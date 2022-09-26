@@ -14,7 +14,7 @@ export const addProxy = async (
     await api.tx.proxy
       .addProxy(proxy, "Any", 0)
       .signAndSend(sender, { signer: injector.signer }, (status) => {
-        console.log("addProxy status >>", status);
+        console.log("addProxy...");
       });
   } catch (error) {
     console.error("addProxy error", error);
@@ -36,4 +36,18 @@ export const removeProxy = async (
   } catch (error) {
     console.error("removeProxy error", error);
   }
+};
+
+export const transfer = async (
+  sender: string,
+  injector: any,
+  receiver: string,
+  amount: number
+) => {
+  const api = await ApiPromise.create({ provider: wsProvider });
+  api.tx.balances
+    .transfer(receiver, amount)
+    .signAndSend(sender, { signer: injector.signer }, (status) => {
+      console.log("transfer...");
+    });
 };

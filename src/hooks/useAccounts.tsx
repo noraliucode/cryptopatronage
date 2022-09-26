@@ -15,7 +15,7 @@ interface IState {
   injector: InjectedExtension | null;
 }
 
-export const useAccounts = async () => {
+export const useAccounts = () => {
   const [state, setState] = useState<IState>({
     accounts: [],
     injector: null,
@@ -25,8 +25,8 @@ export const useAccounts = async () => {
     try {
       await web3Enable("Cryptopatronage");
       const allAccounts = await web3Accounts();
-      setState((prev) => ({ ...prev, accounts: allAccounts, injector }));
       const injector = await web3FromAddress(SUPPORTER_1);
+      setState((prev) => ({ ...prev, accounts: allAccounts, injector }));
     } catch (error) {}
   };
   useEffect(() => {
