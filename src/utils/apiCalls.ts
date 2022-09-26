@@ -1,10 +1,12 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { ROCOCO } from "./constants";
+import { InjectedExtension } from "@polkadot/extension-inject/types";
+
 const wsProvider = new WsProvider(ROCOCO);
 
 export const addProxy = async (
   sender: string,
-  injector: any,
+  injector: InjectedExtension,
   proxy: string
 ) => {
   const api = await ApiPromise.create({ provider: wsProvider });
