@@ -15,6 +15,9 @@ const Container = styled("div")(() => ({
   display: "flex",
   justifyContent: "space-around",
   alignItems: "center",
+  marginTop: "10px",
+}));
+const Wrapper = styled("div")(() => ({
   marginTop: "50px",
 }));
 
@@ -25,7 +28,7 @@ export const TabsMain = () => {
     setValue(newValue);
   };
 
-  console.log("value", value);
+  const creators = ["Creator 1", "Creator 2"];
 
   return (
     <Root>
@@ -39,13 +42,22 @@ export const TabsMain = () => {
           <Tab label="Supporter" />
         </Tabs>
       </Box>
-      {value === 0 && <Text>Supporter List</Text>}
-      {value === 1 && (
-        <Container>
-          <Text>Creator 1</Text>
-          <Button variant="contained">Subscribe</Button>
-        </Container>
-      )}
+      <Wrapper>
+        {value === 0 && <Text>Supporter List</Text>}
+        {value === 1 && (
+          <>
+            {creators.map((x) => (
+              <Container key={x}>
+                <Text>{x}</Text>
+                <div>
+                  <Button variant="contained">Subscribe</Button>{" "}
+                  <Button variant="outlined">Unsubscribe</Button>
+                </div>
+              </Container>
+            ))}
+          </>
+        )}
+      </Wrapper>
     </Root>
   );
 };
