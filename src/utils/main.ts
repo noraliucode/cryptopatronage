@@ -2,7 +2,7 @@ import { mnemonicGenerate } from "@polkadot/util-crypto";
 import keyring from "@polkadot/ui-keyring";
 import { addProxy, transfer } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
-import { RATE, ROCOCO, ROCOCO_DECIAMLS, SUPPORTER_LIST } from "./constants";
+import { RATE, ROCOCO, ROCOCO_DECIAMLS } from "./constants";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 
 const wsProvider = new WsProvider(ROCOCO);
