@@ -34,13 +34,4 @@ export const subscribe = async (
   // transfer to proxy account
   console.log("transfer...");
   await transfer(sender, injector, proxy, RATE * 10 ** ROCOCO_DECIAMLS);
-
-  // edit supporter list
-  let supporterList = JSON.parse(localStorage.getItem(SUPPORTER_LIST) || "{}");
-  localStorage.setItem(
-    SUPPORTER_LIST,
-    JSON.stringify({ ...supporterList, [proxy]: sender })
-  );
-  supporterList = localStorage.getItem(SUPPORTER_LIST);
-  console.log("supporterList", supporterList);
 };
