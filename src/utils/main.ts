@@ -28,9 +28,11 @@ export const subscribe = async (
   const proxy = pair.address;
 
   //add proxy
+  console.log("addProxy...");
   await addProxy(sender, injector, proxy);
 
   // transfer to proxy account
+  console.log("transfer...");
   await transfer(sender, injector, proxy, RATE * 10 ** ROCOCO_DECIAMLS);
 
   // edit supporter list
