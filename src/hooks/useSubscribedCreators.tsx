@@ -1,14 +1,5 @@
-import {
-  InjectedAccountWithMeta,
-  InjectedExtension,
-} from "@polkadot/extension-inject/types";
-import { SUPPORTER_1 } from "../utils/constants";
 import { useEffect, useState } from "react";
-import {
-  getBalance,
-  getBalances,
-  getUserAnonymousProxies,
-} from "../utils/apiCalls";
+import { getBalances, getUserAnonymousProxies } from "../utils/apiCalls";
 
 interface IState {
   subscribedCreators: string[];
