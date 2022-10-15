@@ -91,3 +91,34 @@ export const createAnonymousProxy = async (sender: string, injector: any) => {
   const anonymousCreatedEvent = await promise;
   return anonymousCreatedEvent;
 };
+
+export const getUserAnonymousProxies = async (user: string) => {
+  const api = await ApiPromise.create({ provider: wsProvider });
+  let promise = new Promise(function (resolve, reject) {
+    api.query.proxy.proxies.entries(async (nodes: any) => {
+      const userProxyNodes = nodes.filter((node: any) => {
+        return node[1].toHuman()[0][0].delegate === user;
+      });
+      resolve(userProxyNodes);
+    });
+  });
+
+  const userProxy = await promise;
+  return userProxy;
+};
+
+export const getBalance = async (address: string) => {
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const { parentHash } = await api.rpc.chain.getHeader();
+  const apiAt = await api.at(parentHash);
+  const balance = await apiAt.query.system.account(address);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignores
+  return balance.data.free;
+};
+
+export const getBalances = async (addresses: string[]) => {
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const balances = await api.query.system.account.multi(addresses);
+  return balances;
+};
