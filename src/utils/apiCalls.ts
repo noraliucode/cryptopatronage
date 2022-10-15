@@ -43,9 +43,9 @@ export const transfer = async (
   amount: number
 ) => {
   const api = await ApiPromise.create({ provider: wsProvider });
-  api.tx.balances
+  await api.tx.balances
     .transfer(receiver, amount)
-    .signAndSend(sender, { signer: injector.signer }, (status) => {});
+    .signAndSend(sender, { signer: injector.signer });
 };
 
 export const transferViaProxy = async (
@@ -56,7 +56,14 @@ export const transferViaProxy = async (
   amount: number
 ) => {
   const api = await ApiPromise.create({ provider: wsProvider });
-  api.tx.proxy.proxy(real, null, transfer(sender, injector, receiver, amount));
+  await api.tx.proxy
+    .proxy(real, null, api.tx.balances.transfer(receiver, amount))
+    .signAndSend(sender, { signer: injector.signer });
+};
+
+export const callViaProxy = async (real: string, call: any) => {
+  const api = await ApiPromise.create({ provider: wsProvider });
+  api.tx.proxy.proxy(real, null, call);
 };
 
 export const createAnonymousProxy = async (sender: string, injector: any) => {
