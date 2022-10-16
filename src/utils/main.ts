@@ -6,7 +6,7 @@ import {
   transferViaProxy,
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
-import { CREATOR_1, RATE, ROCOCO_DECIAMLS } from "./constants";
+import { CREATOR_1, RATE, ROCOCO_DECIMALS } from "./constants";
 
 type AnonymousData = {
   anonymous: string;
@@ -31,7 +31,7 @@ export const subscribe = async (
     console.log("anonymous >>", anonymous);
 
     console.log("normal transfer to anonymous proxy...");
-    await transfer(sender, injector, anonymous, RATE * 10 ** ROCOCO_DECIAMLS);
+    await transfer(sender, injector, anonymous, RATE * 10 ** ROCOCO_DECIMALS);
 
     console.log("add creator account as mainProxy...");
     await addProxy(sender, injector, CREATOR_1);
