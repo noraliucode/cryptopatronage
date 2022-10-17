@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBalances, getUserAnonymousProxies } from "../utils/apiCalls";
+import { getBalances, getProxies } from "../utils/apiCalls";
 import { CREATOR_1, RATE, ROCOCO_DECIMALS } from "../utils/constants";
 
 interface IState {
@@ -15,7 +15,7 @@ export const useSubscribedCreators = (user: string) => {
     try {
       // input user's account
       // use proxy.proxy to get all the accounts that has proxies
-      const userProxies: any = await getUserAnonymousProxies(user);
+      const userProxies: any = await getProxies(user);
 
       // TODO: get Proxies that main proxy is creator
       // a static file of creator list?

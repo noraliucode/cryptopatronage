@@ -32,12 +32,13 @@ const Title = styled("div")(() => ({
 
 type IProps = {
   subscribedCreators: string[];
+  supporters: string[];
 };
 
 export const TabsMain = (props: IProps) => {
   const { injector } = useAccounts();
   const [value, setValue] = useState(0);
-  const { subscribedCreators } = props;
+  const { subscribedCreators, supporters } = props;
 
   const handleChange = (event: any, newValue: any) => {
     setValue(newValue);
@@ -56,7 +57,16 @@ export const TabsMain = (props: IProps) => {
         </Tabs>
       </Box>
       <Wrapper>
-        {value === 0 && <Text>Supporter List</Text>}
+        {value === 0 && (
+          <>
+            <Text>Supporter List</Text>
+            <Wrapper>
+              {supporters.map((address, index) => (
+                <Text key={index}>{address}</Text>
+              ))}
+            </Wrapper>
+          </>
+        )}
         {value === 1 && (
           <>
             {/* {creators.map((x) => (

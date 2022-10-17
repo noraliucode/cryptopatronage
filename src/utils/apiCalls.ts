@@ -10,13 +10,7 @@ export const addProxy = async (
   proxy: string
 ) => {
   const api = await ApiPromise.create({ provider: wsProvider });
-  try {
-    await api.tx.proxy
-      .addProxy(proxy, "Any", 0)
-      .signAndSend(sender, { signer: injector.signer }, (status) => {});
-  } catch (error) {
-    console.error("addProxy error", error);
-  }
+  return api.tx.proxy.addProxy(proxy, "Any", 0);
 };
 
 export const removeProxy = async (
@@ -61,9 +55,16 @@ export const transferViaProxy = async (
     .signAndSend(sender, { signer: injector.signer });
 };
 
-export const callViaProxy = async (real: string, call: any) => {
+export const addProxyViaProxy = async (
+  real: string,
+  sender: string,
+  injector: any,
+  proxy: string
+) => {
   const api = await ApiPromise.create({ provider: wsProvider });
-  api.tx.proxy.proxy(real, null, call);
+  api.tx.proxy
+    .proxy(real, null, api.tx.proxy.addProxy(proxy, "Any", 0))
+    .signAndSend(sender, { signer: injector.signer }, (status) => {});
 };
 
 export const createAnonymousProxy = async (sender: string, injector: any) => {
@@ -92,19 +93,19 @@ export const createAnonymousProxy = async (sender: string, injector: any) => {
   return anonymousCreatedEvent;
 };
 
-export const getUserAnonymousProxies = async (user: string) => {
+export const getProxies = async (address: string) => {
   const api = await ApiPromise.create({ provider: wsProvider });
   let promise = new Promise(function (resolve, reject) {
     api.query.proxy.proxies.entries(async (nodes: any) => {
-      const userProxyNodes = nodes.filter((node: any) => {
-        return node[1].toHuman()[0][0].delegate === user;
+      const proxyNodes = nodes.filter((node: any) => {
+        return node[1].toHuman()[0][0].delegate === address;
       });
-      resolve(userProxyNodes);
+      resolve(proxyNodes);
     });
   });
 
-  const userProxy = await promise;
-  return userProxy;
+  const proxyNodes = await promise;
+  return proxyNodes;
 };
 
 export const getBalance = async (address: string) => {
