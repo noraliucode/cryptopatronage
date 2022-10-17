@@ -67,11 +67,15 @@ export const addProxyViaProxy = async (
     .signAndSend(sender, { signer: injector.signer }, (status) => {});
 };
 
-export const createAnonymousProxy = async (sender: string, injector: any) => {
+export const createAnonymousProxy = async (
+  sender: string,
+  injector: any,
+  delay = 0
+) => {
   const api = await ApiPromise.create({ provider: wsProvider });
   let promise = new Promise(function (resolve, reject) {
     api.tx.proxy
-      .anonymous("any", 0, 0)
+      .anonymous("any", delay, 0)
       .signAndSend(
         sender,
         { signer: injector.signer },
