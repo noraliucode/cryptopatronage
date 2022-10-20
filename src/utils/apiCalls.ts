@@ -10,13 +10,7 @@ export const addProxy = async (
   proxy: string
 ) => {
   const api = await ApiPromise.create({ provider: wsProvider });
-  try {
-    await api.tx.proxy
-      .addProxy(proxy, "Any", 0)
-      .signAndSend(sender, { signer: injector.signer }, (status) => {});
-  } catch (error) {
-    console.error("addProxy error", error);
-  }
+  return api.tx.proxy.addProxy(proxy, "Any", 0);
 };
 
 export const removeProxy = async (
@@ -43,9 +37,9 @@ export const transfer = async (
   amount: number
 ) => {
   const api = await ApiPromise.create({ provider: wsProvider });
-  api.tx.balances
+  await api.tx.balances
     .transfer(receiver, amount)
-    .signAndSend(sender, { signer: injector.signer }, (status) => {});
+    .signAndSend(sender, { signer: injector.signer });
 };
 
 export const transferViaProxy = async (
@@ -56,14 +50,32 @@ export const transferViaProxy = async (
   amount: number
 ) => {
   const api = await ApiPromise.create({ provider: wsProvider });
-  api.tx.proxy.proxy(real, null, transfer(sender, injector, receiver, amount));
+  await api.tx.proxy
+    .proxy(real, null, api.tx.balances.transfer(receiver, amount))
+    .signAndSend(sender, { signer: injector.signer });
 };
 
-export const createAnonymousProxy = async (sender: string, injector: any) => {
+export const addProxyViaProxy = async (
+  real: string,
+  sender: string,
+  injector: any,
+  proxy: string
+) => {
+  const api = await ApiPromise.create({ provider: wsProvider });
+  api.tx.proxy
+    .proxy(real, null, api.tx.proxy.addProxy(proxy, "Any", 0))
+    .signAndSend(sender, { signer: injector.signer }, (status) => {});
+};
+
+export const createAnonymousProxy = async (
+  sender: string,
+  injector: any,
+  delay = 0
+) => {
   const api = await ApiPromise.create({ provider: wsProvider });
   let promise = new Promise(function (resolve, reject) {
     api.tx.proxy
-      .anonymous("any", 0, 0)
+      .anonymous("any", delay, 0)
       .signAndSend(
         sender,
         { signer: injector.signer },
@@ -83,4 +95,35 @@ export const createAnonymousProxy = async (sender: string, injector: any) => {
 
   const anonymousCreatedEvent = await promise;
   return anonymousCreatedEvent;
+};
+
+export const getProxies = async (address: string) => {
+  const api = await ApiPromise.create({ provider: wsProvider });
+  let promise = new Promise(function (resolve, reject) {
+    api.query.proxy.proxies.entries(async (nodes: any) => {
+      const proxyNodes = nodes.filter((node: any) => {
+        return node[1].toHuman()[0][0].delegate === address;
+      });
+      resolve(proxyNodes);
+    });
+  });
+
+  const proxyNodes = await promise;
+  return proxyNodes;
+};
+
+export const getBalance = async (address: string) => {
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const { parentHash } = await api.rpc.chain.getHeader();
+  const apiAt = await api.at(parentHash);
+  const balance = await apiAt.query.system.account(address);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignores
+  return balance.data.free;
+};
+
+export const getBalances = async (addresses: string[]) => {
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const balances = await api.query.system.account.multi(addresses);
+  return balances;
 };
