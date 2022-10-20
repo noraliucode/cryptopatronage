@@ -13,7 +13,20 @@ type AnonymousEvent = {
 
 export const subscribe = async (
   sender: string,
-  injector: InjectedExtension
+  real?: string,
+  injector?: InjectedExtension | null
+) => {
+  try {
+    console.log("add creator account as mainProxy...");
+    await addProxyViaProxy(sender, CREATOR_1, real, injector);
+  } catch (error) {
+    console.error("subscribe error >>", error);
+  }
+};
+
+export const commit = async (
+  sender: string,
+  injector?: InjectedExtension | null
 ) => {
   try {
     console.log("ceate anonymous proxy...");
@@ -32,8 +45,7 @@ export const subscribe = async (
       (RATE + 0.1) * 10 ** ROCOCO_DECIMALS
     );
 
-    console.log("add creator account as mainProxy...");
-    await addProxyViaProxy(anonymous, sender, injector, CREATOR_1);
+    return anonymous;
   } catch (error) {
     console.error("subscribe error >>", error);
   }

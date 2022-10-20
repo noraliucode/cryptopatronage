@@ -2,12 +2,15 @@ import { Box, Tabs, Tab } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useState } from "react";
 import Button from "@mui/material/Button";
-import { subscribe } from "../../utils/main";
+import { commit, subscribe } from "../../utils/main";
 import { useAccounts } from "../../hooks/useAccounts";
-import { CREATOR_1 } from "../../utils/constants";
+import { CREATOR_1, SUPPORTER_1 } from "../../utils/constants";
+import Checkbox from "@mui/material/Checkbox";
+import { InjectedExtension } from "@polkadot/extension-inject/types";
+import { toShortAddress } from "../../utils/helpers";
 
 const Root = styled("div")(() => ({
-  width: 500,
+  width: 600,
   height: 500,
 }));
 const Text = styled("div")(() => ({
@@ -17,7 +20,7 @@ const Text = styled("div")(() => ({
 }));
 const Container = styled("div")(() => ({
   display: "flex",
-  justifyContent: "space-around",
+  justifyContent: "space-between",
   alignItems: "center",
   marginTop: "10px",
 }));
@@ -29,19 +32,55 @@ const Title = styled("div")(() => ({
   fontSize: 18,
   marginBottom: 20,
 }));
+const ActionWrapper = styled("div")(() => ({
+  justifyContent: "flex-end",
+  alignItems: "self-end",
+  display: "flex",
+  flexDirection: "column",
+}));
 
 type IProps = {
   subscribedCreators: string[];
   supporters: string[];
 };
 
+type IState = {
+  value: number;
+  isCommitted: boolean;
+  anonymous: string;
+};
+
 export const TabsMain = (props: IProps) => {
-  const { injector } = useAccounts();
-  const [value, setValue] = useState(0);
+  const { injector }: { injector: InjectedExtension | null } = useAccounts();
+  const [state, setState] = useState<IState>({
+    value: 0,
+    isCommitted: true,
+    anonymous: "",
+  });
   const { subscribedCreators, supporters } = props;
+  const { value, isCommitted } = state;
 
   const handleChange = (event: any, newValue: any) => {
-    setValue(newValue);
+    setState((prev) => ({
+      ...prev,
+      value: newValue,
+    }));
+  };
+
+  const _subscribe = async () => {
+    let _anonymous;
+    if (isCommitted) {
+      _anonymous = await commit(SUPPORTER_1, injector);
+    }
+    const real = isCommitted ? _anonymous : SUPPORTER_1;
+    await subscribe(SUPPORTER_1, real, injector);
+  };
+
+  const handleClick = () => {
+    setState((prev) => ({
+      ...prev,
+      isCommitted: !prev.isCommitted,
+    }));
   };
 
   return (
@@ -91,23 +130,23 @@ export const TabsMain = (props: IProps) => {
               </Container>
             ))} */}
             <Container>
-              <Text>{CREATOR_1}</Text>
-              <div>
-                {injector && (
-                  <Button
-                    onClick={() =>
-                      subscribe(
-                        "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",
-                        injector
-                      )
-                    }
-                    variant="contained"
-                  >
-                    Subscribe
-                  </Button>
-                )}{" "}
+              <Text>{toShortAddress(CREATOR_1)}</Text>
+              <ActionWrapper>
+                <Container>
+                  {injector && (
+                    <>
+                      <>
+                        <Checkbox checked={isCommitted} onClick={handleClick} />
+                        <Text>Earmark funds exclusively for this creator</Text>
+                      </>
+                      <Button onClick={_subscribe} variant="contained">
+                        Subscribe
+                      </Button>
+                    </>
+                  )}{" "}
+                </Container>
                 <Button variant="outlined">Unsubscribe</Button>
-              </div>
+              </ActionWrapper>
             </Container>
             <Wrapper>
               <hr />

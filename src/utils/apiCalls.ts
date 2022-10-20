@@ -56,10 +56,10 @@ export const transferViaProxy = async (
 };
 
 export const addProxyViaProxy = async (
-  real: string,
   sender: string,
-  injector: any,
-  proxy: string
+  proxy: string,
+  real?: string,
+  injector?: any
 ) => {
   const api = await ApiPromise.create({ provider: wsProvider });
   api.tx.proxy
