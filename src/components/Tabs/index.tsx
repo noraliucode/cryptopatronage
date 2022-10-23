@@ -4,10 +4,16 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import { commit, subscribe } from "../../utils/main";
 import { useAccounts } from "../../hooks/useAccounts";
-import { CREATOR_1, SUPPORTER_1 } from "../../utils/constants";
+import {
+  CREATOR_1,
+  SUPPORTER_1,
+  KUSAMA_DECIMALS,
+  RATE,
+} from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import { toShortAddress } from "../../utils/helpers";
+import { setRate } from "../../utils/apiCalls";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -98,6 +104,14 @@ export const TabsMain = (props: IProps) => {
       <Wrapper>
         {value === 0 && (
           <>
+            <Button
+              onClick={() =>
+                setRate(RATE * 10 ** KUSAMA_DECIMALS, CREATOR_1, injector)
+              }
+              variant="contained"
+            >
+              Set Rate
+            </Button>
             <Text>Supporter List</Text>
             <Wrapper>
               {supporters.map((address, index) => (

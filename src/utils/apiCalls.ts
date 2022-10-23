@@ -1,8 +1,8 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { ANONYMOUS_CREATED, ROCOCO } from "./constants";
+import { ANONYMOUS_CREATED, KUSAMA } from "./constants";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 
-const wsProvider = new WsProvider(ROCOCO);
+const wsProvider = new WsProvider(KUSAMA);
 
 export const addProxy = async (
   sender: string,
@@ -126,4 +126,34 @@ export const getBalances = async (addresses: string[]) => {
   const api = await ApiPromise.create({ provider: wsProvider });
   const balances = await api.query.system.account.multi(addresses);
   return balances;
+};
+
+export const setRate = async (rate: number, sender: string, injector: any) => {
+  try {
+    const api = await ApiPromise.create({ provider: wsProvider });
+    const identity = await api.query.identity.identityOf(sender);
+    console.log("identity", identity.toHuman());
+    const essentialInfo = identity
+      ? identity
+      : {
+          display: "",
+          legal: "",
+          web: "",
+          riot: "",
+          email: "",
+          image: "",
+          twitter: "",
+        };
+    const additionalInfo = { rate };
+    const result = await api.tx.identity
+      .setIdentity({
+        ...essentialInfo,
+        additional: [[{ Raw: JSON.stringify(additionalInfo) }]],
+      })
+      .signAndSend(sender, { signer: injector.signer });
+
+    console.log("result", result.toHuman());
+  } catch (error) {
+    console.error("setRate error", error);
+  }
 };
