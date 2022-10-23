@@ -1,19 +1,15 @@
 import { Box, Tabs, Tab } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
 import { commit, subscribe } from "../../utils/main";
 import { useAccounts } from "../../hooks/useAccounts";
-import {
-  CREATOR_1,
-  SUPPORTER_1,
-  KUSAMA_DECIMALS,
-  RATE,
-} from "../../utils/constants";
+import { CREATOR_1, SUPPORTER_1, KUSAMA_DECIMALS } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import { toShortAddress } from "../../utils/helpers";
 import { setRate } from "../../utils/apiCalls";
+import TextField from "@mui/material/TextField";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -44,6 +40,12 @@ const ActionWrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
 }));
+const InputWrapper = styled("div")(() => ({
+  display: "flex",
+  justifyContent: "center",
+  marginBottom: 50,
+  flexDirection: "column",
+}));
 
 type IProps = {
   subscribedCreators: string[];
@@ -54,6 +56,7 @@ type IState = {
   value: number;
   isCommitted: boolean;
   anonymous: string;
+  rate: number;
 };
 
 export const TabsMain = (props: IProps) => {
@@ -62,9 +65,10 @@ export const TabsMain = (props: IProps) => {
     value: 0,
     isCommitted: true,
     anonymous: "",
+    rate: 0,
   });
   const { subscribedCreators, supporters } = props;
-  const { value, isCommitted } = state;
+  const { value, isCommitted, rate } = state;
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -89,6 +93,15 @@ export const TabsMain = (props: IProps) => {
     }));
   };
 
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setState((prev) => ({
+      ...prev,
+      rate: Number(event.target.value),
+    }));
+  };
+
   return (
     <Root>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -104,14 +117,24 @@ export const TabsMain = (props: IProps) => {
       <Wrapper>
         {value === 0 && (
           <>
-            <Button
-              onClick={() =>
-                setRate(RATE * 10 ** KUSAMA_DECIMALS, CREATOR_1, injector)
-              }
-              variant="contained"
-            >
-              Set Rate
-            </Button>
+            <InputWrapper>
+              <TextField
+                id="standard-basic"
+                label="Rate"
+                variant="standard"
+                placeholder="Input the amount of Kusama"
+                onChange={handleInputChange}
+              />
+              KUSAMA
+              <Button
+                onClick={() =>
+                  setRate(rate * 10 ** KUSAMA_DECIMALS, CREATOR_1, injector)
+                }
+                variant="contained"
+              >
+                Set Rate
+              </Button>
+            </InputWrapper>
             <Text>Supporter List</Text>
             <Wrapper>
               {supporters.map((address, index) => (
