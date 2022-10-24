@@ -1,13 +1,11 @@
 import React from "react";
 import "./App.css";
-import { useAccounts } from "./hooks/useAccounts";
 import { TabsMain } from "./components/Tabs";
 import { useSubscribedCreators } from "./hooks/useSubscribedCreators";
 import { useSupporters } from "./hooks/useSupporters";
 import { CREATOR_1 } from "./utils/constants";
 
 function App() {
-  const { injector } = useAccounts();
   const { subscribedCreators } = useSubscribedCreators(
     "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr"
   );
