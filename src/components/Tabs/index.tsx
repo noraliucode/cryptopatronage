@@ -32,7 +32,8 @@ const Wrapper = styled("div")(() => ({
 const Title = styled("div")(() => ({
   color: "black",
   fontSize: 18,
-  marginBottom: 20,
+  margin: "40px 0 0 0",
+  textAlign: "left",
 }));
 const ActionWrapper = styled("div")(() => ({
   display: "flex",
@@ -55,18 +56,21 @@ type IState = {
   isCommitted: boolean;
   anonymous: string;
   rate: number;
+  signer: string;
 };
 
 export const TabsMain = (props: IProps) => {
-  const { injector }: { injector: InjectedExtension | null } = useAccounts();
   const [state, setState] = useState<IState>({
     value: 0,
     isCommitted: true,
     anonymous: "",
     rate: 0,
+    signer: "",
   });
   const { subscribedCreators, supporters } = props;
-  const { value, isCommitted, rate } = state;
+  const { value, isCommitted, rate, signer } = state;
+  const { injector }: { injector: InjectedExtension | null } =
+    useAccounts(signer);
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -100,6 +104,15 @@ export const TabsMain = (props: IProps) => {
     }));
   };
 
+  const handleAddressInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setState((prev) => ({
+      ...prev,
+      signer: event.target.value,
+    }));
+  };
+
   return (
     <Root>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -112,88 +125,79 @@ export const TabsMain = (props: IProps) => {
           <Tab label="Supporter" />
         </Tabs>
       </Box>
-      <Wrapper>
-        {value === 0 && (
-          <>
-            <InputWrapper>
-              <TextField
-                id="standard-basic"
-                label="Rate"
-                variant="standard"
-                placeholder="Input the amount of Kusama"
-                onChange={handleInputChange}
-              />
-              KUSAMA
-              <Button
-                onClick={() =>
-                  setRate(rate * 10 ** KUSAMA_DECIMALS, CREATOR_1, injector)
-                }
-                variant="contained"
-              >
-                Set Rate
-              </Button>
-            </InputWrapper>
-            <Text>Supporter List</Text>
+      {value === 0 && (
+        <>
+          <InputWrapper>
+            <Title>Signer Address</Title>
+            <TextField
+              id="standard-basic"
+              label="Signer Address"
+              variant="standard"
+              onChange={handleAddressInputChange}
+            />
+            <Title>Add Rate</Title>
+            <TextField
+              id="standard-basic"
+              label="Rate"
+              variant="standard"
+              placeholder="Input the amount of Kusama"
+              onChange={handleInputChange}
+            />
+            &nbsp;
+            <Button
+              onClick={() =>
+                setRate(rate * 10 ** KUSAMA_DECIMALS, CREATOR_1, injector)
+              }
+              variant="contained"
+            >
+              Set Rate
+            </Button>
+          </InputWrapper>
+          <Title>Supporter List</Title>
+          <Wrapper>
+            {supporters.map((address, index) => (
+              <Text key={index}>{address}</Text>
+            ))}
+          </Wrapper>
+        </>
+      )}
+      {value === 1 && (
+        <InputWrapper>
+          <Title>Signer Address</Title>
+          <TextField
+            id="standard-basic"
+            label="Signer Address"
+            variant="standard"
+            onChange={handleAddressInputChange}
+          />
+          <Title>Commit and Subscribe</Title>
+          <Text>{toShortAddress(CREATOR_1)}</Text>
+          <Container>
+            <ActionWrapper>
+              <Container>
+                <Checkbox checked={isCommitted} onClick={handleClick} />
+                <Text>Earmark funds exclusively for this creator</Text>
+              </Container>
+              <Container>
+                <Button onClick={_subscribe} variant="contained">
+                  Subscribe
+                </Button>
+                &nbsp;
+                <Button variant="outlined">Unsubscribe</Button>
+              </Container>
+            </ActionWrapper>
+          </Container>
+          <Wrapper>
+            <hr />
             <Wrapper>
-              {supporters.map((address, index) => (
-                <Text key={index}>{address}</Text>
+              <Title>Subscribed Creators</Title>
+              {subscribedCreators.map((address) => (
+                <Text>{address}</Text>
               ))}
             </Wrapper>
-          </>
-        )}
-        {value === 1 && (
-          <>
-            {/* {creators.map((x) => (
-              <Container key={x}>
-                <Text>{x}</Text>
-                <div>
-                  {injector && (
-                    <Button
-                      onClick={() =>
-                        subscribe(
-                          "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",
-                          injector
-                        )
-                      }
-                      variant="contained"
-                    >
-                      Subscribe
-                    </Button>
-                  )}{" "}
-                  <Button variant="outlined">Unsubscribe</Button>
-                </div>
-              </Container>
-            ))} */}
-            <Text>{toShortAddress(CREATOR_1)}</Text>
-            <Container>
-              <ActionWrapper>
-                {injector && (
-                  <Container>
-                    <Checkbox checked={isCommitted} onClick={handleClick} />
-                    <Text>Earmark funds exclusively for this creator</Text>
-                  </Container>
-                )}
-                <Container>
-                  <Button onClick={_subscribe} variant="contained">
-                    Subscribe
-                  </Button>
-                  &nbsp;
-                  <Button variant="outlined">Unsubscribe</Button>
-                </Container>
-              </ActionWrapper>
-            </Container>
-            <Wrapper>
-              <hr />
-              <Wrapper>
-                <Title>Subscribed Creators</Title>
-                {subscribedCreators.map((address) => (
-                  <Text>{address}</Text>
-                ))}
-              </Wrapper>
-            </Wrapper>
-          </>
-        )}
-      </Wrapper>
+          </Wrapper>
+        </InputWrapper>
+      )}
     </Root>
   );
 };
