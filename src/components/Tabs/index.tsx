@@ -22,9 +22,9 @@ const Text = styled("div")(() => ({
 }));
 const Container = styled("div")(() => ({
   display: "flex",
-  justifyContent: "space-between",
   alignItems: "center",
   marginTop: "10px",
+  justifyContent: "center",
 }));
 const Wrapper = styled("div")(() => ({
   marginTop: "50px",
@@ -35,8 +35,6 @@ const Title = styled("div")(() => ({
   marginBottom: 20,
 }));
 const ActionWrapper = styled("div")(() => ({
-  justifyContent: "flex-end",
-  alignItems: "self-end",
   display: "flex",
   flexDirection: "column",
 }));
@@ -166,23 +164,22 @@ export const TabsMain = (props: IProps) => {
                 </div>
               </Container>
             ))} */}
+            <Text>{toShortAddress(CREATOR_1)}</Text>
             <Container>
-              <Text>{toShortAddress(CREATOR_1)}</Text>
               <ActionWrapper>
+                {injector && (
+                  <Container>
+                    <Checkbox checked={isCommitted} onClick={handleClick} />
+                    <Text>Earmark funds exclusively for this creator</Text>
+                  </Container>
+                )}
                 <Container>
-                  {injector && (
-                    <>
-                      <>
-                        <Checkbox checked={isCommitted} onClick={handleClick} />
-                        <Text>Earmark funds exclusively for this creator</Text>
-                      </>
-                      <Button onClick={_subscribe} variant="contained">
-                        Subscribe
-                      </Button>
-                    </>
-                  )}{" "}
+                  <Button onClick={_subscribe} variant="contained">
+                    Subscribe
+                  </Button>
+                  &nbsp;
+                  <Button variant="outlined">Unsubscribe</Button>
                 </Container>
-                <Button variant="outlined">Unsubscribe</Button>
               </ActionWrapper>
             </Container>
             <Wrapper>
