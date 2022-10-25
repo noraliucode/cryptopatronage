@@ -30,8 +30,6 @@ export const subscribe = async (
         sender,
         injector
       )) as AnonymousEvent;
-      console.log("proxyData", proxyData);
-
       const { anonymous, who } = proxyData.data;
       real = anonymous;
 
