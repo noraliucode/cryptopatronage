@@ -3,13 +3,17 @@ import { ANONYMOUS_CREATED, NETWORK, NODE_ENDPOINT } from "./constants";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 
 const wsProvider = new WsProvider(NODE_ENDPOINT[NETWORK]);
+const createApi = async () => {
+  const api = await ApiPromise.create({ provider: wsProvider });
+  return api;
+};
 
 export const addProxy = async (
   sender: string,
   injector: InjectedExtension,
   proxy: string
 ) => {
-  const api = await ApiPromise.create({ provider: wsProvider });
+  const api = await createApi();
   return api.tx.proxy.addProxy(proxy, "Any", 0);
 };
 
@@ -18,7 +22,7 @@ export const removeProxy = async (
   injector: any,
   proxy: string
 ) => {
-  const api = await ApiPromise.create({ provider: wsProvider });
+  const api = await createApi();
   try {
     await api.tx.proxy
       .removeProxy(proxy, "Any", 0)
@@ -31,7 +35,7 @@ export const removeProxy = async (
 };
 
 export const transfer = async (receiver: string, amount: number) => {
-  const api = await ApiPromise.create({ provider: wsProvider });
+  const api = await createApi();
   return api.tx.balances.transfer(receiver, amount);
 };
 
@@ -42,7 +46,7 @@ export const transferViaProxy = async (
   receiver: string,
   amount: number
 ) => {
-  const api = await ApiPromise.create({ provider: wsProvider });
+  const api = await createApi();
   await api.tx.proxy
     .proxy(real, null, api.tx.balances.transfer(receiver, amount))
     .signAndSend(sender, { signer: injector.signer });
@@ -54,14 +58,14 @@ export const signAndSendAddProxyViaProxy = async (
   real?: string,
   injector?: any
 ) => {
-  const api = await ApiPromise.create({ provider: wsProvider });
+  const api = await createApi();
   api.tx.proxy
     .proxy(real, null, api.tx.proxy.addProxy(proxy, "Any", 0))
     .signAndSend(sender, { signer: injector.signer }, (status) => {});
 };
 
 export const addProxyViaProxy = async (proxy: string, real?: string) => {
-  const api = await ApiPromise.create({ provider: wsProvider });
+  const api = await createApi();
   return api.tx.proxy.proxy(real, null, api.tx.proxy.addProxy(proxy, "Any", 0));
 };
 
@@ -70,7 +74,7 @@ export const createAnonymousProxy = async (
   injector: any,
   delay = 0
 ) => {
-  const api = await ApiPromise.create({ provider: wsProvider });
+  const api = await createApi();
   let promise = new Promise(function (resolve, reject) {
     api.tx.proxy
       .anonymous("any", delay, 0)
@@ -96,7 +100,7 @@ export const createAnonymousProxy = async (
 };
 
 export const getProxies = async (address: string) => {
-  const api = await ApiPromise.create({ provider: wsProvider });
+  const api = await createApi();
   let promise = new Promise(function (resolve, reject) {
     api.query.proxy.proxies.entries(async (nodes: any) => {
       const proxyNodes = nodes.filter((node: any) => {
@@ -111,7 +115,7 @@ export const getProxies = async (address: string) => {
 };
 
 export const getBalance = async (address: string) => {
-  const api = await ApiPromise.create({ provider: wsProvider });
+  const api = await createApi();
   const { parentHash } = await api.rpc.chain.getHeader();
   const apiAt = await api.at(parentHash);
   const balance = await apiAt.query.system.account(address);
@@ -121,14 +125,14 @@ export const getBalance = async (address: string) => {
 };
 
 export const getBalances = async (addresses: string[]) => {
-  const api = await ApiPromise.create({ provider: wsProvider });
+  const api = await createApi();
   const balances = await api.query.system.account.multi(addresses);
   return balances;
 };
 
 export const setRate = async (rate: number, sender: string, injector: any) => {
   try {
-    const api = await ApiPromise.create({ provider: wsProvider });
+    const api = await createApi();
     const identity = await api.query.identity.identityOf(sender);
     console.log("identity", identity.toHuman());
     const essentialInfo = identity
@@ -157,7 +161,7 @@ export const setRate = async (rate: number, sender: string, injector: any) => {
 };
 
 export const batchCalls = async (calls: any, sender: string, injector: any) => {
-  const api = await ApiPromise.create({ provider: wsProvider });
+  const api = await createApi();
   await api.tx.utility
     .batchAll(calls)
     .signAndSend(sender, { signer: injector.signer });
