@@ -1,6 +1,12 @@
-import { addProxyViaProxy, createAnonymousProxy, transfer } from "./apiCalls";
+import {
+  addProxyViaProxy,
+  batchCalls,
+  createAnonymousProxy,
+  signAndSendAddProxyViaProxy,
+  transfer,
+} from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
-import { CREATOR_1, RATE, ROCOCO_DECIMALS } from "./constants";
+import { CREATOR, NETWORK, DECIMALS } from "./constants";
 
 type AnonymousData = {
   anonymous: string;
@@ -13,39 +19,42 @@ type AnonymousEvent = {
 
 export const subscribe = async (
   sender: string,
-  real?: string,
-  injector?: InjectedExtension | null
+  injector?: InjectedExtension | null,
+  isCommitted = true
 ) => {
   try {
-    console.log("add creator account as mainProxy...");
-    await addProxyViaProxy(sender, CREATOR_1, real, injector);
-  } catch (error) {
-    console.error("subscribe error >>", error);
-  }
-};
+    let real = sender;
+    if (isCommitted) {
+      console.log("ceate anonymous proxy...");
+      const proxyData = (await createAnonymousProxy(
+        sender,
+        injector
+      )) as AnonymousEvent;
+      console.log("proxyData", proxyData);
 
-export const commit = async (
-  sender: string,
-  injector?: InjectedExtension | null
-) => {
-  try {
-    console.log("ceate anonymous proxy...");
-    const proxyData = (await createAnonymousProxy(
-      sender,
-      injector
-    )) as AnonymousEvent;
-    const { anonymous, who } = proxyData.data;
-    console.log("anonymous >>", anonymous);
+      const { anonymous, who } = proxyData.data;
+      real = anonymous;
 
-    console.log("normal transfer to anonymous proxy...");
-    await transfer(
-      sender,
-      injector,
-      anonymous,
-      (RATE + 0.1) * 10 ** ROCOCO_DECIMALS
-    );
+      console.log("anonymous >>", anonymous);
 
-    return anonymous;
+      const amount = 1 * 10 ** DECIMALS[NETWORK];
+
+      const txs = await Promise.all([
+        transfer(anonymous, amount),
+        addProxyViaProxy(CREATOR[NETWORK], real),
+      ]);
+
+      console.log("normal transfer to anonymous proxy...");
+      console.log("set creator as main proxy...");
+      await batchCalls(txs, sender, injector);
+    } else {
+      await signAndSendAddProxyViaProxy(
+        sender,
+        CREATOR[NETWORK],
+        real,
+        injector
+      );
+    }
   } catch (error) {
     console.error("subscribe error >>", error);
   }

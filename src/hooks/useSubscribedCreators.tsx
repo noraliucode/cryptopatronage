@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getBalances, getProxies } from "../utils/apiCalls";
-import { CREATOR_1, RATE, ROCOCO_DECIMALS } from "../utils/constants";
+import { CREATOR, KUSAMA_DECIMALS, NETWORK, RATE } from "../utils/constants";
 
 interface IState {
   subscribedCreators: string[];
@@ -27,13 +27,14 @@ export const useSubscribedCreators = (user: string) => {
       const isSubscribed = balances.some((balance) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        return balance.data.free.toNumber() / 10 ** ROCOCO_DECIMALS >= RATE;
+        return balance.data.free.toNumber() / 10 ** KUSAMA_DECIMALS >= RATE;
       });
 
-      if (isSubscribed) {
-        // TODO: creator list is hardcoded for now, should be fixed later
-        setState((prev) => ({ ...prev, subscribedCreators: [CREATOR_1] }));
-      }
+      // TODO: creator list is hardcoded for now, should be fixed later
+      setState((prev) => ({
+        ...prev,
+        subscribedCreators: isSubscribed ? [CREATOR[NETWORK]] : [],
+      }));
     } catch (error) {
       console.error("getSubscribedCreators error", error);
     }

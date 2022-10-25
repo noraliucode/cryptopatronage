@@ -1,8 +1,8 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { ANONYMOUS_CREATED, KUSAMA } from "./constants";
+import { ANONYMOUS_CREATED, NETWORK, NODE_ENDPOINT } from "./constants";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 
-const wsProvider = new WsProvider(KUSAMA);
+const wsProvider = new WsProvider(NODE_ENDPOINT[NETWORK]);
 
 export const addProxy = async (
   sender: string,
@@ -30,16 +30,9 @@ export const removeProxy = async (
   }
 };
 
-export const transfer = async (
-  sender: string,
-  injector: any,
-  receiver: string,
-  amount: number
-) => {
+export const transfer = async (receiver: string, amount: number) => {
   const api = await ApiPromise.create({ provider: wsProvider });
-  await api.tx.balances
-    .transfer(receiver, amount)
-    .signAndSend(sender, { signer: injector.signer });
+  return api.tx.balances.transfer(receiver, amount);
 };
 
 export const transferViaProxy = async (
@@ -55,7 +48,7 @@ export const transferViaProxy = async (
     .signAndSend(sender, { signer: injector.signer });
 };
 
-export const addProxyViaProxy = async (
+export const signAndSendAddProxyViaProxy = async (
   sender: string,
   proxy: string,
   real?: string,
@@ -65,6 +58,11 @@ export const addProxyViaProxy = async (
   api.tx.proxy
     .proxy(real, null, api.tx.proxy.addProxy(proxy, "Any", 0))
     .signAndSend(sender, { signer: injector.signer }, (status) => {});
+};
+
+export const addProxyViaProxy = async (proxy: string, real?: string) => {
+  const api = await ApiPromise.create({ provider: wsProvider });
+  return api.tx.proxy.proxy(real, null, api.tx.proxy.addProxy(proxy, "Any", 0));
 };
 
 export const createAnonymousProxy = async (
@@ -156,4 +154,11 @@ export const setRate = async (rate: number, sender: string, injector: any) => {
   } catch (error) {
     console.error("setRate error", error);
   }
+};
+
+export const batchCalls = async (calls: any, sender: string, injector: any) => {
+  const api = await ApiPromise.create({ provider: wsProvider });
+  await api.tx.utility
+    .batchAll(calls)
+    .signAndSend(sender, { signer: injector.signer });
 };

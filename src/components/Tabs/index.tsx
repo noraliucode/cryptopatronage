@@ -2,9 +2,9 @@ import { Box, Tabs, Tab } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
-import { commit, subscribe } from "../../utils/main";
+import { subscribe } from "../../utils/main";
 import { useAccounts } from "../../hooks/useAccounts";
-import { CREATOR_1, SUPPORTER_1, KUSAMA_DECIMALS } from "../../utils/constants";
+import { CREATOR, KUSAMA_DECIMALS, NETWORK } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import { toShortAddress } from "../../utils/helpers";
@@ -80,12 +80,7 @@ export const TabsMain = (props: IProps) => {
   };
 
   const _subscribe = async () => {
-    let _anonymous;
-    if (isCommitted) {
-      _anonymous = await commit(SUPPORTER_1, injector);
-    }
-    const real = isCommitted ? _anonymous : SUPPORTER_1;
-    await subscribe(SUPPORTER_1, real, injector);
+    await subscribe(signer, injector, isCommitted);
   };
 
   const handleClick = () => {
@@ -146,7 +141,11 @@ export const TabsMain = (props: IProps) => {
             &nbsp;
             <Button
               onClick={() =>
-                setRate(rate * 10 ** KUSAMA_DECIMALS, CREATOR_1, injector)
+                setRate(
+                  rate * 10 ** KUSAMA_DECIMALS,
+                  CREATOR[NETWORK],
+                  injector
+                )
               }
               variant="contained"
             >
@@ -171,7 +170,7 @@ export const TabsMain = (props: IProps) => {
             onChange={handleAddressInputChange}
           />
           <Title>Commit and Subscribe</Title>
-          <Text>{toShortAddress(CREATOR_1)}</Text>
+          <Text>{toShortAddress(CREATOR[NETWORK])}</Text>
           <Container>
             <ActionWrapper>
               <Container>
