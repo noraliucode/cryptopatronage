@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getBalances, getProxies } from "../utils/apiCalls";
-import { RATE, ROCOCO_DECIMALS } from "../utils/constants";
+import { DECIMALS, NETWORK, RATE } from "../utils/constants";
 
 interface IState {
   supporters: string[];
@@ -41,7 +41,7 @@ export const useSupporters = (creator: string) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         return (
-          node.balance.data.free.toNumber() / 10 ** ROCOCO_DECIMALS >= RATE
+          node.balance.data.free.toNumber() / 10 ** DECIMALS[NETWORK] >= RATE
         );
       });
 
@@ -50,7 +50,7 @@ export const useSupporters = (creator: string) => {
       );
 
       const supporters = supporterProxyNodes.map((nodes: any) => {
-        return nodes[0][0].toHuman()[0];
+        return nodes[0][1].toHuman()[0][1].delegate;
       });
 
       setState((prev) => ({ ...prev, supporters }));

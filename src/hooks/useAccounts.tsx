@@ -30,7 +30,6 @@ export const useAccounts = (signerAddress: string) => {
       }
 
       const allAccounts = await web3Accounts();
-      // // const injector = await web3FromAddress(SUPPORTER_1);
       const injector = await web3FromAddress(signerAddress);
 
       setState((prev) => ({ ...prev, accounts: allAccounts, injector }));
