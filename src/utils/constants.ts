@@ -2,13 +2,9 @@ export const ROCOCO = "wss://rococo-rpc.polkadot.io";
 export const WESTEND = "wss://westend-rpc.polkadot.io";
 export const KUSAMA = "wss://kusama-rpc.polkadot.io";
 
-export const SUPPORTER_1 = "G22qdn1U9dPQLZCxVJu8jmYe1Jdmm551aj9eNb9PT9iVzKh";
 export const SUPPORTER_LIST = "SUPPORTER_LIST";
-export const ROCOCO_DECIMALS = 12;
-export const KUSAMA_DECIMALS = 12;
 export const RATE = 1;
 export const ANONYMOUS_CREATED = "AnonymousCreated";
-export const CREATOR_1 = "FtQpEMfFRb2wi8dVcv93uir3R3tC6bbyCJ3EwhMKwf7v3rQ";
 export const CREATOR = {
   ROCOCO: "5FNo9v1nd4a7C4KBiv769xMqtpmePRnRWpTHrHRPr9SdB1jf",
   WESTEND: "5FNo9v1nd4a7C4KBiv769xMqtpmePRnRWpTHrHRPr9SdB1jf",

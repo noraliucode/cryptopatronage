@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getBalances, getProxies } from "../utils/apiCalls";
-import { CREATOR, KUSAMA_DECIMALS, NETWORK, RATE } from "../utils/constants";
+import { CREATOR, DECIMALS, NETWORK, RATE } from "../utils/constants";
 
 interface IState {
   subscribedCreators: string[];
@@ -27,7 +27,7 @@ export const useSubscribedCreators = (user: string) => {
       const isSubscribed = balances.some((balance) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        return balance.data.free.toNumber() / 10 ** KUSAMA_DECIMALS >= RATE;
+        return balance.data.free.toNumber() / 10 ** DECIMALS[NETWORK] >= RATE;
       });
 
       // TODO: creator list is hardcoded for now, should be fixed later
