@@ -6,7 +6,7 @@ import {
   transfer,
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
-import { CREATOR, NETWORK, DECIMALS } from "./constants";
+import { CREATOR, NETWORK, DECIMALS, USER_PAYMENT } from "./constants";
 
 type AnonymousData = {
   anonymous: string;
@@ -37,7 +37,7 @@ export const subscribe = async (
 
       console.log("anonymous >>", anonymous);
 
-      const amount = 1 * 10 ** DECIMALS[NETWORK];
+      const amount = USER_PAYMENT * 10 ** DECIMALS[NETWORK];
 
       const txs = await Promise.all([
         transfer(anonymous, amount),
