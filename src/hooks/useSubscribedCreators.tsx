@@ -13,22 +13,24 @@ export const useSubscribedCreators = (user: string) => {
 
   const getSubscribedCreators = async () => {
     try {
-      // input user's account
-      // use proxy.proxy to get all the accounts that has proxies
-      const userProxies: any = await getProxies(user);
-
-      // TODO: get Proxies that main proxy is creator
-      // a static file of creator list?
-
-      const balances = await getBalances(
-        userProxies.map((proxy: any) => proxy[0].toHuman()[0])
-      );
-
       const creatorProxies: any = await getProxies(CREATOR[NETWORK]);
       const creatorProxiesFiltered = creatorProxies.filter(
         // filter all nodes that the property is sender
         (node: any) => node[1].toHuman()[0][1].delegate === user
       );
+      const creatorProxiesFilteredParsed = creatorProxiesFiltered.map(
+        (proxy: any) => {
+          return {
+            real: proxy[0].toHuman()[0],
+            delegation: proxy[1].toHuman()[0][0].delegate,
+          };
+        }
+      );
+
+      const balances = await getBalances(
+        creatorProxiesFilteredParsed.map((proxy: any) => proxy.real)
+      );
+
       const isRegistered = creatorProxiesFiltered.length > 0;
 
       const isSubscribed = balances.some((balance) => {
