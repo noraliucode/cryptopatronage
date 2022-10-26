@@ -39,6 +39,18 @@ export const transfer = async (receiver: string, amount: number) => {
   return api.tx.balances.transfer(receiver, amount);
 };
 
+export const getTransferFee = async (
+  receiver: string,
+  amount: number,
+  sender: string
+) => {
+  const api = await createApi();
+  const info = await api.tx.balances
+    .transfer(receiver, amount)
+    .paymentInfo(sender);
+  return info.partialFee.toHuman();
+};
+
 export const transferViaProxy = async (
   real: string,
   sender: string,

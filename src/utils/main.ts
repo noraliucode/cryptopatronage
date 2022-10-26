@@ -4,12 +4,19 @@ import {
   callViaProxy,
   createAnonymousProxy,
   getProxies,
+  getTransferFee,
   removeProxies,
   signAndSendAddProxyViaProxy,
   transfer,
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
-import { CREATOR, NETWORK, DECIMALS, USER_PAYMENT } from "./constants";
+import {
+  CREATOR,
+  NETWORK,
+  DECIMALS,
+  USER_PAYMENT,
+  M_DECIMALS,
+} from "./constants";
 
 type AnonymousData = {
   anonymous: string;
@@ -37,11 +44,19 @@ export const subscribe = async (
       real = anonymous;
 
       console.log("anonymous >>", anonymous);
-
       const amount = USER_PAYMENT * 10 ** DECIMALS[NETWORK];
 
+      const reserved = 0.00000000001 * 10 ** DECIMALS[NETWORK];
+
+      // TODO: add total amount later to inform user
+      // const fee = (await getTransferFee(anonymous, amount, sender)).split(
+      //   " "
+      // )[0];
+      // const totalAmount =
+      //   Math.ceil(Number(fee)) * 10 ** M_DECIMALS[NETWORK] + amount + reserved;
+
       const txs = await Promise.all([
-        transfer(anonymous, amount),
+        transfer(anonymous, amount + reserved),
         addProxyViaProxy(CREATOR[NETWORK], real),
       ]);
 
