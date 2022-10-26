@@ -2,9 +2,9 @@ import { Box, Tabs, Tab } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
-import { subscribe } from "../../utils/main";
+import { subscribe, unsubscribe } from "../../utils/main";
 import { useAccounts } from "../../hooks/useAccounts";
-import { CREATOR, KUSAMA_DECIMALS, NETWORK } from "../../utils/constants";
+import { CREATOR, DECIMALS, NETWORK } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import { toShortAddress } from "../../utils/helpers";
@@ -83,6 +83,10 @@ export const TabsMain = (props: IProps) => {
     await subscribe(signer, injector, isCommitted);
   };
 
+  const _unsubscribe = async () => {
+    await unsubscribe(signer, injector, CREATOR[NETWORK]);
+  };
+
   const handleClick = () => {
     setState((prev) => ({
       ...prev,
@@ -142,7 +146,7 @@ export const TabsMain = (props: IProps) => {
             <Button
               onClick={() =>
                 setRate(
-                  rate * 10 ** KUSAMA_DECIMALS,
+                  rate * 10 ** DECIMALS[NETWORK],
                   CREATOR[NETWORK],
                   injector
                 )
@@ -182,7 +186,9 @@ export const TabsMain = (props: IProps) => {
                   Subscribe
                 </Button>
                 &nbsp;
-                <Button variant="outlined">Unsubscribe</Button>
+                <Button onClick={_unsubscribe} variant="outlined">
+                  Unsubscribe
+                </Button>
               </Container>
             </ActionWrapper>
           </Container>
