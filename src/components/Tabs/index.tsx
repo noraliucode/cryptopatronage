@@ -2,7 +2,7 @@ import { Box, Tabs, Tab } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
-import { subscribe } from "../../utils/main";
+import { subscribe, unsubscribe } from "../../utils/main";
 import { useAccounts } from "../../hooks/useAccounts";
 import { CREATOR, DECIMALS, NETWORK } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
@@ -81,6 +81,10 @@ export const TabsMain = (props: IProps) => {
 
   const _subscribe = async () => {
     await subscribe(signer, injector, isCommitted);
+  };
+
+  const _unsubscribe = async () => {
+    await unsubscribe(signer, injector, CREATOR[NETWORK]);
   };
 
   const handleClick = () => {
@@ -182,7 +186,9 @@ export const TabsMain = (props: IProps) => {
                   Subscribe
                 </Button>
                 &nbsp;
-                <Button variant="outlined">Unsubscribe</Button>
+                <Button onClick={_unsubscribe} variant="outlined">
+                  Unsubscribe
+                </Button>
               </Container>
             </ActionWrapper>
           </Container>

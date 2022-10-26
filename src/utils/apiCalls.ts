@@ -69,6 +69,11 @@ export const addProxyViaProxy = async (proxy: string, real?: string) => {
   return api.tx.proxy.proxy(real, null, api.tx.proxy.addProxy(proxy, "Any", 0));
 };
 
+export const callViaProxy = async (call: any, real?: string) => {
+  const api = await createApi();
+  return api.tx.proxy.proxy(real, null, api.tx.proxy.removeProxies());
+};
+
 export const createAnonymousProxy = async (
   sender: string,
   injector: any,
@@ -164,5 +169,21 @@ export const batchCalls = async (calls: any, sender: string, injector: any) => {
   const api = await createApi();
   await api.tx.utility
     .batchAll(calls)
+    .signAndSend(sender, { signer: injector.signer });
+};
+
+export const removeProxies = async () => {
+  const api = await createApi();
+  return api.tx.proxy.removeProxies;
+};
+
+export const signAndSendRemoveProxies = async (
+  sender: string,
+  injector: any,
+  proxy: string
+) => {
+  const api = await createApi();
+  await api.tx.proxy
+    .removeProxy(proxy, "any", 0)
     .signAndSend(sender, { signer: injector.signer });
 };
