@@ -29,14 +29,14 @@ export const useSubscribedCreators = (user: string) => {
         // filter all nodes that the property is sender
         (node: any) => node[1].toHuman()[0][1].delegate === user
       );
-      const isUnregistered = creatorProxiesFiltered.length > 0;
+      const isRegistered = creatorProxiesFiltered.length > 0;
 
       const isSubscribed = balances.some((balance) => {
         return (
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           balance.data.free.toNumber() / 10 ** DECIMALS[NETWORK] >= RATE &&
-          isUnregistered
+          isRegistered
         );
       });
 
