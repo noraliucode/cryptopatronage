@@ -24,10 +24,20 @@ export const useSubscribedCreators = (user: string) => {
         userProxies.map((proxy: any) => proxy[0].toHuman()[0])
       );
 
+      const creatorProxies: any = await getProxies(CREATOR[NETWORK]);
+      const creatorProxiesFiltered = creatorProxies.filter(
+        // filter all nodes that the property is sender
+        (node: any) => node[1].toHuman()[0][1].delegate === user
+      );
+      const isUnregistered = creatorProxiesFiltered.length > 0;
+
       const isSubscribed = balances.some((balance) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        return balance.data.free.toNumber() / 10 ** DECIMALS[NETWORK] >= RATE;
+        return (
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          balance.data.free.toNumber() / 10 ** DECIMALS[NETWORK] >= RATE &&
+          isUnregistered
+        );
       });
 
       // TODO: creator list is hardcoded for now, should be fixed later
