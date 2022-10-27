@@ -61,5 +61,5 @@ export const useSupporters = (creator: string) => {
   useEffect(() => {
     getSupporters();
   }, []);
-  return { ...state };
+  return { ...state, getSupporters };
 };

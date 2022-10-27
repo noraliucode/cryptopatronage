@@ -49,6 +49,8 @@ const InputWrapper = styled("div")(() => ({
 type IProps = {
   subscribedCreators: string[];
   supporters: string[];
+  getSubscribedCreators: () => void;
+  getSupporters: () => void;
 };
 
 type IState = {
@@ -67,7 +69,12 @@ export const TabsMain = (props: IProps) => {
     rate: 0,
     signer: "",
   });
-  const { subscribedCreators, supporters } = props;
+  const {
+    subscribedCreators,
+    supporters,
+    getSubscribedCreators,
+    getSupporters,
+  } = props;
   const { value, isCommitted, rate, signer } = state;
   const { injector }: { injector: InjectedExtension | null } =
     useAccounts(signer);
@@ -79,12 +86,17 @@ export const TabsMain = (props: IProps) => {
     }));
   };
 
+  const callback = async () => {
+    await getSubscribedCreators();
+    await getSupporters();
+  };
+
   const _subscribe = async () => {
-    await subscribe(signer, injector, isCommitted);
+    await subscribe(signer, injector, isCommitted, callback);
   };
 
   const _unsubscribe = async () => {
-    await unsubscribe(signer, injector, CREATOR[NETWORK]);
+    await unsubscribe(signer, injector, CREATOR[NETWORK], callback);
   };
 
   const handleClick = () => {

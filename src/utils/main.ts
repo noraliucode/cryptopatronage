@@ -30,7 +30,8 @@ type AnonymousEvent = {
 export const subscribe = async (
   sender: string,
   injector?: InjectedExtension | null,
-  isCommitted = true
+  isCommitted = true,
+  callback?: any
 ) => {
   try {
     let real = sender;
@@ -62,7 +63,7 @@ export const subscribe = async (
 
       console.log("normal transfer to anonymous proxy...");
       console.log("set creator as main proxy...");
-      await batchCalls(txs, sender, injector);
+      await batchCalls(txs, sender, injector, callback);
     } else {
       await signAndSendAddProxyViaProxy(
         sender,
@@ -79,7 +80,8 @@ export const subscribe = async (
 export const unsubscribe = async (
   sender: string,
   injector: any,
-  creator: string
+  creator: string,
+  callback?: any
 ) => {
   const creatorProxies: any = await getProxies(creator);
   const creatorProxiesFiltered = creatorProxies.filter(
@@ -93,5 +95,5 @@ export const unsubscribe = async (
   const txs = await Promise.all(
     reals.map((real: any) => callViaProxy(removeProxies(), real))
   );
-  await batchCalls(txs, sender, injector);
+  await batchCalls(txs, sender, injector, callback);
 };

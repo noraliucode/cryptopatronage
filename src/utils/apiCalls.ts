@@ -177,11 +177,20 @@ export const setRate = async (rate: number, sender: string, injector: any) => {
   }
 };
 
-export const batchCalls = async (calls: any, sender: string, injector: any) => {
+export const batchCalls = async (
+  calls: any,
+  sender: string,
+  injector: any,
+  callback?: any
+) => {
   const api = await createApi();
   await api.tx.utility
     .batchAll(calls)
-    .signAndSend(sender, { signer: injector.signer });
+    .signAndSend(sender, { signer: injector.signer }, (status) => {
+      if (status.isInBlock) {
+        callback && callback();
+      }
+    });
 };
 
 export const removeProxies = async () => {
