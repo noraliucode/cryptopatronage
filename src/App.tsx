@@ -6,8 +6,10 @@ import { useSupporters } from "./hooks/useSupporters";
 import { CREATOR, SUPPORTER, NETWORK } from "./utils/constants";
 
 function App() {
-  const { subscribedCreators } = useSubscribedCreators(SUPPORTER[NETWORK]);
-  const { supporters } = useSupporters(CREATOR[NETWORK]);
+  const { subscribedCreators, getSubscribedCreators } = useSubscribedCreators(
+    SUPPORTER[NETWORK]
+  );
+  const { supporters, getSupporters } = useSupporters(CREATOR[NETWORK]);
 
   return (
     <div className="App">
@@ -15,6 +17,8 @@ function App() {
         <TabsMain
           subscribedCreators={subscribedCreators}
           supporters={supporters}
+          getSubscribedCreators={getSubscribedCreators}
+          getSupporters={getSupporters}
         />
       </header>
     </div>

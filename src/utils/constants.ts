@@ -21,6 +21,11 @@ export const DECIMALS = {
   WESTEND: 12,
   KUSAMA: 12,
 };
+export const M_DECIMALS = {
+  ROCOCO: 9,
+  WESTEND: 9,
+  KUSAMA: 9,
+};
 export const NETWORK = "ROCOCO";
 export const NODE_ENDPOINT = {
   ROCOCO: "wss://rococo-rpc.polkadot.io",

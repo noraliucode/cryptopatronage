@@ -39,6 +39,18 @@ export const transfer = async (receiver: string, amount: number) => {
   return api.tx.balances.transfer(receiver, amount);
 };
 
+export const getTransferFee = async (
+  receiver: string,
+  amount: number,
+  sender: string
+) => {
+  const api = await createApi();
+  const info = await api.tx.balances
+    .transfer(receiver, amount)
+    .paymentInfo(sender);
+  return info.partialFee.toHuman();
+};
+
 export const transferViaProxy = async (
   real: string,
   sender: string,
@@ -165,11 +177,20 @@ export const setRate = async (rate: number, sender: string, injector: any) => {
   }
 };
 
-export const batchCalls = async (calls: any, sender: string, injector: any) => {
+export const batchCalls = async (
+  calls: any,
+  sender: string,
+  injector: any,
+  callback?: any
+) => {
   const api = await createApi();
   await api.tx.utility
     .batchAll(calls)
-    .signAndSend(sender, { signer: injector.signer });
+    .signAndSend(sender, { signer: injector.signer }, (status) => {
+      if (status.isInBlock) {
+        callback && callback();
+      }
+    });
 };
 
 export const removeProxies = async () => {
