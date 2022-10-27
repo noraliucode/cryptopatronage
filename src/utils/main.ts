@@ -31,9 +31,11 @@ export const subscribe = async (
   sender: string,
   injector?: InjectedExtension | null,
   isCommitted = true,
-  callback?: any
+  callback?: any,
+  setLoading?: (_: boolean) => void
 ) => {
   try {
+    setLoading && setLoading(true);
     let real = sender;
     if (isCommitted) {
       console.log("ceate anonymous proxy...");
@@ -74,6 +76,8 @@ export const subscribe = async (
     }
   } catch (error) {
     console.error("subscribe error >>", error);
+  } finally {
+    setLoading && setLoading(false);
   }
 };
 
@@ -81,19 +85,29 @@ export const unsubscribe = async (
   sender: string,
   injector: any,
   creator: string,
-  callback?: any
+  callback?: any,
+  setLoading?: (_: boolean) => void
 ) => {
-  const creatorProxies: any = await getProxies(creator);
-  const creatorProxiesFiltered = creatorProxies.filter(
-    // filter all nodes that the property is sender
-    (node: any) => node[1].toHuman()[0][1].delegate === sender
-  );
-  const reals = creatorProxiesFiltered.map((node: any) => node[0].toHuman()[0]);
+  try {
+    setLoading && setLoading(true);
+    const creatorProxies: any = await getProxies(creator);
+    const creatorProxiesFiltered = creatorProxies.filter(
+      // filter all nodes that the property is sender
+      (node: any) => node[1].toHuman()[0][1].delegate === sender
+    );
+    const reals = creatorProxiesFiltered.map(
+      (node: any) => node[0].toHuman()[0]
+    );
 
-  // batch call removeProxies
-  // get all txs
-  const txs = await Promise.all(
-    reals.map((real: any) => callViaProxy(removeProxies(), real))
-  );
-  await batchCalls(txs, sender, injector, callback);
+    // batch call removeProxies
+    // get all txs
+    const txs = await Promise.all(
+      reals.map((real: any) => callViaProxy(removeProxies(), real))
+    );
+    await batchCalls(txs, sender, injector, callback);
+  } catch (error) {
+    console.error("unsubscribe error >>", error);
+  } finally {
+    setLoading && setLoading(false);
+  }
 };

@@ -10,6 +10,7 @@ import { InjectedExtension } from "@polkadot/extension-inject/types";
 import { toShortAddress } from "../../utils/helpers";
 import { setRate } from "../../utils/apiCalls";
 import TextField from "@mui/material/TextField";
+import Snackbar from "@mui/material/Snackbar";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -59,6 +60,8 @@ type IState = {
   anonymous: string;
   rate: number;
   signer: string;
+  isSubscribing: boolean;
+  isUnsubscribing: boolean;
 };
 
 export const TabsMain = (props: IProps) => {
@@ -68,6 +71,8 @@ export const TabsMain = (props: IProps) => {
     anonymous: "",
     rate: 0,
     signer: "",
+    isSubscribing: false,
+    isUnsubscribing: false,
   });
   const {
     subscribedCreators,
@@ -75,7 +80,8 @@ export const TabsMain = (props: IProps) => {
     getSubscribedCreators,
     getSupporters,
   } = props;
-  const { value, isCommitted, rate, signer } = state;
+  const { value, isCommitted, rate, signer, isSubscribing, isUnsubscribing } =
+    state;
   const { injector }: { injector: InjectedExtension | null } =
     useAccounts(signer);
 
@@ -92,11 +98,23 @@ export const TabsMain = (props: IProps) => {
   };
 
   const _subscribe = async () => {
-    await subscribe(signer, injector, isCommitted, callback);
+    const setLoading = (value: boolean) => {
+      setState((prev) => ({
+        ...prev,
+        isSubscribing: value,
+      }));
+    };
+    await subscribe(signer, injector, isCommitted, callback, setLoading);
   };
 
   const _unsubscribe = async () => {
-    await unsubscribe(signer, injector, CREATOR[NETWORK], callback);
+    const setLoading = (value: boolean) => {
+      setState((prev) => ({
+        ...prev,
+        isUnsubscribing: value,
+      }));
+    };
+    await unsubscribe(signer, injector, CREATOR[NETWORK], callback, setLoading);
   };
 
   const handleClick = () => {
@@ -178,6 +196,22 @@ export const TabsMain = (props: IProps) => {
       )}
       {value === 1 && (
         <InputWrapper>
+          <Snackbar
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "center",
+            }}
+            open={isSubscribing}
+            message="Subscribing..."
+          />
+          <Snackbar
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "center",
+            }}
+            open={isUnsubscribing}
+            message="Unsubscribing..."
+          />
           <Title>Signer Address</Title>
           <TextField
             id="standard-basic"
