@@ -49,7 +49,7 @@ const InputWrapper = styled("div")(() => ({
 
 type IProps = {
   subscribedCreators: string[];
-  supporters: string[];
+  committedSupporters: string[];
   getSubscribedCreators: () => void;
   getSupporters: () => void;
 };
@@ -76,7 +76,7 @@ export const TabsMain = (props: IProps) => {
   });
   const {
     subscribedCreators,
-    supporters,
+    committedSupporters,
     getSubscribedCreators,
     getSupporters,
   } = props;
@@ -98,6 +98,7 @@ export const TabsMain = (props: IProps) => {
   };
 
   const _subscribe = async () => {
+    if (!injector) return;
     const setLoading = (value: boolean) => {
       setState((prev) => ({
         ...prev,
@@ -188,7 +189,7 @@ export const TabsMain = (props: IProps) => {
           </InputWrapper>
           <Title>Supporter List</Title>
           <Wrapper>
-            {supporters.map((address, index) => (
+            {committedSupporters.map((address, index) => (
               <Text key={index}>{address}</Text>
             ))}
           </Wrapper>

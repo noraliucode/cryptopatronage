@@ -13,10 +13,18 @@ export const useSubscribedCreators = (user: string) => {
 
   const getSubscribedCreators = async () => {
     try {
+      const uncommittedNodes = [];
       const creatorProxies: any = await getProxies(CREATOR[NETWORK]);
       const creatorProxiesFiltered = creatorProxies.filter(
         // filter all nodes that the property is sender
-        (node: any) => node[1].toHuman()[0][1].delegate === user
+        (node: any) => {
+          const delegation = node[1].toHuman()[0][1];
+          if (!delegation) {
+            uncommittedNodes.push(node);
+          } else {
+            return delegation.delegate === user;
+          }
+        }
       );
       const creatorProxiesFilteredParsed = creatorProxiesFiltered.map(
         (proxy: any) => {

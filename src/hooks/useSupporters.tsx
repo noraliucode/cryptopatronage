@@ -3,18 +3,21 @@ import { getBalances, getProxies } from "../utils/apiCalls";
 import { DECIMALS, NETWORK, RATE } from "../utils/constants";
 
 interface IState {
-  supporters: string[];
+  committedSupporters: string[];
+  uncommittedSupporters: string[];
 }
 
 export const useSupporters = (creator: string) => {
   const [state, setState] = useState<IState>({
-    supporters: [""],
+    committedSupporters: [""],
+    uncommittedSupporters: [""],
   });
 
   const getSupporters = async () => {
     try {
       // input creator address
       // get proxyNodes
+      const uncommittedNodes = [];
       const proxyNodes: any = await getProxies(creator);
 
       let proxyNodesParsed = proxyNodes.map((proxy: any) => {
@@ -49,11 +52,14 @@ export const useSupporters = (creator: string) => {
         proxyNodesParsedFiltered.map((node: any) => getProxies(node.delegation))
       );
 
-      const supporters = supporterProxyNodes.map((nodes: any) => {
-        return nodes[0][1].toHuman()[0][1].delegate;
+      const committedSupporters = supporterProxyNodes.map((nodes: any) => {
+        const node = nodes[0][1].toHuman()[0][1];
+        if (node) {
+          return node.delegate;
+        }
       });
 
-      setState((prev) => ({ ...prev, supporters }));
+      setState((prev) => ({ ...prev, committedSupporters }));
     } catch (error) {
       console.error("getSupporters error", error);
     }

@@ -9,14 +9,16 @@ function App() {
   const { subscribedCreators, getSubscribedCreators } = useSubscribedCreators(
     SUPPORTER[NETWORK]
   );
-  const { supporters, getSupporters } = useSupporters(CREATOR[NETWORK]);
+  const { committedSupporters, getSupporters } = useSupporters(
+    CREATOR[NETWORK]
+  );
 
   return (
     <div className="App">
       <header className="App-header">
         <TabsMain
           subscribedCreators={subscribedCreators}
-          supporters={supporters}
+          committedSupporters={committedSupporters}
           getSubscribedCreators={getSubscribedCreators}
           getSupporters={getSupporters}
         />
