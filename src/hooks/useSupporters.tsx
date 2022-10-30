@@ -67,12 +67,13 @@ export const useSupporters = (creator: string) => {
         }
       });
 
-      const committedSupporters = supporterProxyNodes.forEach(
+      const committedSupporters = supporterProxyNodes.map(
         (nodes: any, index: number) => {
           const node = nodes[index][1].toHuman()[0][1];
           if (node) {
             return node.delegate;
           }
+          return null;
         }
       );
 
