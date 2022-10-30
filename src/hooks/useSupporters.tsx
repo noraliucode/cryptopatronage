@@ -15,18 +15,16 @@ export const useSupporters = (creator: string) => {
 
   const getSupporters = async () => {
     try {
-      // input creator address
       // get proxyNodes
-      const uncommittedNodes = [];
       const proxyNodes: any = await getProxies(creator);
 
+      // get all creator related proxies
       let proxyNodesParsed = proxyNodes.map((proxy: any) => {
         return {
-          real: proxy[0].toHuman()[0],
-          delegation: proxy[1].toHuman()[0][0].delegate,
+          real: proxy[0].toHuman()[0], // pure
+          delegation: proxy[1].toHuman()[0][0].delegate, // creator
         };
       });
-
       // get balances
       const balances = await getBalances(
         proxyNodesParsed.map((node: any) => node.real)
@@ -48,18 +46,48 @@ export const useSupporters = (creator: string) => {
         );
       });
 
-      const supporterProxyNodes: any = await Promise.all(
+      // get nodes that the balance greater than the rate
+      let supporterProxyNodes: any = await Promise.all(
         proxyNodesParsedFiltered.map((node: any) => getProxies(node.delegation))
       );
 
-      const committedSupporters = supporterProxyNodes.map((nodes: any) => {
-        const node = nodes[0][1].toHuman()[0][1];
-        if (node) {
-          return node.delegate;
+      // TODO: a better way to get uncommittedSupporters (Which don't have pures)
+      const allProxyNodes: any = await Promise.all(
+        proxyNodesParsed.map((node: any) => {
+          return getProxies(node.delegation);
+        })
+      );
+
+      let uncommittedSupporters: string[] = [];
+      allProxyNodes.forEach((nodes: any, index: number) => {
+        const node = nodes[index][1].toHuman()[0][1];
+        if (!node) {
+          // TODO: a better way to get uncommittedSupporters (Which don't have pures)
+          uncommittedSupporters.push(proxyNodesParsed[index].real);
         }
       });
 
-      setState((prev) => ({ ...prev, committedSupporters }));
+      const committedSupporters = supporterProxyNodes.forEach(
+        (nodes: any, index: number) => {
+          const node = nodes[index][1].toHuman()[0][1];
+          if (node) {
+            return node.delegate;
+          }
+        }
+      );
+
+      uncommittedSupporters = uncommittedSupporters.filter(
+        (supporter) =>
+          !committedSupporters
+            .map((supporter: any) => supporter)
+            .includes(supporter)
+      );
+
+      setState((prev) => ({
+        ...prev,
+        committedSupporters,
+        uncommittedSupporters,
+      }));
     } catch (error) {
       console.error("getSupporters error", error);
     }

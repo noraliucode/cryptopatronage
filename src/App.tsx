@@ -9,9 +9,8 @@ function App() {
   const { subscribedCreators, getSubscribedCreators } = useSubscribedCreators(
     SUPPORTER[NETWORK]
   );
-  const { committedSupporters, getSupporters } = useSupporters(
-    CREATOR[NETWORK]
-  );
+  const { committedSupporters, getSupporters, uncommittedSupporters } =
+    useSupporters(CREATOR[NETWORK]);
 
   return (
     <div className="App">
@@ -21,6 +20,7 @@ function App() {
           committedSupporters={committedSupporters}
           getSubscribedCreators={getSubscribedCreators}
           getSupporters={getSupporters}
+          uncommittedSupporters={uncommittedSupporters}
         />
       </header>
     </div>
