@@ -158,11 +158,17 @@ export const getBalances = async (addresses: string[]) => {
   return balances;
 };
 
-export const setRate = async (rate: number, sender: string, injector: any) => {
+export const setRate = async (
+  rate: number,
+  sender: string,
+  injector: any,
+  callback?: () => void,
+  setLoading?: (_: boolean) => void
+) => {
   try {
+    setLoading && setLoading(true);
     const api = await createApi();
-    const identity = await api.query.identity.identityOf(sender);
-    console.log("identity", identity.toHuman());
+    const identity = await getIdentity(sender);
     const essentialInfo = identity
       ? identity
       : {
@@ -185,7 +191,16 @@ export const setRate = async (rate: number, sender: string, injector: any) => {
     console.log("result", result.toHuman());
   } catch (error) {
     console.error("setRate error", error);
+  } finally {
+    setLoading && setLoading(false);
+    callback && callback();
   }
+};
+
+export const getIdentity = async (creator: string) => {
+  const api = await createApi();
+  const identity = await api.query.identity.identityOf(creator);
+  return identity;
 };
 
 export const batchCalls = async (
