@@ -6,6 +6,7 @@ import {
   getProxies,
   getTransferFee,
   removeProxies,
+  signAndSendAddProxy,
   signAndSendAddProxyViaProxy,
   transfer,
 } from "./apiCalls";
@@ -16,10 +17,11 @@ import {
   DECIMALS,
   USER_PAYMENT,
   M_DECIMALS,
+  RESERVED_AMOUNT,
 } from "./constants";
 
 type AnonymousData = {
-  anonymous: string;
+  pure: string;
   who: string;
 };
 
@@ -29,7 +31,7 @@ type AnonymousEvent = {
 
 export const subscribe = async (
   sender: string,
-  injector?: InjectedExtension | null,
+  injector: InjectedExtension,
   isCommitted = true,
   callback?: any,
   setLoading?: (_: boolean) => void
@@ -43,13 +45,13 @@ export const subscribe = async (
         sender,
         injector
       )) as AnonymousEvent;
-      const { anonymous, who } = proxyData.data;
-      real = anonymous;
+      const { pure, who } = proxyData.data;
+      real = pure;
 
-      console.log("anonymous >>", anonymous);
+      console.log("anonymous >>", pure);
       const amount = USER_PAYMENT * 10 ** DECIMALS[NETWORK];
 
-      const reserved = 0.00000000001 * 10 ** DECIMALS[NETWORK];
+      const reserved = RESERVED_AMOUNT * 10 ** DECIMALS[NETWORK];
 
       // TODO: add total amount later to inform user
       // const fee = (await getTransferFee(anonymous, amount, sender)).split(
@@ -59,7 +61,7 @@ export const subscribe = async (
       //   Math.ceil(Number(fee)) * 10 ** M_DECIMALS[NETWORK] + amount + reserved;
 
       const txs = await Promise.all([
-        transfer(anonymous, amount + reserved),
+        transfer(pure, amount + reserved),
         addProxyViaProxy(CREATOR[NETWORK], real),
       ]);
 
@@ -67,12 +69,8 @@ export const subscribe = async (
       console.log("set creator as main proxy...");
       await batchCalls(txs, sender, injector, callback);
     } else {
-      await signAndSendAddProxyViaProxy(
-        sender,
-        CREATOR[NETWORK],
-        real,
-        injector
-      );
+      console.log("set creator as proxy...");
+      await signAndSendAddProxy(sender, injector, CREATOR[NETWORK]);
     }
   } catch (error) {
     console.error("subscribe error >>", error);

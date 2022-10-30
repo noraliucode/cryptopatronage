@@ -28,12 +28,12 @@ const Container = styled("div")(() => ({
   justifyContent: "center",
 }));
 const Wrapper = styled("div")(() => ({
-  marginTop: "50px",
+  marginTop: "15px",
 }));
 const Title = styled("div")(() => ({
   color: "black",
   fontSize: 18,
-  margin: "40px 0 0 0",
+  margin: "20px 0 0 0",
   textAlign: "left",
 }));
 const ActionWrapper = styled("div")(() => ({
@@ -49,7 +49,8 @@ const InputWrapper = styled("div")(() => ({
 
 type IProps = {
   subscribedCreators: string[];
-  supporters: string[];
+  committedSupporters: string[];
+  uncommittedSupporters: string[];
   getSubscribedCreators: () => void;
   getSupporters: () => void;
 };
@@ -76,9 +77,10 @@ export const TabsMain = (props: IProps) => {
   });
   const {
     subscribedCreators,
-    supporters,
+    committedSupporters,
     getSubscribedCreators,
     getSupporters,
+    uncommittedSupporters,
   } = props;
   const { value, isCommitted, rate, signer, isSubscribing, isUnsubscribing } =
     state;
@@ -98,6 +100,7 @@ export const TabsMain = (props: IProps) => {
   };
 
   const _subscribe = async () => {
+    if (!injector) return;
     const setLoading = (value: boolean) => {
       setState((prev) => ({
         ...prev,
@@ -186,9 +189,15 @@ export const TabsMain = (props: IProps) => {
               Set Rate
             </Button>
           </InputWrapper>
-          <Title>Supporter List</Title>
+          <Title>Committed Supporters</Title>
           <Wrapper>
-            {supporters.map((address, index) => (
+            {committedSupporters.map((address, index) => (
+              <Text key={index}>{address}</Text>
+            ))}
+          </Wrapper>
+          <Title>Uncommitted Supporters</Title>
+          <Wrapper>
+            {uncommittedSupporters.map((address, index) => (
               <Text key={index}>{address}</Text>
             ))}
           </Wrapper>

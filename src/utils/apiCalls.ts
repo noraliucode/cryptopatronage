@@ -1,5 +1,5 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { ANONYMOUS_CREATED, NETWORK, NODE_ENDPOINT } from "./constants";
+import { PURE_CREATED, NETWORK, NODE_ENDPOINT } from "./constants";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 
 const wsProvider = new WsProvider(NODE_ENDPOINT[NETWORK]);
@@ -15,6 +15,17 @@ export const addProxy = async (
 ) => {
   const api = await createApi();
   return api.tx.proxy.addProxy(proxy, "Any", 0);
+};
+
+export const signAndSendAddProxy = async (
+  sender: string,
+  injector: InjectedExtension,
+  proxy: string
+) => {
+  const api = await createApi();
+  api.tx.proxy
+    .addProxy(proxy, "Any", 0)
+    .signAndSend(sender, { signer: injector.signer });
 };
 
 export const removeProxy = async (
@@ -94,7 +105,7 @@ export const createAnonymousProxy = async (
   const api = await createApi();
   let promise = new Promise(function (resolve, reject) {
     api.tx.proxy
-      .anonymous("any", delay, 0)
+      .createPure("any", delay, 0)
       .signAndSend(
         sender,
         { signer: injector.signer },
@@ -104,7 +115,7 @@ export const createAnonymousProxy = async (
               const event = x.toHuman().event?.valueOf();
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
-              return event.method === ANONYMOUS_CREATED;
+              return event.method === PURE_CREATED;
             });
             resolve(anonymousCreatedEvent?.toHuman().event?.valueOf());
           }
