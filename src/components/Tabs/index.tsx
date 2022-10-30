@@ -4,7 +4,7 @@ import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
 import { subscribe, unsubscribe } from "../../utils/main";
 import { useAccounts } from "../../hooks/useAccounts";
-import { CREATOR, DECIMALS, NETWORK } from "../../utils/constants";
+import { CREATOR, DECIMALS, NETWORK, SYMBOL } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import { toShortAddress } from "../../utils/helpers";
@@ -172,7 +172,7 @@ export const TabsMain = (props: IProps) => {
               id="standard-basic"
               label="Rate"
               variant="standard"
-              placeholder="Input the amount of Kusama"
+              placeholder={`Input the amount of ${SYMBOL[NETWORK]}`}
               onChange={handleInputChange}
             />
             &nbsp;

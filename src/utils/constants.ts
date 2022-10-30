@@ -34,3 +34,8 @@ export const NODE_ENDPOINT = {
   WESTEND: "wss://westend-rpc.polkadot.io",
   KUSAMA: "wss://kusama-rpc.polkadot.io",
 };
+export const SYMBOL = {
+  ROCOCO: "ROC",
+  WESTEND: "WND",
+  KUSAMA: "KSM",
+};
