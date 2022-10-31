@@ -92,7 +92,7 @@ export const addProxyViaProxy = async (proxy: string, real?: string) => {
   return api.tx.proxy.proxy(real, null, api.tx.proxy.addProxy(proxy, "Any", 0));
 };
 
-export const callViaProxy = async (call: any, real?: string) => {
+export const removeProxiesViaProxy = async (call: any, real?: string) => {
   const api = await createApi();
   return api.tx.proxy.proxy(real, null, api.tx.proxy.removeProxies());
 };
