@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { getBalances, getProxies } from "../utils/apiCalls";
-import { CREATOR, DECIMALS, NETWORK, RATE } from "../utils/constants";
+import { CREATOR, DECIMALS, NETWORK } from "../utils/constants";
 
 interface IState {
   subscribedCreators: string[];
 }
 
-export const useSubscribedCreators = (user: string) => {
+export const useSubscribedCreators = (user: string, rate: number) => {
   const [state, setState] = useState<IState>({
     subscribedCreators: [],
   });
@@ -45,7 +45,7 @@ export const useSubscribedCreators = (user: string) => {
         return (
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          balance.data.free.toNumber() / 10 ** DECIMALS[NETWORK] >= RATE &&
+          balance.data.free.toNumber() / 10 ** DECIMALS[NETWORK] >= rate &&
           isRegistered
         );
       });
