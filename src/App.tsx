@@ -13,7 +13,7 @@ function App() {
     rate
   );
   const { committedSupporters, getSupporters, uncommittedSupporters } =
-    useSupporters(CREATOR[NETWORK]);
+    useSupporters(CREATOR[NETWORK], rate);
 
   return (
     <div className="App">

@@ -23,6 +23,6 @@ export const useRate = (creator: string) => {
   };
   useEffect(() => {
     getRate();
-  }, []);
+  }, [creator]);
   return { ...state, getRate };
 };

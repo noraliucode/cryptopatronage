@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { getBalances, getProxies } from "../utils/apiCalls";
-import { DECIMALS, NETWORK, RATE } from "../utils/constants";
 
 interface IState {
   committedSupporters: string[];
   uncommittedSupporters: string[];
 }
 
-export const useSupporters = (creator: string) => {
+export const useSupporters = (creator: string, rate: number) => {
   const [state, setState] = useState<IState>({
     committedSupporters: [""],
     uncommittedSupporters: [""],
@@ -41,9 +40,7 @@ export const useSupporters = (creator: string) => {
       const proxyNodesParsedFiltered = proxyNodesParsed.filter((node: any) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        return (
-          node.balance.data.free.toNumber() / 10 ** DECIMALS[NETWORK] >= RATE
-        );
+        return node.balance.data.free.toNumber() >= rate;
       });
 
       // get nodes that the balance greater than the rate
@@ -95,6 +92,6 @@ export const useSupporters = (creator: string) => {
   };
   useEffect(() => {
     getSupporters();
-  }, []);
+  }, [creator, rate]);
   return { ...state, getSupporters };
 };
