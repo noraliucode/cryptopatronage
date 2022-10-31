@@ -46,6 +46,12 @@ const InputWrapper = styled("div")(() => ({
   marginBottom: 50,
   flexDirection: "column",
 }));
+const PullPaymentWrapper = styled("div")(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+  marginBottom: "10px",
+  alignItems: "center",
+}));
 
 type IProps = {
   subscribedCreators: string[];
@@ -233,17 +239,23 @@ export const TabsMain = (props: IProps) => {
           <Title>Committed Supporters</Title>
           <Wrapper>
             {committedSupporters &&
-              committedSupporters.map((supporter, index) => (
-                <div key={index}>
-                  <Text>{supporter?.address}</Text>
-                  <Text>
-                    {`${formatUnit(
-                      Number(supporter?.balance),
-                      DECIMALS[NETWORK]
-                    )} ${NETWORK}`}
-                  </Text>
-                </div>
-              ))}
+              committedSupporters.map(
+                (supporter, index) =>
+                  supporter && (
+                    <PullPaymentWrapper key={index}>
+                      <Text>{toShortAddress(supporter?.address)}</Text>
+                      <Text>
+                        {`${formatUnit(
+                          Number(supporter?.balance),
+                          DECIMALS[NETWORK]
+                        )} ${NETWORK}`}
+                      </Text>
+                      <Button onClick={_subscribe} variant="contained">
+                        Pull Payment
+                      </Button>
+                    </PullPaymentWrapper>
+                  )
+              )}
           </Wrapper>
           <Title>Uncommitted Supporters</Title>
           <Wrapper>
