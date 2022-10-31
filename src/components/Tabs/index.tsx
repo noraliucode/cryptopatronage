@@ -2,7 +2,7 @@ import { Box, Tabs, Tab } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
-import { setRate, subscribe, unsubscribe } from "../../utils/main";
+import { pullPayment, setRate, subscribe, unsubscribe } from "../../utils/main";
 import { useAccounts } from "../../hooks/useAccounts";
 import { CREATOR, DECIMALS, NETWORK, SYMBOL } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
@@ -142,23 +142,39 @@ export const TabsMain = (props: IProps) => {
     await unsubscribe(signer, injector, CREATOR[NETWORK], callback, setLoading);
   };
 
+  const setLoading = (value: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      open: value,
+    }));
+  };
+
   const _setRate = async () => {
     setState((prev) => ({
       ...prev,
       message: "Setting Rate...",
     }));
-    const setLoading = (value: boolean) => {
-      setState((prev) => ({
-        ...prev,
-        open: value,
-      }));
-    };
+
     await setRate(
       rate * 10 ** DECIMALS[NETWORK],
       CREATOR[NETWORK],
       injector,
       getRate,
       setLoading
+    );
+  };
+
+  const _pullPayment = async (pure: string) => {
+    setState((prev) => ({
+      ...prev,
+      message: "Pulling Payment...",
+    }));
+    await pullPayment(
+      pure,
+      CREATOR[NETWORK],
+      injector,
+      CREATOR[NETWORK],
+      currentRate
     );
   };
 
@@ -244,13 +260,18 @@ export const TabsMain = (props: IProps) => {
                   supporter && (
                     <PullPaymentWrapper key={index}>
                       <Text>{toShortAddress(supporter?.address)}</Text>
+                      {/* for testing */}
+                      {/* <Text>{supporter?.pure}</Text> */}
                       <Text>
                         {`${formatUnit(
                           Number(supporter?.balance),
                           DECIMALS[NETWORK]
                         )} ${NETWORK}`}
                       </Text>
-                      <Button onClick={_subscribe} variant="contained">
+                      <Button
+                        onClick={() => _pullPayment(supporter?.pure)}
+                        variant="contained"
+                      >
                         Pull Payment
                       </Button>
                     </PullPaymentWrapper>

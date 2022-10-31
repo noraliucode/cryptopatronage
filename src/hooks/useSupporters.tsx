@@ -73,6 +73,7 @@ export const useSupporters = (creator: string, rate: number) => {
               address: node.delegate,
               balance:
                 proxyNodesParsedFiltered[index].balance.data.free.toNumber(),
+              pure: proxyNodesParsedFiltered[index].real,
             };
           }
           return null;
