@@ -10,6 +10,7 @@ import { InjectedExtension } from "@polkadot/extension-inject/types";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
+import { ISupporter } from "../../utils/types";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -48,7 +49,7 @@ const InputWrapper = styled("div")(() => ({
 
 type IProps = {
   subscribedCreators: string[];
-  committedSupporters: string[];
+  committedSupporters: ISupporter[] | null;
   uncommittedSupporters: string[];
   getSubscribedCreators: () => void;
   getSupporters: () => void;
@@ -231,9 +232,18 @@ export const TabsMain = (props: IProps) => {
           </InputWrapper>
           <Title>Committed Supporters</Title>
           <Wrapper>
-            {committedSupporters.map((address, index) => (
-              <Text key={index}>{address}</Text>
-            ))}
+            {committedSupporters &&
+              committedSupporters.map((supporter, index) => (
+                <div key={index}>
+                  <Text>{supporter.address}</Text>
+                  <Text>
+                    {`${formatUnit(
+                      Number(supporter.balance),
+                      DECIMALS[NETWORK]
+                    )} ${NETWORK}`}
+                  </Text>
+                </div>
+              ))}
           </Wrapper>
           <Title>Uncommitted Supporters</Title>
           <Wrapper>
