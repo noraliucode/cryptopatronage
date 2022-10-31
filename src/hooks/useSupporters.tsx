@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { getBalances, getProxies } from "../utils/apiCalls";
-import { DECIMALS, NETWORK, RATE } from "../utils/constants";
+import { ISupporter } from "../utils/types";
 
 interface IState {
-  committedSupporters: string[];
+  committedSupporters: ISupporter[] | null;
   uncommittedSupporters: string[];
 }
 
-export const useSupporters = (creator: string) => {
+export const useSupporters = (creator: string, rate: number) => {
   const [state, setState] = useState<IState>({
-    committedSupporters: [""],
+    committedSupporters: null,
     uncommittedSupporters: [""],
   });
 
@@ -41,9 +41,7 @@ export const useSupporters = (creator: string) => {
       const proxyNodesParsedFiltered = proxyNodesParsed.filter((node: any) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        return (
-          node.balance.data.free.toNumber() / 10 ** DECIMALS[NETWORK] >= RATE
-        );
+        return node.balance.data.free.toNumber() >= rate;
       });
 
       // get nodes that the balance greater than the rate
@@ -71,7 +69,12 @@ export const useSupporters = (creator: string) => {
         (nodes: any, index: number) => {
           const node = nodes[index][1].toHuman()[0][1];
           if (node) {
-            return node.delegate;
+            return {
+              address: node.delegate,
+              balance:
+                proxyNodesParsedFiltered[index].balance.data.free.toNumber(),
+              pure: proxyNodesParsedFiltered[index].real,
+            };
           }
           return null;
         }
@@ -80,7 +83,7 @@ export const useSupporters = (creator: string) => {
       uncommittedSupporters = uncommittedSupporters.filter(
         (supporter) =>
           !committedSupporters
-            .map((supporter: any) => supporter)
+            .map((supporter: any) => supporter?.address)
             .includes(supporter)
       );
 
@@ -95,6 +98,6 @@ export const useSupporters = (creator: string) => {
   };
   useEffect(() => {
     getSupporters();
-  }, []);
+  }, [creator, rate]);
   return { ...state, getSupporters };
 };

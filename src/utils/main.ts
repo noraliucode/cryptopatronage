@@ -1,16 +1,15 @@
 import {
   addProxyViaProxy,
   batchCalls,
-  callViaProxy,
+  removeProxiesViaProxy,
   createAnonymousProxy,
   getIdentity,
   getProxies,
-  getTransferFee,
   removeProxies,
   signAndSendAddProxy,
-  signAndSendAddProxyViaProxy,
   signAndSendSetIdentity,
   transfer,
+  transferViaProxy,
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import {
@@ -18,7 +17,6 @@ import {
   NETWORK,
   DECIMALS,
   USER_PAYMENT,
-  M_DECIMALS,
   RESERVED_AMOUNT,
 } from "./constants";
 
@@ -102,7 +100,7 @@ export const unsubscribe = async (
     // batch call removeProxies
     // get all txs
     const txs = await Promise.all(
-      reals.map((real: any) => callViaProxy(removeProxies(), real))
+      reals.map((real: any) => removeProxiesViaProxy(removeProxies(), real))
     );
     await batchCalls(txs, sender, injector, callback);
   } catch (error) {
@@ -149,5 +147,19 @@ export const setRate = async (
   } catch (error) {
     console.error("setRate error", error);
     setLoading && setLoading(false);
+  }
+};
+
+export const pullPayment = async (
+  real: string,
+  sender: string,
+  injector: any,
+  receiver: string,
+  amount: number
+) => {
+  try {
+    await transferViaProxy(real, sender, injector, receiver, amount);
+  } catch (error) {
+    console.error("pullPayment error", error);
   }
 };

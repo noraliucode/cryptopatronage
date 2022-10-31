@@ -45,8 +45,7 @@ export const useSubscribedCreators = (user: string, rate: number) => {
         return (
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          balance.data.free.toNumber() / 10 ** DECIMALS[NETWORK] >= rate &&
-          isRegistered
+          balance.data.free.toNumber() >= rate && isRegistered
         );
       });
 
@@ -61,6 +60,6 @@ export const useSubscribedCreators = (user: string, rate: number) => {
   };
   useEffect(() => {
     getSubscribedCreators();
-  }, []);
+  }, [user, rate]);
   return { ...state, getSubscribedCreators };
 };
