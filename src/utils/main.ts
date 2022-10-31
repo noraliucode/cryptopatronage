@@ -3,11 +3,13 @@ import {
   batchCalls,
   callViaProxy,
   createAnonymousProxy,
+  getIdentity,
   getProxies,
   getTransferFee,
   removeProxies,
   signAndSendAddProxy,
   signAndSendAddProxyViaProxy,
+  signAndSendSetIdentity,
   transfer,
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
@@ -106,6 +108,46 @@ export const unsubscribe = async (
   } catch (error) {
     console.error("unsubscribe error >>", error);
   } finally {
+    setLoading && setLoading(false);
+  }
+};
+
+export const setRate = async (
+  rate: number,
+  sender: string,
+  injector: any,
+  callback?: () => void,
+  setLoading?: (_: boolean) => void
+) => {
+  try {
+    setLoading && setLoading(true);
+    const identity = await getIdentity(sender);
+    const essentialInfo = identity
+      ? identity
+      : {
+          display: "",
+          legal: "",
+          web: "",
+          riot: "",
+          email: "",
+          image: "",
+          twitter: "",
+        };
+    const additionalInfo = { rate };
+    const _callBack = () => {
+      callback && callback();
+      setLoading && setLoading(false);
+    };
+
+    await signAndSendSetIdentity(
+      essentialInfo,
+      additionalInfo,
+      sender,
+      injector,
+      _callBack
+    );
+  } catch (error) {
+    console.error("setRate error", error);
     setLoading && setLoading(false);
   }
 };

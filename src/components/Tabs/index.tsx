@@ -2,13 +2,12 @@ import { Box, Tabs, Tab } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
-import { subscribe, unsubscribe } from "../../utils/main";
+import { setRate, subscribe, unsubscribe } from "../../utils/main";
 import { useAccounts } from "../../hooks/useAccounts";
 import { CREATOR, DECIMALS, NETWORK, SYMBOL } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
-import { setRate } from "../../utils/apiCalls";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
 
