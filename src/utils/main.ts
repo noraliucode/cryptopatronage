@@ -91,8 +91,14 @@ export const unsubscribe = async (
     const creatorProxies: any = await getProxies(creator);
     const creatorProxiesFiltered = creatorProxies.filter(
       // filter all nodes that the property is sender
-      (node: any) => node[1].toHuman()[0][1].delegate === sender
+      (node: any) => {
+        const _node = node[1].toHuman()[0][1];
+        if (_node) {
+          return _node.delegate === sender;
+        }
+      }
     );
+
     const reals = creatorProxiesFiltered.map(
       (node: any) => node[0].toHuman()[0]
     );

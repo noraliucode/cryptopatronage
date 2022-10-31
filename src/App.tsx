@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.css";
+import { AccountSelector } from "./components/AccountSelector";
 import { TabsMain } from "./components/Tabs";
 import { useRate } from "./hooks/useRate";
 import { useSubscribedCreators } from "./hooks/useSubscribedCreators";
@@ -18,6 +19,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <AccountSelector />
         <TabsMain
           subscribedCreators={subscribedCreators}
           committedSupporters={committedSupporters}
