@@ -5,10 +5,8 @@ import {
   createAnonymousProxy,
   getIdentity,
   getProxies,
-  getTransferFee,
   removeProxies,
   signAndSendAddProxy,
-  signAndSendAddProxyViaProxy,
   signAndSendSetIdentity,
   transfer,
 } from "./apiCalls";
@@ -18,7 +16,6 @@ import {
   NETWORK,
   DECIMALS,
   USER_PAYMENT,
-  M_DECIMALS,
   RESERVED_AMOUNT,
 } from "./constants";
 
