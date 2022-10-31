@@ -82,7 +82,7 @@ export const useSupporters = (creator: string, rate: number) => {
       uncommittedSupporters = uncommittedSupporters.filter(
         (supporter) =>
           !committedSupporters
-            .map((supporter: any) => supporter.address)
+            .map((supporter: any) => supporter?.address)
             .includes(supporter)
       );
 

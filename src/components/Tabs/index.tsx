@@ -235,10 +235,10 @@ export const TabsMain = (props: IProps) => {
             {committedSupporters &&
               committedSupporters.map((supporter, index) => (
                 <div key={index}>
-                  <Text>{supporter.address}</Text>
+                  <Text>{supporter?.address}</Text>
                   <Text>
                     {`${formatUnit(
-                      Number(supporter.balance),
+                      Number(supporter?.balance),
                       DECIMALS[NETWORK]
                     )} ${NETWORK}`}
                   </Text>
