@@ -16,3 +16,7 @@ export function toShortAddress(
     ? `${address.slice(0, 6)}…${address.slice(-6)}`
     : address;
 }
+
+export function formatUnit(amount: number, decimals: number): number {
+  return amount / 10 ** decimals;
+}

@@ -2,13 +2,12 @@ import { Box, Tabs, Tab } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
-import { subscribe, unsubscribe } from "../../utils/main";
+import { setRate, subscribe, unsubscribe } from "../../utils/main";
 import { useAccounts } from "../../hooks/useAccounts";
-import { CREATOR, DECIMALS, NETWORK } from "../../utils/constants";
+import { CREATOR, DECIMALS, NETWORK, SYMBOL } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
-import { toShortAddress } from "../../utils/helpers";
-import { setRate } from "../../utils/apiCalls";
+import { formatUnit, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
 
@@ -53,6 +52,8 @@ type IProps = {
   uncommittedSupporters: string[];
   getSubscribedCreators: () => void;
   getSupporters: () => void;
+  currentRate: number;
+  getRate: () => void;
 };
 
 type IState = {
@@ -63,6 +64,8 @@ type IState = {
   signer: string;
   isSubscribing: boolean;
   isUnsubscribing: boolean;
+  open: boolean;
+  message: string;
 };
 
 export const TabsMain = (props: IProps) => {
@@ -74,6 +77,8 @@ export const TabsMain = (props: IProps) => {
     signer: "",
     isSubscribing: false,
     isUnsubscribing: false,
+    open: false,
+    message: "",
   });
   const {
     subscribedCreators,
@@ -81,9 +86,19 @@ export const TabsMain = (props: IProps) => {
     getSubscribedCreators,
     getSupporters,
     uncommittedSupporters,
+    currentRate,
+    getRate,
   } = props;
-  const { value, isCommitted, rate, signer, isSubscribing, isUnsubscribing } =
-    state;
+  const {
+    value,
+    isCommitted,
+    rate,
+    signer,
+    isSubscribing,
+    isUnsubscribing,
+    message,
+    open,
+  } = state;
   const { injector }: { injector: InjectedExtension | null } =
     useAccounts(signer);
 
@@ -118,6 +133,26 @@ export const TabsMain = (props: IProps) => {
       }));
     };
     await unsubscribe(signer, injector, CREATOR[NETWORK], callback, setLoading);
+  };
+
+  const _setRate = async () => {
+    setState((prev) => ({
+      ...prev,
+      message: "Setting Rate...",
+    }));
+    const setLoading = (value: boolean) => {
+      setState((prev) => ({
+        ...prev,
+        open: value,
+      }));
+    };
+    await setRate(
+      rate * 10 ** DECIMALS[NETWORK],
+      CREATOR[NETWORK],
+      injector,
+      getRate,
+      setLoading
+    );
   };
 
   const handleClick = () => {
@@ -159,6 +194,14 @@ export const TabsMain = (props: IProps) => {
       </Box>
       {value === 0 && (
         <>
+          <Snackbar
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "center",
+            }}
+            open={open}
+            message={message}
+          />
           <InputWrapper>
             <Title>Signer Address</Title>
             <TextField
@@ -172,22 +215,19 @@ export const TabsMain = (props: IProps) => {
               id="standard-basic"
               label="Rate"
               variant="standard"
-              placeholder="Input the amount of Kusama"
+              placeholder={`Input the amount of ${SYMBOL[NETWORK]}`}
               onChange={handleInputChange}
             />
             &nbsp;
-            <Button
-              onClick={() =>
-                setRate(
-                  rate * 10 ** DECIMALS[NETWORK],
-                  CREATOR[NETWORK],
-                  injector
-                )
-              }
-              variant="contained"
-            >
+            <Button onClick={_setRate} variant="contained">
               Set Rate
             </Button>
+            <Title>Current Rate</Title>
+            <Text>
+              {currentRate
+                ? `${formatUnit(currentRate, DECIMALS[NETWORK])} ${NETWORK}`
+                : "N/A"}
+            </Text>
           </InputWrapper>
           <Title>Committed Supporters</Title>
           <Wrapper>

@@ -158,34 +158,34 @@ export const getBalances = async (addresses: string[]) => {
   return balances;
 };
 
-export const setRate = async (rate: number, sender: string, injector: any) => {
-  try {
-    const api = await createApi();
-    const identity = await api.query.identity.identityOf(sender);
-    console.log("identity", identity.toHuman());
-    const essentialInfo = identity
-      ? identity
-      : {
-          display: "",
-          legal: "",
-          web: "",
-          riot: "",
-          email: "",
-          image: "",
-          twitter: "",
-        };
-    const additionalInfo = { rate };
-    const result = await api.tx.identity
-      .setIdentity({
-        ...essentialInfo,
-        additional: [[{ Raw: JSON.stringify(additionalInfo) }]],
-      })
-      .signAndSend(sender, { signer: injector.signer });
+export const getIdentity = async (creator: string) => {
+  const api = await createApi();
+  const identity = await api.query.identity.identityOf(creator);
+  return identity;
+};
 
-    console.log("result", result.toHuman());
-  } catch (error) {
-    console.error("setRate error", error);
-  }
+export const signAndSendSetIdentity = async (
+  essentialInfo: any,
+  additionalInfo: any,
+  sender: string,
+  injector: any,
+  callback?: () => void
+) => {
+  const api = await createApi();
+  await api.tx.identity
+    .setIdentity({
+      ...essentialInfo,
+      additional: [[{ Raw: JSON.stringify(additionalInfo) }]],
+    })
+    .signAndSend(
+      sender,
+      { signer: injector.signer },
+      ({ status, events = [] }) => {
+        if (status.isInBlock) {
+          callback && callback();
+        }
+      }
+    );
 };
 
 export const batchCalls = async (
