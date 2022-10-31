@@ -14,7 +14,7 @@ interface IState {
   injector: InjectedExtension | null;
 }
 
-export const useAccounts = (signerAddress: string) => {
+export const useAccounts = (signerAddress?: string) => {
   const [state, setState] = useState<IState>({
     accounts: [],
     injector: null,
@@ -30,8 +30,14 @@ export const useAccounts = (signerAddress: string) => {
       }
 
       const allAccounts = await web3Accounts();
-      const injector = await web3FromAddress(signerAddress);
-
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      let injector;
+      if (signerAddress) {
+        injector = await web3FromAddress(signerAddress);
+      }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       setState((prev) => ({ ...prev, accounts: allAccounts, injector }));
     } catch (error) {}
   };
