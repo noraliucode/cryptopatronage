@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -17,28 +17,34 @@ const Root = styled("div")(() => ({
 type IState = {
   open: boolean;
   anchorEl: any;
+  selectedAddress: string;
 };
 
 type IAccount = {
   address: string;
+  meta: IMeta;
+};
+
+type IMeta = {
+  name: string;
 };
 
 export const AccountSelector = () => {
   const { accounts }: { accounts: any } = useAccounts();
 
-  console.log("accounts", accounts);
-
   const [state, setState] = useState<IState>({
     open: false,
     anchorEl: null,
+    selectedAddress: "",
   });
 
-  const { open, anchorEl } = state;
+  const { open, anchorEl, selectedAddress } = state;
 
-  const handleClose = () => {
+  const handleClose = (address: string) => {
     setState((prev) => ({
       ...prev,
       open: !prev.open,
+      selectedAddress: address,
     }));
   };
   const handleClick = (event: any) => {
@@ -51,15 +57,10 @@ export const AccountSelector = () => {
 
   return (
     <Root>
-      <Button
-        variant="contained"
-        // id="basic-button"
-        // aria-controls={open ? "basic-menu" : undefined}
-        // aria-haspopup="true"
-        // aria-expanded={open ? "true" : undefined}
-        onClick={handleClick}
-      >
-        Select Signer
+      <Button variant="contained" onClick={handleClick}>
+        {typeof selectedAddress === "string" && selectedAddress
+          ? toShortAddress(selectedAddress)
+          : "Select Signer"}
       </Button>
       <Menu
         id="basic-menu"
@@ -77,8 +78,8 @@ export const AccountSelector = () => {
       >
         {accounts.map((account: IAccount) => {
           return (
-            <MenuItem onClick={handleClose}>
-              {toShortAddress(account.address)}
+            <MenuItem onClick={() => handleClose(account.address)}>
+              {account.meta.name} {toShortAddress(account.address)}
             </MenuItem>
           );
         })}
