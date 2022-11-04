@@ -5,6 +5,11 @@ import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
 import { useAccounts } from "../../hooks/useAccounts";
 import { toShortAddress } from "../../utils/helpers";
+import {
+  IAccount,
+  IWeb3ConnectedContextState,
+  useWeb3ConnectedContext,
+} from "../../context/Web3ConnectedContext";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -20,17 +25,9 @@ type IState = {
   selectedAddress: string;
 };
 
-type IAccount = {
-  address: string;
-  meta: IMeta;
-};
-
-type IMeta = {
-  name: string;
-};
-
 export const AccountSelector = () => {
-  const { accounts }: { accounts: any } = useAccounts();
+  const { accounts, setSigner, signer }: IWeb3ConnectedContextState =
+    useWeb3ConnectedContext();
 
   const [state, setState] = useState<IState>({
     open: false,
@@ -41,10 +38,10 @@ export const AccountSelector = () => {
   const { open, anchorEl, selectedAddress } = state;
 
   const handleClose = (address: string) => {
+    setSigner(address);
     setState((prev) => ({
       ...prev,
       open: !prev.open,
-      selectedAddress: address,
     }));
   };
   const handleClick = (event: any) => {
@@ -58,9 +55,7 @@ export const AccountSelector = () => {
   return (
     <Root>
       <Button variant="contained" onClick={handleClick}>
-        {typeof selectedAddress === "string" && selectedAddress
-          ? toShortAddress(selectedAddress)
-          : "Select Signer"}
+        {signer ? toShortAddress(signer) : "Select Signer"}
       </Button>
       <Menu
         id="basic-menu"
@@ -76,7 +71,7 @@ export const AccountSelector = () => {
           horizontal: "left",
         }}
       >
-        {accounts.map((account: IAccount) => {
+        {accounts?.map((account: IAccount) => {
           return (
             <MenuItem onClick={() => handleClose(account.address)}>
               {account.meta.name} {toShortAddress(account.address)}

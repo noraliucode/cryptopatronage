@@ -6,6 +6,7 @@ import { useRate } from "./hooks/useRate";
 import { useSubscribedCreators } from "./hooks/useSubscribedCreators";
 import { useSupporters } from "./hooks/useSupporters";
 import { CREATOR, SUPPORTER, NETWORK } from "./utils/constants";
+import { Web3ConnectedContextProvider } from "./context/Web3ConnectedContext";
 
 function App() {
   const { rate, getRate } = useRate(CREATOR[NETWORK]);
@@ -19,16 +20,20 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <AccountSelector />
-        <TabsMain
-          subscribedCreators={subscribedCreators}
-          committedSupporters={committedSupporters}
-          getSubscribedCreators={getSubscribedCreators}
-          getSupporters={getSupporters}
-          uncommittedSupporters={uncommittedSupporters}
-          currentRate={rate}
-          getRate={getRate}
-        />
+        <Web3ConnectedContextProvider>
+          <>
+            <AccountSelector />
+            <TabsMain
+              subscribedCreators={subscribedCreators}
+              committedSupporters={committedSupporters}
+              getSubscribedCreators={getSubscribedCreators}
+              getSupporters={getSupporters}
+              uncommittedSupporters={uncommittedSupporters}
+              currentRate={rate}
+              getRate={getRate}
+            />
+          </>
+        </Web3ConnectedContextProvider>
       </header>
     </div>
   );
