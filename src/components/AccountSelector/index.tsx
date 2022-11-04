@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
-import { useAccounts } from "../../hooks/useAccounts";
 import { toShortAddress } from "../../utils/helpers";
 import {
   IAccount,
@@ -22,7 +21,6 @@ const Root = styled("div")(() => ({
 type IState = {
   open: boolean;
   anchorEl: any;
-  selectedAddress: string;
 };
 
 export const AccountSelector = () => {
@@ -32,10 +30,9 @@ export const AccountSelector = () => {
   const [state, setState] = useState<IState>({
     open: false,
     anchorEl: null,
-    selectedAddress: "",
   });
 
-  const { open, anchorEl, selectedAddress } = state;
+  const { open, anchorEl } = state;
 
   const handleClose = (address: string) => {
     setSigner(address);
