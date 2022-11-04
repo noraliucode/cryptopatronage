@@ -1,6 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
-import { web3Accounts, web3Enable } from "@polkadot/extension-dapp";
+import {
+  web3Accounts,
+  web3Enable,
+  web3FromAddress,
+} from "@polkadot/extension-dapp";
 
 export type IWeb3ConnectedContextState = {
   network: string;
@@ -54,6 +58,7 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
       }
 
       const allAccounts = await web3Accounts();
+      const injector = await web3FromAddress(signer);
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
