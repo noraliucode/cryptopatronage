@@ -3,14 +3,16 @@ import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
 import { pullPayment, setRate, subscribe, unsubscribe } from "../../utils/main";
-import { useAccounts } from "../../hooks/useAccounts";
 import { CREATOR, DECIMALS, NETWORK, SYMBOL } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
-import { InjectedExtension } from "@polkadot/extension-inject/types";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
 import { ISupporter } from "../../utils/types";
+import {
+  IWeb3ConnectedContextState,
+  useWeb3ConnectedContext,
+} from "../../context/Web3ConnectedContext";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -68,7 +70,6 @@ type IState = {
   isCommitted: boolean;
   anonymous: string;
   rate: number;
-  signer: string;
   isSubscribing: boolean;
   isUnsubscribing: boolean;
   open: boolean;
@@ -81,7 +82,6 @@ export const TabsMain = (props: IProps) => {
     isCommitted: true,
     anonymous: "",
     rate: 0,
-    signer: "",
     isSubscribing: false,
     isUnsubscribing: false,
     open: false,
@@ -100,14 +100,14 @@ export const TabsMain = (props: IProps) => {
     value,
     isCommitted,
     rate,
-    signer,
     isSubscribing,
     isUnsubscribing,
     message,
     open,
   } = state;
-  const { injector }: { injector: InjectedExtension | null } =
-    useAccounts(signer);
+
+  const { signer, injector }: IWeb3ConnectedContextState =
+    useWeb3ConnectedContext();
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -194,15 +194,6 @@ export const TabsMain = (props: IProps) => {
     }));
   };
 
-  const handleAddressInputChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setState((prev) => ({
-      ...prev,
-      signer: event.target.value,
-    }));
-  };
-
   return (
     <Root>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -226,13 +217,6 @@ export const TabsMain = (props: IProps) => {
             message={message}
           />
           <InputWrapper>
-            <Title>Signer Address</Title>
-            <TextField
-              id="standard-basic"
-              label="Signer Address"
-              variant="standard"
-              onChange={handleAddressInputChange}
-            />
             <Title>Add Rate</Title>
             <TextField
               id="standard-basic"
@@ -303,13 +287,6 @@ export const TabsMain = (props: IProps) => {
             }}
             open={isUnsubscribing}
             message="Unsubscribing..."
-          />
-          <Title>Signer Address</Title>
-          <TextField
-            id="standard-basic"
-            label="Signer Address"
-            variant="standard"
-            onChange={handleAddressInputChange}
           />
           <Title>Commit and Subscribe</Title>
           <Text>{toShortAddress(CREATOR[NETWORK])}</Text>

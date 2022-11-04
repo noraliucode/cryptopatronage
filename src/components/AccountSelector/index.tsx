@@ -3,8 +3,12 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
-import { useAccounts } from "../../hooks/useAccounts";
 import { toShortAddress } from "../../utils/helpers";
+import {
+  IAccount,
+  IWeb3ConnectedContextState,
+  useWeb3ConnectedContext,
+} from "../../context/Web3ConnectedContext";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -19,14 +23,9 @@ type IState = {
   anchorEl: any;
 };
 
-type IAccount = {
-  address: string;
-};
-
 export const AccountSelector = () => {
-  const { accounts }: { accounts: any } = useAccounts();
-
-  console.log("accounts", accounts);
+  const { accounts, setSigner, signer }: IWeb3ConnectedContextState =
+    useWeb3ConnectedContext();
 
   const [state, setState] = useState<IState>({
     open: false,
@@ -35,7 +34,8 @@ export const AccountSelector = () => {
 
   const { open, anchorEl } = state;
 
-  const handleClose = () => {
+  const handleClose = (address: string) => {
+    setSigner(address);
     setState((prev) => ({
       ...prev,
       open: !prev.open,
@@ -51,15 +51,8 @@ export const AccountSelector = () => {
 
   return (
     <Root>
-      <Button
-        variant="contained"
-        // id="basic-button"
-        // aria-controls={open ? "basic-menu" : undefined}
-        // aria-haspopup="true"
-        // aria-expanded={open ? "true" : undefined}
-        onClick={handleClick}
-      >
-        Select Signer
+      <Button variant="contained" onClick={handleClick}>
+        {signer ? toShortAddress(signer) : "Select Signer"}
       </Button>
       <Menu
         id="basic-menu"
@@ -75,10 +68,10 @@ export const AccountSelector = () => {
           horizontal: "left",
         }}
       >
-        {accounts.map((account: IAccount) => {
+        {accounts?.map((account: IAccount) => {
           return (
-            <MenuItem onClick={handleClose}>
-              {toShortAddress(account.address)}
+            <MenuItem onClick={() => handleClose(account.address)}>
+              {account.meta.name} {toShortAddress(account.address)}
             </MenuItem>
           );
         })}
