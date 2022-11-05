@@ -2,17 +2,8 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { styled } from "@mui/material/styles";
 import { toShortAddress } from "../../utils/helpers";
 import { IAccount, IAccounts } from "../../utils/types";
-
-const Root = styled("div")(() => ({
-  width: 600,
-  height: 50,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-}));
 
 type IState = {
   open: boolean;

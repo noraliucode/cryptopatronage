@@ -21,8 +21,6 @@ export const NavigationBar = () => {
     network,
   }: IWeb3ConnectedContextState = useWeb3ConnectedContext();
 
-  console.log("accounts", accounts);
-
   return (
     <Root>
       <NetworkSelector setNetwork={setNetwork} network={network} />

@@ -45,7 +45,6 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
         injector = await web3FromAddress(signer);
       }
 
-
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       setState((prev) => ({ ...prev, accounts: allAccounts, injector }));
