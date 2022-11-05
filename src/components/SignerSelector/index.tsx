@@ -60,9 +60,12 @@ export const SignerSelector = ({ setSigner, signer, accounts }: IProps) => {
           horizontal: "left",
         }}
       >
-        {accounts?.map((account: IAccount) => {
+        {accounts?.map((account: IAccount, index: number) => {
           return (
-            <MenuItem onClick={() => handleClose(account.address)}>
+            <MenuItem
+              key={`${account.address}_${index}`}
+              onClick={() => handleClose(account.address)}
+            >
               {account.meta.name} {toShortAddress(account.address)}
             </MenuItem>
           );

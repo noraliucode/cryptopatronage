@@ -56,9 +56,14 @@ export const NetworkSelector = ({ setNetwork, network }: IProps) => {
           horizontal: "left",
         }}
       >
-        {NETWORKS.map((network: string) => {
+        {NETWORKS.map((network: string, index: number) => {
           return (
-            <MenuItem onClick={() => handleClose(network)}>{network}</MenuItem>
+            <MenuItem
+              key={`${network}_${index}`}
+              onClick={() => handleClose(network)}
+            >
+              {network}
+            </MenuItem>
           );
         })}
       </Menu>
