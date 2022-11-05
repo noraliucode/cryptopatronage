@@ -1,12 +1,12 @@
 import React from "react";
 import "./App.css";
-import { AccountSelector } from "./components/AccountSelector";
 import { TabsMain } from "./components/Tabs";
 import { useRate } from "./hooks/useRate";
 import { useSubscribedCreators } from "./hooks/useSubscribedCreators";
 import { useSupporters } from "./hooks/useSupporters";
 import { CREATOR, SUPPORTER, NETWORK } from "./utils/constants";
 import { Web3ConnectedContextProvider } from "./context/Web3ConnectedContext";
+import { NavigationBar } from "./components/NavigationBar";
 
 function App() {
   const { rate, getRate } = useRate(CREATOR[NETWORK]);
@@ -22,7 +22,7 @@ function App() {
       <header className="App-header">
         <Web3ConnectedContextProvider>
           <>
-            <AccountSelector />
+            <NavigationBar />
             <TabsMain
               subscribedCreators={subscribedCreators}
               committedSupporters={committedSupporters}

@@ -2,31 +2,21 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { styled } from "@mui/material/styles";
 import { toShortAddress } from "../../utils/helpers";
-import {
-  IAccount,
-  IWeb3ConnectedContextState,
-  useWeb3ConnectedContext,
-} from "../../context/Web3ConnectedContext";
-
-const Root = styled("div")(() => ({
-  width: 600,
-  height: 50,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-}));
+import { IAccount, IAccounts } from "../../utils/types";
 
 type IState = {
   open: boolean;
   anchorEl: any;
 };
 
-export const AccountSelector = () => {
-  const { accounts, setSigner, signer }: IWeb3ConnectedContextState =
-    useWeb3ConnectedContext();
+type IProps = {
+  setSigner: (_: string) => void;
+  signer: string;
+  accounts: IAccounts;
+};
 
+export const SignerSelector = ({ setSigner, signer, accounts }: IProps) => {
   const [state, setState] = useState<IState>({
     open: false,
     anchorEl: null,
@@ -50,9 +40,11 @@ export const AccountSelector = () => {
   };
 
   return (
-    <Root>
+    <>
       <Button variant="contained" onClick={handleClick}>
-        {signer ? toShortAddress(signer) : "Select Signer"}
+        {typeof signer === "string" && signer
+          ? toShortAddress(signer)
+          : "Select Signer"}
       </Button>
       <Menu
         id="basic-menu"
@@ -68,14 +60,17 @@ export const AccountSelector = () => {
           horizontal: "left",
         }}
       >
-        {accounts?.map((account: IAccount) => {
+        {accounts?.map((account: IAccount, index: number) => {
           return (
-            <MenuItem onClick={() => handleClose(account.address)}>
+            <MenuItem
+              key={`${account.address}_${index}`}
+              onClick={() => handleClose(account.address)}
+            >
               {account.meta.name} {toShortAddress(account.address)}
             </MenuItem>
           );
         })}
       </Menu>
-    </Root>
+    </>
   );
 };

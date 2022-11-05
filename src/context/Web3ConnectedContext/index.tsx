@@ -1,32 +1,14 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { InjectedExtension } from "@polkadot/extension-inject/types";
 import {
   web3Accounts,
   web3Enable,
   web3FromAddress,
 } from "@polkadot/extension-dapp";
-
-export type IWeb3ConnectedContextState = {
-  network: string;
-  accounts: IAccount[] | null;
-  signer: string;
-  injector: InjectedExtension | null;
-  setSigner: (value: string) => any;
-  setNetwork: (value: string) => any;
-};
+import { IInjector, IWeb3ConnectedContextState } from "../../utils/types";
 
 interface IProps {
   children?: React.ReactElement;
 }
-
-export type IAccount = {
-  address: string;
-  meta: IMeta;
-};
-
-type IMeta = {
-  name: string;
-};
 
 const SIGNER = "signer";
 const NETWORK = "network";
@@ -58,12 +40,17 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
       }
 
       const allAccounts = await web3Accounts();
-      const injector = await web3FromAddress(signer);
+      let injector: IInjector = null;
+      if (signer) {
+        injector = await web3FromAddress(signer);
+      }
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       setState((prev) => ({ ...prev, accounts: allAccounts, injector }));
-    } catch (error) {}
+    } catch (error) {
+      console.error("Web3ConnectedContextProvider error", error);
+    }
   };
 
   useEffect(() => {

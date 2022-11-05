@@ -39,3 +39,5 @@ export const SYMBOL = {
   WESTEND: "WND",
   KUSAMA: "KSM",
 };
+
+export const NETWORKS = ["ROCOCO", "WESTEND", "KUSAMA"];
