@@ -2,31 +2,19 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { styled } from "@mui/material/styles";
-import { toShortAddress } from "../../utils/helpers";
-import {
-  IAccount,
-  IWeb3ConnectedContextState,
-  useWeb3ConnectedContext,
-} from "../../context/Web3ConnectedContext";
-
-const Root = styled("div")(() => ({
-  width: 600,
-  height: 50,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-}));
+import { NETWORKS } from "../../utils/constants";
 
 type IState = {
   open: boolean;
   anchorEl: any;
 };
 
-export const AccountSelector = () => {
-  const { accounts, setSigner, signer }: IWeb3ConnectedContextState =
-    useWeb3ConnectedContext();
+type IProps = {
+  setNetwork: (_: string) => void;
+  network: string;
+};
 
+export const NetworkSelector = ({ setNetwork, network }: IProps) => {
   const [state, setState] = useState<IState>({
     open: false,
     anchorEl: null,
@@ -34,8 +22,8 @@ export const AccountSelector = () => {
 
   const { open, anchorEl } = state;
 
-  const handleClose = (address: string) => {
-    setSigner(address);
+  const handleClose = (network: string) => {
+    setNetwork(network);
     setState((prev) => ({
       ...prev,
       open: !prev.open,
@@ -50,9 +38,9 @@ export const AccountSelector = () => {
   };
 
   return (
-    <Root>
-      <Button variant="contained" onClick={handleClick}>
-        {signer ? toShortAddress(signer) : "Select Signer"}
+    <>
+      <Button onClick={handleClick}>
+        {typeof network === "string" && network ? network : "Select Network"}
       </Button>
       <Menu
         id="basic-menu"
@@ -68,14 +56,12 @@ export const AccountSelector = () => {
           horizontal: "left",
         }}
       >
-        {accounts?.map((account: IAccount) => {
+        {NETWORKS.map((network: string) => {
           return (
-            <MenuItem onClick={() => handleClose(account.address)}>
-              {account.meta.name} {toShortAddress(account.address)}
-            </MenuItem>
+            <MenuItem onClick={() => handleClose(network)}>{network}</MenuItem>
           );
         })}
       </Menu>
-    </Root>
+    </>
   );
 };

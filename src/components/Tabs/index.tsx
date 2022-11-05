@@ -8,11 +8,8 @@ import Checkbox from "@mui/material/Checkbox";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
-import { ISupporter } from "../../utils/types";
-import {
-  IWeb3ConnectedContextState,
-  useWeb3ConnectedContext,
-} from "../../context/Web3ConnectedContext";
+import { ISupporter, IWeb3ConnectedContextState } from "../../utils/types";
+import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 
 const Root = styled("div")(() => ({
   width: 600,
