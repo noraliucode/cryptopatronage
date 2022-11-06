@@ -1,17 +1,18 @@
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 
 export type ISupporter = {
-  address: string;
-  balance: number;
-  pure: string;
+  supporter?: string;
+  pure?: string;
+  pureBalance?: number;
+  supporterBalance?: number;
 };
-
-export type IAccounts = IAccount[] | null;
+export type ISupporters = ISupporter[] | null;
 
 export type IAccount = {
   address: string;
   meta: IMeta;
 };
+export type IAccounts = IAccount[] | null;
 
 type IMeta = {
   name: string;

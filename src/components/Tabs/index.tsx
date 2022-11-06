@@ -8,7 +8,11 @@ import Checkbox from "@mui/material/Checkbox";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
-import { ISupporter, IWeb3ConnectedContextState } from "../../utils/types";
+import {
+  ISupporter,
+  ISupporters,
+  IWeb3ConnectedContextState,
+} from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 
 const Root = styled("div")(() => ({
@@ -54,8 +58,8 @@ const PullPaymentWrapper = styled("div")(() => ({
 
 type IProps = {
   subscribedCreators: string[];
-  committedSupporters: ISupporter[] | null;
-  uncommittedSupporters: string[];
+  committedSupporters: ISupporters;
+  uncommittedSupporters: ISupporters;
   getSubscribedCreators: () => void;
   getSupporters: () => void;
   currentRate: number;
@@ -240,17 +244,17 @@ export const TabsMain = (props: IProps) => {
                 (supporter, index) =>
                   supporter && (
                     <PullPaymentWrapper key={index}>
-                      <Text>{toShortAddress(supporter?.address)}</Text>
+                      <Text>{toShortAddress(supporter?.supporter)}</Text>
                       {/* for testing */}
                       {/* <Text>{supporter?.pure}</Text> */}
                       <Text>
                         {`${formatUnit(
-                          Number(supporter?.balance),
+                          Number(supporter?.pureBalance),
                           DECIMALS[NETWORK]
                         )} ${NETWORK}`}
                       </Text>
                       <Button
-                        onClick={() => _pullPayment(supporter?.pure)}
+                        onClick={() => _pullPayment(supporter?.pure as string)}
                         variant="contained"
                       >
                         Pull Payment
@@ -261,9 +265,10 @@ export const TabsMain = (props: IProps) => {
           </Wrapper>
           <Title>Uncommitted Supporters</Title>
           <Wrapper>
-            {uncommittedSupporters.map((address, index) => (
-              <Text key={index}>{address}</Text>
-            ))}
+            {uncommittedSupporters &&
+              uncommittedSupporters.map((address, index) => (
+                <Text key={index}>{address.supporter}</Text>
+              ))}
           </Wrapper>
         </>
       )}
