@@ -219,6 +219,14 @@ export const TabsMain = (props: IProps) => {
             open={open}
             message={message}
           />
+          <Title>Register to payment system</Title>
+          <Container>
+            <Checkbox checked={isCommitted} onClick={handleClick} />
+            <Text>
+              Register to Cryptopatronage payment system. Payment will
+              automically transfer to your recipient account. (1% fee required)
+            </Text>
+          </Container>
           <InputWrapper>
             <Title>Add Rate</Title>
             <TextField
