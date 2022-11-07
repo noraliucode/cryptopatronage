@@ -66,7 +66,6 @@ export const useSupporters = (creator: string, rate: number) => {
         if (balance > rate) {
           return {
             ...supporter,
-            // pureBalance: balance,
             pureBalance: balance,
           };
         } else {
