@@ -10,6 +10,7 @@ import {
   signAndSendSetIdentity,
   transfer,
   transferViaProxy,
+  setIdentity,
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import {
@@ -63,10 +64,12 @@ export const subscribe = async (
       const txs = await Promise.all([
         transfer(pure, amount + reserved),
         addProxyViaProxy(CREATOR[NETWORK], real),
+        getSetLastPaymentTimeTx(sender),
       ]);
 
       console.log("normal transfer to anonymous proxy...");
       console.log("set creator as main proxy...");
+      console.log("set last payment time...");
       await batchCalls(txs, sender, injector, callback);
     } else {
       console.log("set creator as proxy...");
@@ -167,5 +170,30 @@ export const pullPayment = async (
     await transferViaProxy(real, sender, injector, receiver, amount);
   } catch (error) {
     console.error("pullPayment error", error);
+  }
+};
+
+export const getSetLastPaymentTimeTx = async (sender: string) => {
+  try {
+    const identity = await getIdentity(sender);
+    const essentialInfo = identity
+      ? identity
+      : {
+          display: "",
+          legal: "",
+          web: "",
+          riot: "",
+          email: "",
+          image: "",
+          twitter: "",
+        };
+
+    const time = Date.now();
+    const additionalInfo = { lastPaymentTime: Math.round(time / 1000) };
+
+    const tx = await setIdentity(essentialInfo, additionalInfo);
+    return tx;
+  } catch (error) {
+    console.error("setLastPaymentTime error", error);
   }
 };

@@ -219,3 +219,11 @@ export const signAndSendRemoveProxies = async (
     .removeProxy(proxy, "any", 0)
     .signAndSend(sender, { signer: injector.signer });
 };
+
+export const setIdentity = async (essentialInfo: any, additionalInfo: any) => {
+  const api = await createApi();
+  return api.tx.identity.setIdentity({
+    ...essentialInfo,
+    additional: [[{ Raw: JSON.stringify(additionalInfo) }]],
+  });
+};
