@@ -165,13 +165,13 @@ export const TabsMain = (props: IProps) => {
     );
   };
 
-  const _pullPayment = async (pure: string, supporter: string) => {
+  const _pullPayment = async (real: string, supporter: string) => {
     setState((prev) => ({
       ...prev,
       message: "Pulling Payment...",
     }));
     await pullPayment(
-      pure,
+      real,
       CREATOR[NETWORK],
       injector,
       CREATOR[NETWORK],
@@ -291,7 +291,7 @@ export const TabsMain = (props: IProps) => {
                   <Button
                     onClick={() =>
                       _pullPayment(
-                        supporter?.pure as string,
+                        supporter?.supporter as string,
                         supporter?.supporter as string
                       )
                     }
