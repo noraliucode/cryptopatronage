@@ -20,6 +20,7 @@ import {
   USER_PAYMENT,
   RESERVED_AMOUNT,
 } from "./constants";
+import { getPaymentAmount } from "./helpers";
 
 type AnonymousData = {
   pure: string;
@@ -164,9 +165,16 @@ export const pullPayment = async (
   sender: string,
   injector: any,
   receiver: string,
-  amount: number
+  currentRate: number
 ) => {
   try {
+    const identity = await getIdentity(sender);
+    const lastPaymentTime = JSON.parse(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignores
+      identity.toHuman()?.valueOf().info.additional[0][0]["Raw"]
+    ).lastPaymentTime;
+    const amount = getPaymentAmount(lastPaymentTime, currentRate);
     await transferViaProxy(real, sender, injector, receiver, amount);
   } catch (error) {
     console.error("pullPayment error", error);
