@@ -170,12 +170,20 @@ export const pullPayment = async (
   supporter: string
 ) => {
   try {
-    const identity = await getIdentity(supporter);
-    const lastPaymentTime = JSON.parse(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignores
-      identity.toHuman()?.valueOf().info.additional[0][0]["Raw"]
-    ).lastPaymentTime;
+    const [creatorIdentity, supporterIdentity] = await Promise.all(
+      [sender, supporter].map((x) => getIdentity(x))
+    );
+    const getLastPaymentTime = (identity: any) => {
+      return JSON.parse(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignores
+        identity.toHuman()?.valueOf().info.additional[0][0]["Raw"]
+      ).lastPaymentTime;
+    };
+    const lastPaymentTime = getLastPaymentTime(creatorIdentity)
+      ? getLastPaymentTime(creatorIdentity)
+      : getLastPaymentTime(supporterIdentity);
+
     const amount = getPaymentAmount(lastPaymentTime, currentRate, decimals);
     await transferViaProxy(real, sender, injector, receiver, amount);
   } catch (error) {
