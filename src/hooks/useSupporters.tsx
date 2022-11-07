@@ -26,9 +26,6 @@ export const useSupporters = (creator: string, rate: number) => {
           return;
         }
         const delegations = proxy[1].toHuman()[0];
-        // const creator = proxy[1].toHuman()[0][0].delegate;
-        // const supporter = proxy[1].toHuman()[0][1].delegate;
-
         // check if the account gives proxy permissions to exactly one other account
         // a committed pure proxy will have exactly 2 delegates, the creator, and the supporter
         if (delegations.length > 1) {
