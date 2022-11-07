@@ -10,6 +10,7 @@ import {
   signAndSendSetIdentity,
   transfer,
   transferViaProxy,
+  setIdentity,
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import {
@@ -19,6 +20,7 @@ import {
   USER_PAYMENT,
   RESERVED_AMOUNT,
 } from "./constants";
+import { getPaymentAmount } from "./helpers";
 
 type AnonymousData = {
   pure: string;
@@ -63,10 +65,12 @@ export const subscribe = async (
       const txs = await Promise.all([
         transfer(pure, amount + reserved),
         addProxyViaProxy(CREATOR[NETWORK], real),
+        getSetLastPaymentTimeTx(sender),
       ]);
 
       console.log("normal transfer to anonymous proxy...");
       console.log("set creator as main proxy...");
+      console.log("set last payment time...");
       await batchCalls(txs, sender, injector, callback);
     } else {
       console.log("set creator as proxy...");
@@ -161,11 +165,53 @@ export const pullPayment = async (
   sender: string,
   injector: any,
   receiver: string,
-  amount: number
+  currentRate: number,
+  decimals: number,
+  supporter: string
 ) => {
   try {
+    const [creatorIdentity, supporterIdentity] = await Promise.all(
+      [sender, supporter].map((x) => getIdentity(x))
+    );
+    const getLastPaymentTime = (identity: any) => {
+      return JSON.parse(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignores
+        identity.toHuman()?.valueOf().info.additional[0][0]["Raw"]
+      ).lastPaymentTime;
+    };
+    const lastPaymentTime = getLastPaymentTime(creatorIdentity)
+      ? getLastPaymentTime(creatorIdentity)
+      : getLastPaymentTime(supporterIdentity);
+
+    const amount = getPaymentAmount(lastPaymentTime, currentRate, decimals);
     await transferViaProxy(real, sender, injector, receiver, amount);
   } catch (error) {
     console.error("pullPayment error", error);
+  }
+};
+
+export const getSetLastPaymentTimeTx = async (sender: string) => {
+  try {
+    const identity = await getIdentity(sender);
+    const essentialInfo = identity
+      ? identity
+      : {
+          display: "",
+          legal: "",
+          web: "",
+          riot: "",
+          email: "",
+          image: "",
+          twitter: "",
+        };
+
+    const time = Date.now();
+    const additionalInfo = { lastPaymentTime: Math.round(time / 1000) };
+
+    const tx = await setIdentity(essentialInfo, additionalInfo);
+    return tx;
+  } catch (error) {
+    console.error("setLastPaymentTime error", error);
   }
 };

@@ -6,6 +6,7 @@ import type {
   AccountIndex,
   Address,
 } from "@polkadot/types/interfaces";
+import { SECONDS_IN_ONE_DAY } from "./constants";
 
 export function toShortAddress(
   _address?: AccountId | AccountIndex | Address | string | null | Uint8Array
@@ -19,4 +20,24 @@ export function toShortAddress(
 
 export function formatUnit(amount: number, decimals: number): number {
   return amount / 10 ** decimals;
+}
+
+function parseUnit(amount: number, decimals: number): number {
+  return amount * 10 ** decimals;
+}
+
+export function getPaymentAmount(
+  lastPaymentTime: number,
+  rate: number,
+  decimals: number
+): number {
+  const now = Date.now();
+  // TODO: a better way to calculate PaymentAmount
+  console.log("getPaymentAmount lastPaymentTime: ", lastPaymentTime);
+  console.log("getPaymentAmount rate: ", rate);
+
+  const amount = ((now - lastPaymentTime) / SECONDS_IN_ONE_DAY / rate) * 30;
+  console.log("getPaymentAmount amount: ", amount);
+
+  return Math.round(parseUnit(amount, decimals));
 }
