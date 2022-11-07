@@ -242,17 +242,19 @@ export const TabsMain = (props: IProps) => {
             {committedSupporters &&
               committedSupporters.map(
                 (supporter, index) =>
-                  supporter && (
+                  supporter.pureBalance && (
                     <PullPaymentWrapper key={index}>
                       <Text>{toShortAddress(supporter?.supporter)}</Text>
                       {/* for testing */}
                       {/* <Text>{supporter?.pure}</Text> */}
+
                       <Text>
                         {`${formatUnit(
                           Number(supporter?.pureBalance),
                           DECIMALS[NETWORK]
                         )} ${NETWORK}`}
                       </Text>
+
                       <Button
                         onClick={() => _pullPayment(supporter?.pure as string)}
                         variant="contained"
@@ -266,8 +268,26 @@ export const TabsMain = (props: IProps) => {
           <Title>Uncommitted Supporters</Title>
           <Wrapper>
             {uncommittedSupporters &&
-              uncommittedSupporters.map((address, index) => (
-                <Text key={index}>{address.supporter}</Text>
+              uncommittedSupporters.map((supporter, index) => (
+                <PullPaymentWrapper key={index}>
+                  <Text>{toShortAddress(supporter?.supporter)}</Text>
+                  {/* for testing */}
+                  {/* <Text>{supporter?.pure}</Text> */}
+
+                  <Text>
+                    {`${formatUnit(
+                      Number(supporter?.supporterBalance),
+                      DECIMALS[NETWORK]
+                    )} ${NETWORK}`}
+                  </Text>
+
+                  <Button
+                    onClick={() => _pullPayment(supporter?.pure as string)}
+                    variant="contained"
+                  >
+                    Pull Payment
+                  </Button>
+                </PullPaymentWrapper>
               ))}
           </Wrapper>
         </>

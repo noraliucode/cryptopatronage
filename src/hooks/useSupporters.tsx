@@ -39,14 +39,13 @@ export const useSupporters = (creator: string, rate: number) => {
           });
         } else {
           uncommittedSupporters.push({
-            supporter: proxy[1].toHuman()[0][0].delegate,
+            supporter: proxy[0].toHuman()[0],
             supporterBalance: 0,
           });
         }
       });
 
       // get balances
-
       const [committedSupporterBalances, uncommittedSupporterBalances] =
         await Promise.all([
           getBalances(
@@ -61,10 +60,11 @@ export const useSupporters = (creator: string, rate: number) => {
 
       // filter accounts that has balances that is greater than the rate
       committedSupporters = committedSupporters.map((supporter, index) => {
-        const balance =
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          Number(committedSupporterBalances[index].toHuman().data.free);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const _balance = committedSupporterBalances[index].toHuman().data.free;
+        // format number wirh commas: '1,000,890,001,100'
+        const balance = Number(_balance.replace(/,/g, ""));
 
         if (balance > rate) {
           return {
@@ -78,10 +78,12 @@ export const useSupporters = (creator: string, rate: number) => {
       });
 
       uncommittedSupporters = uncommittedSupporters.map((supporter, index) => {
-        const balance =
+        const _balance =
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          Number(uncommittedSupporterBalances[index].toHuman().data.free);
+          uncommittedSupporterBalances[index].toHuman().data.free;
+        // format number wirh commas: '1,000,890,001,100'
+        const balance = Number(_balance.replace(/,/g, ""));
         if (balance > rate) {
           return {
             ...supporter,
