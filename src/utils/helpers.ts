@@ -22,12 +22,22 @@ export function formatUnit(amount: number, decimals: number): number {
   return amount / 10 ** decimals;
 }
 
+function parseUnit(amount: number, decimals: number): number {
+  return amount * 10 ** decimals;
+}
+
 export function getPaymentAmount(
   lastPaymentTime: number,
-  rate: number
+  rate: number,
+  decimals: number
 ): number {
   const now = Date.now();
   // TODO: a better way to calculate PaymentAmount
+  console.log("getPaymentAmount lastPaymentTime: ", lastPaymentTime);
+  console.log("getPaymentAmount rate: ", rate);
+
   const amount = ((now - lastPaymentTime) / SECONDS_IN_ONE_DAY / rate) * 30;
-  return amount;
+  console.log("getPaymentAmount amount: ", amount);
+
+  return Math.round(parseUnit(amount, decimals));
 }

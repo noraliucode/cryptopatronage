@@ -165,16 +165,18 @@ export const pullPayment = async (
   sender: string,
   injector: any,
   receiver: string,
-  currentRate: number
+  currentRate: number,
+  decimals: number,
+  supporter: string
 ) => {
   try {
-    const identity = await getIdentity(sender);
+    const identity = await getIdentity(supporter);
     const lastPaymentTime = JSON.parse(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignores
       identity.toHuman()?.valueOf().info.additional[0][0]["Raw"]
     ).lastPaymentTime;
-    const amount = getPaymentAmount(lastPaymentTime, currentRate);
+    const amount = getPaymentAmount(lastPaymentTime, currentRate, decimals);
     await transferViaProxy(real, sender, injector, receiver, amount);
   } catch (error) {
     console.error("pullPayment error", error);

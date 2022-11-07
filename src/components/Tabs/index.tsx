@@ -165,7 +165,7 @@ export const TabsMain = (props: IProps) => {
     );
   };
 
-  const _pullPayment = async (pure: string) => {
+  const _pullPayment = async (pure: string, supporter: string) => {
     setState((prev) => ({
       ...prev,
       message: "Pulling Payment...",
@@ -175,7 +175,9 @@ export const TabsMain = (props: IProps) => {
       CREATOR[NETWORK],
       injector,
       CREATOR[NETWORK],
-      currentRate
+      currentRate,
+      DECIMALS[NETWORK],
+      supporter
     );
   };
 
@@ -256,7 +258,12 @@ export const TabsMain = (props: IProps) => {
                       </Text>
 
                       <Button
-                        onClick={() => _pullPayment(supporter?.pure as string)}
+                        onClick={() =>
+                          _pullPayment(
+                            supporter?.pure as string,
+                            supporter?.supporter as string
+                          )
+                        }
                         variant="contained"
                       >
                         Pull Payment
@@ -282,7 +289,12 @@ export const TabsMain = (props: IProps) => {
                   </Text>
 
                   <Button
-                    onClick={() => _pullPayment(supporter?.pure as string)}
+                    onClick={() =>
+                      _pullPayment(
+                        supporter?.pure as string,
+                        supporter?.supporter as string
+                      )
+                    }
                     variant="contained"
                   >
                     Pull Payment
