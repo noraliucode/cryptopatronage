@@ -1,91 +1,98 @@
 import { useEffect, useState } from "react";
 import { getBalances, getProxies } from "../utils/apiCalls";
-import { ISupporter } from "../utils/types";
+import { ISupporter, ISupporters } from "../utils/types";
 
 interface IState {
   committedSupporters: ISupporter[] | null;
-  uncommittedSupporters: string[];
+  uncommittedSupporters: ISupporter[] | null;
 }
 
 export const useSupporters = (creator: string, rate: number) => {
   const [state, setState] = useState<IState>({
     committedSupporters: null,
-    uncommittedSupporters: [""],
+    uncommittedSupporters: null,
   });
 
   const getSupporters = async () => {
     try {
       // get proxyNodes
       const proxyNodes: any = await getProxies(creator);
+      let committedSupporters: ISupporters = [];
+      let uncommittedSupporters: ISupporters = [];
 
       // get all creator related proxies
-      let proxyNodesParsed = proxyNodes.map((proxy: any) => {
-        return {
-          real: proxy[0].toHuman()[0], // pure
-          delegation: proxy[1].toHuman()[0][0].delegate, // creator
-        };
+      proxyNodes.map((proxy: any) => {
+        if (!(committedSupporters && uncommittedSupporters)) {
+          return;
+        }
+        const delegations = proxy[1].toHuman()[0];
+        // const creator = proxy[1].toHuman()[0][0].delegate;
+        // const supporter = proxy[1].toHuman()[0][1].delegate;
+
+        // check if the account gives proxy permissions to exactly one other account
+        // a committed pure proxy will have exactly 2 delegates, the creator, and the supporter
+        if (delegations.length > 1) {
+          committedSupporters.push({
+            supporter: proxy[1].toHuman()[0][1].delegate,
+            pure: proxy[0].toHuman()[0],
+            pureBalance: 0,
+          });
+        } else {
+          uncommittedSupporters.push({
+            supporter: proxy[0].toHuman()[0],
+            supporterBalance: 0,
+          });
+        }
       });
+
       // get balances
-      const balances = await getBalances(
-        proxyNodesParsed.map((node: any) => node.real)
-      );
+      const [committedSupporterBalances, uncommittedSupporterBalances] =
+        await Promise.all([
+          getBalances(
+            committedSupporters.map((supporter) => supporter.pure as string)
+          ),
+          getBalances(
+            uncommittedSupporters.map(
+              (supporter) => supporter.supporter as string
+            )
+          ),
+        ]);
 
-      proxyNodesParsed = proxyNodesParsed.map((node: any, index: number) => {
-        return {
-          ...node,
-          balance: balances[index],
-        };
-      });
-
-      // filter delegation balances that greater than rate
-      const proxyNodesParsedFiltered = proxyNodesParsed.filter((node: any) => {
+      // filter accounts that has balances that is greater than the rate
+      committedSupporters = committedSupporters.map((supporter, index) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        return node.balance.data.free.toNumber() >= rate;
-      });
+        const _balance = committedSupporterBalances[index].toHuman().data.free;
+        // format number wirh commas: '1,000,890,001,100'
+        const balance = Number(_balance.replace(/,/g, ""));
 
-      // get nodes that the balance greater than the rate
-      let supporterProxyNodes: any = await Promise.all(
-        proxyNodesParsedFiltered.map((node: any) => getProxies(node.delegation))
-      );
-
-      // TODO: a better way to get uncommittedSupporters (Which don't have pures)
-      const allProxyNodes: any = await Promise.all(
-        proxyNodesParsed.map((node: any) => {
-          return getProxies(node.delegation);
-        })
-      );
-
-      let uncommittedSupporters: string[] = [];
-      allProxyNodes.forEach((nodes: any, index: number) => {
-        const node = nodes[index][1].toHuman()[0][1];
-        if (!node) {
-          // TODO: a better way to get uncommittedSupporters (Which don't have pures)
-          uncommittedSupporters.push(proxyNodesParsed[index].real);
+        if (balance > rate) {
+          return {
+            ...supporter,
+            // pureBalance: balance,
+            pureBalance: balance,
+          };
+        } else {
+          return {};
         }
       });
 
-      const committedSupporters = supporterProxyNodes.map(
-        (nodes: any, index: number) => {
-          const node = nodes[index][1].toHuman()[0][1];
-          if (node) {
-            return {
-              address: node.delegate,
-              balance:
-                proxyNodesParsedFiltered[index].balance.data.free.toNumber(),
-              pure: proxyNodesParsedFiltered[index].real,
-            };
-          }
-          return null;
+      uncommittedSupporters = uncommittedSupporters.map((supporter, index) => {
+        const _balance =
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          uncommittedSupporterBalances[index].toHuman().data.free;
+        // format number wirh commas: '1,000,890,001,100'
+        const balance = Number(_balance.replace(/,/g, ""));
+        if (balance > rate) {
+          return {
+            ...supporter,
+            supporterBalance: balance,
+          };
+        } else {
+          return {};
         }
-      );
-
-      uncommittedSupporters = uncommittedSupporters.filter(
-        (supporter) =>
-          !committedSupporters
-            .map((supporter: any) => supporter?.address)
-            .includes(supporter)
-      );
+      });
 
       setState((prev) => ({
         ...prev,
