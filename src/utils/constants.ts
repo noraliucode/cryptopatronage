@@ -41,3 +41,4 @@ export const SYMBOL = {
 };
 
 export const NETWORKS = ["ROCOCO", "WESTEND", "KUSAMA"];
+export const SECONDS_IN_ONE_DAY = 60 * 60 * 24;
