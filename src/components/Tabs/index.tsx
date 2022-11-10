@@ -55,6 +55,11 @@ const PullPaymentWrapper = styled("div")(() => ({
   marginBottom: "10px",
   alignItems: "center",
 }));
+const Subtitle = styled("div")(() => ({
+  color: "black",
+  fontSize: 16,
+  margin: "20px 0 0 0",
+}));
 
 type IProps = {
   subscribedCreators: string[];
@@ -331,9 +336,16 @@ export const TabsMain = (props: IProps) => {
             message="Unsubscribing..."
           />
           <Title>Commit and Subscribe</Title>
+          <Subtitle>Creator</Subtitle>
           <Text>{toShortAddress(CREATOR[NETWORK])}</Text>
           <Container>
             <ActionWrapper>
+              <Subtitle>Current Rate</Subtitle>
+              <Text>
+                {currentRate
+                  ? `${formatUnit(currentRate, DECIMALS[NETWORK])} ${NETWORK}`
+                  : "N/A"}
+              </Text>
               <Container>
                 <Checkbox checked={isCommitted} onClick={handleClick} />
                 <Text>Earmark funds exclusively for this creator</Text>
