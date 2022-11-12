@@ -186,6 +186,8 @@ export const TabsMain = (props: IProps) => {
     );
   };
 
+  const _pullAll = async () => {};
+
   const handleClick = () => {
     setState((prev) => ({
       ...prev,
@@ -315,6 +317,16 @@ export const TabsMain = (props: IProps) => {
                 </PullPaymentWrapper>
               ))}
           </Wrapper>
+          <InputWrapper>
+            <Button
+              onClick={() => {
+                _pullAll();
+              }}
+              variant="contained"
+            >
+              Pull All
+            </Button>
+          </InputWrapper>
         </>
       )}
       {value === 1 && (
