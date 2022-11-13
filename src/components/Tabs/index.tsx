@@ -2,7 +2,13 @@ import { Box, Tabs, Tab } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
-import { pullPayment, setRate, subscribe, unsubscribe } from "../../utils/main";
+import {
+  pullPayment,
+  setRate,
+  subscribe,
+  toggleIsRegisterToPaymentSystem,
+  unsubscribe,
+} from "../../utils/main";
 import { CREATOR, DECIMALS, NETWORK, SYMBOL } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
@@ -69,6 +75,7 @@ type IProps = {
   getSupporters: () => void;
   currentRate: number;
   getRate: () => void;
+  isRegisterToPaymentSystem: boolean;
 };
 
 type IState = {
@@ -101,6 +108,7 @@ export const TabsMain = (props: IProps) => {
     uncommittedSupporters,
     currentRate,
     getRate,
+    isRegisterToPaymentSystem,
   } = props;
   const {
     value,
@@ -189,6 +197,8 @@ export const TabsMain = (props: IProps) => {
   const _pullAll = async () => {};
 
   const handleClick = () => {
+    toggleIsRegisterToPaymentSystem(signer, true);
+
     setState((prev) => ({
       ...prev,
       isCommitted: !prev.isCommitted,
@@ -228,7 +238,10 @@ export const TabsMain = (props: IProps) => {
           />
           <Title>Register to payment system</Title>
           <Container>
-            <Checkbox checked={isCommitted} onClick={handleClick} />
+            <Checkbox
+              checked={isRegisterToPaymentSystem}
+              onClick={handleClick}
+            />
             <Text>
               Register to Cryptopatronage payment system. Payment will
               automically transfer to your recipient account. (1% fee required)

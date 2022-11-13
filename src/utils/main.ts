@@ -20,7 +20,7 @@ import {
   USER_PAYMENT,
   RESERVED_AMOUNT,
 } from "./constants";
-import { getPaymentAmount } from "./helpers";
+import { getPaymentAmount, parseAdditionalInfo } from "./helpers";
 
 type AnonymousData = {
   pure: string;
@@ -210,6 +210,40 @@ export const getSetLastPaymentTimeTx = async (sender: string) => {
     const additionalInfo = { lastPaymentTime: Math.round(time / 1000) };
 
     const tx = await setIdentity(essentialInfo, additionalInfo);
+    return tx;
+  } catch (error) {
+    console.error("setLastPaymentTime error", error);
+  }
+};
+
+const getInfos = async (sender: string) => {
+  const identity = await getIdentity(sender);
+  const essentialInfo = identity
+    ? identity
+    : {
+        display: "",
+        legal: "",
+        web: "",
+        riot: "",
+        email: "",
+        image: "",
+        twitter: "",
+      };
+
+  const additionalInfo = await parseAdditionalInfo(identity);
+
+  return { essentialInfo, additionalInfo };
+};
+
+export const toggleIsRegisterToPaymentSystem = async (
+  sender: string,
+  isRegisterToPaymentSystem: boolean
+) => {
+  try {
+    const { essentialInfo, additionalInfo } = await getInfos(sender);
+    const _additionalInfo = { ...additionalInfo, isRegisterToPaymentSystem };
+
+    const tx = await setIdentity(essentialInfo, _additionalInfo);
     return tx;
   } catch (error) {
     console.error("setLastPaymentTime error", error);

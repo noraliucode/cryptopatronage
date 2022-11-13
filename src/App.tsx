@@ -9,7 +9,9 @@ import { Web3ConnectedContextProvider } from "./context/Web3ConnectedContext";
 import { NavigationBar } from "./components/NavigationBar";
 
 function App() {
-  const { rate, getRate } = useRate(CREATOR[NETWORK]);
+  const { rate, getRate, isRegisterToPaymentSystem } = useRate(
+    CREATOR[NETWORK]
+  );
   const { subscribedCreators, getSubscribedCreators } = useSubscribedCreators(
     SUPPORTER[NETWORK],
     rate
@@ -31,6 +33,7 @@ function App() {
               uncommittedSupporters={uncommittedSupporters}
               currentRate={rate}
               getRate={getRate}
+              isRegisterToPaymentSystem={isRegisterToPaymentSystem}
             />
           </>
         </Web3ConnectedContextProvider>

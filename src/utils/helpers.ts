@@ -41,3 +41,12 @@ export function getPaymentAmount(
 
   return Math.round(parseUnit(amount, decimals));
 }
+
+export function parseAdditionalInfo(identity: any) {
+  const additionalInfo = JSON.parse(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignores
+    identity.toHuman()?.valueOf().info.additional[0][0]["Raw"]
+  );
+  return additionalInfo;
+}

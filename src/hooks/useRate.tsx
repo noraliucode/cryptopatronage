@@ -3,22 +3,28 @@ import { getIdentity } from "../utils/apiCalls";
 
 interface IState {
   rate: number;
+  isRegisterToPaymentSystem: boolean;
 }
 
 export const useRate = (creator: string) => {
   const [state, setState] = useState<IState>({
     rate: 0,
+    isRegisterToPaymentSystem: false,
   });
 
   const getRate = async () => {
     try {
       const identity = await getIdentity(creator);
-      const rate = JSON.parse(
+      const additionalInfo = JSON.parse(
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignores
         identity.toHuman()?.valueOf().info.additional[0][0]["Raw"]
-      ).rate;
-      setState((prev) => ({ ...prev, rate }));
+      );
+
+      const rate = additionalInfo.rate;
+      const isRegisterToPaymentSystem =
+        additionalInfo.isRegisterToPaymentSystem;
+      setState((prev) => ({ ...prev, rate, isRegisterToPaymentSystem }));
     } catch (error) {}
   };
   useEffect(() => {
