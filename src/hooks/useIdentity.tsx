@@ -6,7 +6,7 @@ interface IState {
   isRegisterToPaymentSystem: boolean;
 }
 
-export const useRate = (creator: string) => {
+export const useIdentity = (creator: string) => {
   const [state, setState] = useState<IState>({
     rate: 0,
     isRegisterToPaymentSystem: false,

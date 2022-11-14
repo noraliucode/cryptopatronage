@@ -22,7 +22,7 @@ import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
-import { useRate } from "../../hooks/useRate";
+import { useIdentity } from "../../hooks/useIdentity";
 import { useSupporters } from "../../hooks/useSupporters";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { PaymentSystem } from "../PaymentSystem";
@@ -110,7 +110,7 @@ export const TabsMain = () => {
     rate: currentRate,
     getRate,
     isRegisterToPaymentSystem,
-  } = useRate(CREATOR[NETWORK]);
+  } = useIdentity(CREATOR[NETWORK]);
   const { subscribedCreators, getSubscribedCreators } = useSubscribedCreators(
     SUPPORTER[NETWORK],
     rate
