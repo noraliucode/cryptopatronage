@@ -25,6 +25,7 @@ import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useRate } from "../../hooks/useRate";
 import { useSupporters } from "../../hooks/useSupporters";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
+import { PaymentSystem } from "../PaymentSystem";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -225,6 +226,7 @@ export const TabsMain = () => {
         >
           <Tab label="Creator" />
           <Tab label="Supporter" />
+          <Tab label="Payment System" />
         </Tabs>
       </Box>
       {value === 0 && (
@@ -397,6 +399,11 @@ export const TabsMain = () => {
             </Wrapper>
           </Wrapper>
         </InputWrapper>
+      )}
+      {value === 2 && (
+        <PaymentSystem
+          creators={[{ creator: "0x12345678", supporterBalance: "123456" }]}
+        />
       )}
     </Root>
   );
