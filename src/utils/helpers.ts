@@ -43,10 +43,8 @@ export function getPaymentAmount(
 }
 
 export function parseAdditionalInfo(identity: any) {
-  const additionalInfo = JSON.parse(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignores
-    identity.toHuman()?.valueOf().info.additional[0][0]["Raw"]
-  );
-  return additionalInfo;
+  const additionalInfo = identity.toHuman()?.valueOf().info.additional[0][0][
+    "Raw"
+  ];
+  return additionalInfo ? JSON.parse(additionalInfo) : {};
 }

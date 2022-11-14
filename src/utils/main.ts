@@ -237,15 +237,26 @@ const getInfos = async (sender: string) => {
 
 export const toggleIsRegisterToPaymentSystem = async (
   sender: string,
-  isRegisterToPaymentSystem: boolean
+  isRegisterToPaymentSystem: boolean,
+  injector: InjectedExtension
 ) => {
   try {
     const { essentialInfo, additionalInfo } = await getInfos(sender);
-    const _additionalInfo = { ...additionalInfo, isRegisterToPaymentSystem };
+    // key shorten to ps dur to "failed on additional: Vec<(Data,Data)>:: Tuple: failed on 0:: Data.Raw values are limited to a maximum length of 32 bytes" error
+    const _additionalInfo = {
+      ...additionalInfo,
+      ps: isRegisterToPaymentSystem,
+    };
 
-    const tx = await setIdentity(essentialInfo, _additionalInfo);
+    const tx = await signAndSendSetIdentity(
+      essentialInfo,
+      _additionalInfo,
+      sender,
+      injector
+    );
+
     return tx;
   } catch (error) {
-    console.error("setLastPaymentTime error", error);
+    console.error("toggleIsRegisterToPaymentSystem error", error);
   }
 };

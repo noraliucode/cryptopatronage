@@ -197,7 +197,12 @@ export const TabsMain = (props: IProps) => {
   const _pullAll = async () => {};
 
   const handleClick = () => {
-    toggleIsRegisterToPaymentSystem(signer, true);
+    if (!injector) return;
+    toggleIsRegisterToPaymentSystem(
+      signer,
+      isRegisterToPaymentSystem ? !isRegisterToPaymentSystem : true,
+      injector
+    );
 
     setState((prev) => ({
       ...prev,

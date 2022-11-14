@@ -22,8 +22,8 @@ export const useRate = (creator: string) => {
       );
 
       const rate = additionalInfo.rate;
-      const isRegisterToPaymentSystem =
-        additionalInfo.isRegisterToPaymentSystem;
+      const isRegisterToPaymentSystem = additionalInfo.ps;
+
       setState((prev) => ({ ...prev, rate, isRegisterToPaymentSystem }));
     } catch (error) {}
   };
