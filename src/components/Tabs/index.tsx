@@ -9,17 +9,22 @@ import {
   toggleIsRegisterToPaymentSystem,
   unsubscribe,
 } from "../../utils/main";
-import { CREATOR, DECIMALS, NETWORK, SYMBOL } from "../../utils/constants";
+import {
+  CREATOR,
+  DECIMALS,
+  NETWORK,
+  SUPPORTER,
+  SYMBOL,
+} from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
-import {
-  ISupporter,
-  ISupporters,
-  IWeb3ConnectedContextState,
-} from "../../utils/types";
+import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
+import { useRate } from "../../hooks/useRate";
+import { useSupporters } from "../../hooks/useSupporters";
+import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -67,17 +72,6 @@ const Subtitle = styled("div")(() => ({
   margin: "20px 0 0 0",
 }));
 
-type IProps = {
-  subscribedCreators: string[];
-  committedSupporters: ISupporters;
-  uncommittedSupporters: ISupporters;
-  getSubscribedCreators: () => void;
-  getSupporters: () => void;
-  currentRate: number;
-  getRate: () => void;
-  isRegisterToPaymentSystem: boolean;
-};
-
 type IState = {
   value: number;
   isCommitted: boolean;
@@ -89,7 +83,7 @@ type IState = {
   message: string;
 };
 
-export const TabsMain = (props: IProps) => {
+export const TabsMain = () => {
   const [state, setState] = useState<IState>({
     value: 0,
     isCommitted: true,
@@ -100,16 +94,7 @@ export const TabsMain = (props: IProps) => {
     open: false,
     message: "",
   });
-  const {
-    subscribedCreators,
-    committedSupporters,
-    getSubscribedCreators,
-    getSupporters,
-    uncommittedSupporters,
-    currentRate,
-    getRate,
-    isRegisterToPaymentSystem,
-  } = props;
+
   const {
     value,
     isCommitted,
@@ -120,6 +105,17 @@ export const TabsMain = (props: IProps) => {
     open,
   } = state;
 
+  const {
+    rate: currentRate,
+    getRate,
+    isRegisterToPaymentSystem,
+  } = useRate(CREATOR[NETWORK]);
+  const { subscribedCreators, getSubscribedCreators } = useSubscribedCreators(
+    SUPPORTER[NETWORK],
+    rate
+  );
+  const { committedSupporters, getSupporters, uncommittedSupporters } =
+    useSupporters(CREATOR[NETWORK], rate);
   const { signer, injector }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
 
