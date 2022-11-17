@@ -26,6 +26,7 @@ import { useIdentity } from "../../hooks/useIdentity";
 import { useSupporters } from "../../hooks/useSupporters";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { PaymentSystem } from "../PaymentSystem";
+import { useCreators } from "../../hooks/useCreators";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -119,6 +120,7 @@ export const TabsMain = () => {
     useSupporters(CREATOR[NETWORK], rate);
   const { signer, injector }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
+  const { creators } = useCreators();
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -271,6 +273,10 @@ export const TabsMain = () => {
             </Text>
           </InputWrapper>
           <Title>Committed Supporters</Title>
+          <Text>
+            **Creators can not pull payment manually once register to payment
+            system
+          </Text>
           <Wrapper>
             {committedSupporters &&
               committedSupporters.map(
@@ -289,6 +295,7 @@ export const TabsMain = () => {
                       </Text>
 
                       <Button
+                        disabled={isRegisterToPaymentSystem}
                         onClick={() =>
                           _pullPayment(
                             supporter?.pure as string,
@@ -320,6 +327,7 @@ export const TabsMain = () => {
                   </Text>
 
                   <Button
+                    disabled={isRegisterToPaymentSystem}
                     onClick={() =>
                       _pullPayment(
                         supporter?.supporter as string,
@@ -335,6 +343,7 @@ export const TabsMain = () => {
           </Wrapper>
           <InputWrapper>
             <Button
+              disabled={isRegisterToPaymentSystem}
               onClick={() => {
                 _pullAll();
               }}
@@ -402,7 +411,7 @@ export const TabsMain = () => {
       )}
       {value === 2 && (
         <PaymentSystem
-          creators={[{ creator: "0x12345678", supporterBalance: "123456" }]}
+          creators={[{ address: "0x12345678", supporterBalance: "123456" }]}
         />
       )}
     </Root>
