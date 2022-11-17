@@ -38,7 +38,7 @@ export const PaymentSystem = ({ creators }: { creators: any }) => {
         {creators &&
           creators.map((creator: any, index: number) => (
             <PullPaymentWrapper key={index}>
-              <Text>{toShortAddress(creator?.creator)}</Text>
+              <Text>{toShortAddress(creator?.address)}</Text>
               {/* for testing */}
               {/* <Text>{supporter?.pure}</Text> */}
 

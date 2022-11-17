@@ -127,14 +127,18 @@ export const createAnonymousProxy = async (
   return anonymousCreatedEvent;
 };
 
-export const getProxies = async (address: string) => {
+export const getProxies = async (address?: string) => {
   const api = await createApi();
   let promise = new Promise(function (resolve, reject) {
     api.query.proxy.proxies.entries(async (nodes: any) => {
-      const proxyNodes = nodes.filter((node: any) => {
-        return node[1].toHuman()[0][0].delegate === address;
-      });
-      resolve(proxyNodes);
+      if (address) {
+        const proxyNodes = nodes.filter((node: any) => {
+          return node[1].toHuman()[0][0].delegate === address;
+        });
+        resolve(proxyNodes);
+      } else {
+        resolve(nodes);
+      }
     });
   });
 
