@@ -409,11 +409,7 @@ export const TabsMain = () => {
           </Wrapper>
         </InputWrapper>
       )}
-      {value === 2 && (
-        <PaymentSystem
-          creators={[{ address: "0x12345678", supporterBalance: "123456" }]}
-        />
-      )}
+      {value === 2 && <PaymentSystem creators={creators} />}
     </Root>
   );
 };

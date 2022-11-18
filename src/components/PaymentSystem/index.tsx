@@ -42,12 +42,12 @@ export const PaymentSystem = ({ creators }: { creators: any }) => {
               {/* for testing */}
               {/* <Text>{supporter?.pure}</Text> */}
 
-              <Text>
+              {/* <Text>
                 {`${formatUnit(
                   Number(creator?.supporterBalance),
                   DECIMALS[NETWORK]
                 )} ${NETWORK}`}
-              </Text>
+              </Text> */}
 
               <Button onClick={() => {}} variant="contained">
                 Transfer
