@@ -29,10 +29,6 @@ export const useCreators = () => {
           } else {
             // do nothitng here for now as the RPC has timeout error
             // const creator = proxy[1].toHuman()[0][0].delegate;
-            // console.log(
-            //   "proxy[1].toHuman()",
-            //   proxy[1].toHuman()[0][0].delegate
-            // );
           }
         })
       );
