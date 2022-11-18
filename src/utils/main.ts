@@ -20,7 +20,7 @@ import {
   USER_PAYMENT,
   RESERVED_AMOUNT,
 } from "./constants";
-import { getPaymentAmount } from "./helpers";
+import { getPaymentAmount, parseAdditionalInfo } from "./helpers";
 
 type AnonymousData = {
   pure: string;
@@ -213,5 +213,50 @@ export const getSetLastPaymentTimeTx = async (sender: string) => {
     return tx;
   } catch (error) {
     console.error("setLastPaymentTime error", error);
+  }
+};
+
+const getInfos = async (sender: string) => {
+  const identity = await getIdentity(sender);
+  const essentialInfo = identity
+    ? identity
+    : {
+        display: "",
+        legal: "",
+        web: "",
+        riot: "",
+        email: "",
+        image: "",
+        twitter: "",
+      };
+
+  const additionalInfo = await parseAdditionalInfo(identity);
+
+  return { essentialInfo, additionalInfo };
+};
+
+export const toggleIsRegisterToPaymentSystem = async (
+  sender: string,
+  isRegisterToPaymentSystem: boolean,
+  injector: InjectedExtension
+) => {
+  try {
+    const { essentialInfo, additionalInfo } = await getInfos(sender);
+    // key shorten to ps dur to "failed on additional: Vec<(Data,Data)>:: Tuple: failed on 0:: Data.Raw values are limited to a maximum length of 32 bytes" error
+    const _additionalInfo = {
+      ...additionalInfo,
+      ps: isRegisterToPaymentSystem,
+    };
+
+    const tx = await signAndSendSetIdentity(
+      essentialInfo,
+      _additionalInfo,
+      sender,
+      injector
+    );
+
+    return tx;
+  } catch (error) {
+    console.error("toggleIsRegisterToPaymentSystem error", error);
   }
 };

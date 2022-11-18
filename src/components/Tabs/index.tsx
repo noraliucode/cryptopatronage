@@ -2,18 +2,31 @@ import { Box, Tabs, Tab } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
-import { pullPayment, setRate, subscribe, unsubscribe } from "../../utils/main";
-import { CREATOR, DECIMALS, NETWORK, SYMBOL } from "../../utils/constants";
+import {
+  pullPayment,
+  setRate,
+  subscribe,
+  toggleIsRegisterToPaymentSystem,
+  unsubscribe,
+} from "../../utils/main";
+import {
+  CREATOR,
+  DECIMALS,
+  NETWORK,
+  SUPPORTER,
+  SYMBOL,
+} from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
-import {
-  ISupporter,
-  ISupporters,
-  IWeb3ConnectedContextState,
-} from "../../utils/types";
+import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
+import { useIdentity } from "../../hooks/useIdentity";
+import { useSupporters } from "../../hooks/useSupporters";
+import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
+import { PaymentSystem } from "../PaymentSystem";
+import { useCreators } from "../../hooks/useCreators";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -55,16 +68,11 @@ const PullPaymentWrapper = styled("div")(() => ({
   marginBottom: "10px",
   alignItems: "center",
 }));
-
-type IProps = {
-  subscribedCreators: string[];
-  committedSupporters: ISupporters;
-  uncommittedSupporters: ISupporters;
-  getSubscribedCreators: () => void;
-  getSupporters: () => void;
-  currentRate: number;
-  getRate: () => void;
-};
+const Subtitle = styled("div")(() => ({
+  color: "black",
+  fontSize: 16,
+  margin: "20px 0 0 0",
+}));
 
 type IState = {
   value: number;
@@ -77,7 +85,7 @@ type IState = {
   message: string;
 };
 
-export const TabsMain = (props: IProps) => {
+export const TabsMain = () => {
   const [state, setState] = useState<IState>({
     value: 0,
     isCommitted: true,
@@ -88,15 +96,7 @@ export const TabsMain = (props: IProps) => {
     open: false,
     message: "",
   });
-  const {
-    subscribedCreators,
-    committedSupporters,
-    getSubscribedCreators,
-    getSupporters,
-    uncommittedSupporters,
-    currentRate,
-    getRate,
-  } = props;
+
   const {
     value,
     isCommitted,
@@ -107,8 +107,20 @@ export const TabsMain = (props: IProps) => {
     open,
   } = state;
 
+  const {
+    rate: currentRate,
+    getRate,
+    isRegisterToPaymentSystem,
+  } = useIdentity(CREATOR[NETWORK]);
+  const { subscribedCreators, getSubscribedCreators } = useSubscribedCreators(
+    SUPPORTER[NETWORK],
+    rate
+  );
+  const { committedSupporters, getSupporters, uncommittedSupporters } =
+    useSupporters(CREATOR[NETWORK], rate);
   const { signer, injector }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
+  const { creators } = useCreators();
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -181,7 +193,16 @@ export const TabsMain = (props: IProps) => {
     );
   };
 
+  const _pullAll = async () => {};
+
   const handleClick = () => {
+    if (!injector) return;
+    toggleIsRegisterToPaymentSystem(
+      signer,
+      isRegisterToPaymentSystem ? !isRegisterToPaymentSystem : true,
+      injector
+    );
+
     setState((prev) => ({
       ...prev,
       isCommitted: !prev.isCommitted,
@@ -207,6 +228,7 @@ export const TabsMain = (props: IProps) => {
         >
           <Tab label="Creator" />
           <Tab label="Supporter" />
+          <Tab label="Payment System" />
         </Tabs>
       </Box>
       {value === 0 && (
@@ -219,6 +241,17 @@ export const TabsMain = (props: IProps) => {
             open={open}
             message={message}
           />
+          <Title>Register to payment system</Title>
+          <Container>
+            <Checkbox
+              checked={isRegisterToPaymentSystem}
+              onClick={handleClick}
+            />
+            <Text>
+              Register to Cryptopatronage payment system. Payment will
+              automically transfer to your recipient account. (1% fee required)
+            </Text>
+          </Container>
           <InputWrapper>
             <Title>Add Rate</Title>
             <TextField
@@ -240,6 +273,10 @@ export const TabsMain = (props: IProps) => {
             </Text>
           </InputWrapper>
           <Title>Committed Supporters</Title>
+          <Text>
+            **Creators can not pull payment manually once register to payment
+            system
+          </Text>
           <Wrapper>
             {committedSupporters &&
               committedSupporters.map(
@@ -258,6 +295,7 @@ export const TabsMain = (props: IProps) => {
                       </Text>
 
                       <Button
+                        disabled={isRegisterToPaymentSystem}
                         onClick={() =>
                           _pullPayment(
                             supporter?.pure as string,
@@ -289,6 +327,7 @@ export const TabsMain = (props: IProps) => {
                   </Text>
 
                   <Button
+                    disabled={isRegisterToPaymentSystem}
                     onClick={() =>
                       _pullPayment(
                         supporter?.supporter as string,
@@ -302,6 +341,17 @@ export const TabsMain = (props: IProps) => {
                 </PullPaymentWrapper>
               ))}
           </Wrapper>
+          <InputWrapper>
+            <Button
+              disabled={isRegisterToPaymentSystem}
+              onClick={() => {
+                _pullAll();
+              }}
+              variant="contained"
+            >
+              Pull All
+            </Button>
+          </InputWrapper>
         </>
       )}
       {value === 1 && (
@@ -323,9 +373,16 @@ export const TabsMain = (props: IProps) => {
             message="Unsubscribing..."
           />
           <Title>Commit and Subscribe</Title>
+          <Subtitle>Creator</Subtitle>
           <Text>{toShortAddress(CREATOR[NETWORK])}</Text>
           <Container>
             <ActionWrapper>
+              <Subtitle>Current Rate</Subtitle>
+              <Text>
+                {currentRate
+                  ? `${formatUnit(currentRate, DECIMALS[NETWORK])} ${NETWORK}`
+                  : "N/A"}
+              </Text>
               <Container>
                 <Checkbox checked={isCommitted} onClick={handleClick} />
                 <Text>Earmark funds exclusively for this creator</Text>
@@ -352,6 +409,7 @@ export const TabsMain = (props: IProps) => {
           </Wrapper>
         </InputWrapper>
       )}
+      {value === 2 && <PaymentSystem creators={creators} />}
     </Root>
   );
 };

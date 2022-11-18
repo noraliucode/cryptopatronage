@@ -28,3 +28,9 @@ export type IWeb3ConnectedContextState = {
   setSigner: (value: string) => any;
   setNetwork: (value: string) => any;
 };
+
+export type ICreator = {
+  address?: string;
+  transferableBalance?: number;
+  supporterBalance?: number;
+};

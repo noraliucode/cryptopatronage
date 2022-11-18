@@ -41,3 +41,10 @@ export function getPaymentAmount(
 
   return Math.round(parseUnit(amount, decimals));
 }
+
+export function parseAdditionalInfo(identity: any) {
+  const additionalInfo = identity.toHuman()?.valueOf().info.additional[0][0][
+    "Raw"
+  ];
+  return additionalInfo ? JSON.parse(additionalInfo) : {};
+}
