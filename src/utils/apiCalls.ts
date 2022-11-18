@@ -168,6 +168,11 @@ export const getIdentity = async (creator: string) => {
   return identity;
 };
 
+export const getIdentityPromise = async (creator: string) => {
+  const api = await createApi();
+  return api.query.identity.identityOf(creator);
+};
+
 export const signAndSendSetIdentity = async (
   essentialInfo: any,
   additionalInfo: any,

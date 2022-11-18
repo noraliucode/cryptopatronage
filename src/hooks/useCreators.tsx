@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBalances, getIdentity, getProxies } from "../utils/apiCalls";
+import { getIdentityPromise, getProxies } from "../utils/apiCalls";
 import { parseAdditionalInfo } from "../utils/helpers";
 import { ICreator } from "../utils/types";
 
@@ -19,17 +19,9 @@ export const useCreators = () => {
       // promise all getIdentity and see creator it has rate / ps
       let identidies = await Promise.all(
         nodes.map((proxy: any) => {
-          const delegations = proxy[1].toHuman()[0];
-          // check if the account gives proxy permissions to exactly one other account
-          // a committed pure proxy will have exactly 2 delegates, the creator, and the supporter
-
-          if (delegations.length > 1) {
-            const creator = proxy[1].toHuman()[0][0].delegate;
-            return getIdentity(creator);
-          } else {
-            // do nothitng here for now as the RPC has timeout error
-            // const creator = proxy[1].toHuman()[0][0].delegate;
-          }
+          // TODO: Performance optimization
+          const creator = proxy[1].toHuman()[0][0].delegate;
+          return getIdentityPromise(creator);
         })
       );
 
