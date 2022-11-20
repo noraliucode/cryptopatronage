@@ -17,7 +17,7 @@ import {
   SYMBOL,
 } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
-import { formatUnit, toShortAddress } from "../../utils/helpers";
+import { formatUnit, getUserPure, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
 import { IWeb3ConnectedContextState } from "../../utils/types";
@@ -142,7 +142,8 @@ export const TabsMain = () => {
         isSubscribing: value,
       }));
     };
-    await subscribe(signer, injector, isCommitted, callback, setLoading);
+    const pure = getUserPure(signer, committedSupporters);
+    await subscribe(signer, injector, isCommitted, callback, setLoading, pure);
   };
 
   const _unsubscribe = async () => {

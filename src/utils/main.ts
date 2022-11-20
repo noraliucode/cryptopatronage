@@ -36,21 +36,27 @@ export const subscribe = async (
   injector: InjectedExtension,
   isCommitted = true,
   callback?: any,
-  setLoading?: (_: boolean) => void
+  setLoading?: (_: boolean) => void,
+  pureProxy?: string
 ) => {
   try {
     setLoading && setLoading(true);
     let real = sender;
     if (isCommitted) {
-      console.log("ceate anonymous proxy...");
-      const proxyData = (await createAnonymousProxy(
-        sender,
-        injector
-      )) as AnonymousEvent;
-      const { pure, who } = proxyData.data;
-      real = pure;
+      // check if the supporter has created pure proxy to the creator
+      if (!pureProxy) {
+        console.log("ceate anonymous proxy...");
+        const proxyData = (await createAnonymousProxy(
+          sender,
+          injector
+        )) as AnonymousEvent;
+        const { pure, who } = proxyData.data;
+        real = pure;
+      } else {
+        real = pureProxy;
+      }
 
-      console.log("anonymous >>", pure);
+      console.log("pure proxy >>", real);
       const amount = USER_PAYMENT * 10 ** DECIMALS[NETWORK];
 
       const reserved = RESERVED_AMOUNT * 10 ** DECIMALS[NETWORK];
@@ -63,7 +69,7 @@ export const subscribe = async (
       //   Math.ceil(Number(fee)) * 10 ** M_DECIMALS[NETWORK] + amount + reserved;
 
       const txs = await Promise.all([
-        transfer(pure, amount + reserved),
+        transfer(real, amount + reserved),
         addProxyViaProxy(CREATOR[NETWORK], real),
         getSetLastPaymentTimeTx(sender),
       ]);

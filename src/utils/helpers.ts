@@ -7,6 +7,7 @@ import type {
   Address,
 } from "@polkadot/types/interfaces";
 import { DAYS_IN_ONE_MONTH, SECONDS_IN_ONE_DAY } from "./constants";
+import { ISupporters } from "./types";
 
 export function toShortAddress(
   _address?: AccountId | AccountIndex | Address | string | null | Uint8Array
@@ -47,4 +48,15 @@ export function parseAdditionalInfo(identity: any) {
     "Raw"
   ];
   return additionalInfo ? JSON.parse(additionalInfo) : {};
+}
+
+export function getUserPure(
+  user: string,
+  supporters: ISupporters
+): string | undefined {
+  if (!supporters) return;
+  const supporter = supporters.find(
+    (supporter) => supporter.supporter === user
+  );
+  return supporter?.pure;
 }
