@@ -243,16 +243,20 @@ export const TabsMain = () => {
             message={message}
           />
           <Title>Register to payment system</Title>
-          <Container>
-            <Checkbox
-              checked={isRegisterToPaymentSystem}
-              onClick={handleClick}
-            />
+          <InputWrapper>
+            <Text>
+              Status:{" "}
+              {isRegisterToPaymentSystem ? "Registered" : "Not Registered"}
+            </Text>
             <Text>
               Register to Cryptopatronage payment system. Payment will
               automically transfer to your recipient account. (1% fee required)
             </Text>
-          </Container>
+            <br />
+            <Button onClick={handleClick} variant="contained">
+              {isRegisterToPaymentSystem ? "Cancel" : "Register"}
+            </Button>
+          </InputWrapper>
           <InputWrapper>
             <Title>Add Rate</Title>
             <TextField
