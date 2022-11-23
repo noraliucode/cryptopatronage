@@ -34,3 +34,8 @@ export type ICreator = {
   transferableBalance?: number;
   supporterBalance?: number;
 };
+
+export type IAdditionalInfo = {
+  rate: string;
+  ps: string;
+};

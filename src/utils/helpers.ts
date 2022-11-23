@@ -44,10 +44,34 @@ export function getPaymentAmount(
 }
 
 export function parseAdditionalInfo(identity: any) {
-  const additionalInfo = identity.toHuman()?.valueOf().info.additional[0][0][
-    "Raw"
-  ];
-  return additionalInfo ? JSON.parse(additionalInfo) : {};
+  const additionalInfo = {} as any;
+  identity
+    .toHuman()
+    ?.valueOf()
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignores
+    .info.additional.forEach((keyValue: any) => {
+      additionalInfo[keyValue[0]["Raw"]] = keyValue[1]["Raw"];
+    });
+
+  return additionalInfo;
+}
+
+export function formatAdditionalInfo(additionalInfo: any) {
+  const _additionalInfo = [] as any;
+
+  for (let key in additionalInfo) {
+    const item = [
+      {
+        Raw: key,
+      },
+      { Raw: additionalInfo[key] },
+    ];
+
+    _additionalInfo.push(item);
+  }
+
+  return _additionalInfo; // [[{Raw: key}, {Raw: value}], [{Raw: key2}, {Raw: value2}]]
 }
 
 export function getUserPure(

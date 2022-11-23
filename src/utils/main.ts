@@ -135,19 +135,12 @@ export const setRate = async (
 ) => {
   try {
     setLoading && setLoading(true);
-    const identity = await getIdentity(sender);
-    const essentialInfo = identity
-      ? identity
-      : {
-          display: "",
-          legal: "",
-          web: "",
-          riot: "",
-          email: "",
-          image: "",
-          twitter: "",
-        };
-    const additionalInfo = { rate };
+
+    const { essentialInfo, additionalInfo } = await getInfos(sender);
+    const _additionalInfo = {
+      ...additionalInfo,
+      rate,
+    };
     const _callBack = () => {
       callback && callback();
       setLoading && setLoading(false);
@@ -155,7 +148,7 @@ export const setRate = async (
 
     await signAndSendSetIdentity(
       essentialInfo,
-      additionalInfo,
+      _additionalInfo,
       sender,
       injector,
       _callBack
@@ -180,11 +173,7 @@ export const pullPayment = async (
       [sender, supporter].map((x) => getIdentity(x))
     );
     const getLastPaymentTime = (identity: any) => {
-      return JSON.parse(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignores
-        identity.toHuman()?.valueOf().info.additional[0][0]["Raw"]
-      ).lastPaymentTime;
+      return parseAdditionalInfo(identity).lastPaymentTime;
     };
     const lastPaymentTime = getLastPaymentTime(creatorIdentity)
       ? getLastPaymentTime(creatorIdentity)
@@ -248,7 +237,6 @@ export const toggleIsRegisterToPaymentSystem = async (
 ) => {
   try {
     const { essentialInfo, additionalInfo } = await getInfos(sender);
-    // key shorten to ps dur to "failed on additional: Vec<(Data,Data)>:: Tuple: failed on 0:: Data.Raw values are limited to a maximum length of 32 bytes" error
     const _additionalInfo = {
       ...additionalInfo,
       ps: isRegisterToPaymentSystem,

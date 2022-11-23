@@ -1,6 +1,7 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { PURE_CREATED, NETWORK, NODE_ENDPOINT } from "./constants";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
+import { formatAdditionalInfo } from "./helpers";
 
 const wsProvider = new WsProvider(NODE_ENDPOINT[NETWORK]);
 const createApi = async () => {
@@ -184,7 +185,7 @@ export const signAndSendSetIdentity = async (
   await api.tx.identity
     .setIdentity({
       ...essentialInfo,
-      additional: [[{ Raw: JSON.stringify(additionalInfo) }]],
+      additional: formatAdditionalInfo(additionalInfo),
     })
     .signAndSend(
       sender,
