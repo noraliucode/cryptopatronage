@@ -27,6 +27,7 @@ import { useSupporters } from "../../hooks/useSupporters";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { PaymentSystem } from "../PaymentSystem";
 import { useCreators } from "../../hooks/useCreators";
+import { Modal } from "../Modal";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -83,6 +84,7 @@ type IState = {
   isUnsubscribing: boolean;
   open: boolean;
   message: string;
+  isModalOpen: boolean;
 };
 
 export const TabsMain = () => {
@@ -95,6 +97,7 @@ export const TabsMain = () => {
     isUnsubscribing: false,
     open: false,
     message: "",
+    isModalOpen: false,
   });
 
   const {
@@ -105,6 +108,7 @@ export const TabsMain = () => {
     isUnsubscribing,
     message,
     open,
+    isModalOpen,
   } = state;
 
   const {
@@ -135,6 +139,7 @@ export const TabsMain = () => {
   };
 
   const _subscribe = async () => {
+    checkSigner();
     if (!injector) return;
     const setLoading = (value: boolean) => {
       setState((prev) => ({
@@ -147,6 +152,8 @@ export const TabsMain = () => {
   };
 
   const _unsubscribe = async () => {
+    checkSigner();
+    if (!injector) return;
     const setLoading = (value: boolean) => {
       setState((prev) => ({
         ...prev,
@@ -164,6 +171,9 @@ export const TabsMain = () => {
   };
 
   const _setRate = async () => {
+    checkSigner();
+    if (!injector) return;
+
     setState((prev) => ({
       ...prev,
       message: "Setting Rate...",
@@ -197,6 +207,7 @@ export const TabsMain = () => {
   const _pullAll = async () => {};
 
   const handleClick = () => {
+    checkSigner();
     if (!injector) return;
     toggleIsRegisterToPaymentSystem(
       signer,
@@ -219,8 +230,27 @@ export const TabsMain = () => {
     }));
   };
 
+  const checkSigner = () => {
+    if (!signer || !injector) {
+      setState((prev) => ({
+        ...prev,
+        isModalOpen: true,
+      }));
+      return;
+    }
+  };
+
   return (
     <Root>
+      <Modal
+        open={isModalOpen}
+        onClose={() =>
+          setState((prev) => ({
+            ...prev,
+            isModalOpen: false,
+          }))
+        }
+      />
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
           value={value}
