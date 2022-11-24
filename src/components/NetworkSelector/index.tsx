@@ -39,9 +39,9 @@ export const NetworkSelector = ({ setNetwork, network }: IProps) => {
 
   return (
     <>
-      <Button onClick={handleClick}>
+      {/* <Button onClick={handleClick}>
         {typeof network === "string" && network ? network : "Select Network"}
-      </Button>
+      </Button> */}
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
