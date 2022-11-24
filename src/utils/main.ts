@@ -11,6 +11,7 @@ import {
   transfer,
   transferViaProxy,
   setIdentity,
+  getRemoveProxyPromise,
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import {
@@ -113,11 +114,13 @@ export const unsubscribe = async (
       (node: any) => node[0].toHuman()[0]
     );
 
-    // batch call removeProxies
     // get all txs
-    const txs = await Promise.all(
-      reals.map((real: any) => removeProxiesViaProxy(removeProxies(), real))
-    );
+    const txs = await Promise.all([
+      ...reals.map((real: any) => removeProxiesViaProxy(removeProxies(), real)),
+      // uncommitted supporters
+      getRemoveProxyPromise(creator),
+    ]);
+
     await batchCalls(txs, sender, injector, callback);
   } catch (error) {
     console.error("unsubscribe error >>", error);

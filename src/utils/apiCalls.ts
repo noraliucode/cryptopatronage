@@ -29,7 +29,7 @@ export const signAndSendAddProxy = async (
     .signAndSend(sender, { signer: injector.signer });
 };
 
-export const removeProxy = async (
+export const signAndSendRemoveProxy = async (
   sender: string,
   injector: any,
   proxy: string
@@ -217,6 +217,11 @@ export const batchCalls = async (
 export const removeProxies = async () => {
   const api = await createApi();
   return api.tx.proxy.removeProxies;
+};
+
+export const getRemoveProxyPromise = async (proxy: string) => {
+  const api = await createApi();
+  return api.tx.proxy.removeProxy(proxy, "any", 0);
 };
 
 export const signAndSendRemoveProxies = async (
