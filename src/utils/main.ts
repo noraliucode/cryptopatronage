@@ -14,14 +14,9 @@ import {
   getRemoveProxyPromise,
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
-import {
-  CREATOR,
-  NETWORK,
-  DECIMALS,
-  USER_PAYMENT,
-  RESERVED_AMOUNT,
-} from "./constants";
+import { CREATOR, DECIMALS, USER_PAYMENT, RESERVED_AMOUNT } from "./constants";
 import { getPaymentAmount, parseAdditionalInfo } from "./helpers";
+import { INetwork } from "./types";
 
 type AnonymousData = {
   pure: string;
@@ -36,6 +31,7 @@ export const subscribe = async (
   sender: string,
   injector: InjectedExtension,
   isCommitted = true,
+  network: INetwork,
   callback?: any,
   setLoading?: (_: boolean) => void,
   pureProxy?: string
@@ -58,9 +54,9 @@ export const subscribe = async (
       }
 
       console.log("pure proxy >>", real);
-      const amount = USER_PAYMENT * 10 ** DECIMALS[NETWORK];
+      const amount = USER_PAYMENT * 10 ** DECIMALS[network];
 
-      const reserved = RESERVED_AMOUNT * 10 ** DECIMALS[NETWORK];
+      const reserved = RESERVED_AMOUNT * 10 ** DECIMALS[network];
 
       // TODO: add total amount later to inform user
       // const fee = (await getTransferFee(anonymous, amount, sender)).split(
@@ -71,7 +67,7 @@ export const subscribe = async (
 
       const txs = await Promise.all([
         transfer(real, amount + reserved),
-        addProxyViaProxy(CREATOR[NETWORK], real),
+        addProxyViaProxy(CREATOR[network], real),
         getSetLastPaymentTimeTx(sender),
       ]);
 
@@ -81,7 +77,7 @@ export const subscribe = async (
       await batchCalls(txs, sender, injector, callback);
     } else {
       console.log("set creator as proxy...");
-      await signAndSendAddProxy(sender, injector, CREATOR[NETWORK]);
+      await signAndSendAddProxy(sender, injector, CREATOR[network]);
     }
   } catch (error) {
     console.error("subscribe error >>", error);

@@ -1,9 +1,9 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { PURE_CREATED, NETWORK, NODE_ENDPOINT } from "./constants";
+import { PURE_CREATED, NODE_ENDPOINT, DEFAULT_NETWORK } from "./constants";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import { formatAdditionalInfo } from "./helpers";
 
-const wsProvider = new WsProvider(NODE_ENDPOINT[NETWORK]);
+const wsProvider = new WsProvider(NODE_ENDPOINT[DEFAULT_NETWORK]);
 const createApi = async () => {
   const api = await ApiPromise.create({ provider: wsProvider });
   return api;

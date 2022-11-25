@@ -28,7 +28,7 @@ export const M_DECIMALS = {
   WESTEND: 9,
   KUSAMA: 9,
 };
-export const NETWORK = "ROCOCO";
+export const DEFAULT_NETWORK = "ROCOCO";
 export const NODE_ENDPOINT = {
   ROCOCO: "wss://rococo-rpc.polkadot.io",
   WESTEND: "wss://westend-rpc.polkadot.io",

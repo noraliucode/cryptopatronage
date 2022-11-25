@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import { getBalances, getProxies } from "../utils/apiCalls";
-import { CREATOR, DECIMALS, NETWORK } from "../utils/constants";
+import { CREATOR } from "../utils/constants";
+import { INetwork } from "../utils/types";
 
 interface IState {
   subscribedCreators: string[];
 }
 
-export const useSubscribedCreators = (user: string, rate: number) => {
+export const useSubscribedCreators = (
+  user: string,
+  rate: number,
+  network: INetwork
+) => {
   const [state, setState] = useState<IState>({
     subscribedCreators: [],
   });
@@ -14,7 +19,7 @@ export const useSubscribedCreators = (user: string, rate: number) => {
   const getSubscribedCreators = async () => {
     try {
       const uncommittedNodes = [];
-      const creatorProxies: any = await getProxies(CREATOR[NETWORK]);
+      const creatorProxies: any = await getProxies(CREATOR[network]);
       const creatorProxiesFiltered = creatorProxies.filter(
         // filter all nodes that the property is sender
         (node: any) => {
@@ -52,7 +57,7 @@ export const useSubscribedCreators = (user: string, rate: number) => {
       // TODO: creator list is hardcoded for now, should be fixed later
       setState((prev) => ({
         ...prev,
-        subscribedCreators: isSubscribed ? [CREATOR[NETWORK]] : [],
+        subscribedCreators: isSubscribed ? [CREATOR[network]] : [],
       }));
     } catch (error) {
       console.error("getSubscribedCreators error", error);

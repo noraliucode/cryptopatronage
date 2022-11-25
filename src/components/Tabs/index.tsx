@@ -9,13 +9,7 @@ import {
   toggleIsRegisterToPaymentSystem,
   unsubscribe,
 } from "../../utils/main";
-import {
-  CREATOR,
-  DECIMALS,
-  NETWORK,
-  SUPPORTER,
-  SYMBOL,
-} from "../../utils/constants";
+import { CREATOR, DECIMALS, SUPPORTER, SYMBOL } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
 import { formatUnit, getUserPure, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
@@ -111,20 +105,22 @@ export const TabsMain = () => {
     isModalOpen,
   } = state;
 
+  const { signer, injector, network }: IWeb3ConnectedContextState =
+    useWeb3ConnectedContext();
   const {
     rate: currentRate,
     getRate,
     isRegisterToPaymentSystem,
-  } = useIdentity(CREATOR[NETWORK]);
+  } = useIdentity(CREATOR[network]);
   const { subscribedCreators, getSubscribedCreators } = useSubscribedCreators(
-    SUPPORTER[NETWORK],
-    rate
+    SUPPORTER[network],
+    rate,
+    network
   );
   const { committedSupporters, getSupporters, uncommittedSupporters } =
-    useSupporters(CREATOR[NETWORK], rate);
-  const { signer, injector }: IWeb3ConnectedContextState =
-    useWeb3ConnectedContext();
-  const { creators } = useCreators();
+    useSupporters(CREATOR[network], rate);
+
+  // const { creators } = useCreators();
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -148,7 +144,15 @@ export const TabsMain = () => {
       }));
     };
     const pure = getUserPure(signer, committedSupporters);
-    await subscribe(signer, injector, isCommitted, callback, setLoading, pure);
+    await subscribe(
+      signer,
+      injector,
+      isCommitted,
+      network,
+      callback,
+      setLoading,
+      pure
+    );
   };
 
   const _unsubscribe = async () => {
@@ -160,7 +164,7 @@ export const TabsMain = () => {
         isUnsubscribing: value,
       }));
     };
-    await unsubscribe(signer, injector, CREATOR[NETWORK], callback, setLoading);
+    await unsubscribe(signer, injector, CREATOR[network], callback, setLoading);
   };
 
   const setLoading = (value: boolean) => {
@@ -180,8 +184,8 @@ export const TabsMain = () => {
     }));
 
     await setRate(
-      rate * 10 ** DECIMALS[NETWORK],
-      CREATOR[NETWORK],
+      rate * 10 ** DECIMALS[network],
+      CREATOR[network],
       injector,
       getRate,
       setLoading
@@ -195,11 +199,11 @@ export const TabsMain = () => {
     }));
     await pullPayment(
       real,
-      CREATOR[NETWORK],
+      CREATOR[network],
       injector,
-      CREATOR[NETWORK],
+      CREATOR[network],
       currentRate,
-      DECIMALS[NETWORK],
+      DECIMALS[network],
       supporter
     );
   };
@@ -295,7 +299,7 @@ export const TabsMain = () => {
               id="standard-basic"
               label="Rate"
               variant="standard"
-              placeholder={`Input the amount of ${SYMBOL[NETWORK]}`}
+              placeholder={`Input the amount of ${SYMBOL[network]}`}
               onChange={handleInputChange}
             />
             &nbsp;
@@ -309,7 +313,7 @@ export const TabsMain = () => {
             <Title>Current Rate</Title>
             <Text>
               {currentRate
-                ? `${formatUnit(currentRate, DECIMALS[NETWORK])} ${NETWORK}`
+                ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
                 : "N/A"}
             </Text>
           </InputWrapper>
@@ -331,8 +335,8 @@ export const TabsMain = () => {
                       <Text>
                         {`${formatUnit(
                           Number(supporter?.pureBalance),
-                          DECIMALS[NETWORK]
-                        )} ${NETWORK}`}
+                          DECIMALS[network]
+                        )} ${network}`}
                       </Text>
 
                       <Button
@@ -363,8 +367,8 @@ export const TabsMain = () => {
                   <Text>
                     {`${formatUnit(
                       Number(supporter?.supporterBalance),
-                      DECIMALS[NETWORK]
-                    )} ${NETWORK}`}
+                      DECIMALS[network]
+                    )} ${network}`}
                   </Text>
 
                   <Button
@@ -415,13 +419,13 @@ export const TabsMain = () => {
           />
           <Title>Commit and Subscribe</Title>
           <Subtitle>Creator</Subtitle>
-          <Text>{toShortAddress(CREATOR[NETWORK])}</Text>
+          <Text>{toShortAddress(CREATOR[network])}</Text>
           <Container>
             <ActionWrapper>
               <Subtitle>Current Rate</Subtitle>
               <Text>
                 {currentRate
-                  ? `${formatUnit(currentRate, DECIMALS[NETWORK])} ${NETWORK}`
+                  ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
                   : "N/A"}
               </Text>
               <Container>
@@ -450,7 +454,7 @@ export const TabsMain = () => {
           </Wrapper>
         </InputWrapper>
       )}
-      {value === 2 && <PaymentSystem creators={creators} />}
+      {/* {value === 2 && <PaymentSystem creators={creators} />} */}
     </Root>
   );
 };

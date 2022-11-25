@@ -5,6 +5,7 @@ import {
   web3FromAddress,
 } from "@polkadot/extension-dapp";
 import { IInjector, IWeb3ConnectedContextState } from "../../utils/types";
+import { DEFAULT_NETWORK } from "../../utils/constants";
 
 interface IProps {
   children?: React.ReactElement;
@@ -21,7 +22,7 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
     setState((prev: IWeb3ConnectedContextState) => ({ ...prev, [key]: value }));
   };
   const [state, setState] = useState<IWeb3ConnectedContextState>({
-    network: "",
+    network: DEFAULT_NETWORK,
     accounts: null,
     signer: "",
     injector: null,
