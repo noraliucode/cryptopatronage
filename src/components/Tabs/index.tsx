@@ -240,6 +240,8 @@ export const TabsMain = () => {
     }
   };
 
+  const isSetRateDisabled = !rate || rate === 0;
+
   return (
     <Root>
       <Modal
@@ -297,7 +299,11 @@ export const TabsMain = () => {
               onChange={handleInputChange}
             />
             &nbsp;
-            <Button onClick={_setRate} variant="contained">
+            <Button
+              disabled={isSetRateDisabled}
+              onClick={_setRate}
+              variant="contained"
+            >
               Set Rate
             </Button>
             <Title>Current Rate</Title>
