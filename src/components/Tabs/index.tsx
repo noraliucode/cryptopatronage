@@ -32,6 +32,11 @@ const Text = styled("div")(() => ({
   fontSize: 14,
   lineHeight: 2,
 }));
+const CheckWrapper = styled("div")(() => ({
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+}));
 const Container = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
@@ -79,6 +84,7 @@ type IState = {
   open: boolean;
   message: string;
   isModalOpen: boolean;
+  isDelayed: boolean;
 };
 
 export const TabsMain = () => {
@@ -92,6 +98,7 @@ export const TabsMain = () => {
     open: false,
     message: "",
     isModalOpen: false,
+    isDelayed: false,
   });
 
   const {
@@ -103,6 +110,7 @@ export const TabsMain = () => {
     message,
     open,
     isModalOpen,
+    isDelayed,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -210,7 +218,7 @@ export const TabsMain = () => {
 
   const _pullAll = async () => {};
 
-  const handleClick = () => {
+  const handleRegisterClick = () => {
     checkSigner();
     if (!injector) return;
     toggleIsRegisterToPaymentSystem(
@@ -218,10 +226,19 @@ export const TabsMain = () => {
       isRegisterToPaymentSystem ? !isRegisterToPaymentSystem : true,
       injector
     );
+  };
 
+  const handleCommittedClick = () => {
     setState((prev) => ({
       ...prev,
       isCommitted: !prev.isCommitted,
+    }));
+  };
+
+  const handleDelayedClick = () => {
+    setState((prev) => ({
+      ...prev,
+      isDelayed: !prev.isDelayed,
     }));
   };
 
@@ -289,7 +306,7 @@ export const TabsMain = () => {
               automically transfer to your recipient account. (1% fee required)
             </Text>
             <br />
-            <Button onClick={handleClick} variant="contained">
+            <Button onClick={handleRegisterClick} variant="contained">
               {isRegisterToPaymentSystem ? "Cancel" : "Register"}
             </Button>
           </InputWrapper>
@@ -429,8 +446,14 @@ export const TabsMain = () => {
                   : "N/A"}
               </Text>
               <Container>
-                <Checkbox checked={isCommitted} onClick={handleClick} />
-                <Text>Earmark funds exclusively for this creator</Text>
+                <CheckWrapper onClick={handleCommittedClick}>
+                  <Checkbox checked={isCommitted} />
+                  <Text>Earmark funds exclusively for this creator</Text>
+                </CheckWrapper>
+                <CheckWrapper onClick={handleDelayedClick}>
+                  <Checkbox checked={isDelayed} />
+                  <Text>Delay transfer</Text>
+                </CheckWrapper>
               </Container>
               <Container>
                 <Button onClick={_subscribe} variant="contained">
