@@ -6,7 +6,8 @@ import type {
   AccountIndex,
   Address,
 } from "@polkadot/types/interfaces";
-import { SECONDS_IN_ONE_DAY } from "./constants";
+import { DAYS_IN_ONE_MONTH, SECONDS_IN_ONE_DAY } from "./constants";
+import { ISupporters } from "./types";
 
 export function toShortAddress(
   _address?: AccountId | AccountIndex | Address | string | null | Uint8Array
@@ -32,19 +33,54 @@ export function getPaymentAmount(
   decimals: number
 ): number {
   const now = Date.now();
-  // TODO: a better way to calculate PaymentAmount
-  console.log("getPaymentAmount lastPaymentTime: ", lastPaymentTime);
-  console.log("getPaymentAmount rate: ", rate);
+  // TODO: a better way to calculate PaymentAmount/better flow?
+  const months =
+    Math.round(now - lastPaymentTime) / SECONDS_IN_ONE_DAY / DAYS_IN_ONE_MONTH;
 
-  const amount = ((now - lastPaymentTime) / SECONDS_IN_ONE_DAY / rate) * 30;
+  const amount = months * rate;
   console.log("getPaymentAmount amount: ", amount);
 
-  return Math.round(parseUnit(amount, decimals));
+  return parseUnit(amount, decimals);
 }
 
 export function parseAdditionalInfo(identity: any) {
-  const additionalInfo = identity.toHuman()?.valueOf().info.additional[0][0][
-    "Raw"
-  ];
-  return additionalInfo ? JSON.parse(additionalInfo) : {};
+  const additionalInfo = {} as any;
+  identity
+    .toHuman()
+    ?.valueOf()
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignores
+    .info.additional.forEach((keyValue: any) => {
+      additionalInfo[keyValue[0]["Raw"]] = keyValue[1]["Raw"];
+    });
+
+  return additionalInfo;
+}
+
+export function formatAdditionalInfo(additionalInfo: any) {
+  const _additionalInfo = [] as any;
+
+  for (let key in additionalInfo) {
+    const item = [
+      {
+        Raw: key,
+      },
+      { Raw: additionalInfo[key] },
+    ];
+
+    _additionalInfo.push(item);
+  }
+
+  return _additionalInfo; // [[{Raw: key}, {Raw: value}], [{Raw: key2}, {Raw: value2}]]
+}
+
+export function getUserPure(
+  user: string,
+  supporters: ISupporters
+): string | undefined {
+  if (!supporters) return;
+  const supporter = supporters.find(
+    (supporter) => supporter.supporter === user
+  );
+  return supporter?.pure;
 }

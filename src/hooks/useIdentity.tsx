@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getIdentity } from "../utils/apiCalls";
+import { parseAdditionalInfo } from "../utils/helpers";
 
 interface IState {
   rate: number;
@@ -15,14 +16,10 @@ export const useIdentity = (creator: string) => {
   const getRate = async () => {
     try {
       const identity = await getIdentity(creator);
-      const additionalInfo = JSON.parse(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignores
-        identity.toHuman()?.valueOf().info.additional[0][0]["Raw"]
-      );
+      const additionalInfo = parseAdditionalInfo(identity);
 
       const rate = additionalInfo.rate;
-      const isRegisterToPaymentSystem = additionalInfo.ps;
+      const isRegisterToPaymentSystem = JSON.parse(additionalInfo.ps);
 
       setState((prev) => ({ ...prev, rate, isRegisterToPaymentSystem }));
     } catch (error) {}

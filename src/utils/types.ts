@@ -21,7 +21,7 @@ type IMeta = {
 export type IInjector = InjectedExtension | null;
 
 export type IWeb3ConnectedContextState = {
-  network: string;
+  network: INetwork;
   accounts: IAccounts;
   signer: string;
   injector: IInjector;
@@ -33,4 +33,17 @@ export type ICreator = {
   address?: string;
   transferableBalance?: number;
   supporterBalance?: number;
+};
+
+export type IAdditionalInfo = {
+  rate: string;
+  ps: string;
+};
+
+export type INetwork = keyof ICreatorAddress;
+
+export type ICreatorAddress = {
+  ROCOCO: string;
+  WESTEND: string;
+  KUSAMA: string;
 };

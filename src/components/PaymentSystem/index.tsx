@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { Button } from "@mui/material";
-import { DECIMALS, NETWORK } from "../../utils/constants";
-import { formatUnit, toShortAddress } from "../../utils/helpers";
+import { toShortAddress } from "../../utils/helpers";
 
 const Text = styled("div")(() => ({
   color: "black",

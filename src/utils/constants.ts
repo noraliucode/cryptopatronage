@@ -28,7 +28,7 @@ export const M_DECIMALS = {
   WESTEND: 9,
   KUSAMA: 9,
 };
-export const NETWORK = "ROCOCO";
+export const DEFAULT_NETWORK = "ROCOCO";
 export const NODE_ENDPOINT = {
   ROCOCO: "wss://rococo-rpc.polkadot.io",
   WESTEND: "wss://westend-rpc.polkadot.io",
@@ -42,3 +42,4 @@ export const SYMBOL = {
 
 export const NETWORKS = ["ROCOCO", "WESTEND", "KUSAMA"];
 export const SECONDS_IN_ONE_DAY = 60 * 60 * 24;
+export const DAYS_IN_ONE_MONTH = 30.4;

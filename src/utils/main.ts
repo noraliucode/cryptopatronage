@@ -11,16 +11,12 @@ import {
   transfer,
   transferViaProxy,
   setIdentity,
+  getRemoveProxyPromise,
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
-import {
-  CREATOR,
-  NETWORK,
-  DECIMALS,
-  USER_PAYMENT,
-  RESERVED_AMOUNT,
-} from "./constants";
+import { CREATOR, DECIMALS, USER_PAYMENT, RESERVED_AMOUNT } from "./constants";
 import { getPaymentAmount, parseAdditionalInfo } from "./helpers";
+import { INetwork } from "./types";
 
 type AnonymousData = {
   pure: string;
@@ -35,25 +31,32 @@ export const subscribe = async (
   sender: string,
   injector: InjectedExtension,
   isCommitted = true,
+  network: INetwork,
   callback?: any,
-  setLoading?: (_: boolean) => void
+  setLoading?: (_: boolean) => void,
+  pureProxy?: string
 ) => {
   try {
     setLoading && setLoading(true);
     let real = sender;
     if (isCommitted) {
-      console.log("ceate anonymous proxy...");
-      const proxyData = (await createAnonymousProxy(
-        sender,
-        injector
-      )) as AnonymousEvent;
-      const { pure, who } = proxyData.data;
-      real = pure;
+      // check if the supporter has created pure proxy to the creator
+      if (!pureProxy) {
+        console.log("ceate anonymous proxy...");
+        const proxyData = (await createAnonymousProxy(
+          sender,
+          injector
+        )) as AnonymousEvent;
+        const { pure, who } = proxyData.data;
+        real = pure;
+      } else {
+        real = pureProxy;
+      }
 
-      console.log("anonymous >>", pure);
-      const amount = USER_PAYMENT * 10 ** DECIMALS[NETWORK];
+      console.log("pure proxy >>", real);
+      const amount = USER_PAYMENT * 10 ** DECIMALS[network];
 
-      const reserved = RESERVED_AMOUNT * 10 ** DECIMALS[NETWORK];
+      const reserved = RESERVED_AMOUNT * 10 ** DECIMALS[network];
 
       // TODO: add total amount later to inform user
       // const fee = (await getTransferFee(anonymous, amount, sender)).split(
@@ -63,8 +66,8 @@ export const subscribe = async (
       //   Math.ceil(Number(fee)) * 10 ** M_DECIMALS[NETWORK] + amount + reserved;
 
       const txs = await Promise.all([
-        transfer(pure, amount + reserved),
-        addProxyViaProxy(CREATOR[NETWORK], real),
+        transfer(real, amount + reserved),
+        addProxyViaProxy(CREATOR[network], real),
         getSetLastPaymentTimeTx(sender),
       ]);
 
@@ -74,7 +77,7 @@ export const subscribe = async (
       await batchCalls(txs, sender, injector, callback);
     } else {
       console.log("set creator as proxy...");
-      await signAndSendAddProxy(sender, injector, CREATOR[NETWORK]);
+      await signAndSendAddProxy(sender, injector, CREATOR[network]);
     }
   } catch (error) {
     console.error("subscribe error >>", error);
@@ -107,11 +110,13 @@ export const unsubscribe = async (
       (node: any) => node[0].toHuman()[0]
     );
 
-    // batch call removeProxies
     // get all txs
-    const txs = await Promise.all(
-      reals.map((real: any) => removeProxiesViaProxy(removeProxies(), real))
-    );
+    const txs = await Promise.all([
+      ...reals.map((real: any) => removeProxiesViaProxy(removeProxies(), real)),
+      // uncommitted supporters
+      getRemoveProxyPromise(creator),
+    ]);
+
     await batchCalls(txs, sender, injector, callback);
   } catch (error) {
     console.error("unsubscribe error >>", error);
@@ -129,19 +134,12 @@ export const setRate = async (
 ) => {
   try {
     setLoading && setLoading(true);
-    const identity = await getIdentity(sender);
-    const essentialInfo = identity
-      ? identity
-      : {
-          display: "",
-          legal: "",
-          web: "",
-          riot: "",
-          email: "",
-          image: "",
-          twitter: "",
-        };
-    const additionalInfo = { rate };
+
+    const { essentialInfo, additionalInfo } = await getInfos(sender);
+    const _additionalInfo = {
+      ...additionalInfo,
+      rate,
+    };
     const _callBack = () => {
       callback && callback();
       setLoading && setLoading(false);
@@ -149,7 +147,7 @@ export const setRate = async (
 
     await signAndSendSetIdentity(
       essentialInfo,
-      additionalInfo,
+      _additionalInfo,
       sender,
       injector,
       _callBack
@@ -174,11 +172,7 @@ export const pullPayment = async (
       [sender, supporter].map((x) => getIdentity(x))
     );
     const getLastPaymentTime = (identity: any) => {
-      return JSON.parse(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignores
-        identity.toHuman()?.valueOf().info.additional[0][0]["Raw"]
-      ).lastPaymentTime;
+      return parseAdditionalInfo(identity).lastPaymentTime;
     };
     const lastPaymentTime = getLastPaymentTime(creatorIdentity)
       ? getLastPaymentTime(creatorIdentity)
@@ -242,7 +236,6 @@ export const toggleIsRegisterToPaymentSystem = async (
 ) => {
   try {
     const { essentialInfo, additionalInfo } = await getInfos(sender);
-    // key shorten to ps dur to "failed on additional: Vec<(Data,Data)>:: Tuple: failed on 0:: Data.Raw values are limited to a maximum length of 32 bytes" error
     const _additionalInfo = {
       ...additionalInfo,
       ps: isRegisterToPaymentSystem,

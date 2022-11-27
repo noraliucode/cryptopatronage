@@ -9,15 +9,9 @@ import {
   toggleIsRegisterToPaymentSystem,
   unsubscribe,
 } from "../../utils/main";
-import {
-  CREATOR,
-  DECIMALS,
-  NETWORK,
-  SUPPORTER,
-  SYMBOL,
-} from "../../utils/constants";
+import { CREATOR, DECIMALS, SUPPORTER, SYMBOL } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
-import { formatUnit, toShortAddress } from "../../utils/helpers";
+import { formatUnit, getUserPure, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
 import { IWeb3ConnectedContextState } from "../../utils/types";
@@ -27,6 +21,7 @@ import { useSupporters } from "../../hooks/useSupporters";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { PaymentSystem } from "../PaymentSystem";
 import { useCreators } from "../../hooks/useCreators";
+import { Modal } from "../Modal";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -36,6 +31,11 @@ const Text = styled("div")(() => ({
   color: "black",
   fontSize: 14,
   lineHeight: 2,
+}));
+const CheckWrapper = styled("div")(() => ({
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
 }));
 const Container = styled("div")(() => ({
   display: "flex",
@@ -83,6 +83,8 @@ type IState = {
   isUnsubscribing: boolean;
   open: boolean;
   message: string;
+  isModalOpen: boolean;
+  isDelayed: boolean;
 };
 
 export const TabsMain = () => {
@@ -95,6 +97,8 @@ export const TabsMain = () => {
     isUnsubscribing: false,
     open: false,
     message: "",
+    isModalOpen: false,
+    isDelayed: false,
   });
 
   const {
@@ -105,22 +109,26 @@ export const TabsMain = () => {
     isUnsubscribing,
     message,
     open,
+    isModalOpen,
+    isDelayed,
   } = state;
 
+  const { signer, injector, network }: IWeb3ConnectedContextState =
+    useWeb3ConnectedContext();
   const {
     rate: currentRate,
     getRate,
     isRegisterToPaymentSystem,
-  } = useIdentity(CREATOR[NETWORK]);
+  } = useIdentity(CREATOR[network]);
   const { subscribedCreators, getSubscribedCreators } = useSubscribedCreators(
-    SUPPORTER[NETWORK],
-    rate
+    SUPPORTER[network],
+    rate,
+    network
   );
   const { committedSupporters, getSupporters, uncommittedSupporters } =
-    useSupporters(CREATOR[NETWORK], rate);
-  const { signer, injector }: IWeb3ConnectedContextState =
-    useWeb3ConnectedContext();
-  const { creators } = useCreators();
+    useSupporters(CREATOR[network], rate);
+
+  // const { creators } = useCreators();
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -135,6 +143,7 @@ export const TabsMain = () => {
   };
 
   const _subscribe = async () => {
+    checkSigner();
     if (!injector) return;
     const setLoading = (value: boolean) => {
       setState((prev) => ({
@@ -142,17 +151,28 @@ export const TabsMain = () => {
         isSubscribing: value,
       }));
     };
-    await subscribe(signer, injector, isCommitted, callback, setLoading);
+    const pure = getUserPure(signer, committedSupporters);
+    await subscribe(
+      signer,
+      injector,
+      isCommitted,
+      network,
+      callback,
+      setLoading,
+      pure
+    );
   };
 
   const _unsubscribe = async () => {
+    checkSigner();
+    if (!injector) return;
     const setLoading = (value: boolean) => {
       setState((prev) => ({
         ...prev,
         isUnsubscribing: value,
       }));
     };
-    await unsubscribe(signer, injector, CREATOR[NETWORK], callback, setLoading);
+    await unsubscribe(signer, injector, CREATOR[network], callback, setLoading);
   };
 
   const setLoading = (value: boolean) => {
@@ -163,14 +183,17 @@ export const TabsMain = () => {
   };
 
   const _setRate = async () => {
+    checkSigner();
+    if (!injector) return;
+
     setState((prev) => ({
       ...prev,
       message: "Setting Rate...",
     }));
 
     await setRate(
-      rate * 10 ** DECIMALS[NETWORK],
-      CREATOR[NETWORK],
+      rate * 10 ** DECIMALS[network],
+      CREATOR[network],
       injector,
       getRate,
       setLoading
@@ -184,28 +207,38 @@ export const TabsMain = () => {
     }));
     await pullPayment(
       real,
-      CREATOR[NETWORK],
+      CREATOR[network],
       injector,
-      CREATOR[NETWORK],
+      CREATOR[network],
       currentRate,
-      DECIMALS[NETWORK],
+      DECIMALS[network],
       supporter
     );
   };
 
   const _pullAll = async () => {};
 
-  const handleClick = () => {
+  const handleRegisterClick = () => {
+    checkSigner();
     if (!injector) return;
     toggleIsRegisterToPaymentSystem(
       signer,
       isRegisterToPaymentSystem ? !isRegisterToPaymentSystem : true,
       injector
     );
+  };
 
+  const handleCommittedClick = () => {
     setState((prev) => ({
       ...prev,
       isCommitted: !prev.isCommitted,
+    }));
+  };
+
+  const handleDelayedClick = () => {
+    setState((prev) => ({
+      ...prev,
+      isDelayed: !prev.isDelayed,
     }));
   };
 
@@ -218,8 +251,29 @@ export const TabsMain = () => {
     }));
   };
 
+  const checkSigner = () => {
+    if (!signer || !injector) {
+      setState((prev) => ({
+        ...prev,
+        isModalOpen: true,
+      }));
+      return;
+    }
+  };
+
+  const isSetRateDisabled = !rate || rate === 0;
+
   return (
     <Root>
+      <Modal
+        open={isModalOpen}
+        onClose={() =>
+          setState((prev) => ({
+            ...prev,
+            isModalOpen: false,
+          }))
+        }
+      />
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
           value={value}
@@ -242,33 +296,41 @@ export const TabsMain = () => {
             message={message}
           />
           <Title>Register to payment system</Title>
-          <Container>
-            <Checkbox
-              checked={isRegisterToPaymentSystem}
-              onClick={handleClick}
-            />
+          <InputWrapper>
+            <Text>
+              Status:{" "}
+              {isRegisterToPaymentSystem ? "Registered" : "Not Registered"}
+            </Text>
             <Text>
               Register to Cryptopatronage payment system. Payment will
               automically transfer to your recipient account. (1% fee required)
             </Text>
-          </Container>
+            <br />
+            <Button onClick={handleRegisterClick} variant="contained">
+              {isRegisterToPaymentSystem ? "Cancel" : "Register"}
+            </Button>
+          </InputWrapper>
           <InputWrapper>
             <Title>Add Rate</Title>
             <TextField
               id="standard-basic"
               label="Rate"
               variant="standard"
-              placeholder={`Input the amount of ${SYMBOL[NETWORK]}`}
+              placeholder={`Input the amount of ${SYMBOL[network]}`}
               onChange={handleInputChange}
             />
             &nbsp;
-            <Button onClick={_setRate} variant="contained">
+            <Button
+              disabled={isSetRateDisabled}
+              onClick={_setRate}
+              variant="contained"
+            >
               Set Rate
             </Button>
             <Title>Current Rate</Title>
             <Text>
               {currentRate
-                ? `${formatUnit(currentRate, DECIMALS[NETWORK])} ${NETWORK}`
+                ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
                 : "N/A"}
             </Text>
           </InputWrapper>
@@ -290,8 +352,8 @@ export const TabsMain = () => {
                       <Text>
                         {`${formatUnit(
                           Number(supporter?.pureBalance),
-                          DECIMALS[NETWORK]
-                        )} ${NETWORK}`}
+                          DECIMALS[network]
+                        )} ${network}`}
                       </Text>
 
                       <Button
@@ -322,8 +384,8 @@ export const TabsMain = () => {
                   <Text>
                     {`${formatUnit(
                       Number(supporter?.supporterBalance),
-                      DECIMALS[NETWORK]
-                    )} ${NETWORK}`}
+                      DECIMALS[network]
+                    )} ${network}`}
                   </Text>
 
                   <Button
@@ -374,18 +436,24 @@ export const TabsMain = () => {
           />
           <Title>Commit and Subscribe</Title>
           <Subtitle>Creator</Subtitle>
-          <Text>{toShortAddress(CREATOR[NETWORK])}</Text>
+          <Text>{toShortAddress(CREATOR[network])}</Text>
           <Container>
             <ActionWrapper>
               <Subtitle>Current Rate</Subtitle>
               <Text>
                 {currentRate
-                  ? `${formatUnit(currentRate, DECIMALS[NETWORK])} ${NETWORK}`
+                  ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
                   : "N/A"}
               </Text>
               <Container>
-                <Checkbox checked={isCommitted} onClick={handleClick} />
-                <Text>Earmark funds exclusively for this creator</Text>
+                <CheckWrapper onClick={handleCommittedClick}>
+                  <Checkbox checked={isCommitted} />
+                  <Text>Earmark funds exclusively for this creator</Text>
+                </CheckWrapper>
+                <CheckWrapper onClick={handleDelayedClick}>
+                  <Checkbox checked={isDelayed} />
+                  <Text>Delay transfer</Text>
+                </CheckWrapper>
               </Container>
               <Container>
                 <Button onClick={_subscribe} variant="contained">
@@ -409,7 +477,7 @@ export const TabsMain = () => {
           </Wrapper>
         </InputWrapper>
       )}
-      {value === 2 && <PaymentSystem creators={creators} />}
+      {/* {value === 2 && <PaymentSystem creators={creators} />} */}
     </Root>
   );
 };
