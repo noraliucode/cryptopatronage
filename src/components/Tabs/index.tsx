@@ -159,7 +159,8 @@ export const TabsMain = () => {
       network,
       callback,
       setLoading,
-      pure
+      pure,
+      isDelayed
     );
   };
 

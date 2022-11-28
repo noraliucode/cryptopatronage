@@ -2,6 +2,8 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { PURE_CREATED, NODE_ENDPOINT, DEFAULT_NETWORK } from "./constants";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import { formatAdditionalInfo } from "./helpers";
+import type { H256 } from "@polkadot/types/interfaces";
+import type { Bytes } from "@polkadot/types";
 
 const wsProvider = new WsProvider(NODE_ENDPOINT[DEFAULT_NETWORK]);
 const createApi = async () => {
@@ -88,9 +90,17 @@ export const signAndSendAddProxyViaProxy = async (
     .signAndSend(sender, { signer: injector.signer }, (status) => {});
 };
 
-export const addProxyViaProxy = async (proxy: string, real?: string) => {
+export const addProxyViaProxy = async (
+  proxy: string,
+  real?: string,
+  delay = 0
+) => {
   const api = await createApi();
-  return api.tx.proxy.proxy(real, null, api.tx.proxy.addProxy(proxy, "Any", 0));
+  return api.tx.proxy.proxy(
+    real,
+    null,
+    api.tx.proxy.addProxy(proxy, "Any", delay)
+  );
 };
 
 export const removeProxiesViaProxy = async (call: any, real?: string) => {
@@ -241,4 +251,14 @@ export const setIdentity = async (essentialInfo: any, additionalInfo: any) => {
     ...essentialInfo,
     additional: [[{ Raw: JSON.stringify(additionalInfo) }]],
   });
+};
+
+export const getAnnouncePromise = async (real: string, call_hash: H256) => {
+  const api = await createApi();
+  return api.tx.proxy.announce(real, call_hash);
+};
+
+export const getNotePreimagePromise = async (bytes: Bytes) => {
+  const api = await createApi();
+  return api.tx.preimage.notePreimage(bytes);
 };
