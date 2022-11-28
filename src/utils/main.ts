@@ -12,11 +12,20 @@ import {
   transferViaProxy,
   setIdentity,
   getRemoveProxyPromise,
+  getAnnouncePromise,
+  getNotePreimagePromise,
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
-import { CREATOR, DECIMALS, USER_PAYMENT, RESERVED_AMOUNT } from "./constants";
+import {
+  CREATOR,
+  DECIMALS,
+  USER_PAYMENT,
+  RESERVED_AMOUNT,
+  SECONDS_IN_ONE_DAY,
+} from "./constants";
 import { getPaymentAmount, parseAdditionalInfo } from "./helpers";
 import { INetwork } from "./types";
+import type { H256 } from "@polkadot/types/interfaces";
 
 type AnonymousData = {
   pure: string;
@@ -34,18 +43,22 @@ export const subscribe = async (
   network: INetwork,
   callback?: any,
   setLoading?: (_: boolean) => void,
-  pureProxy?: string
+  pureProxy?: string,
+  isDelayed = false
 ) => {
   try {
     setLoading && setLoading(true);
     let real = sender;
+    let delay = isDelayed ? SECONDS_IN_ONE_DAY : 0;
+    // let delay = isDelayed ? 300 : 0; // for testing
     if (isCommitted) {
       // check if the supporter has created pure proxy to the creator
       if (!pureProxy) {
         console.log("ceate anonymous proxy...");
         const proxyData = (await createAnonymousProxy(
           sender,
-          injector
+          injector,
+          delay
         )) as AnonymousEvent;
         const { pure, who } = proxyData.data;
         real = pure;
@@ -65,15 +78,33 @@ export const subscribe = async (
       // const totalAmount =
       //   Math.ceil(Number(fee)) * 10 ** M_DECIMALS[NETWORK] + amount + reserved;
 
-      const txs = await Promise.all([
+      const promises = [
         transfer(real, amount + reserved),
-        addProxyViaProxy(CREATOR[network], real),
+        addProxyViaProxy(CREATOR[network], real, delay),
         getSetLastPaymentTimeTx(sender),
-      ]);
+      ];
 
-      console.log("normal transfer to anonymous proxy...");
+      let txs = await Promise.all(promises);
+
       console.log("set creator as main proxy...");
       console.log("set last payment time...");
+      if (isDelayed) {
+        console.log(
+          "publish the hash of a proxy-call that will be made in the future...."
+        );
+        console.log("register a preimage on-chain....");
+        const tranferTx = txs[0] as any;
+        // remove transfer tx
+        txs.shift();
+        const extras = [
+          getAnnouncePromise(real, tranferTx.hash),
+          getNotePreimagePromise(tranferTx.data),
+        ];
+        const extraTxs = await Promise.all(extras);
+        txs = [...txs, ...extraTxs];
+      } else {
+        console.log("normal transfer to anonymous proxy...");
+      }
       await batchCalls(txs, sender, injector, callback);
     } else {
       console.log("set creator as proxy...");

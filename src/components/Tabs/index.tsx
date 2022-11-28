@@ -22,6 +22,7 @@ import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { PaymentSystem } from "../PaymentSystem";
 import { useCreators } from "../../hooks/useCreators";
 import { Modal } from "../Modal";
+import { signAndSendUnnotePreimage } from "../../utils/apiCalls";
 
 const Root = styled("div")(() => ({
   width: 600,
@@ -159,7 +160,8 @@ export const TabsMain = () => {
       network,
       callback,
       setLoading,
-      pure
+      pure,
+      isDelayed
     );
   };
 
@@ -173,6 +175,10 @@ export const TabsMain = () => {
       }));
     };
     await unsubscribe(signer, injector, CREATOR[network], callback, setLoading);
+  };
+
+  const _unnotePreimage = async () => {
+    // await signAndSendUnnotePreimage(signer, injector, "");
   };
 
   const setLoading = (value: boolean) => {
@@ -462,6 +468,10 @@ export const TabsMain = () => {
                 &nbsp;
                 <Button onClick={_unsubscribe} variant="outlined">
                   Unsubscribe
+                </Button>
+                &nbsp;
+                <Button onClick={_unnotePreimage} variant="contained">
+                  Unnote Preimage
                 </Button>
               </Container>
             </ActionWrapper>
