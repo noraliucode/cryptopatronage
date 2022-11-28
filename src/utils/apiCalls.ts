@@ -262,3 +262,14 @@ export const getNotePreimagePromise = async (bytes: Bytes) => {
   const api = await createApi();
   return api.tx.preimage.notePreimage(bytes);
 };
+
+export const signAndSendUnnotePreimage = async (
+  sender: string,
+  injector: any,
+  hash: H256
+) => {
+  const api = await createApi();
+  await api.tx.preimage
+    .unnotePreimage(hash)
+    .signAndSend(sender, { signer: injector.signer });
+};
