@@ -24,9 +24,12 @@ import { useCreators } from "../../hooks/useCreators";
 import { Modal } from "../Modal";
 import { signAndSendUnnotePreimage } from "../../utils/apiCalls";
 
-const Root = styled("div")(() => ({
+const Root = styled("div")(({ theme }) => ({
   width: 600,
   height: 500,
+  [theme.breakpoints.down("md")]: {
+    width: "90%",
+  },
 }));
 const Text = styled("div")(() => ({
   color: "black",
