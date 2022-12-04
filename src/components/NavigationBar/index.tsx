@@ -14,7 +14,7 @@ export const NavigationBar = () => {
   }: IWeb3ConnectedContextState = useWeb3ConnectedContext();
 
   return (
-    <AppBar>
+    <AppBar color="secondary" enableColorOnDark>
       <Toolbar>
         <Typography variant="h6" sx={{ my: 2 }}>
           {"Cryptopatronage".toUpperCase()}
