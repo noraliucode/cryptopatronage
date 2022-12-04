@@ -59,6 +59,8 @@ const Title = styled("div")(() => ({
   fontSize: 18,
   margin: "20px 0 0 0",
   textAlign: "left",
+  fontWeight: 700,
+  marginBottom: 20,
 }));
 const ActionWrapper = styled("div")(() => ({
   display: "flex",
@@ -308,9 +310,7 @@ export const TabsMain = () => {
             open={open}
             message={message}
           />
-          <Title>
-            <Typography>Register to payment system</Typography>
-          </Title>
+          <Title>Register to payment system</Title>
           <InputWrapper>
             <Text>
               Status:{" "}
