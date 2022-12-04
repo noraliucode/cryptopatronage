@@ -1,4 +1,4 @@
-import { Box, Tabs, Tab } from "@mui/material";
+import { Box, Tabs, Tab, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
@@ -26,15 +26,19 @@ import { signAndSendUnnotePreimage } from "../../utils/apiCalls";
 
 const Root = styled("div")(({ theme }) => ({
   width: 600,
-  height: 500,
   [theme.breakpoints.down("md")]: {
     width: "90%",
   },
+  background: "#300f78",
+  padding: "20px",
+  borderRadius: "5px",
+  margin: "auto",
+  marginTop: 100,
 }));
 const Text = styled("div")(() => ({
-  color: "black",
   fontSize: 14,
   lineHeight: 2,
+  color: "white",
 }));
 const CheckWrapper = styled("div")(() => ({
   cursor: "pointer",
@@ -51,7 +55,7 @@ const Wrapper = styled("div")(() => ({
   marginTop: "15px",
 }));
 const Title = styled("div")(() => ({
-  color: "black",
+  color: "white",
   fontSize: 18,
   margin: "20px 0 0 0",
   textAlign: "left",
@@ -73,7 +77,7 @@ const PullPaymentWrapper = styled("div")(() => ({
   alignItems: "center",
 }));
 const Subtitle = styled("div")(() => ({
-  color: "black",
+  color: "white",
   fontSize: 16,
   margin: "20px 0 0 0",
 }));
@@ -304,7 +308,9 @@ export const TabsMain = () => {
             open={open}
             message={message}
           />
-          <Title>Register to payment system</Title>
+          <Title>
+            <Typography>Register to payment system</Typography>
+          </Title>
           <InputWrapper>
             <Text>
               Status:{" "}
