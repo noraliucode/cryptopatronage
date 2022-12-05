@@ -100,6 +100,8 @@ type IState = {
   isModalOpen: boolean;
   isDelayed: boolean;
   isShowAllCreators: boolean;
+  selectedCreator: string;
+  creatorUrl: string;
 };
 
 export const TabsMain = () => {
@@ -115,6 +117,8 @@ export const TabsMain = () => {
     isModalOpen: false,
     isDelayed: false,
     isShowAllCreators: false,
+    selectedCreator: "",
+    creatorUrl: "",
   });
 
   const {
@@ -128,6 +132,8 @@ export const TabsMain = () => {
     isModalOpen,
     isDelayed,
     isShowAllCreators,
+    selectedCreator,
+    creatorUrl,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -287,6 +293,22 @@ export const TabsMain = () => {
     setState((prev) => ({
       ...prev,
       isShowAllCreators: true,
+    }));
+  };
+
+  const setCreatorUrl = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setState((prev) => ({
+      ...prev,
+      creatorUrl: event.target.value,
+    }));
+  };
+
+  const setSelectedCreator = () => {
+    setState((prev) => ({
+      ...prev,
+      selectedCreator: selectedCreator,
     }));
   };
 
@@ -483,15 +505,25 @@ export const TabsMain = () => {
             open={isUnsubscribing}
             message="Unsubscribing..."
           />
-
           <TitleWrapper>
             <Title>Commit and Subscribe</Title>
             <Tooltip title="Subscribe to current selected creator">
               <img alt="question" src="/assets/icons/question.svg" />
             </Tooltip>
           </TitleWrapper>
-          <Subtitle>Creator</Subtitle>
-          <Text>{toShortAddress(CREATOR[network])}</Text>
+          {/* <Subtitle>Creator</Subtitle>
+          <Text>{toShortAddress(CREATOR[network])}</Text> */}
+          <TextField
+            id="standard-basic"
+            label="Creator"
+            variant="standard"
+            placeholder={`Input the creator's url or address`}
+            onChange={setCreatorUrl}
+          />
+          &nbsp;
+          <Button onClick={setSelectedCreator} variant="contained">
+            Slelect this Creator
+          </Button>
           <ActionWrapper>
             <TitleWrapper>
               <Title>Current Rate</Title>
