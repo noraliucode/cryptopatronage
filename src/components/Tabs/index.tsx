@@ -53,6 +53,7 @@ const Container = styled("div")(() => ({
 }));
 const Wrapper = styled("div")(() => ({
   marginTop: "15px",
+  width: "100%",
 }));
 const Title = styled("div")(() => ({
   color: "white",
@@ -68,7 +69,6 @@ const ActionWrapper = styled("div")(() => ({
 const InputWrapper = styled("div")(() => ({
   display: "flex",
   justifyContent: "center",
-  marginBottom: 50,
   flexDirection: "column",
 }));
 const PullPaymentWrapper = styled("div")(() => ({
@@ -85,6 +85,7 @@ const Subtitle = styled("div")(() => ({
 const TitleWrapper = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
+  marginTop: 20,
 }));
 
 type IState = {
