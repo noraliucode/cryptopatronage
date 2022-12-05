@@ -99,6 +99,7 @@ type IState = {
   message: string;
   isModalOpen: boolean;
   isDelayed: boolean;
+  isShowAllCreators: boolean;
 };
 
 export const TabsMain = () => {
@@ -113,6 +114,7 @@ export const TabsMain = () => {
     message: "",
     isModalOpen: false,
     isDelayed: false,
+    isShowAllCreators: false,
   });
 
   const {
@@ -125,6 +127,7 @@ export const TabsMain = () => {
     open,
     isModalOpen,
     isDelayed,
+    isShowAllCreators,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -141,8 +144,6 @@ export const TabsMain = () => {
   );
   const { committedSupporters, getSupporters, uncommittedSupporters } =
     useSupporters(CREATOR[network], rate);
-
-  // const { creators } = useCreators();
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -281,6 +282,13 @@ export const TabsMain = () => {
   };
 
   const isSetRateDisabled = !rate || rate === 0;
+
+  const showAllCreators = () => {
+    setState((prev) => ({
+      ...prev,
+      isShowAllCreators: true,
+    }));
+  };
 
   return (
     <Root>
@@ -536,7 +544,26 @@ export const TabsMain = () => {
           </Wrapper>
         </InputWrapper>
       )}
-      {/* {value === 2 && <PaymentSystem creators={creators} />} */}
+
+      {value === 2 && (
+        <>
+          <TitleWrapper>
+            <Title>Creators registered to payment system</Title>
+            <Tooltip title="Admins manually transfer fund to creators' account in case of failure">
+              <img alt="question" src="/assets/icons/question.svg" />
+            </Tooltip>
+          </TitleWrapper>
+          {isShowAllCreators ? (
+            <PaymentSystem />
+          ) : (
+            <ActionWrapper>
+              <Button onClick={showAllCreators} variant="contained">
+                Show all creators
+              </Button>
+            </ActionWrapper>
+          )}
+        </>
+      )}
     </Root>
   );
 };
