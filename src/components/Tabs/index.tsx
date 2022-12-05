@@ -33,7 +33,7 @@ const Root = styled("div")(({ theme }) => ({
   padding: "20px",
   borderRadius: "5px",
   margin: "auto",
-  marginTop: 50,
+  marginTop: 30,
 }));
 const Text = styled("div")(() => ({
   fontSize: 14,
@@ -53,6 +53,7 @@ const Container = styled("div")(() => ({
 }));
 const Wrapper = styled("div")(() => ({
   marginTop: "15px",
+  width: "100%",
 }));
 const Title = styled("div")(() => ({
   color: "white",
@@ -68,7 +69,6 @@ const ActionWrapper = styled("div")(() => ({
 const InputWrapper = styled("div")(() => ({
   display: "flex",
   justifyContent: "center",
-  marginBottom: 50,
   flexDirection: "column",
 }));
 const PullPaymentWrapper = styled("div")(() => ({
@@ -85,6 +85,7 @@ const Subtitle = styled("div")(() => ({
 const TitleWrapper = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
+  marginTop: 20,
 }));
 
 type IState = {
@@ -98,6 +99,9 @@ type IState = {
   message: string;
   isModalOpen: boolean;
   isDelayed: boolean;
+  isShowAllCreators: boolean;
+  selectedCreator: string;
+  creatorUrl: string;
 };
 
 export const TabsMain = () => {
@@ -112,6 +116,9 @@ export const TabsMain = () => {
     message: "",
     isModalOpen: false,
     isDelayed: false,
+    isShowAllCreators: false,
+    selectedCreator: "",
+    creatorUrl: "",
   });
 
   const {
@@ -124,6 +131,9 @@ export const TabsMain = () => {
     open,
     isModalOpen,
     isDelayed,
+    isShowAllCreators,
+    selectedCreator,
+    creatorUrl,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -140,8 +150,6 @@ export const TabsMain = () => {
   );
   const { committedSupporters, getSupporters, uncommittedSupporters } =
     useSupporters(CREATOR[network], rate);
-
-  // const { creators } = useCreators();
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -281,6 +289,29 @@ export const TabsMain = () => {
 
   const isSetRateDisabled = !rate || rate === 0;
 
+  const showAllCreators = () => {
+    setState((prev) => ({
+      ...prev,
+      isShowAllCreators: true,
+    }));
+  };
+
+  const setCreatorUrl = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setState((prev) => ({
+      ...prev,
+      creatorUrl: event.target.value,
+    }));
+  };
+
+  const setSelectedCreator = () => {
+    setState((prev) => ({
+      ...prev,
+      selectedCreator: selectedCreator,
+    }));
+  };
+
   return (
     <Root>
       <Modal
@@ -297,6 +328,7 @@ export const TabsMain = () => {
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
+          textColor="primary"
         >
           <Tab label="Creator" />
           <Tab label="Supporter" />
@@ -473,55 +505,68 @@ export const TabsMain = () => {
             open={isUnsubscribing}
             message="Unsubscribing..."
           />
-
           <TitleWrapper>
             <Title>Commit and Subscribe</Title>
             <Tooltip title="Subscribe to current selected creator">
               <img alt="question" src="/assets/icons/question.svg" />
             </Tooltip>
           </TitleWrapper>
-          <Subtitle>Creator</Subtitle>
-          <Text>{toShortAddress(CREATOR[network])}</Text>
-          <Container>
-            <ActionWrapper>
-              <TitleWrapper>
-                <Title>Current Rate</Title>
-                <Tooltip title="Rate for current selected creator">
-                  <img alt="question" src="/assets/icons/question.svg" />
-                </Tooltip>
-              </TitleWrapper>
-              <Text>
-                {currentRate
-                  ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
-                  : "N/A"}
-              </Text>
-              <Container>
-                <CheckWrapper onClick={handleCommittedClick}>
-                  <Checkbox checked={isCommitted} />
-                  <Text>Earmark funds exclusively for this creator</Text>
-                </CheckWrapper>
-                <CheckWrapper onClick={handleDelayedClick}>
-                  <Checkbox checked={isDelayed} />
-                  <Text>Delay transfer</Text>
-                </CheckWrapper>
-              </Container>
-              <Container>
-                <Button onClick={_subscribe} variant="contained">
-                  Subscribe
-                </Button>
-                &nbsp;
-                <Button onClick={_unsubscribe} variant="outlined">
-                  Unsubscribe
-                </Button>
-                &nbsp;
-                <Button onClick={_unnotePreimage} variant="contained">
-                  Unnote Preimage
-                </Button>
-              </Container>
-            </ActionWrapper>
-          </Container>
+          {/* <Subtitle>Creator</Subtitle>
+          <Text>{toShortAddress(CREATOR[network])}</Text> */}
+          <TextField
+            id="standard-basic"
+            label="Creator"
+            variant="standard"
+            placeholder={`Input the creator's url or address`}
+            onChange={setCreatorUrl}
+          />
+          &nbsp;
+          <Button onClick={setSelectedCreator} variant="contained">
+            Slelect this Creator
+          </Button>
+          <ActionWrapper>
+            <TitleWrapper>
+              <Title>Current Rate</Title>
+              <Tooltip title="Rate for current selected creator">
+                <img alt="question" src="/assets/icons/question.svg" />
+              </Tooltip>
+            </TitleWrapper>
+            <Text>
+              {currentRate
+                ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
+                : "N/A"}
+            </Text>
+            <Container>
+              <CheckWrapper onClick={handleCommittedClick}>
+                <Checkbox checked={isCommitted} />
+                <Text>Earmark funds exclusively for this creator</Text>
+              </CheckWrapper>
+              <CheckWrapper onClick={handleDelayedClick}>
+                <Checkbox checked={isDelayed} />
+                <Text>Delay transfer</Text>
+              </CheckWrapper>
+            </Container>
+            <Container>
+              <Button onClick={_subscribe} variant="contained">
+                Subscribe
+              </Button>
+              &nbsp;
+              <Button onClick={_unsubscribe} variant="outlined">
+                Unsubscribe
+              </Button>
+              &nbsp;
+            </Container>
+          </ActionWrapper>
+          <TitleWrapper>
+            <Title>Unnote Preimages</Title>
+            <Tooltip title="Withdraw the deposit for delay proxy">
+              <img alt="question" src="/assets/icons/question.svg" />
+            </Tooltip>
+          </TitleWrapper>
+          <Button onClick={_unnotePreimage} variant="contained">
+            Unnote Preimage
+          </Button>
           <Wrapper>
-            <hr />
             <Wrapper>
               <Title>Subscribed Creators</Title>
               {subscribedCreators.map((address) => (
@@ -531,7 +576,26 @@ export const TabsMain = () => {
           </Wrapper>
         </InputWrapper>
       )}
-      {/* {value === 2 && <PaymentSystem creators={creators} />} */}
+
+      {value === 2 && (
+        <>
+          <TitleWrapper>
+            <Title>Creators registered to payment system</Title>
+            <Tooltip title="Admins manually transfer fund to creators' account in case of failure">
+              <img alt="question" src="/assets/icons/question.svg" />
+            </Tooltip>
+          </TitleWrapper>
+          {isShowAllCreators ? (
+            <PaymentSystem />
+          ) : (
+            <ActionWrapper>
+              <Button onClick={showAllCreators} variant="contained">
+                Show all creators
+              </Button>
+            </ActionWrapper>
+          )}
+        </>
+      )}
     </Root>
   );
 };
