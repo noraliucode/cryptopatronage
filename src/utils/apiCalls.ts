@@ -273,3 +273,13 @@ export const signAndSendUnnotePreimage = async (
     .unnotePreimage(hash)
     .signAndSend(sender, { signer: injector.signer });
 };
+
+export const getPreimageStatus = async (hash: H256) => {
+  const api = await createApi();
+  await api.query.preimage.statusFor(hash);
+};
+
+export const getPreimageData = async (hash: H256) => {
+  const api = await createApi();
+  await api.query.preimage.preimageFor(hash);
+};

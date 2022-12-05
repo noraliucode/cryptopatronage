@@ -14,6 +14,8 @@ import {
   getRemoveProxyPromise,
   getAnnouncePromise,
   getNotePreimagePromise,
+  getPreimageStatus,
+  getPreimageData,
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import {
@@ -282,5 +284,21 @@ export const toggleIsRegisterToPaymentSystem = async (
     return tx;
   } catch (error) {
     console.error("toggleIsRegisterToPaymentSystem error", error);
+  }
+};
+
+export const executePreimages = async (
+  sender: string,
+  injector: InjectedExtension,
+  hash: H256
+) => {
+  try {
+    const status = await getPreimageStatus(hash);
+    console.log("status", status);
+
+    const preimage = await getPreimageData(hash);
+    await batchCalls(preimage, sender, injector);
+  } catch (error) {
+    console.error("executePreimage error", error);
   }
 };
