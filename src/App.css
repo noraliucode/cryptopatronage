@@ -40,3 +40,8 @@ body
     transform: rotate(360deg);
   }
 }
+
+.selector-image {
+    width: 12px;
+    transform: rotate(90deg);
+}

@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { NETWORKS } from "../../utils/constants";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
 type IState = {
   open: boolean;
@@ -43,6 +44,7 @@ export const NetworkSelector = ({ setNetwork, network }: IProps) => {
     <>
       <Button onClick={handleClick}>
         {typeof network === "string" && network ? network : "Select Network"}
+        <PlayArrowIcon className="selector-image" />
       </Button>
       <Menu
         id="basic-menu"
