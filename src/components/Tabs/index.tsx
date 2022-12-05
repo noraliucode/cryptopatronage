@@ -297,6 +297,7 @@ export const TabsMain = () => {
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
+          textColor="primary"
         >
           <Tab label="Creator" />
           <Tab label="Supporter" />
@@ -482,44 +483,42 @@ export const TabsMain = () => {
           </TitleWrapper>
           <Subtitle>Creator</Subtitle>
           <Text>{toShortAddress(CREATOR[network])}</Text>
-          <Container>
-            <ActionWrapper>
-              <TitleWrapper>
-                <Title>Current Rate</Title>
-                <Tooltip title="Rate for current selected creator">
-                  <img alt="question" src="/assets/icons/question.svg" />
-                </Tooltip>
-              </TitleWrapper>
-              <Text>
-                {currentRate
-                  ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
-                  : "N/A"}
-              </Text>
-              <Container>
-                <CheckWrapper onClick={handleCommittedClick}>
-                  <Checkbox checked={isCommitted} />
-                  <Text>Earmark funds exclusively for this creator</Text>
-                </CheckWrapper>
-                <CheckWrapper onClick={handleDelayedClick}>
-                  <Checkbox checked={isDelayed} />
-                  <Text>Delay transfer</Text>
-                </CheckWrapper>
-              </Container>
-              <Container>
-                <Button onClick={_subscribe} variant="contained">
-                  Subscribe
-                </Button>
-                &nbsp;
-                <Button onClick={_unsubscribe} variant="outlined">
-                  Unsubscribe
-                </Button>
-                &nbsp;
-                <Button onClick={_unnotePreimage} variant="contained">
-                  Unnote Preimage
-                </Button>
-              </Container>
-            </ActionWrapper>
-          </Container>
+          <ActionWrapper>
+            <TitleWrapper>
+              <Title>Current Rate</Title>
+              <Tooltip title="Rate for current selected creator">
+                <img alt="question" src="/assets/icons/question.svg" />
+              </Tooltip>
+            </TitleWrapper>
+            <Text>
+              {currentRate
+                ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
+                : "N/A"}
+            </Text>
+            <Container>
+              <CheckWrapper onClick={handleCommittedClick}>
+                <Checkbox checked={isCommitted} />
+                <Text>Earmark funds exclusively for this creator</Text>
+              </CheckWrapper>
+              <CheckWrapper onClick={handleDelayedClick}>
+                <Checkbox checked={isDelayed} />
+                <Text>Delay transfer</Text>
+              </CheckWrapper>
+            </Container>
+            <Container>
+              <Button onClick={_subscribe} variant="contained">
+                Subscribe
+              </Button>
+              &nbsp;
+              <Button onClick={_unsubscribe} variant="outlined">
+                Unsubscribe
+              </Button>
+              &nbsp;
+              <Button onClick={_unnotePreimage} variant="contained">
+                Unnote Preimage
+              </Button>
+            </Container>
+          </ActionWrapper>
           <Wrapper>
             <hr />
             <Wrapper>
