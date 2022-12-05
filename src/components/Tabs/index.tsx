@@ -33,7 +33,7 @@ const Root = styled("div")(({ theme }) => ({
   padding: "20px",
   borderRadius: "5px",
   margin: "auto",
-  marginTop: 100,
+  marginTop: 50,
 }));
 const Text = styled("div")(() => ({
   fontSize: 14,
