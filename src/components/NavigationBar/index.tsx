@@ -16,6 +16,7 @@ export const NavigationBar = () => {
   return (
     <AppBar color="secondary" enableColorOnDark>
       <Toolbar>
+        <img alt="question" src="/assets/icons/logo.png" className="logo" />
         <Typography variant="h6" sx={{ my: 2 }}>
           {"Cryptopatronage".toUpperCase()}
         </Typography>

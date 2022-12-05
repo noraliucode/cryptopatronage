@@ -45,3 +45,8 @@ body
     width: 12px;
     transform: rotate(90deg);
 }
+
+.logo {
+  width: 30px;
+  height: 30px;
+}
