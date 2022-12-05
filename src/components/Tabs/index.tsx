@@ -520,7 +520,6 @@ export const TabsMain = () => {
             </Container>
           </ActionWrapper>
           <Wrapper>
-            <hr />
             <Wrapper>
               <Title>Subscribed Creators</Title>
               {subscribedCreators.map((address) => (
