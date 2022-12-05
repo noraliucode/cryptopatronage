@@ -23,7 +23,9 @@ export const NetworkSelector = ({ setNetwork, network }: IProps) => {
   const { open, anchorEl } = state;
 
   const handleClose = (network: string) => {
-    setNetwork(network);
+    if (typeof network === "string") {
+      setNetwork(network);
+    }
     setState((prev) => ({
       ...prev,
       open: !prev.open,

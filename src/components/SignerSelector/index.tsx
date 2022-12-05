@@ -25,7 +25,9 @@ export const SignerSelector = ({ setSigner, signer, accounts }: IProps) => {
   const { open, anchorEl } = state;
 
   const handleClose = (address: string) => {
-    setSigner(address);
+    if (typeof address === "string") {
+      setSigner(address);
+    }
     setState((prev) => ({
       ...prev,
       open: !prev.open,
