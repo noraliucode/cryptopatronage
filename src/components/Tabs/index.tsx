@@ -514,11 +514,17 @@ export const TabsMain = () => {
                 Unsubscribe
               </Button>
               &nbsp;
-              <Button onClick={_unnotePreimage} variant="contained">
-                Unnote Preimage
-              </Button>
             </Container>
           </ActionWrapper>
+          <TitleWrapper>
+            <Title>Unnote Preimages</Title>
+            <Tooltip title="Withdraw the deposit for delay proxy">
+              <img alt="question" src="/assets/icons/question.svg" />
+            </Tooltip>
+          </TitleWrapper>
+          <Button onClick={_unnotePreimage} variant="contained">
+            Unnote Preimage
+          </Button>
           <Wrapper>
             <Wrapper>
               <Title>Subscribed Creators</Title>
