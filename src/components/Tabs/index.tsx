@@ -1,4 +1,4 @@
-import { Box, Tabs, Tab, Typography } from "@mui/material";
+import { Box, Tabs, Tab, Tooltip } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
@@ -57,10 +57,9 @@ const Wrapper = styled("div")(() => ({
 const Title = styled("div")(() => ({
   color: "white",
   fontSize: 18,
-  margin: "20px 0 0 0",
+  margin: "20px 10px 20px 0",
   textAlign: "left",
   fontWeight: 700,
-  marginBottom: 20,
 }));
 const ActionWrapper = styled("div")(() => ({
   display: "flex",
@@ -82,6 +81,10 @@ const Subtitle = styled("div")(() => ({
   color: "white",
   fontSize: 16,
   margin: "20px 0 0 0",
+}));
+const TitleWrapper = styled("div")(() => ({
+  display: "flex",
+  alignItems: "center",
 }));
 
 type IState = {
@@ -310,15 +313,17 @@ export const TabsMain = () => {
             open={open}
             message={message}
           />
-          <Title>Register to payment system</Title>
+          <TitleWrapper>
+            <Title>Register to payment system</Title>
+            <Tooltip title="Register to Cryptopatronage payment system. Payment will automically transfer to your recipient account. (1% fee required)">
+              <img alt="question" src="/assets/icons/question.svg" />
+            </Tooltip>
+          </TitleWrapper>
+
           <InputWrapper>
             <Text>
               Status:{" "}
               {isRegisterToPaymentSystem ? "Registered" : "Not Registered"}
-            </Text>
-            <Text>
-              Register to Cryptopatronage payment system. Payment will
-              automically transfer to your recipient account. (1% fee required)
             </Text>
             <br />
             <Button onClick={handleRegisterClick} variant="contained">
@@ -326,7 +331,12 @@ export const TabsMain = () => {
             </Button>
           </InputWrapper>
           <InputWrapper>
-            <Title>Add Rate</Title>
+            <TitleWrapper>
+              <Title>Add Rate</Title>
+              <Tooltip title="Add rate for current selected creator(signer)">
+                <img alt="question" src="/assets/icons/question.svg" />
+              </Tooltip>
+            </TitleWrapper>
             <TextField
               id="standard-basic"
               label="Rate"
@@ -342,18 +352,25 @@ export const TabsMain = () => {
             >
               Set Rate
             </Button>
-            <Title>Current Rate</Title>
+            <TitleWrapper>
+              <Title>Current Rate</Title>
+              <Tooltip title="Rate for current selected creator(signer)">
+                <img alt="question" src="/assets/icons/question.svg" />
+              </Tooltip>
+            </TitleWrapper>
             <Text>
               {currentRate
                 ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
                 : "N/A"}
             </Text>
           </InputWrapper>
-          <Title>Committed Supporters</Title>
-          <Text>
-            **Creators can not pull payment manually once register to payment
-            system
-          </Text>
+          <TitleWrapper>
+            <Title>Committed Supporters</Title>
+            <Tooltip title="Supporters that are committed to transfer fund meets the rate. Creators can not pull payment manually once register to payment system">
+              <img alt="question" src="/assets/icons/question.svg" />
+            </Tooltip>
+          </TitleWrapper>
+
           <Wrapper>
             {committedSupporters &&
               committedSupporters.map(
@@ -387,7 +404,14 @@ export const TabsMain = () => {
                   )
               )}
           </Wrapper>
-          <Title>Uncommitted Supporters</Title>
+
+          <TitleWrapper>
+            <Title>Uncommitted Supporters</Title>
+            <Tooltip title="Supporters that are not committed to transfer fund meets the rate">
+              <img alt="question" src="/assets/icons/question.svg" />
+            </Tooltip>
+          </TitleWrapper>
+
           <Wrapper>
             {uncommittedSupporters &&
               uncommittedSupporters.map((supporter, index) => (
@@ -449,12 +473,23 @@ export const TabsMain = () => {
             open={isUnsubscribing}
             message="Unsubscribing..."
           />
-          <Title>Commit and Subscribe</Title>
+
+          <TitleWrapper>
+            <Title>Commit and Subscribe</Title>
+            <Tooltip title="Subscribe to current selected creator">
+              <img alt="question" src="/assets/icons/question.svg" />
+            </Tooltip>
+          </TitleWrapper>
           <Subtitle>Creator</Subtitle>
           <Text>{toShortAddress(CREATOR[network])}</Text>
           <Container>
             <ActionWrapper>
-              <Subtitle>Current Rate</Subtitle>
+              <TitleWrapper>
+                <Title>Current Rate</Title>
+                <Tooltip title="Rate for current selected creator">
+                  <img alt="question" src="/assets/icons/question.svg" />
+                </Tooltip>
+              </TitleWrapper>
               <Text>
                 {currentRate
                   ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
