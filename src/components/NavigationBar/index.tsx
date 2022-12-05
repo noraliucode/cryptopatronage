@@ -18,7 +18,7 @@ export const NavigationBar = () => {
       <Toolbar>
         <img alt="question" src="/assets/icons/logo.png" className="logo" />
         <Typography variant="h6" sx={{ my: 2 }}>
-          {"Cryptopatronage".toUpperCase()}
+          CryptoPatronage
         </Typography>
         <Divider />
         <NetworkSelector setNetwork={setNetwork} network={network} />
