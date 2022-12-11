@@ -8,6 +8,12 @@ export type ISupporter = {
 };
 export type ISupporters = ISupporter[] | null;
 
+export type ICreatorProxyParsed = {
+  creator: string;
+  pure?: string;
+};
+export type IProxyParsedCreators = ICreatorProxyParsed[] | [];
+
 export type IAccount = {
   address: string;
   meta: IMeta;
@@ -46,4 +52,9 @@ export type ICreatorAddress = {
   ROCOCO: string;
   WESTEND: string;
   KUSAMA: string;
+};
+
+export type IParsedProxies = {
+  committedCreators: IProxyParsedCreators;
+  uncommittedCreators: IProxyParsedCreators;
 };

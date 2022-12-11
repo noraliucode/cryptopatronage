@@ -11,7 +11,7 @@ import {
 } from "../../utils/main";
 import { CREATOR, DECIMALS, SUPPORTER, SYMBOL } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
-import { formatUnit, getUserPure, toShortAddress } from "../../utils/helpers";
+import { findPure, formatUnit, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
 import { IWeb3ConnectedContextState } from "../../utils/types";
@@ -22,7 +22,7 @@ import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { PaymentSystem } from "../PaymentSystem";
 import { useCreators } from "../../hooks/useCreators";
 import { Modal } from "../Modal";
-import { signAndSendUnnotePreimage } from "../../utils/apiCalls";
+import { getProxies, signAndSendUnnotePreimage } from "../../utils/apiCalls";
 
 const Root = styled("div")(({ theme }) => ({
   width: 600,
@@ -143,11 +143,8 @@ export const TabsMain = () => {
     getRate,
     isRegisterToPaymentSystem,
   } = useIdentity(CREATOR[network]);
-  const { subscribedCreators, getSubscribedCreators } = useSubscribedCreators(
-    SUPPORTER[network],
-    rate,
-    network
-  );
+  const { committedCreators, uncommittedCreators, getSubscribedCreators } =
+    useSubscribedCreators(signer, rate, network);
   const { committedSupporters, getSupporters, uncommittedSupporters } =
     useSupporters(CREATOR[network], rate);
 
@@ -172,7 +169,10 @@ export const TabsMain = () => {
         isSubscribing: value,
       }));
     };
-    const pure = getUserPure(signer, committedSupporters);
+
+    const supporterProxies: any = await getProxies(signer);
+    // TODO: current selected creator
+    const pure = findPure(supporterProxies, CREATOR[network]);
     await subscribe(
       signer,
       injector,
@@ -568,9 +568,13 @@ export const TabsMain = () => {
           </Button>
           <Wrapper>
             <Wrapper>
-              <Title>Subscribed Creators</Title>
-              {subscribedCreators.map((address) => (
-                <Text>{address}</Text>
+              <Title>Committed subscribed Creators</Title>
+              {committedCreators.map((creator) => (
+                <Text>{creator.creator}</Text>
+              ))}
+              <Title>Uncommitted subscribed Creators</Title>
+              {uncommittedCreators.map((creator) => (
+                <Text>{creator.creator}</Text>
               ))}
             </Wrapper>
           </Wrapper>

@@ -7,7 +7,11 @@ import type {
   Address,
 } from "@polkadot/types/interfaces";
 import { DAYS_IN_ONE_MONTH, SECONDS_IN_ONE_DAY } from "./constants";
-import { ISupporters } from "./types";
+import {
+  ICreatorProxyParsed,
+  IParsedProxies,
+  IProxyParsedCreators,
+} from "./types";
 
 export function toShortAddress(
   _address?: AccountId | AccountIndex | Address | string | null | Uint8Array
@@ -74,13 +78,34 @@ export function formatAdditionalInfo(additionalInfo: any) {
   return _additionalInfo; // [[{Raw: key}, {Raw: value}], [{Raw: key2}, {Raw: value2}]]
 }
 
-export function getUserPure(
-  user: string,
-  supporters: ISupporters
-): string | undefined {
-  if (!supporters) return;
-  const supporter = supporters.find(
-    (supporter) => supporter.supporter === user
+export function findPure(proxies: any, creator: string): string {
+  const { committedCreators } = parseSupporterProxies(proxies);
+  const proxy: ICreatorProxyParsed | undefined = committedCreators.find(
+    (proxy: ICreatorProxyParsed) => proxy.creator === creator
   );
-  return supporter?.pure;
+  const pure = proxy ? proxy.creator : "";
+  return pure;
+}
+
+export function parseSupporterProxies(
+  // TODO: import type PalletProxyProxyDefinition
+  proxies: any
+): IParsedProxies {
+  // TODO: not assignable to parameter of type never" error in TypeScript
+  const committedCreators: any = [];
+  const uncommittedCreators: any = [];
+  proxies.forEach((proxy: any) => {
+    const delegations = proxy[1].toHuman()[0];
+    if (delegations.length > 1) {
+      committedCreators.push({
+        creator: proxy[1].toHuman()[0][1].delegate,
+        pure: proxy[0].toHuman()[0],
+      });
+    } else {
+      uncommittedCreators.push({
+        creator: proxy[0].toHuman()[0],
+      });
+    }
+  });
+  return { committedCreators, uncommittedCreators };
 }
