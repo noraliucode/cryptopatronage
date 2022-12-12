@@ -9,7 +9,7 @@ import {
   toggleIsRegisterToPaymentSystem,
   unsubscribe,
 } from "../../utils/main";
-import { CREATOR, DECIMALS, SUPPORTER, SYMBOL } from "../../utils/constants";
+import { CREATOR, DECIMALS, SYMBOL } from "../../utils/constants";
 import Checkbox from "@mui/material/Checkbox";
 import { findPure, formatUnit, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
@@ -20,7 +20,6 @@ import { useIdentity } from "../../hooks/useIdentity";
 import { useSupporters } from "../../hooks/useSupporters";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { PaymentSystem } from "../PaymentSystem";
-import { useCreators } from "../../hooks/useCreators";
 import { Modal } from "../Modal";
 import { getProxies, signAndSendUnnotePreimage } from "../../utils/apiCalls";
 
