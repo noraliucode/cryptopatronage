@@ -108,7 +108,7 @@ export const Supporter = () => {
   const setSelectedCreator = () => {
     setState((prev) => ({
       ...prev,
-      selectedCreator: selectedCreator,
+      selectedCreator: creatorUrl,
     }));
   };
 
@@ -201,10 +201,16 @@ export const Supporter = () => {
         />
         <TitleWrapper>
           <Title>Commit and Subscribe</Title>
+
           <Tooltip title="Subscribe to current selected creator">
             <img alt="question" src="/assets/icons/question.svg" />
           </Tooltip>
         </TitleWrapper>
+        <Text>
+          Current selected creator:
+          <br />
+          {selectedCreator ? selectedCreator : "N/A"}
+        </Text>
         <TextField
           id="standard-basic"
           label="Creator"
