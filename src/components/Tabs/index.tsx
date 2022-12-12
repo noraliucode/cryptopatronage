@@ -7,7 +7,7 @@ import {
   setRate,
   toggleIsRegisterToPaymentSystem,
 } from "../../utils/main";
-import { CREATOR, DECIMALS, SYMBOL } from "../../utils/constants";
+import { DECIMALS, SYMBOL } from "../../utils/constants";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";

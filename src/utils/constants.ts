@@ -8,11 +8,6 @@ export const USER_PAYMENT = 1;
 export const ANONYMOUS_CREATED = "AnonymousCreated";
 export const PURE_CREATED = "PureCreated";
 export const RESERVED_AMOUNT = 0.001;
-export const CREATOR = {
-  ROCOCO: "5FNo9v1nd4a7C4KBiv769xMqtpmePRnRWpTHrHRPr9SdB1jf",
-  WESTEND: "5FNo9v1nd4a7C4KBiv769xMqtpmePRnRWpTHrHRPr9SdB1jf",
-  KUSAMA: "FtQpEMfFRb2wi8dVcv93uir3R3tC6bbyCJ3EwhMKwf7v3rQ",
-};
 export const SUPPORTER = {
   ROCOCO: "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",
   WESTEND: "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",

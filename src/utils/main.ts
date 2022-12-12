@@ -19,7 +19,6 @@ import {
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import {
-  CREATOR,
   DECIMALS,
   USER_PAYMENT,
   RESERVED_AMOUNT,

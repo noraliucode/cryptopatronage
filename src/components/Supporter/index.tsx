@@ -11,7 +11,7 @@ import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useIdentity } from "../../hooks/useIdentity";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { getProxies } from "../../utils/apiCalls";
-import { CREATOR, DECIMALS } from "../../utils/constants";
+import { DECIMALS } from "../../utils/constants";
 import { findPure, formatUnit } from "../../utils/helpers";
 import { subscribe, unsubscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
