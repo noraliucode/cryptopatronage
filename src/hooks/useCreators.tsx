@@ -46,6 +46,7 @@ export const useCreators = () => {
           const address = allDelegations[index];
           const creator: ICreator = {
             address,
+            rate: identity.rate,
           };
           creators.push(creator);
         }

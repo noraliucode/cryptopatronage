@@ -1,7 +1,10 @@
 import styled from "@emotion/styled";
 import { Button } from "@mui/material";
+import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useCreators } from "../../hooks/useCreators";
-import { toShortAddress } from "../../utils/helpers";
+import { DECIMALS } from "../../utils/constants";
+import { formatUnit, toShortAddress } from "../../utils/helpers";
+import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Text } from "../Tabs";
 const Wrapper = styled("div")(() => ({
   marginTop: "15px",
@@ -21,6 +24,8 @@ const InputWrapper = styled("div")(() => ({
 
 export const PaymentSystem = () => {
   const { creators } = useCreators();
+  const { signer, injector, network }: IWeb3ConnectedContextState =
+    useWeb3ConnectedContext();
   return (
     <Wrapper>
       {creators &&
@@ -30,12 +35,12 @@ export const PaymentSystem = () => {
             {/* for testing */}
             {/* <Text>{supporter?.pure}</Text> */}
 
-            {/* <Text>
-                {`${formatUnit(
-                  Number(creator?.supporterBalance),
-                  DECIMALS[NETWORK]
-                )} ${NETWORK}`}
-              </Text> */}
+            <Text>
+              {`Rate: ${formatUnit(
+                Number(creator?.rate),
+                DECIMALS[network]
+              )} ${network}`}
+            </Text>
 
             <Button onClick={() => {}} variant="contained">
               Transfer

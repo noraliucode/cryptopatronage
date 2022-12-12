@@ -39,6 +39,7 @@ export type ICreator = {
   address?: string;
   transferableBalance?: number;
   supporterBalance?: number;
+  rate?: string;
 };
 
 export type IAdditionalInfo = {
