@@ -19,7 +19,6 @@ import {
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import {
-  CREATOR,
   DECIMALS,
   USER_PAYMENT,
   RESERVED_AMOUNT,
@@ -39,6 +38,7 @@ type AnonymousEvent = {
 };
 
 export const subscribe = async (
+  creator: string,
   sender: string,
   injector: InjectedExtension,
   isCommitted = true,
@@ -82,7 +82,7 @@ export const subscribe = async (
 
       const promises = [
         transfer(real, amount + reserved),
-        addProxyViaProxy(CREATOR[network], real, delay),
+        addProxyViaProxy(creator, real, delay),
         getSetLastPaymentTimeTx(sender),
       ];
 
@@ -110,7 +110,7 @@ export const subscribe = async (
       await batchCalls(txs, sender, injector, callback);
     } else {
       console.log("set creator as proxy...");
-      await signAndSendAddProxy(sender, injector, CREATOR[network]);
+      await signAndSendAddProxy(sender, injector, creator);
     }
   } catch (error) {
     console.error("subscribe error >>", error);
@@ -195,11 +195,11 @@ export const pullPayment = async (
   real: string,
   sender: string,
   injector: any,
-  receiver: string,
   currentRate: number,
   decimals: number,
   supporter: string
 ) => {
+  const receiver = sender;
   try {
     const [creatorIdentity, supporterIdentity] = await Promise.all(
       [sender, supporter].map((x) => getIdentity(x))

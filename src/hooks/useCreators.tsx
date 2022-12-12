@@ -1,3 +1,4 @@
+import { Codec } from "@polkadot/types-codec/types";
 import { useEffect, useState } from "react";
 import { getIdentityPromise, getProxies } from "../utils/apiCalls";
 import { parseAdditionalInfo } from "../utils/helpers";
@@ -17,13 +18,22 @@ export const useCreators = () => {
       // get all prixies nodes.
       const nodes = (await getProxies()) as any;
       // promise all getIdentity and see creator it has rate / ps
-      let identidies = await Promise.all(
-        nodes.map((proxy: any) => {
+      const allDelegations: string[] = [];
+      const getAllDelegations = () => {
+        const promises: Promise<Codec>[] = [];
+        nodes.forEach((proxy: any) => {
           // TODO: Performance optimization
-          const creator = proxy[1].toHuman()[0][0].delegate;
-          return getIdentityPromise(creator);
-        })
-      );
+
+          const delegations = proxy[1].toHuman()[0];
+          delegations.forEach((delegation: any) => {
+            promises.push(getIdentityPromise(delegation.delegate));
+            allDelegations.push(delegation.delegate);
+          });
+        });
+        return promises;
+      };
+
+      let identidies = await Promise.all(getAllDelegations());
 
       identidies = identidies.map((identity) => {
         if (identity) {
@@ -33,9 +43,10 @@ export const useCreators = () => {
       let creators = [] as any;
       identidies.forEach((identity: any, index: number) => {
         if (identity && identity.rate > 0 && identity.ps) {
-          const address = nodes[index][1].toHuman()[0][0].delegate as string;
+          const address = allDelegations[index];
           const creator: ICreator = {
             address,
+            rate: identity.rate,
           };
           creators.push(creator);
         }

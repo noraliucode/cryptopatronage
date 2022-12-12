@@ -11,7 +11,7 @@ import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useIdentity } from "../../hooks/useIdentity";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { getProxies } from "../../utils/apiCalls";
-import { CREATOR, DECIMALS } from "../../utils/constants";
+import { DECIMALS } from "../../utils/constants";
 import { findPure, formatUnit } from "../../utils/helpers";
 import { subscribe, unsubscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
@@ -108,7 +108,7 @@ export const Supporter = () => {
   const setSelectedCreator = () => {
     setState((prev) => ({
       ...prev,
-      selectedCreator: selectedCreator,
+      selectedCreator: creatorUrl,
     }));
   };
 
@@ -141,9 +141,9 @@ export const Supporter = () => {
     };
 
     const supporterProxies: any = await getProxies(signer);
-    // TODO: current selected creator
-    const pure = findPure(supporterProxies, CREATOR[network], signer);
+    const pure = findPure(supporterProxies, selectedCreator, signer);
     await subscribe(
+      selectedCreator,
       signer,
       injector,
       isCommitted,
@@ -164,7 +164,7 @@ export const Supporter = () => {
         isUnsubscribing: value,
       }));
     };
-    await unsubscribe(signer, injector, CREATOR[network], callback, setLoading);
+    await unsubscribe(signer, injector, selectedCreator, callback, setLoading);
   };
 
   const _unnotePreimage = async () => {
@@ -201,10 +201,16 @@ export const Supporter = () => {
         />
         <TitleWrapper>
           <Title>Commit and Subscribe</Title>
+
           <Tooltip title="Subscribe to current selected creator">
             <img alt="question" src="/assets/icons/question.svg" />
           </Tooltip>
         </TitleWrapper>
+        <Text>
+          Current selected creator:
+          <br />
+          {selectedCreator ? selectedCreator : "N/A"}
+        </Text>
         <TextField
           id="standard-basic"
           label="Creator"

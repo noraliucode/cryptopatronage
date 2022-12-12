@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { getBalances, getProxies } from "../utils/apiCalls";
-import { CREATOR } from "../utils/constants";
 import { parseSupporterProxies } from "../utils/helpers";
-import { INetwork, IProxyParsedCreators } from "../utils/types";
+import { IProxyParsedCreators } from "../utils/types";
 
 interface IState {
   committedCreators: IProxyParsedCreators;
