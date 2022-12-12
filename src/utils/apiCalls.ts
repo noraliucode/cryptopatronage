@@ -161,6 +161,12 @@ export const getProxies = async (address?: string) => {
   return proxyNodes;
 };
 
+export const getDelegations = async (address?: string) => {
+  const api = await createApi();
+  const delegations = await api.query.proxy.proxies(address);
+  return delegations;
+};
+
 export const getBalance = async (address: string) => {
   const api = await createApi();
   const { parentHash } = await api.rpc.chain.getHeader();

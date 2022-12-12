@@ -22,8 +22,10 @@ export const useSubscribedCreators = (
   const getSubscribedCreators = async () => {
     try {
       const supporterProxies: any = await getProxies(supporter);
-      const { committedCreators, uncommittedCreators } =
-        parseSupporterProxies(supporterProxies);
+      const { committedCreators, uncommittedCreators } = parseSupporterProxies(
+        supporterProxies,
+        supporter
+      );
       const balances = await getBalances(
         committedCreators.map((proxy: any) => proxy.pure)
       );

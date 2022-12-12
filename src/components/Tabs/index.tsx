@@ -146,7 +146,7 @@ export const TabsMain = () => {
   const { committedCreators, uncommittedCreators, getSubscribedCreators } =
     useSubscribedCreators(signer, rate, network);
   const { committedSupporters, getSupporters, uncommittedSupporters } =
-    useSupporters(CREATOR[network], rate);
+    useSupporters(signer, rate);
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -172,7 +172,7 @@ export const TabsMain = () => {
 
     const supporterProxies: any = await getProxies(signer);
     // TODO: current selected creator
-    const pure = findPure(supporterProxies, CREATOR[network]);
+    const pure = findPure(supporterProxies, CREATOR[network], signer);
     await subscribe(
       signer,
       injector,
@@ -511,8 +511,6 @@ export const TabsMain = () => {
               <img alt="question" src="/assets/icons/question.svg" />
             </Tooltip>
           </TitleWrapper>
-          {/* <Subtitle>Creator</Subtitle>
-          <Text>{toShortAddress(CREATOR[network])}</Text> */}
           <TextField
             id="standard-basic"
             label="Creator"
