@@ -19,10 +19,12 @@ export const useIdentity = (creator: string) => {
       const additionalInfo = parseAdditionalInfo(identity);
 
       const rate = additionalInfo.rate;
-      const isRegisterToPaymentSystem = JSON.parse(additionalInfo.ps);
+      const isRegisterToPaymentSystem = additionalInfo.ps;
 
       setState((prev) => ({ ...prev, rate, isRegisterToPaymentSystem }));
-    } catch (error) {}
+    } catch (error) {
+      console.error("getRate error", error);
+    }
   };
   useEffect(() => {
     getRate();
