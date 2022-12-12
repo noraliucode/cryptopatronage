@@ -2,12 +2,7 @@ import styled from "@emotion/styled";
 import { Button } from "@mui/material";
 import { useCreators } from "../../hooks/useCreators";
 import { toShortAddress } from "../../utils/helpers";
-
-const Text = styled("div")(() => ({
-  color: "black",
-  fontSize: 14,
-  lineHeight: 2,
-}));
+import { Text } from "../Tabs";
 const Wrapper = styled("div")(() => ({
   marginTop: "15px",
 }));
