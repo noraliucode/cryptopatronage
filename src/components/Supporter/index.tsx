@@ -141,9 +141,9 @@ export const Supporter = () => {
     };
 
     const supporterProxies: any = await getProxies(signer);
-    // TODO: current selected creator
-    const pure = findPure(supporterProxies, CREATOR[network], signer);
+    const pure = findPure(supporterProxies, selectedCreator, signer);
     await subscribe(
+      selectedCreator,
       signer,
       injector,
       isCommitted,
@@ -164,7 +164,7 @@ export const Supporter = () => {
         isUnsubscribing: value,
       }));
     };
-    await unsubscribe(signer, injector, CREATOR[network], callback, setLoading);
+    await unsubscribe(signer, injector, selectedCreator, callback, setLoading);
   };
 
   const _unnotePreimage = async () => {

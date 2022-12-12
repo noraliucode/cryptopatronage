@@ -112,7 +112,7 @@ export const TabsMain = () => {
     rate: currentRate,
     getRate,
     isRegisterToPaymentSystem,
-  } = useIdentity(CREATOR[network]);
+  } = useIdentity(signer);
 
   const { committedSupporters, getSupporters, uncommittedSupporters } =
     useSupporters(signer, rate);
@@ -146,7 +146,7 @@ export const TabsMain = () => {
 
     await setRate(
       rate * 10 ** DECIMALS[network],
-      CREATOR[network],
+      signer,
       injector,
       getRate,
       setLoading
@@ -160,9 +160,8 @@ export const TabsMain = () => {
     }));
     await pullPayment(
       real,
-      CREATOR[network],
+      signer,
       injector,
-      CREATOR[network],
       currentRate,
       DECIMALS[network],
       supporter
