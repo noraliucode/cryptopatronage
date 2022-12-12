@@ -85,47 +85,26 @@ export const TitleWrapper = styled("div")(() => ({
 
 type IState = {
   value: number;
-  isCommitted: boolean;
   anonymous: string;
   rate: number;
-  isSubscribing: boolean;
-  isUnsubscribing: boolean;
   open: boolean;
   message: string;
   isModalOpen: boolean;
-  isDelayed: boolean;
   isShowAllCreators: boolean;
-  selectedCreator: string;
-  creatorUrl: string;
 };
 
 export const TabsMain = () => {
   const [state, setState] = useState<IState>({
     value: 0,
-    isCommitted: true,
     anonymous: "",
     rate: 0,
-    isSubscribing: false,
-    isUnsubscribing: false,
     open: false,
     message: "",
     isModalOpen: false,
-    isDelayed: false,
     isShowAllCreators: false,
-    selectedCreator: "",
-    creatorUrl: "",
   });
 
-  const {
-    value,
-    isCommitted,
-    rate,
-    message,
-    open,
-    isModalOpen,
-    isDelayed,
-    isShowAllCreators,
-  } = state;
+  const { value, rate, message, open, isModalOpen, isShowAllCreators } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
