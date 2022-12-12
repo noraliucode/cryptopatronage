@@ -46,7 +46,7 @@ export const useSupporters = (creator: string, rate: number) => {
             // @ts-ignore
             committedSupporterBalances[index].toHuman().data.free;
           // format number wirh commas: '1,000,890,001,100'
-          const balance = Number(_balance.replace(/,/g, ""));
+          const balance = Number(_balance?.replace(/,/g, ""));
 
           if (balance > rate) {
             return {
@@ -64,9 +64,9 @@ export const useSupporters = (creator: string, rate: number) => {
           const _balance =
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            uncommittedSupporterBalances[index].toHuman().data.free;
+            uncommittedSupporterBalances[index]?.toHuman().data.free;
           // format number wirh commas: '1,000,890,001,100'
-          const balance = Number(_balance.replace(/,/g, ""));
+          const balance = Number(_balance?.replace(/,/g, ""));
           if (balance > rate) {
             return {
               ...supporter,

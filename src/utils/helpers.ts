@@ -111,7 +111,7 @@ export function parseSupporterProxies(
       });
     } else {
       committedCreators.push({
-        creator: proxy[1].toHuman()[0][1].delegate,
+        creator: proxy[1].toHuman()[0][1]?.delegate,
         pure: proxy[0].toHuman()[0],
       });
     }
@@ -142,7 +142,7 @@ export async function parseCreatorProxies(
             // and validate if it is pure
             const pureDelegations = nodes && nodes[0].toHuman();
             // In the case of subscribtion adding pure proxy, creator address is the first element.
-            if (pureDelegations && pureDelegations[1].delegate === creator) {
+            if (pureDelegations && pureDelegations[1]?.delegate === creator) {
               committedSupporters.push({
                 supporter: committedSupporter,
                 pure: pureProxyOrSupporter,
