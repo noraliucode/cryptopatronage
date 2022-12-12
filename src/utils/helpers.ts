@@ -52,7 +52,7 @@ export function getPaymentAmount(
 export function parseAdditionalInfo(identity: any) {
   const additionalInfo = {} as any;
   identity
-    .toHuman()
+    ?.toHuman()
     ?.valueOf()
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignores
