@@ -1,63 +1,47 @@
 import { useEffect, useState } from "react";
 import { getBalances, getProxies } from "../utils/apiCalls";
 import { CREATOR } from "../utils/constants";
-import { INetwork } from "../utils/types";
+import { parseSupporterProxies } from "../utils/helpers";
+import { INetwork, IProxyParsedCreators } from "../utils/types";
 
 interface IState {
-  subscribedCreators: string[];
+  committedCreators: IProxyParsedCreators;
+  uncommittedCreators: IProxyParsedCreators;
 }
 
 export const useSubscribedCreators = (
-  user: string,
+  supporter: string,
   rate: number,
-  network: INetwork
+  creator: string
 ) => {
   const [state, setState] = useState<IState>({
-    subscribedCreators: [],
+    committedCreators: [],
+    uncommittedCreators: [],
   });
 
   const getSubscribedCreators = async () => {
     try {
-      const uncommittedNodes = [];
-      const creatorProxies: any = await getProxies(CREATOR[network]);
-      const creatorProxiesFiltered = creatorProxies.filter(
-        // filter all nodes that the property is sender
-        (node: any) => {
-          const delegation = node[1].toHuman()[0][1];
-          if (!delegation) {
-            uncommittedNodes.push(node);
-          } else {
-            return delegation.delegate === user;
-          }
-        }
+      const supporterProxies: any = await getProxies(supporter);
+      const { committedCreators, uncommittedCreators } = parseSupporterProxies(
+        supporterProxies,
+        supporter
       );
-      const creatorProxiesFilteredParsed = creatorProxiesFiltered.map(
-        (proxy: any) => {
-          return {
-            real: proxy[0].toHuman()[0],
-            delegation: proxy[1].toHuman()[0][0].delegate,
-          };
-        }
-      );
-
       const balances = await getBalances(
-        creatorProxiesFilteredParsed.map((proxy: any) => proxy.real)
+        committedCreators.map((proxy: any) => proxy.pure)
       );
 
-      const isRegistered = creatorProxiesFiltered.length > 0;
-
-      const isSubscribed = balances.some((balance) => {
+      const _committedCreators = committedCreators.filter((creator, index) => {
         return (
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          balance.data.free.toNumber() >= rate && isRegistered
+          balances[index].data.free.toNumber() >= rate
         );
       });
 
-      // TODO: creator list is hardcoded for now, should be fixed later
       setState((prev) => ({
         ...prev,
-        subscribedCreators: isSubscribed ? [CREATOR[network]] : [],
+        committedCreators: _committedCreators,
+        uncommittedCreators,
       }));
     } catch (error) {
       console.error("getSubscribedCreators error", error);
@@ -65,6 +49,6 @@ export const useSubscribedCreators = (
   };
   useEffect(() => {
     getSubscribedCreators();
-  }, [user, rate]);
+  }, [supporter, rate]);
   return { ...state, getSubscribedCreators };
 };

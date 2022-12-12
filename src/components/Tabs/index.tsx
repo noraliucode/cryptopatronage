@@ -5,24 +5,19 @@ import Button from "@mui/material/Button";
 import {
   pullPayment,
   setRate,
-  subscribe,
   toggleIsRegisterToPaymentSystem,
-  unsubscribe,
 } from "../../utils/main";
-import { CREATOR, DECIMALS, SUPPORTER, SYMBOL } from "../../utils/constants";
-import Checkbox from "@mui/material/Checkbox";
-import { formatUnit, getUserPure, toShortAddress } from "../../utils/helpers";
+import { CREATOR, DECIMALS, SYMBOL } from "../../utils/constants";
+import { formatUnit, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useIdentity } from "../../hooks/useIdentity";
 import { useSupporters } from "../../hooks/useSupporters";
-import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { PaymentSystem } from "../PaymentSystem";
-import { useCreators } from "../../hooks/useCreators";
 import { Modal } from "../Modal";
-import { signAndSendUnnotePreimage } from "../../utils/apiCalls";
+import { Supporter } from "../Supporter";
 
 const Root = styled("div")(({ theme }) => ({
   width: 600,
@@ -35,38 +30,38 @@ const Root = styled("div")(({ theme }) => ({
   margin: "auto",
   marginTop: 30,
 }));
-const Text = styled("div")(() => ({
+export const Text = styled("div")(() => ({
   fontSize: 14,
   lineHeight: 2,
   color: "white",
 }));
-const CheckWrapper = styled("div")(() => ({
+export const CheckWrapper = styled("div")(() => ({
   cursor: "pointer",
   display: "flex",
   alignItems: "center",
 }));
-const Container = styled("div")(() => ({
+export const Container = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
   marginTop: "10px",
   justifyContent: "center",
 }));
-const Wrapper = styled("div")(() => ({
+export const Wrapper = styled("div")(() => ({
   marginTop: "15px",
   width: "100%",
 }));
-const Title = styled("div")(() => ({
+export const Title = styled("div")(() => ({
   color: "white",
   fontSize: 18,
   margin: "20px 10px 20px 0",
   textAlign: "left",
   fontWeight: 700,
 }));
-const ActionWrapper = styled("div")(() => ({
+export const ActionWrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
 }));
-const InputWrapper = styled("div")(() => ({
+export const InputWrapper = styled("div")(() => ({
   display: "flex",
   justifyContent: "center",
   flexDirection: "column",
@@ -82,7 +77,7 @@ const Subtitle = styled("div")(() => ({
   fontSize: 16,
   margin: "20px 0 0 0",
 }));
-const TitleWrapper = styled("div")(() => ({
+export const TitleWrapper = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
   marginTop: 20,
@@ -90,51 +85,26 @@ const TitleWrapper = styled("div")(() => ({
 
 type IState = {
   value: number;
-  isCommitted: boolean;
   anonymous: string;
   rate: number;
-  isSubscribing: boolean;
-  isUnsubscribing: boolean;
   open: boolean;
   message: string;
   isModalOpen: boolean;
-  isDelayed: boolean;
   isShowAllCreators: boolean;
-  selectedCreator: string;
-  creatorUrl: string;
 };
 
 export const TabsMain = () => {
   const [state, setState] = useState<IState>({
     value: 0,
-    isCommitted: true,
     anonymous: "",
     rate: 0,
-    isSubscribing: false,
-    isUnsubscribing: false,
     open: false,
     message: "",
     isModalOpen: false,
-    isDelayed: false,
     isShowAllCreators: false,
-    selectedCreator: "",
-    creatorUrl: "",
   });
 
-  const {
-    value,
-    isCommitted,
-    rate,
-    isSubscribing,
-    isUnsubscribing,
-    message,
-    open,
-    isModalOpen,
-    isDelayed,
-    isShowAllCreators,
-    selectedCreator,
-    creatorUrl,
-  } = state;
+  const { value, rate, message, open, isModalOpen, isShowAllCreators } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
@@ -143,13 +113,9 @@ export const TabsMain = () => {
     getRate,
     isRegisterToPaymentSystem,
   } = useIdentity(CREATOR[network]);
-  const { subscribedCreators, getSubscribedCreators } = useSubscribedCreators(
-    SUPPORTER[network],
-    rate,
-    network
-  );
+
   const { committedSupporters, getSupporters, uncommittedSupporters } =
-    useSupporters(CREATOR[network], rate);
+    useSupporters(signer, rate);
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -159,46 +125,7 @@ export const TabsMain = () => {
   };
 
   const callback = async () => {
-    await getSubscribedCreators();
     await getSupporters();
-  };
-
-  const _subscribe = async () => {
-    checkSigner();
-    if (!injector) return;
-    const setLoading = (value: boolean) => {
-      setState((prev) => ({
-        ...prev,
-        isSubscribing: value,
-      }));
-    };
-    const pure = getUserPure(signer, committedSupporters);
-    await subscribe(
-      signer,
-      injector,
-      isCommitted,
-      network,
-      callback,
-      setLoading,
-      pure,
-      isDelayed
-    );
-  };
-
-  const _unsubscribe = async () => {
-    checkSigner();
-    if (!injector) return;
-    const setLoading = (value: boolean) => {
-      setState((prev) => ({
-        ...prev,
-        isUnsubscribing: value,
-      }));
-    };
-    await unsubscribe(signer, injector, CREATOR[network], callback, setLoading);
-  };
-
-  const _unnotePreimage = async () => {
-    // await signAndSendUnnotePreimage(signer, injector, "");
   };
 
   const setLoading = (value: boolean) => {
@@ -254,20 +181,6 @@ export const TabsMain = () => {
     );
   };
 
-  const handleCommittedClick = () => {
-    setState((prev) => ({
-      ...prev,
-      isCommitted: !prev.isCommitted,
-    }));
-  };
-
-  const handleDelayedClick = () => {
-    setState((prev) => ({
-      ...prev,
-      isDelayed: !prev.isDelayed,
-    }));
-  };
-
   const handleInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -293,22 +206,6 @@ export const TabsMain = () => {
     setState((prev) => ({
       ...prev,
       isShowAllCreators: true,
-    }));
-  };
-
-  const setCreatorUrl = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setState((prev) => ({
-      ...prev,
-      creatorUrl: event.target.value,
-    }));
-  };
-
-  const setSelectedCreator = () => {
-    setState((prev) => ({
-      ...prev,
-      selectedCreator: selectedCreator,
     }));
   };
 
@@ -487,95 +384,7 @@ export const TabsMain = () => {
           </InputWrapper>
         </>
       )}
-      {value === 1 && (
-        <InputWrapper>
-          <Snackbar
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "center",
-            }}
-            open={isSubscribing}
-            message="Subscribing..."
-          />
-          <Snackbar
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "center",
-            }}
-            open={isUnsubscribing}
-            message="Unsubscribing..."
-          />
-          <TitleWrapper>
-            <Title>Commit and Subscribe</Title>
-            <Tooltip title="Subscribe to current selected creator">
-              <img alt="question" src="/assets/icons/question.svg" />
-            </Tooltip>
-          </TitleWrapper>
-          {/* <Subtitle>Creator</Subtitle>
-          <Text>{toShortAddress(CREATOR[network])}</Text> */}
-          <TextField
-            id="standard-basic"
-            label="Creator"
-            variant="standard"
-            placeholder={`Input the creator's url or address`}
-            onChange={setCreatorUrl}
-          />
-          &nbsp;
-          <Button onClick={setSelectedCreator} variant="contained">
-            Slelect this Creator
-          </Button>
-          <ActionWrapper>
-            <TitleWrapper>
-              <Title>Current Rate</Title>
-              <Tooltip title="Rate for current selected creator">
-                <img alt="question" src="/assets/icons/question.svg" />
-              </Tooltip>
-            </TitleWrapper>
-            <Text>
-              {currentRate
-                ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
-                : "N/A"}
-            </Text>
-            <Container>
-              <CheckWrapper onClick={handleCommittedClick}>
-                <Checkbox checked={isCommitted} />
-                <Text>Earmark funds exclusively for this creator</Text>
-              </CheckWrapper>
-              <CheckWrapper onClick={handleDelayedClick}>
-                <Checkbox checked={isDelayed} />
-                <Text>Delay transfer</Text>
-              </CheckWrapper>
-            </Container>
-            <Container>
-              <Button onClick={_subscribe} variant="contained">
-                Subscribe
-              </Button>
-              &nbsp;
-              <Button onClick={_unsubscribe} variant="outlined">
-                Unsubscribe
-              </Button>
-              &nbsp;
-            </Container>
-          </ActionWrapper>
-          <TitleWrapper>
-            <Title>Unnote Preimages</Title>
-            <Tooltip title="Withdraw the deposit for delay proxy">
-              <img alt="question" src="/assets/icons/question.svg" />
-            </Tooltip>
-          </TitleWrapper>
-          <Button onClick={_unnotePreimage} variant="contained">
-            Unnote Preimage
-          </Button>
-          <Wrapper>
-            <Wrapper>
-              <Title>Subscribed Creators</Title>
-              {subscribedCreators.map((address) => (
-                <Text>{address}</Text>
-              ))}
-            </Wrapper>
-          </Wrapper>
-        </InputWrapper>
-      )}
+      {value === 1 && <Supporter />}
 
       {value === 2 && (
         <>

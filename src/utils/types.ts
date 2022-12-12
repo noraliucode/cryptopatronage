@@ -1,12 +1,18 @@
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 
-export type ISupporter = {
+export type IProxyParsedSupporter = {
   supporter?: string;
   pure?: string;
   pureBalance?: number;
   supporterBalance?: number;
 };
-export type ISupporters = ISupporter[] | null;
+export type IProxyParsedSupporters = IProxyParsedSupporter[] | [];
+
+export type ICreatorProxyParsed = {
+  creator: string;
+  pure?: string;
+};
+export type IProxyParsedCreators = ICreatorProxyParsed[] | [];
 
 export type IAccount = {
   address: string;
@@ -46,4 +52,14 @@ export type ICreatorAddress = {
   ROCOCO: string;
   WESTEND: string;
   KUSAMA: string;
+};
+
+export type IParsedProxies = {
+  committedCreators: IProxyParsedCreators;
+  uncommittedCreators: IProxyParsedCreators;
+};
+
+export type IParsedSupporterProxies = {
+  committedSupporters: IProxyParsedSupporters;
+  uncommittedSupporters: IProxyParsedSupporters;
 };

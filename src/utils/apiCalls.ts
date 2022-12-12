@@ -144,7 +144,11 @@ export const getProxies = async (address?: string) => {
     api.query.proxy.proxies.entries(async (nodes: any) => {
       if (address) {
         const proxyNodes = nodes.filter((node: any) => {
-          return node[1].toHuman()[0][0].delegate === address;
+          return (
+            // node[0] is real account, and node[1] is delegations
+            node[1].toHuman()[0][0].delegate === address ||
+            node[0].toHuman()[0] === address
+          );
         });
         resolve(proxyNodes);
       } else {
@@ -155,6 +159,12 @@ export const getProxies = async (address?: string) => {
 
   const proxyNodes = await promise;
   return proxyNodes;
+};
+
+export const getDelegations = async (address?: string) => {
+  const api = await createApi();
+  const delegations = await api.query.proxy.proxies(address);
+  return delegations;
 };
 
 export const getBalance = async (address: string) => {
