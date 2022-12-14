@@ -189,9 +189,10 @@ export const getIdentity = async (creator: string) => {
   return identity;
 };
 
-export const getIdentityPromise = async (creator: string) => {
+export const getIdentities = async (creators: string[]) => {
   const api = await createApi();
-  return api.query.identity.identityOf(creator);
+  const result = await api.query.identity.identityOf.multi(creators);
+  return result;
 };
 
 export const signAndSendSetIdentity = async (
