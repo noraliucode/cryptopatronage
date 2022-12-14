@@ -53,8 +53,13 @@ export const NavigationBar = () => {
             </TextWrapper>
           </Logo>
           <Button>
-            <NavLink to={"/creators"}>
+            <NavLink to={"/"}>
               <Text> Explore</Text>
+            </NavLink>
+          </Button>
+          <Button>
+            <NavLink to={"/manage"}>
+              <Text> Manage</Text>
             </NavLink>
           </Button>
           <div>

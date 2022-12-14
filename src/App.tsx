@@ -11,7 +11,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
+          path="/manage"
           element={
             // TODO: refactor to render router
             <Layout>
@@ -20,7 +20,7 @@ function App() {
           }
         />
         <Route
-          path="/creators"
+          path="/"
           element={
             <Layout>
               <CreatorsPage />
