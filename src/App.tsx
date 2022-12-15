@@ -1,23 +1,34 @@
 import React from "react";
 import "./App.css";
+
+import { Route, Routes, BrowserRouter } from "react-router-dom";
+import { Layout } from "./layout";
+import { CreatorsPage } from "./page/creatorsPage";
 import { TabsMain } from "./components/Tabs";
-import { Web3ConnectedContextProvider } from "./context/Web3ConnectedContext";
-import { NavigationBar } from "./components/NavigationBar";
-import { ThemeProvider } from "@mui/material/styles";
-import { theme } from "./theme";
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <div className="App">
-        <Web3ConnectedContextProvider>
-          <>
-            <NavigationBar />
-            <TabsMain />
-          </>
-        </Web3ConnectedContextProvider>
-      </div>
-    </ThemeProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/manage"
+          element={
+            // TODO: refactor to render router
+            <Layout>
+              <TabsMain />
+            </Layout>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <CreatorsPage />
+            </Layout>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

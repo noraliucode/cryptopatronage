@@ -2,8 +2,17 @@ import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { NetworkSelector } from "../NetworkSelector";
 import { SignerSelector } from "../SignerSelector";
-import { AppBar, Divider, Toolbar, Typography, Box } from "@mui/material";
+import {
+  AppBar,
+  Divider,
+  Toolbar,
+  Typography,
+  Box,
+  Button,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { NavLink } from "react-router-dom";
+import { Text } from "../Tabs";
 
 const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -43,6 +52,16 @@ export const NavigationBar = () => {
               </Typography>
             </TextWrapper>
           </Logo>
+          <Button>
+            <NavLink to={"/"}>
+              <Text> Explore</Text>
+            </NavLink>
+          </Button>
+          <Button>
+            <NavLink to={"/manage"}>
+              <Text> Manage</Text>
+            </NavLink>
+          </Button>
           <div>
             <NetworkSelector setNetwork={setNetwork} network={network} />
             <SignerSelector
