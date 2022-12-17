@@ -5,10 +5,11 @@ import DialogActions from "@mui/material/DialogActions";
 type IProps = {
   open: boolean;
   onClose: () => void;
+  title?: string;
 };
 
 export const Modal = (props: IProps) => {
-  const { onClose, open } = props;
+  const { onClose, open, title = "Please select signer" } = props;
 
   const handleClose = () => {
     onClose();
@@ -16,7 +17,7 @@ export const Modal = (props: IProps) => {
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Please select signer</DialogTitle>
+      <DialogTitle>{title}</DialogTitle>
       <DialogActions>
         <Button onClick={handleClose} autoFocus>
           Got it

@@ -91,6 +91,7 @@ type IState = {
   message: string;
   isModalOpen: boolean;
   isShowAllCreators: boolean;
+  title: string;
 };
 
 export const TabsMain = () => {
@@ -102,9 +103,11 @@ export const TabsMain = () => {
     message: "",
     isModalOpen: false,
     isShowAllCreators: false,
+    title: "",
   });
 
-  const { value, rate, message, open, isModalOpen, isShowAllCreators } = state;
+  const { value, rate, message, open, isModalOpen, isShowAllCreators, title } =
+    state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
@@ -153,7 +156,22 @@ export const TabsMain = () => {
     );
   };
 
-  const _pullPayment = async (real: string, supporter: string) => {
+  const _pullPayment = async (
+    real?: string,
+    supporter?: string,
+    balance?: number
+  ) => {
+    if (!real || !supporter || !balance) return;
+    console.log("balance", balance);
+    console.log("currentRate", currentRate);
+    if (Number(currentRate) > balance) {
+      setState((prev) => ({
+        ...prev,
+        title: "Insufficient Fund",
+        isModalOpen: true,
+      }));
+      return;
+    }
     setState((prev) => ({
       ...prev,
       message: "Pulling Payment...",
@@ -218,6 +236,7 @@ export const TabsMain = () => {
             isModalOpen: false,
           }))
         }
+        title={title}
       />
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
@@ -320,8 +339,9 @@ export const TabsMain = () => {
                         disabled={isRegisterToPaymentSystem}
                         onClick={() =>
                           _pullPayment(
-                            supporter?.pure as string,
-                            supporter?.supporter as string
+                            supporter?.pure,
+                            supporter?.supporter,
+                            supporter?.pureBalance
                           )
                         }
                         variant="contained"
