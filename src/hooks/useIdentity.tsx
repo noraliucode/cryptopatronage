@@ -21,7 +21,11 @@ export const useIdentity = (creator: string) => {
       const rate = additionalInfo.rate;
       const isRegisterToPaymentSystem = additionalInfo.ps;
 
-      setState((prev) => ({ ...prev, rate, isRegisterToPaymentSystem }));
+      setState((prev) => ({
+        ...prev,
+        rate: Number(rate),
+        isRegisterToPaymentSystem,
+      }));
     } catch (error) {
       console.error("getRate error", error);
     }

@@ -164,7 +164,7 @@ export const TabsMain = () => {
     if (!real || !supporter || !balance) return;
     console.log("balance", balance);
     console.log("currentRate", currentRate);
-    if (Number(currentRate) > balance) {
+    if (currentRate > balance) {
       setState((prev) => ({
         ...prev,
         title: "Insufficient Fund",
