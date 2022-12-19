@@ -46,7 +46,7 @@ export const SignerSelector = ({ setSigner, signer, accounts }: IProps) => {
       <Button variant="contained" onClick={handleClick}>
         {typeof signer === "string" && signer
           ? toShortAddress(signer)
-          : "Select Signer"}
+          : "Connect"}
       </Button>
       <Menu
         id="basic-menu"
