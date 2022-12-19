@@ -191,7 +191,7 @@ export const Supporter = () => {
             <img alt="question" src="/assets/icons/question.svg" />
           </Tooltip>
         </TitleWrapper>
-        <Button onClick={_unnotePreimage} variant="contained">
+        <Button disabled onClick={_unnotePreimage} variant="contained">
           Unnote Preimage
         </Button>
         <Wrapper>
