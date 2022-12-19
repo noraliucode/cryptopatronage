@@ -337,7 +337,10 @@ export const TabsMain = () => {
                       </Text>
 
                       <Button
-                        disabled={isRegisterToPaymentSystem}
+                        disabled={
+                          isRegisterToPaymentSystem ||
+                          supporter?.pureBalance < currentRate
+                        }
                         onClick={() =>
                           _pullPayment(
                             supporter?.pure,
