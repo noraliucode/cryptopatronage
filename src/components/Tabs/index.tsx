@@ -435,7 +435,8 @@ export const TabsMain = () => {
               </Content>
             )}
           </Wrapper>
-          {isShowUncommittedSupporters && (
+          {/* TODO: comment out Uncommitted Pull All for now */}
+          {/* {isShowUncommittedSupporters && (
             <InputWrapper>
               <Button
                 disabled={isRegisterToPaymentSystem}
@@ -447,7 +448,7 @@ export const TabsMain = () => {
                 Pull All
               </Button>
             </InputWrapper>
-          )}
+          )} */}
         </>
       )}
       {value === 1 && <Supporter />}
