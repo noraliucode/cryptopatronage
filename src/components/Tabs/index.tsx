@@ -82,6 +82,9 @@ export const TitleWrapper = styled("div")(() => ({
   alignItems: "center",
   marginTop: 20,
 }));
+export const Content = styled("div")(() => ({
+  margin: 20,
+}));
 
 type IState = {
   value: number;
@@ -319,7 +322,7 @@ export const TabsMain = () => {
           </TitleWrapper>
 
           <Wrapper>
-            {committedSupporters &&
+            {committedSupporters && committedSupporters.length > 0 ? (
               committedSupporters.map(
                 (supporter, index) =>
                   supporter.pureBalance && (
@@ -329,7 +332,7 @@ export const TabsMain = () => {
                       {/* <Text>{supporter?.pure}</Text> */}
 
                       <Text>
-                        {`${formatUnit(
+                        {`Balance: ${formatUnit(
                           Number(supporter?.pureBalance),
                           DECIMALS[network]
                         )} ${network}`}
@@ -350,7 +353,12 @@ export const TabsMain = () => {
                       </Button>
                     </PullPaymentWrapper>
                   )
-              )}
+              )
+            ) : (
+              <Content>
+                <Text>N/A</Text>
+              </Content>
+            )}
           </Wrapper>
 
           <TitleWrapper>
@@ -361,34 +369,42 @@ export const TabsMain = () => {
           </TitleWrapper>
 
           <Wrapper>
-            {uncommittedSupporters &&
-              uncommittedSupporters.map((supporter, index) => (
-                <PullPaymentWrapper key={index}>
-                  <Text>{toShortAddress(supporter?.supporter)}</Text>
-                  {/* for testing */}
-                  {/* <Text>{supporter?.pure}</Text> */}
+            {uncommittedSupporters && uncommittedSupporters.length > 0 ? (
+              uncommittedSupporters.map(
+                (supporter, index) =>
+                  supporter?.supporter && (
+                    <PullPaymentWrapper key={index}>
+                      <Text>{toShortAddress(supporter?.supporter)}</Text>
+                      {/* for testing */}
+                      {/* <Text>{supporter?.pure}</Text> */}
 
-                  <Text>
-                    {`${formatUnit(
-                      Number(supporter?.supporterBalance),
-                      DECIMALS[network]
-                    )} ${network}`}
-                  </Text>
+                      <Text>
+                        {`Balance: ${formatUnit(
+                          Number(supporter?.supporterBalance),
+                          DECIMALS[network]
+                        )} ${network}`}
+                      </Text>
 
-                  <Button
-                    disabled={isRegisterToPaymentSystem}
-                    onClick={() =>
-                      _pullPayment(
-                        supporter?.supporter as string,
-                        supporter?.supporter as string
-                      )
-                    }
-                    variant="contained"
-                  >
-                    Pull Payment
-                  </Button>
-                </PullPaymentWrapper>
-              ))}
+                      <Button
+                        disabled={isRegisterToPaymentSystem}
+                        onClick={() =>
+                          _pullPayment(
+                            supporter?.supporter as string,
+                            supporter?.supporter as string
+                          )
+                        }
+                        variant="contained"
+                      >
+                        Pull Payment
+                      </Button>
+                    </PullPaymentWrapper>
+                  )
+              )
+            ) : (
+              <Content>
+                <Text>N/A</Text>
+              </Content>
+            )}
           </Wrapper>
           <InputWrapper>
             <Button
