@@ -3,6 +3,7 @@ import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
 import {
+  pullAllPayment,
   pullPayment,
   setRate,
   toggleIsRegisterToPaymentSystem,
@@ -180,11 +181,23 @@ export const TabsMain = () => {
     await pullPayment(real, signer, injector, currentRate, DECIMALS[network]);
   };
 
-  const _pullAll = async () => {
+  const _pullAll = async (isCommitted: boolean) => {
     setState((prev) => ({
       ...prev,
       message: "Pulling All Payment...",
     }));
+
+    if (isCommitted) {
+      const reals = committedSupporters.map((x) => x.supporter) as string[];
+
+      await pullAllPayment(
+        reals,
+        signer,
+        injector,
+        currentRate,
+        DECIMALS[network]
+      );
+    }
   };
 
   const handleRegisterClick = () => {
@@ -362,6 +375,17 @@ export const TabsMain = () => {
               </Content>
             )}
           </Wrapper>
+          <InputWrapper>
+            <Button
+              disabled={isRegisterToPaymentSystem}
+              onClick={() => {
+                _pullAll(true);
+              }}
+              variant="contained"
+            >
+              Pull All
+            </Button>
+          </InputWrapper>
 
           <TitleWrapper>
             <Title>Uncommitted Supporters</Title>
@@ -414,7 +438,7 @@ export const TabsMain = () => {
             <Button
               disabled={isRegisterToPaymentSystem}
               onClick={() => {
-                _pullAll();
+                _pullAll(false);
               }}
               variant="contained"
             >

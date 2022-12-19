@@ -193,6 +193,36 @@ export const setRate = async (
   }
 };
 
+const getPaymentPromises = async (
+  real: string,
+  sender: string,
+  currentRate: number,
+  decimals: number
+) => {
+  const receiver = sender;
+  const [creatorIdentity] = await Promise.all(
+    [sender].map((x) => getIdentity(x))
+  );
+  const getLastPaymentTime = (identity: any) => {
+    return parseAdditionalInfo(identity).lastPaymentTime;
+  };
+
+  const lastPaymentTime = getLastPaymentTime(creatorIdentity);
+
+  const amount = getPaymentAmount(
+    currentRate,
+    decimals,
+    lastPaymentTime && lastPaymentTime
+  );
+
+  const promises = [
+    transferViaProxyPromise(real, receiver, amount),
+    setIdentityPromise(creatorIdentity, { lastPaymentTime: Date.now() }),
+  ];
+
+  return promises;
+};
+
 export const pullPayment = async (
   real: string,
   sender: string,
@@ -200,32 +230,39 @@ export const pullPayment = async (
   currentRate: number,
   decimals: number
 ) => {
-  const receiver = sender;
   try {
-    const [creatorIdentity] = await Promise.all(
-      [sender].map((x) => getIdentity(x))
-    );
-    const getLastPaymentTime = (identity: any) => {
-      return parseAdditionalInfo(identity).lastPaymentTime;
-    };
-
-    const lastPaymentTime = getLastPaymentTime(creatorIdentity);
-
-    const amount = getPaymentAmount(
+    const promises = await getPaymentPromises(
+      real,
+      sender,
       currentRate,
-      decimals,
-      lastPaymentTime && lastPaymentTime
+      decimals
     );
-
-    const promises = [
-      transferViaProxyPromise(real, receiver, amount),
-      setIdentityPromise(creatorIdentity, { lastPaymentTime: Date.now() }),
-    ];
 
     const txs = await Promise.all(promises);
     await batchCalls(txs, sender, injector);
   } catch (error) {
     console.error("pullPayment error", error);
+  }
+};
+
+export const pullAllPayment = async (
+  reals: string[],
+  sender: string,
+  injector: any,
+  currentRate: number,
+  decimals: number
+) => {
+  try {
+    const promises: any[] = [];
+    reals.forEach(async (real) => {
+      promises.push(
+        ...(await getPaymentPromises(real, sender, currentRate, decimals))
+      );
+    });
+    const txs = await Promise.all(promises);
+    await batchCalls(txs, sender, injector);
+  } catch (error) {
+    console.error("pull All Payment error", error);
   }
 };
 
