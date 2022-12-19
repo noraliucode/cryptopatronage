@@ -198,8 +198,7 @@ export const pullPayment = async (
   sender: string,
   injector: any,
   currentRate: number,
-  decimals: number,
-  supporter: string
+  decimals: number
 ) => {
   const receiver = sender;
   try {

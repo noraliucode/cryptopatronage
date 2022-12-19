@@ -177,17 +177,15 @@ export const TabsMain = () => {
       ...prev,
       message: "Pulling Payment...",
     }));
-    await pullPayment(
-      real,
-      signer,
-      injector,
-      currentRate,
-      DECIMALS[network],
-      supporter
-    );
+    await pullPayment(real, signer, injector, currentRate, DECIMALS[network]);
   };
 
-  const _pullAll = async () => {};
+  const _pullAll = async () => {
+    setState((prev) => ({
+      ...prev,
+      message: "Pulling All Payment...",
+    }));
+  };
 
   const handleRegisterClick = () => {
     checkSigner();
