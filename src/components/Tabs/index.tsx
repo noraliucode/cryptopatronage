@@ -165,8 +165,6 @@ export const TabsMain = () => {
     balance?: number
   ) => {
     if (!real || !supporter || !balance) return;
-    console.log("balance", balance);
-    console.log("currentRate", currentRate);
     if (currentRate > balance) {
       setState((prev) => ({
         ...prev,
