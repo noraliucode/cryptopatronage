@@ -121,7 +121,7 @@ export const TabsMain = () => {
   } = useIdentity(signer);
 
   const { committedSupporters, getSupporters, uncommittedSupporters } =
-    useSupporters(signer, rate);
+    useSupporters(signer, currentRate);
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
