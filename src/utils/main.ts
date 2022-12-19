@@ -204,7 +204,7 @@ export const pullPayment = async (
   const receiver = sender;
   try {
     const [creatorIdentity] = await Promise.all(
-      [sender, supporter].map((x) => getIdentity(x))
+      [sender].map((x) => getIdentity(x))
     );
     const getLastPaymentTime = (identity: any) => {
       return parseAdditionalInfo(identity).lastPaymentTime;
