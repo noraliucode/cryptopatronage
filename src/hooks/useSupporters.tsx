@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBalances, getBalancesPromise, getProxies } from "../utils/apiCalls";
+import { getBalances, getProxies } from "../utils/apiCalls";
 import { parseCreatorProxies } from "../utils/helpers";
 import { IProxyParsedSupporters } from "../utils/types";
 interface IState {
@@ -21,10 +21,10 @@ export const useSupporters = (creator: string, rate: number) => {
         await parseCreatorProxies(proxyNodes, creator);
 
       // get balances
-      const committedSupporterBalances = await getBalancesPromise(
+      const committedSupporterBalances = await getBalances(
         committedSupporters.map((supporter) => supporter.pure as string)
       );
-      const uncommittedSupporterBalances = await getBalancesPromise(
+      const uncommittedSupporterBalances = await getBalances(
         uncommittedSupporters.map((supporter) => supporter.supporter as string)
       );
 

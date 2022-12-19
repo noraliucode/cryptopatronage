@@ -196,11 +196,6 @@ export const getBalances = async (addresses: string[]) => {
   return balances;
 };
 
-export const getBalancesPromise = async (addresses: string[]) => {
-  const api = await createApi();
-  return api.query.system.account.multi(addresses);
-};
-
 export const getIdentity = async (creator: string) => {
   const api = await createApi();
   const identity = await api.query.identity.identityOf(creator);
