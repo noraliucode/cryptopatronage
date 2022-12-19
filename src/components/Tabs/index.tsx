@@ -218,14 +218,15 @@ export const TabsMain = () => {
     }
   };
 
-  const isSetRateDisabled = !rate || rate === 0;
-
   const showAllCreators = () => {
     setState((prev) => ({
       ...prev,
       isShowAllCreators: true,
     }));
   };
+
+  const isSetRateDisabled = !rate || rate === 0;
+  const isCreator = currentRate > 0;
 
   return (
     <Root>
@@ -320,7 +321,9 @@ export const TabsMain = () => {
           </TitleWrapper>
 
           <Wrapper>
-            {committedSupporters && committedSupporters.length > 0 ? (
+            {committedSupporters &&
+            committedSupporters.length > 0 &&
+            isCreator ? (
               committedSupporters.map(
                 (supporter, index) =>
                   supporter.pureBalance && (
@@ -370,7 +373,9 @@ export const TabsMain = () => {
           </TitleWrapper>
 
           <Wrapper>
-            {uncommittedSupporters && uncommittedSupporters.length > 0 ? (
+            {uncommittedSupporters &&
+            uncommittedSupporters.length > 0 &&
+            isCreator ? (
               uncommittedSupporters.map(
                 (supporter, index) =>
                   supporter?.supporter && (
