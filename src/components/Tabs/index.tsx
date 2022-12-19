@@ -238,7 +238,10 @@ export const TabsMain = () => {
 
   const isSetRateDisabled = !rate || rate === 0;
   const isCreator = currentRate > 0;
-
+  const isShowCommittedSupporters =
+    committedSupporters && committedSupporters.length > 0 && isCreator;
+  const isShowUncommittedSupporters =
+    uncommittedSupporters && uncommittedSupporters.length > 0 && isCreator;
   return (
     <Root>
       <Modal
@@ -332,9 +335,7 @@ export const TabsMain = () => {
           </TitleWrapper>
 
           <Wrapper>
-            {committedSupporters &&
-            committedSupporters.length > 0 &&
-            isCreator ? (
+            {isShowCommittedSupporters ? (
               committedSupporters.map(
                 (supporter, index) =>
                   supporter.pureBalance && (
@@ -375,17 +376,19 @@ export const TabsMain = () => {
               </Content>
             )}
           </Wrapper>
-          <InputWrapper>
-            <Button
-              disabled={isRegisterToPaymentSystem}
-              onClick={() => {
-                _pullAll(true);
-              }}
-              variant="contained"
-            >
-              Pull All
-            </Button>
-          </InputWrapper>
+          {isShowCommittedSupporters && (
+            <InputWrapper>
+              <Button
+                disabled={isRegisterToPaymentSystem}
+                onClick={() => {
+                  _pullAll(true);
+                }}
+                variant="contained"
+              >
+                Pull All
+              </Button>
+            </InputWrapper>
+          )}
 
           <TitleWrapper>
             <Title>Uncommitted Supporters</Title>
@@ -395,9 +398,7 @@ export const TabsMain = () => {
           </TitleWrapper>
 
           <Wrapper>
-            {uncommittedSupporters &&
-            uncommittedSupporters.length > 0 &&
-            isCreator ? (
+            {isShowUncommittedSupporters ? (
               uncommittedSupporters.map(
                 (supporter, index) =>
                   supporter?.supporter && (
@@ -434,17 +435,19 @@ export const TabsMain = () => {
               </Content>
             )}
           </Wrapper>
-          <InputWrapper>
-            <Button
-              disabled={isRegisterToPaymentSystem}
-              onClick={() => {
-                _pullAll(false);
-              }}
-              variant="contained"
-            >
-              Pull All
-            </Button>
-          </InputWrapper>
+          {isShowUncommittedSupporters && (
+            <InputWrapper>
+              <Button
+                disabled={isRegisterToPaymentSystem}
+                onClick={() => {
+                  _pullAll(false);
+                }}
+                variant="contained"
+              >
+                Pull All
+              </Button>
+            </InputWrapper>
+          )}
         </>
       )}
       {value === 1 && <Supporter />}
