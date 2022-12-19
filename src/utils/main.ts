@@ -16,6 +16,8 @@ import {
   getNotePreimagePromise,
   getPreimageStatus,
   getPreimageData,
+  setIdentityPromise,
+  transferViaProxyPromise,
 } from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import {
@@ -191,30 +193,76 @@ export const setRate = async (
   }
 };
 
+const getPaymentPromises = async (
+  real: string,
+  sender: string,
+  currentRate: number,
+  decimals: number
+) => {
+  const receiver = sender;
+  const [creatorIdentity] = await Promise.all(
+    [sender].map((x) => getIdentity(x))
+  );
+  const getLastPaymentTime = (identity: any) => {
+    return parseAdditionalInfo(identity).lastPaymentTime;
+  };
+
+  const lastPaymentTime = getLastPaymentTime(creatorIdentity);
+
+  const amount = getPaymentAmount(
+    currentRate,
+    decimals,
+    lastPaymentTime && lastPaymentTime
+  );
+
+  const promises = [
+    transferViaProxyPromise(real, receiver, amount),
+    setIdentityPromise(creatorIdentity, { lastPaymentTime: Date.now() }),
+  ];
+
+  return promises;
+};
+
 export const pullPayment = async (
   real: string,
   sender: string,
   injector: any,
   currentRate: number,
-  decimals: number,
-  supporter: string
+  decimals: number
 ) => {
-  const receiver = sender;
   try {
-    const [creatorIdentity, supporterIdentity] = await Promise.all(
-      [sender, supporter].map((x) => getIdentity(x))
+    const promises = await getPaymentPromises(
+      real,
+      sender,
+      currentRate,
+      decimals
     );
-    const getLastPaymentTime = (identity: any) => {
-      return parseAdditionalInfo(identity).lastPaymentTime;
-    };
-    const lastPaymentTime = getLastPaymentTime(creatorIdentity)
-      ? getLastPaymentTime(creatorIdentity)
-      : getLastPaymentTime(supporterIdentity);
 
-    const amount = getPaymentAmount(lastPaymentTime, currentRate, decimals);
-    await transferViaProxy(real, sender, injector, receiver, amount);
+    const txs = await Promise.all(promises);
+    await batchCalls(txs, sender, injector);
   } catch (error) {
     console.error("pullPayment error", error);
+  }
+};
+
+export const pullAllPayment = async (
+  reals: string[],
+  sender: string,
+  injector: any,
+  currentRate: number,
+  decimals: number
+) => {
+  try {
+    const promises: any[] = [];
+    reals.forEach(async (real) => {
+      promises.push(
+        ...(await getPaymentPromises(real, sender, currentRate, decimals))
+      );
+    });
+    const txs = await Promise.all(promises);
+    await batchCalls(txs, sender, injector);
+  } catch (error) {
+    console.error("pull All Payment error", error);
   }
 };
 
@@ -234,7 +282,7 @@ export const getSetLastPaymentTimeTx = async (sender: string) => {
         };
 
     const time = Date.now();
-    const additionalInfo = { lastPaymentTime: Math.round(time / 1000) };
+    const additionalInfo = { lastPaymentTime: Math.round(time) };
 
     const tx = await setIdentity(essentialInfo, additionalInfo);
     return tx;

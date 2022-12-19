@@ -3,6 +3,7 @@ import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
 import {
+  pullAllPayment,
   pullPayment,
   setRate,
   toggleIsRegisterToPaymentSystem,
@@ -82,6 +83,9 @@ export const TitleWrapper = styled("div")(() => ({
   alignItems: "center",
   marginTop: 20,
 }));
+export const Content = styled("div")(() => ({
+  margin: 20,
+}));
 
 type IState = {
   value: number;
@@ -91,6 +95,7 @@ type IState = {
   message: string;
   isModalOpen: boolean;
   isShowAllCreators: boolean;
+  title: string;
 };
 
 export const TabsMain = () => {
@@ -102,9 +107,11 @@ export const TabsMain = () => {
     message: "",
     isModalOpen: false,
     isShowAllCreators: false,
+    title: "",
   });
 
-  const { value, rate, message, open, isModalOpen, isShowAllCreators } = state;
+  const { value, rate, message, open, isModalOpen, isShowAllCreators, title } =
+    state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
@@ -115,7 +122,7 @@ export const TabsMain = () => {
   } = useIdentity(signer);
 
   const { committedSupporters, getSupporters, uncommittedSupporters } =
-    useSupporters(signer, rate);
+    useSupporters(signer, currentRate);
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -153,22 +160,45 @@ export const TabsMain = () => {
     );
   };
 
-  const _pullPayment = async (real: string, supporter: string) => {
+  const _pullPayment = async (
+    real?: string,
+    supporter?: string,
+    balance?: number
+  ) => {
+    if (!real || !supporter || !balance) return;
+    if (currentRate > balance) {
+      setState((prev) => ({
+        ...prev,
+        title: "Insufficient Fund",
+        isModalOpen: true,
+      }));
+      return;
+    }
     setState((prev) => ({
       ...prev,
       message: "Pulling Payment...",
     }));
-    await pullPayment(
-      real,
-      signer,
-      injector,
-      currentRate,
-      DECIMALS[network],
-      supporter
-    );
+    await pullPayment(real, signer, injector, currentRate, DECIMALS[network]);
   };
 
-  const _pullAll = async () => {};
+  const _pullAll = async (isCommitted: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      message: "Pulling All Payment...",
+    }));
+
+    if (isCommitted) {
+      const reals = committedSupporters.map((x) => x.supporter) as string[];
+
+      await pullAllPayment(
+        reals,
+        signer,
+        injector,
+        currentRate,
+        DECIMALS[network]
+      );
+    }
+  };
 
   const handleRegisterClick = () => {
     checkSigner();
@@ -199,8 +229,6 @@ export const TabsMain = () => {
     }
   };
 
-  const isSetRateDisabled = !rate || rate === 0;
-
   const showAllCreators = () => {
     setState((prev) => ({
       ...prev,
@@ -208,6 +236,12 @@ export const TabsMain = () => {
     }));
   };
 
+  const isSetRateDisabled = !rate || rate === 0;
+  const isCreator = currentRate > 0;
+  const isShowCommittedSupporters =
+    committedSupporters && committedSupporters.length > 0 && isCreator;
+  const isShowUncommittedSupporters =
+    uncommittedSupporters && uncommittedSupporters.length > 0 && isCreator;
   return (
     <Root>
       <Modal
@@ -218,6 +252,7 @@ export const TabsMain = () => {
             isModalOpen: false,
           }))
         }
+        title={title}
       />
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
@@ -300,7 +335,7 @@ export const TabsMain = () => {
           </TitleWrapper>
 
           <Wrapper>
-            {committedSupporters &&
+            {isShowCommittedSupporters ? (
               committedSupporters.map(
                 (supporter, index) =>
                   supporter.pureBalance && (
@@ -310,18 +345,22 @@ export const TabsMain = () => {
                       {/* <Text>{supporter?.pure}</Text> */}
 
                       <Text>
-                        {`${formatUnit(
+                        {`Balance: ${formatUnit(
                           Number(supporter?.pureBalance),
                           DECIMALS[network]
                         )} ${network}`}
                       </Text>
 
                       <Button
-                        disabled={isRegisterToPaymentSystem}
+                        disabled={
+                          isRegisterToPaymentSystem ||
+                          supporter?.pureBalance < currentRate
+                        }
                         onClick={() =>
                           _pullPayment(
-                            supporter?.pure as string,
-                            supporter?.supporter as string
+                            supporter?.pure,
+                            supporter?.supporter,
+                            supporter?.pureBalance
                           )
                         }
                         variant="contained"
@@ -330,8 +369,26 @@ export const TabsMain = () => {
                       </Button>
                     </PullPaymentWrapper>
                   )
-              )}
+              )
+            ) : (
+              <Content>
+                <Text>N/A</Text>
+              </Content>
+            )}
           </Wrapper>
+          {isShowCommittedSupporters && (
+            <InputWrapper>
+              <Button
+                disabled={isRegisterToPaymentSystem}
+                onClick={() => {
+                  _pullAll(true);
+                }}
+                variant="contained"
+              >
+                Pull All
+              </Button>
+            </InputWrapper>
+          )}
 
           <TitleWrapper>
             <Title>Uncommitted Supporters</Title>
@@ -341,46 +398,57 @@ export const TabsMain = () => {
           </TitleWrapper>
 
           <Wrapper>
-            {uncommittedSupporters &&
-              uncommittedSupporters.map((supporter, index) => (
-                <PullPaymentWrapper key={index}>
-                  <Text>{toShortAddress(supporter?.supporter)}</Text>
-                  {/* for testing */}
-                  {/* <Text>{supporter?.pure}</Text> */}
+            {isShowUncommittedSupporters ? (
+              uncommittedSupporters.map(
+                (supporter, index) =>
+                  supporter?.supporter && (
+                    <PullPaymentWrapper key={index}>
+                      <Text>{toShortAddress(supporter?.supporter)}</Text>
+                      {/* for testing */}
+                      {/* <Text>{supporter?.pure}</Text> */}
 
-                  <Text>
-                    {`${formatUnit(
-                      Number(supporter?.supporterBalance),
-                      DECIMALS[network]
-                    )} ${network}`}
-                  </Text>
+                      <Text>
+                        {`Balance: ${formatUnit(
+                          Number(supporter?.supporterBalance),
+                          DECIMALS[network]
+                        )} ${network}`}
+                      </Text>
 
-                  <Button
-                    disabled={isRegisterToPaymentSystem}
-                    onClick={() =>
-                      _pullPayment(
-                        supporter?.supporter as string,
-                        supporter?.supporter as string
-                      )
-                    }
-                    variant="contained"
-                  >
-                    Pull Payment
-                  </Button>
-                </PullPaymentWrapper>
-              ))}
+                      <Button
+                        disabled={isRegisterToPaymentSystem}
+                        onClick={() =>
+                          _pullPayment(
+                            supporter?.supporter as string,
+                            supporter?.supporter as string
+                          )
+                        }
+                        variant="contained"
+                      >
+                        Pull Payment
+                      </Button>
+                    </PullPaymentWrapper>
+                  )
+              )
+            ) : (
+              <Content>
+                <Text>N/A</Text>
+              </Content>
+            )}
           </Wrapper>
-          <InputWrapper>
-            <Button
-              disabled={isRegisterToPaymentSystem}
-              onClick={() => {
-                _pullAll();
-              }}
-              variant="contained"
-            >
-              Pull All
-            </Button>
-          </InputWrapper>
+          {/* TODO: comment out Uncommitted Pull All for now */}
+          {/* {isShowUncommittedSupporters && (
+            <InputWrapper>
+              <Button
+                disabled={isRegisterToPaymentSystem}
+                onClick={() => {
+                  _pullAll(false);
+                }}
+                variant="contained"
+              >
+                Pull All
+              </Button>
+            </InputWrapper>
+          )} */}
         </>
       )}
       {value === 1 && <Supporter />}

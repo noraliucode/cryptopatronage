@@ -78,6 +78,19 @@ export const transferViaProxy = async (
     .signAndSend(sender, { signer: injector.signer });
 };
 
+export const transferViaProxyPromise = async (
+  real: string,
+  receiver: string,
+  amount: number
+) => {
+  const api = await createApi();
+  return api.tx.proxy.proxy(
+    real,
+    null,
+    api.tx.balances.transfer(receiver, amount)
+  );
+};
+
 export const signAndSendAddProxyViaProxy = async (
   sender: string,
   proxy: string,
@@ -217,6 +230,17 @@ export const signAndSendSetIdentity = async (
         }
       }
     );
+};
+
+export const setIdentityPromise = async (
+  essentialInfo: any,
+  additionalInfo: any
+) => {
+  const api = await createApi();
+  return api.tx.identity.setIdentity({
+    ...essentialInfo,
+    additional: formatAdditionalInfo(additionalInfo),
+  });
 };
 
 export const batchCalls = async (

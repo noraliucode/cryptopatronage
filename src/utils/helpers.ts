@@ -34,19 +34,22 @@ function parseUnit(amount: number, decimals: number): number {
 }
 
 export function getPaymentAmount(
-  lastPaymentTime: number,
   rate: number,
-  decimals: number
+  decimals: number,
+  lastPaymentTime?: number
 ): number {
   const now = Date.now();
   // TODO: a better way to calculate PaymentAmount/better flow?
-  const months =
-    Math.round(now - lastPaymentTime) / SECONDS_IN_ONE_DAY / DAYS_IN_ONE_MONTH;
+  const months = lastPaymentTime
+    ? Math.round((now - lastPaymentTime) / 1000) /
+      SECONDS_IN_ONE_DAY /
+      DAYS_IN_ONE_MONTH
+    : 1;
 
   const amount = months * rate;
   console.log("getPaymentAmount amount: ", amount);
 
-  return parseUnit(amount, decimals);
+  return amount;
 }
 
 export function parseAdditionalInfo(identity: any) {
