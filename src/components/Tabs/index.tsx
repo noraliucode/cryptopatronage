@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import {
   pullAllPayment,
   pullPayment,
+  setImageUrl,
   setRate,
   toggleIsRegisterToPaymentSystem,
 } from "../../utils/main";
@@ -96,6 +97,7 @@ type IState = {
   isModalOpen: boolean;
   isShowAllCreators: boolean;
   title: string;
+  imgUrl: string;
 };
 
 export const TabsMain = () => {
@@ -108,10 +110,19 @@ export const TabsMain = () => {
     isModalOpen: false,
     isShowAllCreators: false,
     title: "",
+    imgUrl: "",
   });
 
-  const { value, rate, message, open, isModalOpen, isShowAllCreators, title } =
-    state;
+  const {
+    value,
+    rate,
+    message,
+    open,
+    isModalOpen,
+    isShowAllCreators,
+    title,
+    imgUrl,
+  } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
@@ -236,6 +247,27 @@ export const TabsMain = () => {
     }));
   };
 
+  const handleImageUrlInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setState((prev) => ({
+      ...prev,
+      imgUrl: event.target.value,
+    }));
+  };
+
+  const _setImgUrl = async () => {
+    checkSigner();
+    if (!injector) return;
+
+    setState((prev) => ({
+      ...prev,
+      message: "Setting Image Url...",
+    }));
+
+    await setImageUrl(signer, imgUrl, injector);
+  };
+
   const isSetRateDisabled = !rate || rate === 0;
   const isCreator = currentRate > 0;
   const isShowCommittedSupporters =
@@ -326,6 +358,22 @@ export const TabsMain = () => {
                 ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
                 : "N/A"}
             </Text>
+          </InputWrapper>
+          <InputWrapper>
+            <TitleWrapper>
+              <Title>Add Image</Title>
+            </TitleWrapper>
+            <TextField
+              id="standard-basic"
+              label="Image Url"
+              variant="standard"
+              placeholder={`Input image Url`}
+              onChange={handleImageUrlInputChange}
+            />
+            &nbsp;
+            <Button onClick={_setImgUrl} variant="contained">
+              Set Image
+            </Button>
           </InputWrapper>
           <TitleWrapper>
             <Title>Committed Supporters</Title>

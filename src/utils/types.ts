@@ -40,6 +40,7 @@ export type ICreator = {
   transferableBalance?: number;
   supporterBalance?: number;
   rate?: string;
+  imageUrl?: string;
 };
 
 export type IAdditionalInfo = {

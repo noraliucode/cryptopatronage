@@ -36,11 +36,12 @@ export const useCreators = () => {
       });
       let creators = [] as any;
       identidies.forEach((identity: any, index: number) => {
-        if (identity && identity.rate > 0 && identity.ps) {
+        if (identity && identity.rate > 0) {
           const address = allDelegations[index];
           const creator: ICreator = {
             address,
             rate: identity.rate,
+            imageUrl: identity.imgUrl,
           };
           creators.push(creator);
         }

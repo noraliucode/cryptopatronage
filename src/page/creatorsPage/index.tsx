@@ -64,10 +64,8 @@ export const CreatorsPage = () => {
                 <CardMedia
                   component="img"
                   height="140"
-                  image={`/assets/testImages/${Math.floor(
-                    Math.random() * 10
-                  )}.jpeg`}
-                  alt="green iguana"
+                  image={creator.imageUrl}
+                  alt={`creator image Url: ${creator.imageUrl}`}
                 />
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
