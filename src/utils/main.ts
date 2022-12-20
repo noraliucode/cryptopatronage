@@ -116,7 +116,6 @@ export const subscribe = async (
     }
   } catch (error) {
     console.error("subscribe error >>", error);
-  } finally {
     setLoading && setLoading(false);
   }
 };

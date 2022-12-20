@@ -143,12 +143,12 @@ export const Supporter = () => {
           message="Unsubscribing..."
         />
         {/* TODO: confirm if the following is duplicated functionalities. Remove if confirmed. */}
-        {/* <TitleWrapper>
-          <Title>Commit and Subscribe</Title>
+        <TitleWrapper>
+          <Title>Supporter Management tab </Title>
 
-          <Tooltip title="Subscribe to current selected creator">
+          {/* <Tooltip title="Subscribe to current selected creator">
             <img alt="question" src="/assets/icons/question.svg" />
-          </Tooltip>
+          </Tooltip> */}
         </TitleWrapper>
         <Text>
           Current selected creator:
@@ -184,7 +184,7 @@ export const Supporter = () => {
             </Button>
             &nbsp;
           </Container>
-        </ActionWrapper> */}
+        </ActionWrapper>
         <TitleWrapper>
           <Title>Unnote Preimages</Title>
           <Tooltip title="Withdraw the deposit for delay proxy">
