@@ -295,7 +295,8 @@ export const TabsMain = () => {
         >
           <Tab label="Creator" />
           <Tab label="Supporter" />
-          <Tab label="Payment System" />
+          {/* TODO: add disabled logic */}
+          <Tab disabled label="Payment System" />
         </Tabs>
       </Box>
       {value === 0 && (
