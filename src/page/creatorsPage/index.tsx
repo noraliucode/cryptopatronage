@@ -13,6 +13,7 @@ import { formatUnit } from "../../utils/helpers";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { SubscribeModal } from "../../components/SubscribeModal";
+import { Modal } from "../../components/Modal";
 
 const Root = styled("div")(({ theme }) => ({
   padding: 30,
@@ -27,12 +28,14 @@ const Wrapper = styled("div")(() => ({
 type IState = {
   open: boolean;
   selectedCreator: string;
+  isModalOpen: boolean;
 };
 
 export const CreatorsPage = () => {
   const [state, setState] = useState<IState>({
     open: false,
     selectedCreator: "",
+    isModalOpen: false,
   });
   const { creators, loading } = useCreators();
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -45,7 +48,19 @@ export const CreatorsPage = () => {
     }));
   };
 
+  const checkSigner = () => {
+    if (!signer || !injector) {
+      setState((prev) => ({
+        ...prev,
+        isModalOpen: true,
+      }));
+      return;
+    }
+  };
+
   const onClick = (address: string) => {
+    checkSigner();
+    if (!signer) return;
     setState((prev) => ({
       ...prev,
       open: true,
@@ -53,10 +68,19 @@ export const CreatorsPage = () => {
     }));
   };
 
-  const { open, selectedCreator } = state;
+  const { open, selectedCreator, isModalOpen } = state;
 
   return (
     <Root>
+      <Modal
+        open={isModalOpen}
+        onClose={() =>
+          setState((prev) => ({
+            ...prev,
+            isModalOpen: false,
+          }))
+        }
+      />
       {loading ? (
         <Wrapper>
           <Box sx={{ display: "flex" }}>
