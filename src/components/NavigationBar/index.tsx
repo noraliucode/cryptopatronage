@@ -44,19 +44,22 @@ export const NavigationBar = () => {
     <AppBar position="static" color="secondary" enableColorOnDark>
       <Toolbar>
         <Wrapper>
-          <Logo>
-            <img alt="question" src="/assets/icons/logo.png" className="logo" />
-            <TextWrapper>
-              <Typography variant="h6" sx={{ my: 2 }}>
-                CryptoPatronage
-              </Typography>
-            </TextWrapper>
-          </Logo>
-          <Button>
-            <NavLink to={"/"}>
-              <Text> Explore</Text>
-            </NavLink>
-          </Button>
+          <NavLink to={"/"}>
+            <Logo>
+              <img
+                alt="question"
+                src="/assets/icons/logo.png"
+                className="logo"
+              />
+              <TextWrapper>
+                <Text>
+                  <Typography variant="h6" sx={{ my: 2 }}>
+                    CryptoPatronage
+                  </Typography>
+                </Text>
+              </TextWrapper>
+            </Logo>
+          </NavLink>
           <Button>
             <NavLink to={"/manage"}>
               <Text> Manage</Text>

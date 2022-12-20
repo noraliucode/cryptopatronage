@@ -4,6 +4,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { toShortAddress } from "../../utils/helpers";
 import { IAccount, IAccounts } from "../../utils/types";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 type IState = {
   open: boolean;
@@ -44,6 +45,8 @@ export const SignerSelector = ({ setSigner, signer, accounts }: IProps) => {
   return (
     <>
       <Button variant="contained" onClick={handleClick}>
+        <AccountBalanceWalletIcon />
+        &nbsp;
         {typeof signer === "string" && signer
           ? toShortAddress(signer)
           : "Connect"}
