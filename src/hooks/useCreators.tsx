@@ -5,15 +5,21 @@ import { ICreator } from "../utils/types";
 
 interface IState {
   creators: (ICreator | undefined)[] | null;
+  loading: boolean;
 }
 
 export const useCreators = () => {
   const [state, setState] = useState<IState>({
     creators: null,
+    loading: false,
   });
 
   const getCreators = async () => {
     try {
+      setState((prev) => ({
+        ...prev,
+        loading: true,
+      }));
       // get all prixies nodes.
       const nodes = (await getProxies()) as any;
       // getIdentity and see creator it has rate / ps
@@ -55,6 +61,11 @@ export const useCreators = () => {
       }));
     } catch (error) {
       console.error("useCreators error", error);
+    } finally {
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+      }));
     }
   };
   useEffect(() => {
