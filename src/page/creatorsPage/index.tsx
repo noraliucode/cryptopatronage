@@ -9,7 +9,7 @@ import { useCreators } from "../../hooks/useCreators";
 import styled from "@emotion/styled";
 import { Box, CircularProgress, Grid } from "@mui/material";
 import { DECIMALS, SYMBOL } from "../../utils/constants";
-import { formatUnit } from "../../utils/helpers";
+import { formatUnit, toShortAddress } from "../../utils/helpers";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { SubscribeModal } from "../../components/SubscribeModal";
@@ -107,7 +107,7 @@ export const CreatorsPage = () => {
                     />
                     <CardContent>
                       <Typography gutterBottom variant="h5" component="div">
-                        {creator.address}
+                        {toShortAddress(creator.address)}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         Rate: {formatUnit(creator.rate, DECIMALS[network])}{" "}
