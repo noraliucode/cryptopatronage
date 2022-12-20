@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  styled,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
@@ -25,6 +26,11 @@ type IState = {
   isCommitted: boolean;
   isDelayed: boolean;
 };
+
+const HintText = styled("div")(() => ({
+  color: "gray",
+  fontSize: 11,
+}));
 
 export const SubscribeModal = (props: IProps) => {
   const { onClose, open, selectedCreator } = props;
@@ -104,9 +110,14 @@ export const SubscribeModal = (props: IProps) => {
             <Checkbox checked={isCommitted} />
             <Text>Earmark funds exclusively for this creator</Text>
           </CheckWrapper>
-          <CheckWrapper onClick={handleDelayedClick}>
-            <Checkbox checked={isDelayed} />
+          <CheckWrapper
+            onClick={() => {
+              // handleDelayedClick()
+            }}
+          >
+            <Checkbox disabled checked={isDelayed} />
             <Text>Delay transfer</Text>
+            &nbsp;<HintText>*coming soon</HintText>
           </CheckWrapper>
         </Container>
       </DialogContent>
