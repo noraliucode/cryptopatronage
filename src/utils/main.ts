@@ -350,3 +350,29 @@ export const executePreimages = async (
     console.error("executePreimage error", error);
   }
 };
+
+// TODO: refactor set identity
+export const setImageUrl = async (
+  sender: string,
+  imgUrl: string,
+  injector: InjectedExtension
+) => {
+  try {
+    const { essentialInfo, additionalInfo } = await getInfos(sender);
+    const _additionalInfo = {
+      ...additionalInfo,
+      imgUrl,
+    };
+
+    const tx = await signAndSendSetIdentity(
+      essentialInfo,
+      _additionalInfo,
+      sender,
+      injector
+    );
+
+    return tx;
+  } catch (error) {
+    console.error("setImage error", error);
+  }
+};
