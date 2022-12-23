@@ -11,7 +11,8 @@ import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
 import { useState } from "react";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
-import { getProxies } from "../../utils/apiCalls";
+import { useApi } from "../../hooks/useApi";
+import { APIService } from "../../services/apiService";
 import { findPure } from "../../utils/helpers";
 import { subscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
@@ -54,6 +55,8 @@ export const SubscribeModal = (props: IProps) => {
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
 
+  const { api } = useApi(network);
+
   const handleClose = () => {
     onClose();
   };
@@ -77,7 +80,7 @@ export const SubscribeModal = (props: IProps) => {
       handleClose();
       return;
     }
-    if (!injector) return;
+    if (!injector || !api) return;
     setState((prev) => ({
       ...prev,
       isSubscribing: true,
@@ -99,9 +102,11 @@ export const SubscribeModal = (props: IProps) => {
       // await getSubscribedCreators();
     };
 
-    const supporterProxies: any = await getProxies(signer);
+    const apiService = new APIService(api);
+    const supporterProxies: any = await apiService.getProxies(signer);
     const pure = findPure(supporterProxies, selectedCreator, signer);
     await subscribe(
+      api,
       selectedCreator,
       signer,
       injector,

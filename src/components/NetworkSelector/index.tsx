@@ -4,6 +4,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { NETWORKS } from "../../utils/constants";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import { useApi } from "../../hooks/useApi";
+import { INetwork } from "../../utils/types";
 
 type IState = {
   open: boolean;
@@ -12,7 +14,7 @@ type IState = {
 
 type IProps = {
   setNetwork: (_: string) => void;
-  network: string;
+  network: INetwork;
 };
 
 export const NetworkSelector = ({ setNetwork, network }: IProps) => {
@@ -22,6 +24,7 @@ export const NetworkSelector = ({ setNetwork, network }: IProps) => {
   });
 
   const { open, anchorEl } = state;
+  useApi(network);
 
   const handleClose = (network: string) => {
     if (typeof network === "string") {

@@ -6,7 +6,6 @@ import type {
   AccountIndex,
   Address,
 } from "@polkadot/types/interfaces";
-import { getDelegations } from "./apiCalls";
 import { DAYS_IN_ONE_MONTH, SECONDS_IN_ONE_DAY } from "./constants";
 import {
   ICreatorProxyParsed,
@@ -120,47 +119,4 @@ export function parseSupporterProxies(
     }
   });
   return { committedCreators, uncommittedCreators };
-}
-
-export async function parseCreatorProxies(
-  // TODO: import type PalletProxyProxyDefinition
-  proxies: any,
-  creator: string
-): Promise<IParsedSupporterProxies> {
-  // TODO: not assignable to parameter of type never" error in TypeScript
-  const committedSupporters: any = [];
-  const uncommittedSupporters: any = [];
-  const promise = new Promise(function (resolve, reject) {
-    proxies.forEach((proxy: any) => {
-      const delegations = proxy[1].toHuman()[0];
-
-      if (delegations) {
-        delegations.forEach(async (delegation: any) => {
-          if (delegation.delegate === creator) {
-            const pureProxyOrSupporter = proxy[0].toHuman()[0];
-            // In the case of subscribtion adding pure proxy, supporter address is the first element.
-            const committedSupporter = delegations[0].delegate;
-            const nodes: any = await getDelegations(pureProxyOrSupporter);
-
-            // and validate if it is pure
-            const pureDelegations = nodes && nodes[0].toHuman();
-            // In the case of subscribtion adding pure proxy, creator address is the first element.
-            if (pureDelegations && pureDelegations[1]?.delegate === creator) {
-              committedSupporters.push({
-                supporter: committedSupporter,
-                pure: pureProxyOrSupporter,
-              });
-            } else {
-              uncommittedSupporters.push({
-                supporter: pureProxyOrSupporter,
-              });
-            }
-            resolve({ committedSupporters, uncommittedSupporters });
-          }
-        });
-      }
-    });
-  });
-  const result: any = await promise;
-  return result;
 }

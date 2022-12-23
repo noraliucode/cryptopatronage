@@ -14,6 +14,7 @@ import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { SubscribeModal } from "../../components/SubscribeModal";
 import { Modal } from "../../components/Modal";
+import { useApi } from "../../hooks/useApi";
 
 const Root = styled("div")(({ theme }) => ({
   padding: 30,
@@ -37,9 +38,9 @@ export const CreatorsPage = () => {
     selectedCreator: "",
     isModalOpen: false,
   });
-  const { creators, loading } = useCreators();
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
+  const { creators, loading } = useCreators(network);
 
   const onClose = () => {
     setState((prev) => ({

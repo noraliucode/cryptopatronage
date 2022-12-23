@@ -1,24 +1,3 @@
-import {
-  addProxyViaProxy,
-  batchCalls,
-  removeProxiesViaProxy,
-  createAnonymousProxy,
-  getIdentity,
-  getProxies,
-  removeProxies,
-  signAndSendAddProxy,
-  signAndSendSetIdentity,
-  transfer,
-  transferViaProxy,
-  setIdentity,
-  getRemoveProxyPromise,
-  getAnnouncePromise,
-  getNotePreimagePromise,
-  getPreimageStatus,
-  getPreimageData,
-  setIdentityPromise,
-  transferViaProxyPromise,
-} from "./apiCalls";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import {
   DECIMALS,
@@ -27,8 +6,11 @@ import {
   SECONDS_IN_ONE_DAY,
 } from "./constants";
 import { getPaymentAmount, parseAdditionalInfo } from "./helpers";
-import { INetwork } from "./types";
+import { INetwork, IParsedSupporterProxies } from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
+import { ApiPromise } from "@polkadot/api";
+import { APIService } from "../services/apiService";
+import { SubmittableExtrinsic } from "@polkadot/api/types";
 
 type AnonymousData = {
   pure: string;
@@ -40,6 +22,7 @@ type AnonymousEvent = {
 };
 
 export const subscribe = async (
+  api: ApiPromise | null,
   creator: string,
   sender: string,
   injector: InjectedExtension,
@@ -51,6 +34,8 @@ export const subscribe = async (
   isDelayed = false
 ) => {
   try {
+    if (!api) return;
+    const apiService = new APIService(api);
     setLoading && setLoading(true);
     let real = sender;
     let delay = isDelayed ? SECONDS_IN_ONE_DAY : 0;
@@ -59,7 +44,7 @@ export const subscribe = async (
       // check if the supporter has created pure proxy to the creator
       if (!pureProxy) {
         console.log("ceate anonymous proxy...");
-        const proxyData = (await createAnonymousProxy(
+        const proxyData = (await apiService.createAnonymousProxy(
           sender,
           injector,
           delay
@@ -83,9 +68,9 @@ export const subscribe = async (
       //   Math.ceil(Number(fee)) * 10 ** M_DECIMALS[NETWORK] + amount + reserved;
 
       const promises = [
-        transfer(real, amount + reserved),
-        addProxyViaProxy(creator, real, delay),
-        getSetLastPaymentTimeTx(sender),
+        apiService.transfer(real, amount + reserved),
+        apiService.addProxyViaProxy(creator, real, delay),
+        getSetLastPaymentTimeTx(api, sender),
       ];
 
       let txs = await Promise.all(promises);
@@ -101,18 +86,18 @@ export const subscribe = async (
         // remove transfer tx
         txs.shift();
         const extras = [
-          getAnnouncePromise(real, tranferTx.hash),
-          getNotePreimagePromise(tranferTx.data),
+          apiService.getAnnouncePromise(real, tranferTx.hash),
+          apiService.getNotePreimagePromise(tranferTx.data),
         ];
         const extraTxs = await Promise.all(extras);
         txs = [...txs, ...extraTxs];
       } else {
         console.log("normal transfer to anonymous proxy...");
       }
-      await batchCalls(txs, sender, injector, callback);
+      await apiService.batchCalls(txs, sender, injector, callback);
     } else {
       console.log("set creator as proxy...");
-      await signAndSendAddProxy(sender, injector, creator);
+      await apiService.signAndSendAddProxy(sender, injector, creator);
     }
   } catch (error) {
     console.error("subscribe error >>", error);
@@ -121,6 +106,7 @@ export const subscribe = async (
 };
 
 export const unsubscribe = async (
+  api: ApiPromise | null,
   sender: string,
   injector: any,
   creator: string,
@@ -128,8 +114,10 @@ export const unsubscribe = async (
   setLoading?: (_: boolean) => void
 ) => {
   try {
+    if (!api) return;
+    const apiService = new APIService(api);
     setLoading && setLoading(true);
-    const creatorProxies: any = await getProxies(creator);
+    const creatorProxies: any = await apiService.getProxies(creator);
     const creatorProxiesFiltered = creatorProxies.filter(
       // filter all nodes that the property is sender
       (node: any) => {
@@ -146,12 +134,14 @@ export const unsubscribe = async (
 
     // get all txs
     const txs = await Promise.all([
-      ...reals.map((real: any) => removeProxiesViaProxy(removeProxies(), real)),
+      ...reals.map((real: any) =>
+        apiService.removeProxiesViaProxy(apiService.removeProxies(), real)
+      ),
       // uncommitted supporters
-      getRemoveProxyPromise(creator),
+      apiService.getRemoveProxyPromise(creator),
     ]);
 
-    await batchCalls(txs, sender, injector, callback);
+    await apiService.batchCalls(txs, sender, injector, callback);
   } catch (error) {
     console.error("unsubscribe error >>", error);
   } finally {
@@ -160,6 +150,7 @@ export const unsubscribe = async (
 };
 
 export const setRate = async (
+  api: ApiPromise | null,
   rate: number,
   sender: string,
   injector: any,
@@ -167,8 +158,13 @@ export const setRate = async (
   setLoading?: (_: boolean) => void
 ) => {
   try {
-    setLoading && setLoading(true);
+    console.log("setRate api", api);
 
+    if (!api) return;
+    const apiService = new APIService(api);
+    setLoading && setLoading(true);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const { essentialInfo, additionalInfo } = await getInfos(sender);
     const _additionalInfo = {
       ...additionalInfo,
@@ -179,7 +175,7 @@ export const setRate = async (
       setLoading && setLoading(false);
     };
 
-    await signAndSendSetIdentity(
+    await apiService.signAndSendSetIdentity(
       essentialInfo,
       _additionalInfo,
       sender,
@@ -193,14 +189,17 @@ export const setRate = async (
 };
 
 const getPaymentPromises = async (
+  api: ApiPromise | null,
   real: string,
   sender: string,
   currentRate: number,
   decimals: number
 ) => {
+  if (!api) return;
+  const apiService = new APIService(api);
   const receiver = sender;
   const [creatorIdentity] = await Promise.all(
-    [sender].map((x) => getIdentity(x))
+    [sender].map((x) => apiService.getIdentity(x))
   );
   const getLastPaymentTime = (identity: any) => {
     return parseAdditionalInfo(identity).lastPaymentTime;
@@ -215,36 +214,43 @@ const getPaymentPromises = async (
   );
 
   const promises = [
-    transferViaProxyPromise(real, receiver, amount),
-    setIdentityPromise(creatorIdentity, { lastPaymentTime: Date.now() }),
+    apiService.transferViaProxyPromise(real, receiver, amount),
+    apiService.setIdentityPromise(creatorIdentity, {
+      lastPaymentTime: Date.now(),
+    }),
   ];
 
   return promises;
 };
 
 export const pullPayment = async (
+  api: ApiPromise | null,
   real: string,
   sender: string,
   injector: any,
   currentRate: number,
   decimals: number
 ) => {
+  if (!api) return;
+  const apiService = new APIService(api);
   try {
-    const promises = await getPaymentPromises(
+    const promises = (await getPaymentPromises(
+      api,
       real,
       sender,
       currentRate,
       decimals
-    );
+    )) as Promise<SubmittableExtrinsic<"promise">>[];
 
     const txs = await Promise.all(promises);
-    await batchCalls(txs, sender, injector);
+    await apiService.batchCalls(txs, sender, injector);
   } catch (error) {
     console.error("pullPayment error", error);
   }
 };
 
 export const pullAllPayment = async (
+  api: ApiPromise | null,
   reals: string[],
   sender: string,
   injector: any,
@@ -252,22 +258,31 @@ export const pullAllPayment = async (
   decimals: number
 ) => {
   try {
+    if (!api) return;
+    const apiService = new APIService(api);
     const promises: any[] = [];
     reals.forEach(async (real) => {
       promises.push(
-        ...(await getPaymentPromises(real, sender, currentRate, decimals))
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        ...(await getPaymentPromises(api, real, sender, currentRate, decimals))
       );
     });
     const txs = await Promise.all(promises);
-    await batchCalls(txs, sender, injector);
+    await apiService.batchCalls(txs, sender, injector);
   } catch (error) {
     console.error("pull All Payment error", error);
   }
 };
 
-export const getSetLastPaymentTimeTx = async (sender: string) => {
+export const getSetLastPaymentTimeTx = async (
+  api: ApiPromise | null,
+  sender: string
+) => {
   try {
-    const identity = await getIdentity(sender);
+    if (!api) return;
+    const apiService = new APIService(api);
+    const identity = await apiService.getIdentity(sender);
     const essentialInfo = identity
       ? identity
       : {
@@ -283,15 +298,17 @@ export const getSetLastPaymentTimeTx = async (sender: string) => {
     const time = Date.now();
     const additionalInfo = { lastPaymentTime: Math.round(time) };
 
-    const tx = await setIdentity(essentialInfo, additionalInfo);
+    const tx = await apiService.setIdentity(essentialInfo, additionalInfo);
     return tx;
   } catch (error) {
     console.error("setLastPaymentTime error", error);
   }
 };
 
-const getInfos = async (sender: string) => {
-  const identity = await getIdentity(sender);
+const getInfos = async (api: ApiPromise | null, sender: string) => {
+  if (!api) return;
+  const apiService = new APIService(api);
+  const identity = await apiService.getIdentity(sender);
   const essentialInfo = identity
     ? identity
     : {
@@ -310,18 +327,23 @@ const getInfos = async (sender: string) => {
 };
 
 export const toggleIsRegisterToPaymentSystem = async (
+  api: ApiPromise | null,
   sender: string,
   isRegisterToPaymentSystem: boolean,
   injector: InjectedExtension
 ) => {
   try {
-    const { essentialInfo, additionalInfo } = await getInfos(sender);
+    if (!api) return;
+    const apiService = new APIService(api);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { essentialInfo, additionalInfo } = await getInfos(api, sender);
     const _additionalInfo = {
       ...additionalInfo,
       ps: isRegisterToPaymentSystem,
     };
 
-    const tx = await signAndSendSetIdentity(
+    const tx = await apiService.signAndSendSetIdentity(
       essentialInfo,
       _additionalInfo,
       sender,
@@ -335,16 +357,19 @@ export const toggleIsRegisterToPaymentSystem = async (
 };
 
 export const executePreimages = async (
+  api: ApiPromise | null,
   sender: string,
   injector: InjectedExtension,
   hash: H256
 ) => {
   try {
-    const status = await getPreimageStatus(hash);
+    if (!api) return;
+    const apiService = new APIService(api);
+    const status = await apiService.getPreimageStatus(hash);
     console.log("status", status);
 
-    const preimage = await getPreimageData(hash);
-    await batchCalls(preimage, sender, injector);
+    const preimage = await apiService.getPreimageData(hash);
+    await apiService.batchCalls(preimage, sender, injector);
   } catch (error) {
     console.error("executePreimage error", error);
   }
@@ -352,18 +377,23 @@ export const executePreimages = async (
 
 // TODO: refactor set identity
 export const setImageUrl = async (
+  api: ApiPromise | null,
   sender: string,
   imgUrl: string,
   injector: InjectedExtension
 ) => {
   try {
+    if (!api) return;
+    const apiService = new APIService(api);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const { essentialInfo, additionalInfo } = await getInfos(sender);
     const _additionalInfo = {
       ...additionalInfo,
       imgUrl,
     };
 
-    const tx = await signAndSendSetIdentity(
+    const tx = await apiService.signAndSendSetIdentity(
       essentialInfo,
       _additionalInfo,
       sender,
@@ -374,4 +404,52 @@ export const setImageUrl = async (
   } catch (error) {
     console.error("setImage error", error);
   }
+};
+
+export const parseCreatorProxies = async (
+  api: ApiPromise | null,
+  // TODO: import type PalletProxyProxyDefinition
+  proxies: any,
+  creator: string
+): Promise<IParsedSupporterProxies> => {
+  const _api = api as ApiPromise;
+  const apiService = new APIService(_api);
+  // TODO: not assignable to parameter of type never" error in TypeScript
+  const committedSupporters: any = [];
+  const uncommittedSupporters: any = [];
+  const promise = new Promise(function (resolve, reject) {
+    proxies.forEach((proxy: any) => {
+      const delegations = proxy[1].toHuman()[0];
+
+      if (delegations) {
+        delegations.forEach(async (delegation: any) => {
+          if (delegation.delegate === creator) {
+            const pureProxyOrSupporter = proxy[0].toHuman()[0];
+            // In the case of subscribtion adding pure proxy, supporter address is the first element.
+            const committedSupporter = delegations[0].delegate;
+            const nodes: any = await apiService.getDelegations(
+              pureProxyOrSupporter
+            );
+
+            // and validate if it is pure
+            const pureDelegations = nodes && nodes[0].toHuman();
+            // In the case of subscribtion adding pure proxy, creator address is the first element.
+            if (pureDelegations && pureDelegations[1]?.delegate === creator) {
+              committedSupporters.push({
+                supporter: committedSupporter,
+                pure: pureProxyOrSupporter,
+              });
+            } else {
+              uncommittedSupporters.push({
+                supporter: pureProxyOrSupporter,
+              });
+            }
+            resolve({ committedSupporters, uncommittedSupporters });
+          }
+        });
+      }
+    });
+  });
+  const result: any = await promise;
+  return result;
 };

@@ -8,9 +8,9 @@ import {
 } from "@mui/material";
 import { ChangeEvent, useState } from "react";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
+import { useApi } from "../../hooks/useApi";
 import { useIdentity } from "../../hooks/useIdentity";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
-import { getProxies } from "../../utils/apiCalls";
 import { DECIMALS } from "../../utils/constants";
 import { findPure, formatUnit } from "../../utils/helpers";
 import { subscribe, unsubscribe } from "../../utils/main";
@@ -63,10 +63,12 @@ export const Supporter = () => {
     rate: currentRate,
     getRate,
     isRegisterToPaymentSystem,
-  } = useIdentity(selectedCreator);
+  } = useIdentity(selectedCreator, network);
 
   const { committedCreators, uncommittedCreators, getSubscribedCreators } =
     useSubscribedCreators(signer, rate, network);
+
+  const { api } = useApi(network);
 
   const checkSigner = () => {
     if (!signer || !injector) {
@@ -107,7 +109,14 @@ export const Supporter = () => {
         isUnsubscribing: value,
       }));
     };
-    await unsubscribe(signer, injector, selectedCreator, callback, setLoading);
+    await unsubscribe(
+      api,
+      signer,
+      injector,
+      selectedCreator,
+      callback,
+      setLoading
+    );
   };
 
   const _unnotePreimage = async () => {

@@ -1,7 +1,9 @@
+import { ApiPromise, WsProvider } from "@polkadot/api";
 import { useEffect, useState } from "react";
-import { getBalances, getProxies } from "../utils/apiCalls";
+import { APIService } from "../services/apiService";
+import { NODE_ENDPOINT } from "../utils/constants";
 import { parseSupporterProxies } from "../utils/helpers";
-import { IProxyParsedCreators } from "../utils/types";
+import { INetwork, IProxyParsedCreators } from "../utils/types";
 
 interface IState {
   committedCreators: IProxyParsedCreators;
@@ -11,7 +13,7 @@ interface IState {
 export const useSubscribedCreators = (
   supporter: string,
   rate: number,
-  creator: string
+  network: INetwork
 ) => {
   const [state, setState] = useState<IState>({
     committedCreators: [],
@@ -20,12 +22,15 @@ export const useSubscribedCreators = (
 
   const getSubscribedCreators = async () => {
     try {
-      const supporterProxies: any = await getProxies(supporter);
+      const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
+      const api = await ApiPromise.create({ provider: wsProvider });
+      const apiService = new APIService(api);
+      const supporterProxies: any = await apiService.getProxies(supporter);
       const { committedCreators, uncommittedCreators } = parseSupporterProxies(
         supporterProxies,
         supporter
       );
-      const balances = await getBalances(
+      const balances = await apiService.getBalances(
         committedCreators.map((proxy: any) => proxy.pure)
       );
 
@@ -48,6 +53,6 @@ export const useSubscribedCreators = (
   };
   useEffect(() => {
     getSubscribedCreators();
-  }, [supporter, rate]);
+  }, [supporter, rate, network]);
   return { ...state, getSubscribedCreators };
 };

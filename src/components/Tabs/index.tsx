@@ -20,6 +20,7 @@ import { useSupporters } from "../../hooks/useSupporters";
 import { PaymentSystem } from "../PaymentSystem";
 import { Modal } from "../Modal";
 import { Supporter } from "../Supporter";
+import { useApi } from "../../hooks/useApi";
 
 const Root = styled("div")(({ theme }) => ({
   width: 600,
@@ -130,10 +131,12 @@ export const TabsMain = () => {
     rate: currentRate,
     getRate,
     isRegisterToPaymentSystem,
-  } = useIdentity(signer);
+  } = useIdentity(signer, network);
 
   const { committedSupporters, getSupporters, uncommittedSupporters } =
-    useSupporters(signer, currentRate);
+    useSupporters(signer, currentRate, network);
+
+  const { api } = useApi(network);
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -163,6 +166,7 @@ export const TabsMain = () => {
     }));
 
     await setRate(
+      api,
       rate * 10 ** DECIMALS[network],
       signer,
       injector,
@@ -189,7 +193,14 @@ export const TabsMain = () => {
       ...prev,
       message: "Pulling Payment...",
     }));
-    await pullPayment(real, signer, injector, currentRate, DECIMALS[network]);
+    await pullPayment(
+      api,
+      real,
+      signer,
+      injector,
+      currentRate,
+      DECIMALS[network]
+    );
   };
 
   const _pullAll = async (isCommitted: boolean) => {
@@ -202,6 +213,7 @@ export const TabsMain = () => {
       const reals = committedSupporters.map((x) => x.supporter) as string[];
 
       await pullAllPayment(
+        api,
         reals,
         signer,
         injector,
@@ -215,6 +227,7 @@ export const TabsMain = () => {
     checkSigner();
     if (!injector) return;
     toggleIsRegisterToPaymentSystem(
+      api,
       signer,
       isRegisterToPaymentSystem ? !isRegisterToPaymentSystem : true,
       injector
@@ -265,7 +278,7 @@ export const TabsMain = () => {
       message: "Setting Image Url...",
     }));
 
-    await setImageUrl(signer, imgUrl, injector);
+    await setImageUrl(api, signer, imgUrl, injector);
   };
 
   const isSetRateDisabled = !rate || rate === 0;
