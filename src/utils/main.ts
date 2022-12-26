@@ -158,14 +158,12 @@ export const setRate = async (
   setLoading?: (_: boolean) => void
 ) => {
   try {
-    console.log("setRate api", api);
-
     if (!api) return;
     const apiService = new APIService(api);
     setLoading && setLoading(true);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const { essentialInfo, additionalInfo } = await getInfos(sender);
+    const { essentialInfo, additionalInfo } = await getInfos(api, sender);
     const _additionalInfo = {
       ...additionalInfo,
       rate,

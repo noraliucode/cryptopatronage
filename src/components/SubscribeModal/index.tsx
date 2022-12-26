@@ -29,15 +29,21 @@ type IState = {
   isDelayed: boolean;
   isSubscribing: boolean;
   isSubscribingSucceeded: boolean;
+  isNoFundsExclusivelyConfirmed: boolean;
 };
 
-const HintText = styled("div")(() => ({
+export const HintText = styled("div")(() => ({
   color: "gray",
   fontSize: 11,
 }));
 const Wrapper = styled("div")(() => ({
   width: 400,
   height: 110,
+}));
+const WarningText = styled("div")(() => ({
+  fontSize: 14,
+  lineHeight: 2,
+  color: "red",
 }));
 
 export const SubscribeModal = (props: IProps) => {
@@ -47,15 +53,23 @@ export const SubscribeModal = (props: IProps) => {
     isDelayed: false,
     isSubscribing: false,
     isSubscribingSucceeded: false,
+    isNoFundsExclusivelyConfirmed: false,
   });
 
-  const { isCommitted, isDelayed, isSubscribing, isSubscribingSucceeded } =
-    state;
+  const {
+    isCommitted,
+    isDelayed,
+    isSubscribing,
+    isSubscribingSucceeded,
+    isNoFundsExclusivelyConfirmed,
+  } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
 
   const { api } = useApi(network);
+
+  const isSubscribDisabled = !isCommitted && !isNoFundsExclusivelyConfirmed;
 
   const handleClose = () => {
     onClose();
@@ -65,6 +79,13 @@ export const SubscribeModal = (props: IProps) => {
     setState((prev) => ({
       ...prev,
       isDelayed: !prev.isDelayed,
+    }));
+  };
+
+  const handleNoFundsExclusiveClick = () => {
+    setState((prev) => ({
+      ...prev,
+      isNoFundsExclusivelyConfirmed: !prev.isNoFundsExclusivelyConfirmed,
     }));
   };
 
@@ -138,6 +159,15 @@ export const SubscribeModal = (props: IProps) => {
             <Text>Delay transfer</Text>
             &nbsp;<HintText>*coming soon</HintText>
           </CheckWrapper>
+          {!isCommitted && (
+            <CheckWrapper onClick={handleNoFundsExclusiveClick}>
+              <Checkbox checked={isNoFundsExclusivelyConfirmed} />
+              <WarningText>
+                No creating proxy. Creators can withdraw from my account
+                directly.
+              </WarningText>
+            </CheckWrapper>
+          )}
         </Wrapper>
       </Container>
     );
@@ -155,7 +185,7 @@ export const SubscribeModal = (props: IProps) => {
       <DialogContent dividers>{renderContent()}</DialogContent>
       <DialogActions>
         <Button
-          disabled={isSubscribing}
+          disabled={isSubscribing || isSubscribDisabled}
           style={{ width: 120 }}
           onClick={_subscribe}
           autoFocus

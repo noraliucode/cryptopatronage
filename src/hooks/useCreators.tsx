@@ -5,6 +5,9 @@ import { NODE_ENDPOINT } from "../utils/constants";
 import { parseAdditionalInfo } from "../utils/helpers";
 import { ICreator, INetwork } from "../utils/types";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import * as _ from "lodash";
 interface IState {
   creators: (ICreator | undefined)[] | null;
   loading: boolean;
@@ -39,7 +42,7 @@ export const useCreators = (network: INetwork) => {
         return allDelegations;
       };
       let identidies = await apiService.getIdentities(getAllDelegations());
-      identidies = identidies.map((identity) => {
+      identidies = identidies.map((identity: any) => {
         if (identity) {
           return parseAdditionalInfo(identity);
         }
@@ -57,11 +60,13 @@ export const useCreators = (network: INetwork) => {
         }
       });
 
+      const _creators = _.uniqBy(creators, "address") as ICreator[];
+
       // TODO: filter with supporter and calculate funds
 
       setState((prev) => ({
         ...prev,
-        creators,
+        creators: _creators,
       }));
     } catch (error) {
       console.error("useCreators error", error);

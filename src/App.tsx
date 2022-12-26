@@ -27,6 +27,14 @@ function App() {
             </Layout>
           }
         />
+        <Route
+          path="/creators/:address"
+          element={
+            <Layout>
+              <CreatorsPage />
+            </Layout>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

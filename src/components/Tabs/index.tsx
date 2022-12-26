@@ -21,6 +21,7 @@ import { PaymentSystem } from "../PaymentSystem";
 import { Modal } from "../Modal";
 import { Supporter } from "../Supporter";
 import { useApi } from "../../hooks/useApi";
+import { HintText } from "../SubscribeModal";
 
 const Root = styled("div")(({ theme }) => ({
   width: 600,
@@ -327,6 +328,7 @@ export const TabsMain = () => {
             <Tooltip title="Register to Cryptopatronage payment system. Payment will automically transfer to your recipient account. (1% fee required)">
               <img alt="question" src="/assets/icons/question.svg" />
             </Tooltip>
+            &nbsp;<HintText>*coming soon</HintText>
           </TitleWrapper>
 
           <InputWrapper>
@@ -335,7 +337,7 @@ export const TabsMain = () => {
               {isRegisterToPaymentSystem ? "Registered" : "Not Registered"}
             </Text>
             <br />
-            <Button onClick={handleRegisterClick} variant="contained">
+            <Button disabled onClick={handleRegisterClick} variant="contained">
               {isRegisterToPaymentSystem ? "Cancel" : "Register"}
             </Button>
           </InputWrapper>
