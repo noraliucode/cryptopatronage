@@ -158,8 +158,6 @@ export const setRate = async (
   setLoading?: (_: boolean) => void
 ) => {
   try {
-    console.log("setRate api", api);
-
     if (!api) return;
     const apiService = new APIService(api);
     setLoading && setLoading(true);
