@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useCreators } from "../../hooks/useCreators";
-import styled from "@emotion/styled";
+import { styled } from "@mui/material/styles";
 import { Box, CircularProgress, Grid } from "@mui/material";
 import { DECIMALS, SYMBOL } from "../../utils/constants";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
@@ -17,7 +16,7 @@ import { Modal } from "../../components/Modal";
 
 const IMAGE_HEIGHT = 140;
 
-const Root = styled("div")(({ theme }) => ({
+const Root = styled("div")(() => ({
   padding: 30,
   minHeight: "calc(100vh - 70px)",
   maxWidth: 1920,
@@ -43,6 +42,11 @@ const Blur = styled("div")(({ isClicked }: { isClicked: boolean }) => ({
   backgroundColor: "rgba(255,255,255,.2)",
   WebkitBackdropFilter: "blur(5px)",
   backdropFilter: `blur(${isClicked ? 0 : "10px"})`,
+}));
+const Hint = styled("div")(({ theme }) => ({
+  fontWeight: 700,
+  color: theme.palette.text.primary,
+  fontSize: 20,
 }));
 
 type IState = {
@@ -118,47 +122,55 @@ export const CreatorsPage = () => {
         </Wrapper>
       ) : (
         <>
-          <SubscribeModal
-            open={open}
-            onClose={onClose}
-            selectedCreator={selectedCreator}
-          />
-          <Grid container spacing={2}>
-            {creators?.map((creator: any, index: number) => {
-              return (
-                <Grid item xs={12} sm={4} md={3}>
-                  <Card
-                    sx={{ maxWidth: 345, cursor: "pointer" }}
-                    onClick={() => onCardClick(index)}
-                  >
-                    <CardImage url={creator.imageUrl}>
-                      <Blur
-                        isClicked={selectedIndex === index ? true : false}
-                      />
-                    </CardImage>
-
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="div">
-                        {toShortAddress(creator.address)}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Rate: {formatUnit(creator.rate, DECIMALS[network])}{" "}
-                        {SYMBOL[network]}
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button
-                        onClick={() => onClick(creator.address)}
-                        size="small"
+          {(creators && creators.length === 0) || !creators ? (
+            <Wrapper>
+              <Hint>No Creators</Hint>
+            </Wrapper>
+          ) : (
+            <>
+              <SubscribeModal
+                open={open}
+                onClose={onClose}
+                selectedCreator={selectedCreator}
+              />
+              <Grid container spacing={2}>
+                {creators?.map((creator: any, index: number) => {
+                  return (
+                    <Grid item xs={12} sm={4} md={3}>
+                      <Card
+                        sx={{ maxWidth: 345, cursor: "pointer" }}
+                        onClick={() => onCardClick(index)}
                       >
-                        Subscribe
-                      </Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              );
-            })}
-          </Grid>
+                        <CardImage url={creator.imageUrl}>
+                          <Blur
+                            isClicked={selectedIndex === index ? true : false}
+                          />
+                        </CardImage>
+
+                        <CardContent>
+                          <Typography gutterBottom variant="h5" component="div">
+                            {toShortAddress(creator.address)}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Rate: {formatUnit(creator.rate, DECIMALS[network])}{" "}
+                            {SYMBOL[network]}
+                          </Typography>
+                        </CardContent>
+                        <CardActions>
+                          <Button
+                            onClick={() => onClick(creator.address)}
+                            size="small"
+                          >
+                            Subscribe
+                          </Button>
+                        </CardActions>
+                      </Card>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            </>
+          )}
         </>
       )}
     </Root>
