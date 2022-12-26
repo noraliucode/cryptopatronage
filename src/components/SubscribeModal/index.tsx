@@ -31,7 +31,7 @@ type IState = {
   isSubscribingSucceeded: boolean;
 };
 
-const HintText = styled("div")(() => ({
+export const HintText = styled("div")(() => ({
   color: "gray",
   fontSize: 11,
 }));
