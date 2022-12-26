@@ -13,6 +13,7 @@ import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { SubscribeModal } from "../../components/SubscribeModal";
 import { Modal } from "../../components/Modal";
+import { useParams } from "react-router";
 
 const IMAGE_HEIGHT = 140;
 
@@ -66,6 +67,8 @@ export const CreatorsPage = () => {
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
   const { creators, loading } = useCreators(network);
+  const params = useParams();
+  const { address } = params as any;
 
   const onClose = () => {
     setState((prev) => ({
@@ -102,6 +105,11 @@ export const CreatorsPage = () => {
   };
 
   const { open, selectedCreator, isModalOpen, selectedIndex } = state;
+  const _creators = address
+    ? creators?.filter(
+        (x) => x?.address?.toLowerCase() === address.toLowerCase()
+      )
+    : creators;
 
   return (
     <Root>
@@ -122,9 +130,9 @@ export const CreatorsPage = () => {
         </Wrapper>
       ) : (
         <>
-          {(creators && creators.length === 0) || !creators ? (
+          {_creators?.length === 0 || !_creators ? (
             <Wrapper>
-              <Hint>No Creators</Hint>
+              <Hint>No Creator(s)</Hint>
             </Wrapper>
           ) : (
             <>
@@ -134,7 +142,7 @@ export const CreatorsPage = () => {
                 selectedCreator={selectedCreator}
               />
               <Grid container spacing={2}>
-                {creators?.map((creator: any, index: number) => {
+                {_creators?.map((creator: any, index: number) => {
                   return (
                     <Grid item xs={12} sm={4} md={3}>
                       <Card
