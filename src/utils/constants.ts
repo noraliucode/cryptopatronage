@@ -1,3 +1,6 @@
+import GitHubIcon from "@mui/icons-material/GitHub";
+import TwitterIcon from "@mui/icons-material/Twitter";
+
 export const ROCOCO = "wss://rococo-rpc.polkadot.io";
 export const WESTEND = "wss://westend-rpc.polkadot.io";
 export const KUSAMA = "wss://kusama-rpc.polkadot.io";
@@ -38,3 +41,20 @@ export const SYMBOL = {
 export const NETWORKS = ["ROCOCO", "WESTEND", "KUSAMA"];
 export const SECONDS_IN_ONE_DAY = 60 * 60 * 24;
 export const DAYS_IN_ONE_MONTH = 30.4;
+
+export const GITHUB_URL = "https://github.com/noraliucode/cryptopatronage";
+
+export const SOCIAL_ITEMS = [
+  {
+    id: "github",
+    label: "github",
+    icon: GitHubIcon,
+    href: "https://github.com/noraliucode/cryptopatronage",
+  },
+  {
+    id: "twitter",
+    label: "twitter",
+    icon: TwitterIcon,
+    href: "https://twitter.com/ShokuninNetwork",
+  },
+];

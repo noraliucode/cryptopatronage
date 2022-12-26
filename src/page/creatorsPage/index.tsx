@@ -14,10 +14,10 @@ import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { SubscribeModal } from "../../components/SubscribeModal";
 import { Modal } from "../../components/Modal";
-import { useApi } from "../../hooks/useApi";
 
 const Root = styled("div")(({ theme }) => ({
   padding: 30,
+  minHeight: "calc(100vh - 70px)",
 }));
 const Wrapper = styled("div")(() => ({
   display: "flex",
