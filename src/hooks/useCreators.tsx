@@ -1,14 +1,15 @@
+import { ApiPromise, WsProvider } from "@polkadot/api";
 import { useEffect, useState } from "react";
-import { getIdentities, getProxies } from "../utils/apiCalls";
+import { APIService } from "../services/apiService";
+import { NODE_ENDPOINT } from "../utils/constants";
 import { parseAdditionalInfo } from "../utils/helpers";
-import { ICreator } from "../utils/types";
+import { ICreator, INetwork } from "../utils/types";
 
 interface IState {
   creators: (ICreator | undefined)[] | null;
   loading: boolean;
 }
-
-export const useCreators = () => {
+export const useCreators = (network: INetwork) => {
   const [state, setState] = useState<IState>({
     creators: null,
     loading: false,
@@ -20,8 +21,12 @@ export const useCreators = () => {
         ...prev,
         loading: true,
       }));
+      const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
+      const api = await ApiPromise.create({ provider: wsProvider });
+      const apiService = new APIService(api);
+
       // get all prixies nodes.
-      const nodes = (await getProxies()) as any;
+      const nodes = (await apiService.getProxies()) as any;
       // getIdentity and see creator it has rate / ps
       const allDelegations: string[] = [];
       const getAllDelegations = () => {
@@ -33,8 +38,7 @@ export const useCreators = () => {
         });
         return allDelegations;
       };
-      let identidies = await getIdentities(getAllDelegations());
-
+      let identidies = await apiService.getIdentities(getAllDelegations());
       identidies = identidies.map((identity) => {
         if (identity) {
           return parseAdditionalInfo(identity);
@@ -70,6 +74,6 @@ export const useCreators = () => {
   };
   useEffect(() => {
     getCreators();
-  }, []);
+  }, [network]);
   return { ...state, getCreators };
 };
