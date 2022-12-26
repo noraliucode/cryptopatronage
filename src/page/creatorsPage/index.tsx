@@ -15,9 +15,12 @@ import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { SubscribeModal } from "../../components/SubscribeModal";
 import { Modal } from "../../components/Modal";
 
+const IMAGE_HEIGHT = 140;
+
 const Root = styled("div")(({ theme }) => ({
   padding: 30,
   minHeight: "calc(100vh - 70px)",
+  maxWidth: 1920,
 }));
 const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -25,11 +28,28 @@ const Wrapper = styled("div")(() => ({
   alignItems: "center",
   marginTop: "100px",
 }));
+const CardImage = styled("div")(({ url }: { url: any }) => ({
+  backgroundColor: "rgba(255, 255, 255, 0.4)",
+  background: `url(${url}) no-repeat center`,
+  width: "100%",
+  height: IMAGE_HEIGHT,
+  backgroundSize: ["contain", "cover"],
+}));
+const Blur = styled("div")(({ isClicked }: { isClicked: boolean }) => ({
+  fontWeight: 700,
+  flex: 1,
+  textAlign: "center",
+  padding: "70px 10px",
+  backgroundColor: "rgba(255,255,255,.2)",
+  WebkitBackdropFilter: "blur(5px)",
+  backdropFilter: `blur(${isClicked ? 0 : "10px"})`,
+}));
 
 type IState = {
   open: boolean;
   selectedCreator: string;
   isModalOpen: boolean;
+  selectedIndex: number;
 };
 
 export const CreatorsPage = () => {
@@ -37,6 +57,7 @@ export const CreatorsPage = () => {
     open: false,
     selectedCreator: "",
     isModalOpen: false,
+    selectedIndex: -1,
   });
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
@@ -69,7 +90,14 @@ export const CreatorsPage = () => {
     }));
   };
 
-  const { open, selectedCreator, isModalOpen } = state;
+  const onCardClick = (index: number) => {
+    setState((prev) => ({
+      ...prev,
+      selectedIndex: index,
+    }));
+  };
+
+  const { open, selectedCreator, isModalOpen, selectedIndex } = state;
 
   return (
     <Root>
@@ -96,16 +124,19 @@ export const CreatorsPage = () => {
             selectedCreator={selectedCreator}
           />
           <Grid container spacing={2}>
-            {creators?.map((creator: any) => {
+            {creators?.map((creator: any, index: number) => {
               return (
                 <Grid item xs={12} sm={4} md={3}>
-                  <Card sx={{ maxWidth: 345 }}>
-                    <CardMedia
-                      component="img"
-                      height="140"
-                      image={creator.imageUrl}
-                      alt={`creator image Url: ${creator.imageUrl}`}
-                    />
+                  <Card
+                    sx={{ maxWidth: 345, cursor: "pointer" }}
+                    onClick={() => onCardClick(index)}
+                  >
+                    <CardImage url={creator.imageUrl}>
+                      <Blur
+                        isClicked={selectedIndex === index ? true : false}
+                      />
+                    </CardImage>
+
                     <CardContent>
                       <Typography gutterBottom variant="h5" component="div">
                         {toShortAddress(creator.address)}
