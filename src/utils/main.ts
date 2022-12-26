@@ -163,7 +163,7 @@ export const setRate = async (
     setLoading && setLoading(true);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const { essentialInfo, additionalInfo } = await getInfos(sender);
+    const { essentialInfo, additionalInfo } = await getInfos(api, sender);
     const _additionalInfo = {
       ...additionalInfo,
       rate,
