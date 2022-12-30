@@ -58,3 +58,18 @@ export const SOCIAL_ITEMS = [
     href: "https://twitter.com/ShokuninNetwork",
   },
 ];
+
+export const MENU = [
+  {
+    label: "Explore",
+    link: "/",
+  },
+  {
+    label: "Manage",
+    link: "/manage",
+  },
+  {
+    label: "About",
+    link: "/about",
+  },
+];

@@ -4,10 +4,9 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import { MENU } from "../../utils/constants";
+import { Link as StyledLink } from "../Link";
 
 export const Drawer = ({
   open,
@@ -19,16 +18,17 @@ export const Drawer = ({
   const list = () => (
     <Box sx={{ width: 250 }} role="presentation">
       <List>
-        {["Explore", "Manage", "About"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {MENU.map((item, index) => {
+          return (
+            <StyledLink to={item.link}>
+              <ListItem key={item.label} disablePadding>
+                <ListItemButton>
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              </ListItem>
+            </StyledLink>
+          );
+        })}
       </List>
     </Box>
   );
