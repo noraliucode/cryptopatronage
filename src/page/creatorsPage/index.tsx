@@ -7,7 +7,12 @@ import Typography from "@mui/material/Typography";
 import { useCreators } from "../../hooks/useCreators";
 import { styled } from "@mui/material/styles";
 import { Box, CircularProgress, Grid } from "@mui/material";
-import { DECIMALS, SYMBOL } from "../../utils/constants";
+import {
+  DECIMALS,
+  FOOTER_HEIGHT,
+  NAV_BAR_HEIGHT,
+  SYMBOL,
+} from "../../utils/constants";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
@@ -17,9 +22,9 @@ import { useParams } from "react-router";
 
 const IMAGE_HEIGHT = 140;
 
-const Root = styled("div")(() => ({
+export const Root = styled("div")(() => ({
   padding: 30,
-  minHeight: "calc(100vh - 70px)",
+  minHeight: `calc(100vh - (${NAV_BAR_HEIGHT + FOOTER_HEIGHT + 45}px))`,
   maxWidth: 1920,
 }));
 const Wrapper = styled("div")(() => ({

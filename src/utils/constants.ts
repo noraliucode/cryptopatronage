@@ -58,3 +58,21 @@ export const SOCIAL_ITEMS = [
     href: "https://twitter.com/ShokuninNetwork",
   },
 ];
+
+export const MENU = [
+  {
+    label: "Explore",
+    link: "/",
+  },
+  {
+    label: "Manage",
+    link: "/manage",
+  },
+  {
+    label: "About",
+    link: "/about",
+  },
+];
+
+export const NAV_BAR_HEIGHT = 64;
+export const FOOTER_HEIGHT = 58.5;

@@ -34,10 +34,10 @@ const Root = styled("div")(({ theme }) => ({
   margin: "auto",
   marginTop: 30,
 }));
-export const Text = styled("div")(() => ({
+export const Text = styled("div")(({ theme }) => ({
   fontSize: 14,
   lineHeight: 2,
-  color: "white",
+  color: theme.palette.text.primary,
 }));
 export const CheckWrapper = styled("div")(() => ({
   cursor: "pointer",
