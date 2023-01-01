@@ -1,4 +1,3 @@
-import { Box } from "@mui/material";
 import React from "react";
 import { Wrapper } from "../../components/Tabs";
 import { Root } from "../creatorsPage";
