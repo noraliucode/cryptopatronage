@@ -5,6 +5,7 @@ import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { Layout } from "./layout";
 import { CreatorsPage } from "./page/creatorsPage";
 import { TabsMain } from "./components/Tabs";
+import { AboutPage } from "./page/aboutPage";
 
 function App() {
   return (
@@ -32,6 +33,14 @@ function App() {
           element={
             <Layout>
               <CreatorsPage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <Layout>
+              <AboutPage />
             </Layout>
           }
         />

@@ -11,7 +11,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { MENU } from "../../utils/constants";
 import { Link as StyledLink } from "../Link";
 
-const Wrapper = styled("div")(() => ({
+export const Wrapper = styled("div")(() => ({
   display: "flex",
   width: "100%",
   alignItems: "center",
@@ -105,7 +105,7 @@ export const NavigationBar = () => {
               {MENU.map((item) => {
                 return (
                   <Button>
-                    <StyledLink to={"/"}>
+                    <StyledLink to={item.link}>
                       <Text> {item.label}</Text>
                     </StyledLink>
                   </Button>

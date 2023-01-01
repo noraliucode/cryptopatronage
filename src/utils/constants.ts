@@ -73,3 +73,6 @@ export const MENU = [
     link: "/about",
   },
 ];
+
+export const NAV_BAR_HEIGHT = 64;
+export const FOOTER_HEIGHT = 58.5;
