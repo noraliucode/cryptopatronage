@@ -1,5 +1,6 @@
 # Cryptopatronage platform
 <img width="800" margin="auto" alt="image" src="https://user-images.githubusercontent.com/12429503/205587221-d883a660-b04f-4023-8583-402371102bc0.png">
+
 ## About Project
 CryptoPatronage is a platform that helps creators build a membership program by offering their followers exclusive content and a closer connection with their community.
 
@@ -56,6 +57,7 @@ const injector = await web3FromAddress(SENDER);
 * Browse uncommitted subscribed creators list 
 * Withdraw(unnote preimages)
 * Browse creators page
+
 **Creator**
 * Add rate
 * Pull payment (committed, normal)
@@ -68,6 +70,7 @@ const injector = await web3FromAddress(SENDER);
 * Browse uncommitted subscribed supporter list 
 * Register to payment system
 * Add image url
+
 **Admin**
 * Transfer payment(normal)
 * Transfer all payment(normal)
