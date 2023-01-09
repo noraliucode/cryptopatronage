@@ -9,7 +9,12 @@ import {
   setRate,
   toggleIsRegisterToPaymentSystem,
 } from "../../utils/main";
-import { DECIMALS, SYMBOL } from "../../utils/constants";
+import {
+  DECIMALS,
+  FOOTER_HEIGHT,
+  NAV_BAR_HEIGHT,
+  SYMBOL,
+} from "../../utils/constants";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
@@ -33,6 +38,7 @@ const Root = styled("div")(({ theme }) => ({
   borderRadius: "5px",
   margin: "auto",
   marginTop: 30,
+  minHeight: `calc(100vh - (${NAV_BAR_HEIGHT + FOOTER_HEIGHT + 45}px))`,
 }));
 export const Text = styled("div")(({ theme }) => ({
   fontSize: 14,
@@ -70,7 +76,7 @@ export const InputWrapper = styled("div")(() => ({
   justifyContent: "center",
   flexDirection: "column",
 }));
-const PullPaymentWrapper = styled("div")(() => ({
+export const SpaceBetweenWrapper = styled("div")(() => ({
   display: "flex",
   justifyContent: "space-between",
   marginBottom: "10px",
@@ -403,7 +409,7 @@ export const TabsMain = () => {
               committedSupporters.map(
                 (supporter, index) =>
                   supporter.pureBalance && (
-                    <PullPaymentWrapper key={index}>
+                    <SpaceBetweenWrapper key={index}>
                       <Text>{toShortAddress(supporter?.supporter)}</Text>
                       {/* for testing */}
                       {/* <Text>{supporter?.pure}</Text> */}
@@ -431,7 +437,7 @@ export const TabsMain = () => {
                       >
                         Pull Payment
                       </Button>
-                    </PullPaymentWrapper>
+                    </SpaceBetweenWrapper>
                   )
               )
             ) : (
@@ -466,7 +472,7 @@ export const TabsMain = () => {
               uncommittedSupporters.map(
                 (supporter, index) =>
                   supporter?.supporter && (
-                    <PullPaymentWrapper key={index}>
+                    <SpaceBetweenWrapper key={index}>
                       <Text>{toShortAddress(supporter?.supporter)}</Text>
                       {/* for testing */}
                       {/* <Text>{supporter?.pure}</Text> */}
@@ -490,7 +496,7 @@ export const TabsMain = () => {
                       >
                         Pull Payment
                       </Button>
-                    </PullPaymentWrapper>
+                    </SpaceBetweenWrapper>
                   )
               )
             ) : (
