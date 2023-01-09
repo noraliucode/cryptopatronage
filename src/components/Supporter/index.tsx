@@ -151,49 +151,7 @@ export const Supporter = () => {
           open={isUnsubscribing}
           message="Unsubscribing..."
         />
-        {/* TODO: confirm if the following is duplicated functionalities. Remove if confirmed. */}
-        <TitleWrapper>
-          <Title>Supporter Management tab </Title>
-
-          {/* <Tooltip title="Subscribe to current selected creator">
-            <img alt="question" src="/assets/icons/question.svg" />
-          </Tooltip> */}
-        </TitleWrapper>
-        <Text>
-          Current selected creator:
-          <br />
-          {selectedCreator ? selectedCreator : "N/A"}
-        </Text>
-        <TextField
-          id="standard-basic"
-          label="Creator"
-          variant="standard"
-          placeholder={`Input the creator's url or address`}
-          onChange={setCreatorUrl}
-        />
-        &nbsp;
-        <Button onClick={setSelectedCreator} variant="contained">
-          Slelect this Creator
-        </Button>
-        <ActionWrapper>
-          <TitleWrapper>
-            <Title>Current Rate</Title>
-            <Tooltip title="Rate for current selected creator">
-              <img alt="question" src="/assets/icons/question.svg" />
-            </Tooltip>
-          </TitleWrapper>
-          <Text>
-            {currentRate
-              ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
-              : "N/A"}
-          </Text>
-          <Container>
-            <Button onClick={_unsubscribe} variant="outlined">
-              Unsubscribe
-            </Button>
-            &nbsp;
-          </Container>
-        </ActionWrapper>
+        <ActionWrapper></ActionWrapper>
         <TitleWrapper>
           <Title>Unnote Preimages</Title>
           <Tooltip title="Withdraw the deposit for delay proxy">
@@ -207,7 +165,12 @@ export const Supporter = () => {
           <Wrapper>
             <Title>Committed subscribed Creators</Title>
             {committedCreators.map((creator) => (
-              <Text>{creator.creator}</Text>
+              <>
+                <Text>{creator.creator}</Text>
+                <Button onClick={_unsubscribe} variant="outlined">
+                  Unsubscribe
+                </Button>
+              </>
             ))}
             <Title>Uncommitted subscribed Creators</Title>
             {uncommittedCreators.map((creator) => (
