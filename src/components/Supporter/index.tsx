@@ -13,6 +13,8 @@ import {
   TitleWrapper,
   Text,
   Wrapper,
+  Content,
+  SpaceBetweenWrapper,
 } from "../Tabs";
 
 type IState = {
@@ -112,7 +114,7 @@ export const Supporter = () => {
           open={isUnsubscribing}
           message="Unsubscribing..."
         />
-        <ActionWrapper></ActionWrapper>
+
         <TitleWrapper>
           <Title>Unnote Preimages</Title>
           <Tooltip title="Withdraw the deposit for delay proxy">
@@ -125,18 +127,30 @@ export const Supporter = () => {
         <Wrapper>
           <Wrapper>
             <Title>Committed subscribed Creators</Title>
-            {committedCreators.map((creator) => (
-              <>
-                <Text>{creator.creator}</Text>
-                <Button onClick={_unsubscribe} variant="outlined">
-                  Unsubscribe
-                </Button>
-              </>
-            ))}
+            {committedCreators.length > 0 ? (
+              committedCreators.map((creator) => (
+                <SpaceBetweenWrapper>
+                  <Text>{creator.creator}</Text>
+                  <Button onClick={_unsubscribe} variant="outlined">
+                    Unsubscribe
+                  </Button>
+                </SpaceBetweenWrapper>
+              ))
+            ) : (
+              <Content>
+                <Text> N/A</Text>
+              </Content>
+            )}
             <Title>Uncommitted subscribed Creators</Title>
-            {uncommittedCreators.map((creator) => (
-              <Text>{creator.creator}</Text>
-            ))}
+            {uncommittedCreators.length > 0 ? (
+              uncommittedCreators.map((creator) => (
+                <Text>{creator.creator}</Text>
+              ))
+            ) : (
+              <Content>
+                <Text> N/A</Text>
+              </Content>
+            )}
           </Wrapper>
         </Wrapper>
       </InputWrapper>

@@ -70,7 +70,7 @@ export const InputWrapper = styled("div")(() => ({
   justifyContent: "center",
   flexDirection: "column",
 }));
-const PullPaymentWrapper = styled("div")(() => ({
+export const SpaceBetweenWrapper = styled("div")(() => ({
   display: "flex",
   justifyContent: "space-between",
   marginBottom: "10px",
@@ -403,7 +403,7 @@ export const TabsMain = () => {
               committedSupporters.map(
                 (supporter, index) =>
                   supporter.pureBalance && (
-                    <PullPaymentWrapper key={index}>
+                    <SpaceBetweenWrapper key={index}>
                       <Text>{toShortAddress(supporter?.supporter)}</Text>
                       {/* for testing */}
                       {/* <Text>{supporter?.pure}</Text> */}
@@ -431,7 +431,7 @@ export const TabsMain = () => {
                       >
                         Pull Payment
                       </Button>
-                    </PullPaymentWrapper>
+                    </SpaceBetweenWrapper>
                   )
               )
             ) : (
@@ -466,7 +466,7 @@ export const TabsMain = () => {
               uncommittedSupporters.map(
                 (supporter, index) =>
                   supporter?.supporter && (
-                    <PullPaymentWrapper key={index}>
+                    <SpaceBetweenWrapper key={index}>
                       <Text>{toShortAddress(supporter?.supporter)}</Text>
                       {/* for testing */}
                       {/* <Text>{supporter?.pure}</Text> */}
@@ -490,7 +490,7 @@ export const TabsMain = () => {
                       >
                         Pull Payment
                       </Button>
-                    </PullPaymentWrapper>
+                    </SpaceBetweenWrapper>
                   )
               )
             ) : (
