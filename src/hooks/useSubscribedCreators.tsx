@@ -35,11 +35,13 @@ export const useSubscribedCreators = (
       );
 
       const _committedCreators = committedCreators.filter((creator, index) => {
-        return (
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          balances[index].data.free.toNumber() >= rate
-        );
+        if (creator.creator) {
+          return (
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            balances[index].data.free.toNumber() >= rate
+          );
+        }
       });
 
       setState((prev) => ({
