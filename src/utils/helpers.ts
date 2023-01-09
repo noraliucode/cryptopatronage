@@ -120,3 +120,27 @@ export function parseSupporterProxies(
   });
   return { committedCreators, uncommittedCreators };
 }
+
+export const checkProxyAssociation = async (
+  account: string,
+  proxyAddress: string,
+  proxies: string[]
+) => {
+  if (proxies.includes(proxyAddress)) {
+    console.log(`Account ${account} has pure proxy ${proxyAddress}`);
+    return true;
+  } else {
+    console.log(`Account ${account} does not have pure proxy ${proxyAddress}`);
+    return false;
+  }
+};
+
+export function formatEssentialInfo(info: any) {
+  const _info: any = {};
+  for (const key in info) {
+    if (info[key] && info[key] !== "None") {
+      _info[key] = info[key];
+    }
+  }
+  return _info;
+}
