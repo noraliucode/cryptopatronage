@@ -1,19 +1,9 @@
-import {
-  Button,
-  Checkbox,
-  Container,
-  Snackbar,
-  TextField,
-  Tooltip,
-} from "@mui/material";
-import { ChangeEvent, useState } from "react";
+import { Button, Snackbar, Tooltip } from "@mui/material";
+import { useState } from "react";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useApi } from "../../hooks/useApi";
-import { useIdentity } from "../../hooks/useIdentity";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
-import { DECIMALS } from "../../utils/constants";
-import { findPure, formatUnit } from "../../utils/helpers";
-import { subscribe, unsubscribe } from "../../utils/main";
+import { unsubscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Modal } from "../Modal";
 import {
@@ -22,7 +12,6 @@ import {
   Title,
   TitleWrapper,
   Text,
-  CheckWrapper,
   Wrapper,
 } from "../Tabs";
 
@@ -47,23 +36,11 @@ export const Supporter = () => {
     creatorUrl: "",
   });
 
-  const {
-    rate,
-    isSubscribing,
-    isUnsubscribing,
-    isModalOpen,
-    selectedCreator,
-    creatorUrl,
-  } = state;
+  const { rate, isSubscribing, isUnsubscribing, isModalOpen, selectedCreator } =
+    state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
-
-  const {
-    rate: currentRate,
-    getRate,
-    isRegisterToPaymentSystem,
-  } = useIdentity(selectedCreator, network);
 
   const { committedCreators, uncommittedCreators, getSubscribedCreators } =
     useSubscribedCreators(signer, rate, network);
@@ -78,22 +55,6 @@ export const Supporter = () => {
       }));
       return;
     }
-  };
-
-  const setCreatorUrl = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setState((prev) => ({
-      ...prev,
-      creatorUrl: event.target.value,
-    }));
-  };
-
-  const setSelectedCreator = () => {
-    setState((prev) => ({
-      ...prev,
-      selectedCreator: creatorUrl,
-    }));
   };
 
   const callback = async () => {
