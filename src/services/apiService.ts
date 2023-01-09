@@ -3,7 +3,7 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import type { H256 } from "@polkadot/types/interfaces";
 import type { Bytes } from "@polkadot/types";
 import { InjectedExtension } from "@polkadot/extension-inject/types";
-import { formatAdditionalInfo } from "../utils/helpers";
+import { formatAdditionalInfo, formatEssentialInfo } from "../utils/helpers";
 
 class APIService {
   api: ApiPromise;
@@ -194,11 +194,15 @@ class APIService {
     injector: any,
     callback?: () => void
   ) => {
+    const _essentialInfo = formatEssentialInfo(essentialInfo.toHuman().info);
+
+    const identity = {
+      ..._essentialInfo,
+      additional: formatAdditionalInfo(additionalInfo),
+    };
+
     await this.api.tx.identity
-      .setIdentity({
-        ...essentialInfo,
-        additional: formatAdditionalInfo(additionalInfo),
-      })
+      .setIdentity(identity)
       .signAndSend(
         sender,
         { signer: injector.signer },

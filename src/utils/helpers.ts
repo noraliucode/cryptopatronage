@@ -134,3 +134,13 @@ export const checkProxyAssociation = async (
     return false;
   }
 };
+
+export function formatEssentialInfo(info: any) {
+  const _info: any = {};
+  for (const key in info) {
+    if (info[key] && info[key] !== "None") {
+      _info[key] = info[key];
+    }
+  }
+  return _info;
+}
