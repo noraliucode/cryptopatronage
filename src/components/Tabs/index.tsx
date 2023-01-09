@@ -9,7 +9,12 @@ import {
   setRate,
   toggleIsRegisterToPaymentSystem,
 } from "../../utils/main";
-import { DECIMALS, SYMBOL } from "../../utils/constants";
+import {
+  DECIMALS,
+  FOOTER_HEIGHT,
+  NAV_BAR_HEIGHT,
+  SYMBOL,
+} from "../../utils/constants";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
@@ -33,6 +38,7 @@ const Root = styled("div")(({ theme }) => ({
   borderRadius: "5px",
   margin: "auto",
   marginTop: 30,
+  minHeight: `calc(100vh - (${NAV_BAR_HEIGHT + FOOTER_HEIGHT + 45}px))`,
 }));
 export const Text = styled("div")(({ theme }) => ({
   fontSize: 14,
