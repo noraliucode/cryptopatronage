@@ -70,7 +70,8 @@ export const subscribe = async (
       const promises = [
         apiService.transfer(real, amount + reserved),
         apiService.addProxyViaProxy(creator, real, delay),
-        getSetLastPaymentTimeTx(api, sender),
+        // TODO: debug last payment time error
+        // getSetLastPaymentTimeTx(api, sender),
       ];
 
       let txs = await Promise.all(promises);
