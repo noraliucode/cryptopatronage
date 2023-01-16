@@ -6,7 +6,7 @@ import {
   SECONDS_IN_ONE_DAY,
 } from "./constants";
 import { getPaymentAmount, parseAdditionalInfo } from "./helpers";
-import { INetwork, IParsedSupporterProxies } from "./types";
+import { Identity, INetwork, IParsedSupporterProxies } from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
 import { APIService } from "../services/apiService";
@@ -451,4 +451,39 @@ export const parseCreatorProxies = async (
   });
   const result: any = await promise;
   return result;
+};
+
+// TODO: refactor - same functionality as setRate
+export const setIdentity = async (
+  api: ApiPromise | null,
+  idetity: Identity,
+  sender: string,
+  injector: any,
+  callback?: () => void,
+  setLoading?: (_: boolean) => void
+) => {
+  try {
+    if (!api) return;
+    const apiService = new APIService(api);
+    setLoading && setLoading(true);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { essentialInfo, additionalInfo } = await getInfos(api, sender);
+    const _callBack = () => {
+      callback && callback();
+      setLoading && setLoading(false);
+    };
+
+    await apiService.signAndSendSetIdentity(
+      essentialInfo,
+      additionalInfo,
+      sender,
+      injector,
+      _callBack,
+      idetity
+    );
+  } catch (error) {
+    console.error("set identity error", error);
+    setLoading && setLoading(false);
+  }
 };

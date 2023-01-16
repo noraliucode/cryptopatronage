@@ -41,6 +41,10 @@ export type ICreator = {
   supporterBalance?: number;
   rate?: string;
   imageUrl?: string;
+  email: string;
+  twitter: string;
+  display: string;
+  web: string;
 };
 
 export type IAdditionalInfo = {
@@ -64,4 +68,11 @@ export type IParsedProxies = {
 export type IParsedSupporterProxies = {
   committedSupporters: IProxyParsedSupporters;
   uncommittedSupporters: IProxyParsedSupporters;
+};
+
+export type Identity = {
+  email: string;
+  twitter: string;
+  display: string;
+  web: string;
 };

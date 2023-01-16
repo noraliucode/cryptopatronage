@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import {
   pullAllPayment,
   pullPayment,
+  setIdentity,
   setImageUrl,
   setRate,
   toggleIsRegisterToPaymentSystem,
@@ -27,6 +28,8 @@ import { Modal } from "../Modal";
 import { Supporter } from "../Supporter";
 import { useApi } from "../../hooks/useApi";
 import { HintText } from "../SubscribeModal";
+
+const IDENTITY_LABELS = ["Display Name", "Email", "Twitter", "Web"];
 
 const Root = styled("div")(({ theme }) => ({
   width: 600,
@@ -106,6 +109,10 @@ type IState = {
   isShowAllCreators: boolean;
   title: string;
   imgUrl: string;
+  email: string;
+  twitter: string;
+  display: string;
+  web: string;
 };
 
 export const TabsMain = () => {
@@ -119,6 +126,10 @@ export const TabsMain = () => {
     isShowAllCreators: false,
     title: "",
     imgUrl: "",
+    email: "",
+    twitter: "",
+    display: "",
+    web: "",
   });
 
   const {
@@ -130,6 +141,10 @@ export const TabsMain = () => {
     isShowAllCreators,
     title,
     imgUrl,
+    email,
+    twitter,
+    display,
+    web,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -276,6 +291,19 @@ export const TabsMain = () => {
     }));
   };
 
+  const handleIdentityInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    label: string
+  ) => {
+    let _label = label.toLowerCase();
+    _label = _label === "display name" ? "display" : _label;
+
+    setState((prev) => ({
+      ...prev,
+      [_label]: event.target.value,
+    }));
+  };
+
   const _setImgUrl = async () => {
     checkSigner();
     if (!injector) return;
@@ -286,6 +314,25 @@ export const TabsMain = () => {
     }));
 
     await setImageUrl(api, signer, imgUrl, injector);
+  };
+
+  const _setIdentity = async () => {
+    checkSigner();
+    if (!injector) return;
+
+    setState((prev) => ({
+      ...prev,
+      message: "Setting Identity...",
+    }));
+
+    const identity = {
+      email,
+      twitter,
+      display,
+      web,
+    };
+
+    await setIdentity(api, identity, signer, injector, () => {}, setLoading);
   };
 
   const isSetRateDisabled = !rate || rate === 0;
@@ -395,6 +442,24 @@ export const TabsMain = () => {
             &nbsp;
             <Button onClick={_setImgUrl} variant="contained">
               Set Image
+            </Button>
+          </InputWrapper>
+          <InputWrapper>
+            <TitleWrapper>
+              <Title>On-chain Identity</Title>
+            </TitleWrapper>
+            {IDENTITY_LABELS.map((label) => (
+              <TextField
+                id="standard-basic"
+                label={label}
+                variant="standard"
+                placeholder={label}
+                onChange={(event) => handleIdentityInputChange(event, label)}
+              />
+            ))}
+            &nbsp;
+            <Button onClick={_setIdentity} variant="contained">
+              Set On-chain identity
             </Button>
           </InputWrapper>
           <TitleWrapper>
