@@ -162,7 +162,9 @@ export const CreatorsPage = () => {
 
                         <CardContent>
                           <Typography gutterBottom variant="h5" component="div">
-                            {toShortAddress(creator.address)}
+                            {creator.display
+                              ? creator.display
+                              : toShortAddress(creator.address)}
                           </Typography>
                           <Typography variant="body2" color="text.secondary">
                             Rate: {formatUnit(creator.rate, DECIMALS[network])}{" "}

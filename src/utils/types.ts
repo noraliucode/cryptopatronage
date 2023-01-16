@@ -41,6 +41,10 @@ export type ICreator = {
   supporterBalance?: number;
   rate?: string;
   imageUrl?: string;
+  email: string;
+  twitter: string;
+  display: string;
+  web: string;
 };
 
 export type IAdditionalInfo = {

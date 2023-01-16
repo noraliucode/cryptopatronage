@@ -2,7 +2,7 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { useEffect, useState } from "react";
 import { APIService } from "../services/apiService";
 import { NODE_ENDPOINT } from "../utils/constants";
-import { parseAdditionalInfo } from "../utils/helpers";
+import { parseAdditionalInfo, parseEssentialInfo } from "../utils/helpers";
 import { ICreator, INetwork } from "../utils/types";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -44,9 +44,15 @@ export const useCreators = (network: INetwork) => {
       let identidies = await apiService.getIdentities(getAllDelegations());
       identidies = identidies.map((identity: any) => {
         if (identity) {
-          return parseAdditionalInfo(identity);
+          const _identity = {
+            ...parseEssentialInfo(identity.toHuman()?.info),
+            ...parseAdditionalInfo(identity),
+          };
+
+          return _identity;
         }
       });
+
       let creators = [] as any;
       identidies.forEach((identity: any, index: number) => {
         if (identity && identity.rate > 0) {
@@ -55,6 +61,10 @@ export const useCreators = (network: INetwork) => {
             address,
             rate: identity.rate,
             imageUrl: identity.imgUrl,
+            email: identity.email,
+            twitter: identity.twitter,
+            display: identity.display,
+            web: identity.web,
           };
           creators.push(creator);
         }
