@@ -28,6 +28,8 @@ import { Supporter } from "../Supporter";
 import { useApi } from "../../hooks/useApi";
 import { HintText } from "../SubscribeModal";
 
+const IDENTITY_LABELS = ["Display Name", "Email", "Twitter"];
+
 const Root = styled("div")(({ theme }) => ({
   width: 600,
   [theme.breakpoints.down("md")]: {
@@ -106,6 +108,9 @@ type IState = {
   isShowAllCreators: boolean;
   title: string;
   imgUrl: string;
+  email: string;
+  twitter: string;
+  name: string;
 };
 
 export const TabsMain = () => {
@@ -119,6 +124,9 @@ export const TabsMain = () => {
     isShowAllCreators: false,
     title: "",
     imgUrl: "",
+    email: "",
+    twitter: "",
+    name: "",
   });
 
   const {
@@ -276,6 +284,19 @@ export const TabsMain = () => {
     }));
   };
 
+  const handleIdentitiesInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    label: string
+  ) => {
+    let _label = label.toLowerCase();
+    _label = _label === "display name" ? "name" : _label;
+
+    setState((prev) => ({
+      ...prev,
+      [_label]: event.target.value,
+    }));
+  };
+
   const _setImgUrl = async () => {
     checkSigner();
     if (!injector) return;
@@ -395,6 +416,24 @@ export const TabsMain = () => {
             &nbsp;
             <Button onClick={_setImgUrl} variant="contained">
               Set Image
+            </Button>
+          </InputWrapper>
+          <InputWrapper>
+            <TitleWrapper>
+              <Title>On-chain Identity</Title>
+            </TitleWrapper>
+            {IDENTITY_LABELS.map((label) => (
+              <TextField
+                id="standard-basic"
+                label={label}
+                variant="standard"
+                placeholder={label}
+                onChange={(event) => handleIdentitiesInputChange(event, label)}
+              />
+            ))}
+            &nbsp;
+            <Button onClick={_setImgUrl} variant="contained">
+              Set On-chain identity
             </Button>
           </InputWrapper>
           <TitleWrapper>
