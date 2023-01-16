@@ -150,36 +150,54 @@ export const CreatorsPage = () => {
                 {_creators?.map((creator: any, index: number) => {
                   return (
                     <Grid item xs={12} sm={4} md={3}>
-                      <Card
-                        sx={{ maxWidth: 345, cursor: "pointer" }}
-                        onClick={() => onCardClick(index)}
+                      <a
+                        href={creator.web ? creator.web : ""}
+                        target="_blank"
+                        rel="noreferrer"
                       >
-                        <CardImage url={creator.imageUrl}>
-                          <Blur
-                            isClicked={selectedIndex === index ? true : false}
-                          />
-                        </CardImage>
+                        <Card
+                          sx={{ maxWidth: 345, cursor: "pointer" }}
+                          onClick={() => onCardClick(index)}
+                        >
+                          <CardImage url={creator.imageUrl}>
+                            <Blur
+                              isClicked={selectedIndex === index ? true : false}
+                            />
+                          </CardImage>
 
-                        <CardContent>
-                          <Typography gutterBottom variant="h5" component="div">
-                            {creator.display
-                              ? creator.display
-                              : toShortAddress(creator.address)}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            Rate: {formatUnit(creator.rate, DECIMALS[network])}{" "}
-                            {SYMBOL[network]}
-                          </Typography>
-                        </CardContent>
-                        <CardActions>
-                          <Button
-                            onClick={() => onClick(creator.address)}
-                            size="small"
-                          >
-                            Subscribe
-                          </Button>
-                        </CardActions>
-                      </Card>
+                          <CardContent>
+                            <Typography
+                              gutterBottom
+                              variant="h5"
+                              component="div"
+                            >
+                              {creator.display
+                                ? creator.display
+                                : toShortAddress(creator.address)}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              Rate:{" "}
+                              {formatUnit(creator.rate, DECIMALS[network])}{" "}
+                              {SYMBOL[network]}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              Email: {creator.email ? creator.email : "N/A"}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              Twitter:{" "}
+                              {creator.twitter ? creator.twitter : "N/A"}
+                            </Typography>
+                          </CardContent>
+                          <CardActions>
+                            <Button
+                              onClick={() => onClick(creator.address)}
+                              size="small"
+                            >
+                              Subscribe
+                            </Button>
+                          </CardActions>
+                        </Card>
+                      </a>
                     </Grid>
                   );
                 })}
