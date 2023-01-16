@@ -144,3 +144,13 @@ export function formatEssentialInfo(info: any) {
   }
   return _info;
 }
+
+export function formatUpdatedInfo(info: any) {
+  const _info: any = {};
+  for (const key in info) {
+    if (info[key] && info[key] !== "None") {
+      _info[key] = { Raw: info[key] };
+    }
+  }
+  return _info;
+}

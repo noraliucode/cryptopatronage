@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import {
   pullAllPayment,
   pullPayment,
+  setIdentity,
   setImageUrl,
   setRate,
   toggleIsRegisterToPaymentSystem,
@@ -110,7 +111,7 @@ type IState = {
   imgUrl: string;
   email: string;
   twitter: string;
-  name: string;
+  display: string;
 };
 
 export const TabsMain = () => {
@@ -126,7 +127,7 @@ export const TabsMain = () => {
     imgUrl: "",
     email: "",
     twitter: "",
-    name: "",
+    display: "",
   });
 
   const {
@@ -138,6 +139,9 @@ export const TabsMain = () => {
     isShowAllCreators,
     title,
     imgUrl,
+    email,
+    twitter,
+    display,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -284,12 +288,12 @@ export const TabsMain = () => {
     }));
   };
 
-  const handleIdentitiesInputChange = (
+  const handleIdentityInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     label: string
   ) => {
     let _label = label.toLowerCase();
-    _label = _label === "display name" ? "name" : _label;
+    _label = _label === "display name" ? "display" : _label;
 
     setState((prev) => ({
       ...prev,
@@ -307,6 +311,24 @@ export const TabsMain = () => {
     }));
 
     await setImageUrl(api, signer, imgUrl, injector);
+  };
+
+  const _setIdentity = async () => {
+    checkSigner();
+    if (!injector) return;
+
+    setState((prev) => ({
+      ...prev,
+      message: "Setting Identity...",
+    }));
+
+    const identity = {
+      email,
+      twitter,
+      display,
+    };
+
+    await setIdentity(api, identity, signer, injector, () => {}, setLoading);
   };
 
   const isSetRateDisabled = !rate || rate === 0;
@@ -428,11 +450,11 @@ export const TabsMain = () => {
                 label={label}
                 variant="standard"
                 placeholder={label}
-                onChange={(event) => handleIdentitiesInputChange(event, label)}
+                onChange={(event) => handleIdentityInputChange(event, label)}
               />
             ))}
             &nbsp;
-            <Button onClick={_setImgUrl} variant="contained">
+            <Button onClick={_setIdentity} variant="contained">
               Set On-chain identity
             </Button>
           </InputWrapper>

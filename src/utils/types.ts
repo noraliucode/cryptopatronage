@@ -65,3 +65,9 @@ export type IParsedSupporterProxies = {
   committedSupporters: IProxyParsedSupporters;
   uncommittedSupporters: IProxyParsedSupporters;
 };
+
+export type IIdentity = {
+  email: string;
+  twitter: string;
+  display: string;
+};
