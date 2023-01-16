@@ -138,20 +138,27 @@ class APIService {
 
   getProxies = async (address?: string) => {
     let promise = new Promise((resolve, reject) => {
-      this.api.query.proxy.proxies.entries(async (nodes: any) => {
-        if (address) {
-          const proxyNodes = nodes.filter((node: any) => {
-            return (
-              // node[0] is real account, and node[1] is delegations
-              node[1].toHuman()[0][0].delegate === address ||
-              node[0].toHuman()[0] === address
-            );
-          });
-          resolve(proxyNodes);
-        } else {
-          resolve(nodes);
-        }
-      });
+      this.api.query.proxy.proxies
+        .entries(async (nodes: any) => {
+          if (address) {
+            const proxyNodes = nodes.filter((node: any) => {
+              return (
+                // node[0] is real account, and node[1] is delegations
+                node[1].toHuman()[0][0].delegate === address ||
+                node[0].toHuman()[0] === address
+              );
+            });
+            resolve(proxyNodes);
+          } else {
+            resolve(nodes);
+          }
+        })
+        .catch((error) => {
+          // Catch Error: Unable to decode storage proxy.proxies
+          // https://github.com/polkadot-js/api/issues/4948
+          // an unmigrated storage item in a previous format
+          console.log("getProxies error: ", error);
+        });
     });
 
     const proxyNodes = await promise;

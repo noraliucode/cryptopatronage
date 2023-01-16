@@ -4,6 +4,7 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 export const ROCOCO = "wss://rococo-rpc.polkadot.io";
 export const WESTEND = "wss://westend-rpc.polkadot.io";
 export const KUSAMA = "wss://kusama-rpc.polkadot.io";
+export const POLKADOT = "wss://rpc.polkadot.io";
 
 export const SUPPORTER_LIST = "SUPPORTER_LIST";
 export const RATE = 1;
@@ -28,17 +29,19 @@ export const M_DECIMALS = {
 };
 export const DEFAULT_NETWORK = "ROCOCO";
 export const NODE_ENDPOINT = {
-  ROCOCO: "wss://rococo-rpc.polkadot.io",
-  WESTEND: "wss://westend-rpc.polkadot.io",
-  KUSAMA: "wss://kusama-rpc.polkadot.io",
+  ROCOCO,
+  WESTEND,
+  KUSAMA,
+  POLKADOT,
 };
 export const SYMBOL = {
   ROCOCO: "ROC",
   WESTEND: "WND",
   KUSAMA: "KSM",
+  POLKADOT: "DOT",
 };
 
-export const NETWORKS = ["ROCOCO", "WESTEND", "KUSAMA"];
+export const NETWORKS = ["ROCOCO", "WESTEND", "KUSAMA", "POLKADOT"];
 export const SECONDS_IN_ONE_DAY = 60 * 60 * 24;
 export const DAYS_IN_ONE_MONTH = 30.4;
 
