@@ -210,7 +210,7 @@ class APIService {
     let _essentialInfo = formatEssentialInfo(essentialInfo.toHuman().info);
     _essentialInfo = updatedInfo
       ? { ..._essentialInfo, ...formatUpdatedInfo(updatedInfo) }
-      : _essentialInfo;
+      : { ..._essentialInfo };
 
     const identity = {
       ..._essentialInfo,
