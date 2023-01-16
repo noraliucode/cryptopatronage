@@ -29,7 +29,7 @@ import { Supporter } from "../Supporter";
 import { useApi } from "../../hooks/useApi";
 import { HintText } from "../SubscribeModal";
 
-const IDENTITY_LABELS = ["Display Name", "Email", "Twitter"];
+const IDENTITY_LABELS = ["Display Name", "Email", "Twitter", "Web"];
 
 const Root = styled("div")(({ theme }) => ({
   width: 600,
@@ -112,6 +112,7 @@ type IState = {
   email: string;
   twitter: string;
   display: string;
+  web: string;
 };
 
 export const TabsMain = () => {
@@ -128,6 +129,7 @@ export const TabsMain = () => {
     email: "",
     twitter: "",
     display: "",
+    web: "",
   });
 
   const {
@@ -142,6 +144,7 @@ export const TabsMain = () => {
     email,
     twitter,
     display,
+    web,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -326,6 +329,7 @@ export const TabsMain = () => {
       email,
       twitter,
       display,
+      web,
     };
 
     await setIdentity(api, identity, signer, injector, () => {}, setLoading);

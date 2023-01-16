@@ -8,7 +8,7 @@ import {
   formatEssentialInfo,
   formatUpdatedInfo,
 } from "../utils/helpers";
-import { IIdentity } from "../utils/types";
+import { Identity } from "../utils/types";
 
 class APIService {
   api: ApiPromise;
@@ -205,7 +205,7 @@ class APIService {
     sender: string,
     injector: any,
     callback?: () => void,
-    updatedInfo?: IIdentity
+    updatedInfo?: Identity
   ) => {
     let _essentialInfo = formatEssentialInfo(essentialInfo.toHuman().info);
     _essentialInfo = updatedInfo

@@ -6,7 +6,7 @@ import {
   SECONDS_IN_ONE_DAY,
 } from "./constants";
 import { getPaymentAmount, parseAdditionalInfo } from "./helpers";
-import { IIdentity, INetwork, IParsedSupporterProxies } from "./types";
+import { Identity, INetwork, IParsedSupporterProxies } from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
 import { APIService } from "../services/apiService";
@@ -456,7 +456,7 @@ export const parseCreatorProxies = async (
 // TODO: refactor - same functionality as setRate
 export const setIdentity = async (
   api: ApiPromise | null,
-  idetity: IIdentity,
+  idetity: Identity,
   sender: string,
   injector: any,
   callback?: () => void,
