@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 export const Container = styled("div")(() => ({
   maxWidth: 700,
   margin: "auto",
+  textAlign: "left",
 }));
 export const Title = styled("div")(() => ({
   color: "white",
