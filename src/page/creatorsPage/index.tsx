@@ -19,6 +19,9 @@ import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { SubscribeModal } from "../../components/SubscribeModal";
 import { Modal } from "../../components/Modal";
 import { useParams } from "react-router";
+import EmailIcon from "@mui/icons-material/Email";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import IconButton from "@mui/material/IconButton";
 
 const IMAGE_HEIGHT = 140;
 
@@ -53,6 +56,9 @@ const Hint = styled("div")(({ theme }) => ({
   fontWeight: 700,
   color: theme.palette.text.primary,
   fontSize: 20,
+}));
+const ExtraHeight = styled("div")(({ theme }) => ({
+  marginBottom: 40,
 }));
 
 type IState = {
@@ -180,13 +186,35 @@ export const CreatorsPage = () => {
                               {formatUnit(creator.rate, DECIMALS[network])}{" "}
                               {SYMBOL[network]}
                             </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              Email: {creator.email ? creator.email : "N/A"}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              Twitter:{" "}
-                              {creator.twitter ? creator.twitter : "N/A"}
-                            </Typography>
+                            {creator.email ? (
+                              <a href={`mailto:${creator.email}`}>
+                                <IconButton
+                                  color="primary"
+                                  aria-label="email icon"
+                                >
+                                  <EmailIcon />
+                                </IconButton>
+                              </a>
+                            ) : null}
+
+                            {creator.twitter ? (
+                              <a
+                                href={creator.twitter}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <IconButton
+                                  color="primary"
+                                  aria-label="twitter icon"
+                                >
+                                  <TwitterIcon />
+                                </IconButton>
+                              </a>
+                            ) : null}
+
+                            {!creator.twitter && !creator.email ? (
+                              <ExtraHeight />
+                            ) : null}
                           </CardContent>
                           <CardActions>
                             <Button
