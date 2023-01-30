@@ -22,13 +22,13 @@ const Logo = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
 }));
-const DesktopContentWarpper = styled("div")(({ theme }) => ({
+export const DesktopContentWarpper = styled("div")(({ theme }) => ({
   display: "flex",
   [theme.breakpoints.down("sm")]: {
     display: "none",
   },
 }));
-const MobileContentWarpper = styled("div")(({ theme }) => ({
+export const MobileContentWarpper = styled("div")(({ theme }) => ({
   display: "none",
   [theme.breakpoints.down("sm")]: {
     display: "flex",

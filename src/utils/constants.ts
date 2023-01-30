@@ -41,7 +41,12 @@ export const SYMBOL = {
   POLKADOT: "DOT",
 };
 
-export const NETWORKS = ["ROCOCO", "WESTEND", "KUSAMA", "POLKADOT"];
+export const NETWORKS = [
+  { network: "ROCOCO", icon: "/assets/networks/rococo.svg" },
+  { network: "WESTEND", icon: "/assets/networks/westend.svg" },
+  { network: "KUSAMA", icon: "/assets/networks/kusama.gif" },
+  { network: "POLKADOT", icon: "/assets/networks/polkadot.svg" },
+];
 export const SECONDS_IN_ONE_DAY = 60 * 60 * 24;
 export const DAYS_IN_ONE_MONTH = 30.4;
 

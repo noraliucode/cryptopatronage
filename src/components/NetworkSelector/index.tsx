@@ -6,6 +6,13 @@ import { NETWORKS } from "../../utils/constants";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { useApi } from "../../hooks/useApi";
 import { INetwork } from "../../utils/types";
+import { DesktopContentWarpper } from "../NavigationBar";
+import { styled } from "@mui/material/styles";
+
+const Wrapper = styled("div")(() => ({
+  display: "flex",
+  alignItems: "center",
+}));
 
 type IState = {
   open: boolean;
@@ -43,11 +50,29 @@ export const NetworkSelector = ({ setNetwork, network }: IProps) => {
     }));
   };
 
+  // TODO: refactor network object selecting
+  const selectedNework = NETWORKS.find((x) => x.network === network);
+
   return (
     <>
-      <Button onClick={handleClick}>
-        {typeof network === "string" && network ? network : "Select Network"}
-        <PlayArrowIcon className="selector-image" />
+      <Button
+        sx={{ background: "rgba(41,35,107,0.5)", margin: "0 10px" }}
+        onClick={handleClick}
+        variant="contained"
+      >
+        {typeof network === "string" && network ? (
+          <Wrapper>
+            <img
+              className="network-icon"
+              alt="icon"
+              src={selectedNework?.icon}
+            />
+            <DesktopContentWarpper>{network}</DesktopContentWarpper>
+          </Wrapper>
+        ) : (
+          "Select Network"
+        )}
+        <PlayArrowIcon className="selector-image" sx={{ fontSize: 14 }} />
       </Button>
       <Menu
         id="basic-menu"
@@ -63,13 +88,14 @@ export const NetworkSelector = ({ setNetwork, network }: IProps) => {
           horizontal: "left",
         }}
       >
-        {NETWORKS.map((network: string, index: number) => {
+        {NETWORKS.map((network: any, index: number) => {
           return (
             <MenuItem
               key={`${network}_${index}`}
-              onClick={() => handleClose(network)}
+              onClick={() => handleClose(network.network)}
             >
-              {network}
+              <img className="network-icon" alt="icon" src={network.icon} />
+              {network.network}
             </MenuItem>
           );
         })}
