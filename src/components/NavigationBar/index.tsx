@@ -10,6 +10,7 @@ import { Drawer } from "../Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
 import { MENU } from "../../utils/constants";
 import { Link as StyledLink } from "../Link";
+import { useApi } from "../../hooks/useApi";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -60,6 +61,7 @@ export const NavigationBar = () => {
   });
 
   const { open } = state;
+  const { api } = useApi(network);
 
   const toggleDrawer = (event?: any) => {
     if (
@@ -118,6 +120,7 @@ export const NavigationBar = () => {
               setSigner={setSigner}
               accounts={accounts}
               network={network}
+              genesisHash={api?.genesisHash}
             />
             <MobileContentWarpper>
               <MenuWarpper>

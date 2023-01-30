@@ -10,6 +10,7 @@ import { styled } from "@mui/material/styles";
 import { Keyring } from "@polkadot/keyring";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import config from "../../utils/ss58-registry.json";
+import { Hash } from "@polkadot/types/interfaces/runtime/types";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -41,6 +42,7 @@ type IProps = {
   signer: IAccount | null;
   accounts: IAccounts;
   network: string;
+  genesisHash?: Hash | undefined;
 };
 
 export const SignerSelector = ({
@@ -48,6 +50,7 @@ export const SignerSelector = ({
   signer,
   accounts,
   network,
+  genesisHash,
 }: IProps) => {
   const [state, setState] = useState<IState>({
     open: false,
@@ -127,18 +130,23 @@ export const SignerSelector = ({
         }}
       >
         {accounts?.map((account: IAccount, index: number) => {
-          return (
-            <MenuItem
-              key={`${account.address}_${index}`}
-              onClick={() => handleClose(account)}
-            >
-              <Identicon value={account.address} size={size} theme={theme} />
-              <Wrapper>
-                <Name>{account.meta.name}</Name>{" "}
-                <Address>{renderAddress(account.address, 10)}</Address>
-              </Wrapper>
-            </MenuItem>
-          );
+          if (
+            account.meta.genesisHash === genesisHash?.toHex() ||
+            !account.meta.genesisHash
+          ) {
+            return (
+              <MenuItem
+                key={`${account.address}_${index}`}
+                onClick={() => handleClose(account)}
+              >
+                <Identicon value={account.address} size={size} theme={theme} />
+                <Wrapper>
+                  <Name>{account.meta.name}</Name>{" "}
+                  <Address>{renderAddress(account.address, 10)}</Address>
+                </Wrapper>
+              </MenuItem>
+            );
+          }
         })}
       </Menu>
     </>

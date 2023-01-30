@@ -22,6 +22,7 @@ export type IAccounts = IAccount[] | null;
 
 type IMeta = {
   name: string;
+  genesisHash: string;
 };
 
 export type IInjector = InjectedExtension | null;
