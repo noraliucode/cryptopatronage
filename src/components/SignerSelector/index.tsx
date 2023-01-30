@@ -9,6 +9,7 @@ import Identicon from "@polkadot/react-identicon";
 import { styled } from "@mui/material/styles";
 import { Keyring } from "@polkadot/keyring";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import config from "../../utils/ss58-registry.json";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -39,9 +40,15 @@ type IProps = {
   setSigner: (_: IAccount) => void;
   signer: IAccount | null;
   accounts: IAccounts;
+  network: string;
 };
 
-export const SignerSelector = ({ setSigner, signer, accounts }: IProps) => {
+export const SignerSelector = ({
+  setSigner,
+  signer,
+  accounts,
+  network,
+}: IProps) => {
   const [state, setState] = useState<IState>({
     open: false,
     anchorEl: null,
@@ -74,7 +81,10 @@ export const SignerSelector = ({ setSigner, signer, accounts }: IProps) => {
 
   const renderAddress = (address: string, number?: number) => {
     const keyring = new Keyring();
-    const encodedAddress = keyring.encodeAddress(address, 2);
+    const registry = config.registry.find(
+      (x) => x.network.toLowerCase() === network.toLowerCase()
+    );
+    const encodedAddress = keyring.encodeAddress(address, registry?.prefix);
     return toShortAddress(encodedAddress, number);
   };
 

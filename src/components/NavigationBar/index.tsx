@@ -117,6 +117,7 @@ export const NavigationBar = () => {
               signer={signer}
               setSigner={setSigner}
               accounts={accounts}
+              network={network}
             />
             <MobileContentWarpper>
               <MenuWarpper>
