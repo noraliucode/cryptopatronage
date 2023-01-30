@@ -15,12 +15,13 @@ import {
 } from "./types";
 
 export function toShortAddress(
-  _address?: AccountId | AccountIndex | Address | string | null | Uint8Array
+  _address?: AccountId | AccountIndex | Address | string | null | Uint8Array,
+  number = 5
 ): string {
   const address = (_address || "").toString();
 
   return address.length > 13
-    ? `${address.slice(0, 5)}…${address.slice(-4)}`
+    ? `${address.slice(0, number)}…${address.slice(number * -1 + 1)}`
     : address;
 }
 
