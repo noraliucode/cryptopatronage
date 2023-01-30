@@ -409,7 +409,7 @@ export const parseCreatorProxies = async (
   api: ApiPromise | null,
   // TODO: import type PalletProxyProxyDefinition
   proxies: any,
-  creator: string
+  creator?: string
 ): Promise<IParsedSupporterProxies> => {
   const _api = api as ApiPromise;
   const apiService = new APIService(_api);

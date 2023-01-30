@@ -189,7 +189,7 @@ class APIService {
     return balances;
   };
 
-  getIdentity = async (creator: string) => {
+  getIdentity = async (creator?: string) => {
     const identity = await this.api.query.identity.identityOf(creator);
     return identity;
   };

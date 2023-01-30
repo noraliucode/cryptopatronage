@@ -153,10 +153,10 @@ export const TabsMain = () => {
     rate: currentRate,
     getRate,
     isRegisterToPaymentSystem,
-  } = useIdentity(signer, network);
+  } = useIdentity(signer?.address, network);
 
   const { committedSupporters, getSupporters, uncommittedSupporters } =
-    useSupporters(signer, currentRate, network);
+    useSupporters(signer?.address, currentRate, network);
 
   const { api } = useApi(network);
 
@@ -180,7 +180,7 @@ export const TabsMain = () => {
 
   const _setRate = async () => {
     checkSigner();
-    if (!injector) return;
+    if (!injector || !signer) return;
 
     setState((prev) => ({
       ...prev,
@@ -190,7 +190,7 @@ export const TabsMain = () => {
     await setRate(
       api,
       rate * 10 ** DECIMALS[network],
-      signer,
+      signer.address,
       injector,
       getRate,
       setLoading
@@ -202,7 +202,7 @@ export const TabsMain = () => {
     supporter?: string,
     balance?: number
   ) => {
-    if (!real || !supporter || !balance) return;
+    if (!real || !supporter || !balance || !signer) return;
     if (currentRate > balance) {
       setState((prev) => ({
         ...prev,
@@ -218,7 +218,7 @@ export const TabsMain = () => {
     await pullPayment(
       api,
       real,
-      signer,
+      signer.address,
       injector,
       currentRate,
       DECIMALS[network]
@@ -226,6 +226,7 @@ export const TabsMain = () => {
   };
 
   const _pullAll = async (isCommitted: boolean) => {
+    if (!signer) return;
     setState((prev) => ({
       ...prev,
       message: "Pulling All Payment...",
@@ -237,7 +238,7 @@ export const TabsMain = () => {
       await pullAllPayment(
         api,
         reals,
-        signer,
+        signer.address,
         injector,
         currentRate,
         DECIMALS[network]
@@ -247,10 +248,10 @@ export const TabsMain = () => {
 
   const handleRegisterClick = () => {
     checkSigner();
-    if (!injector) return;
+    if (!injector || !signer) return;
     toggleIsRegisterToPaymentSystem(
       api,
-      signer,
+      signer.address,
       isRegisterToPaymentSystem ? !isRegisterToPaymentSystem : true,
       injector
     );
@@ -306,19 +307,19 @@ export const TabsMain = () => {
 
   const _setImgUrl = async () => {
     checkSigner();
-    if (!injector) return;
+    if (!injector || !signer) return;
 
     setState((prev) => ({
       ...prev,
       message: "Setting Image Url...",
     }));
 
-    await setImageUrl(api, signer, imgUrl, injector);
+    await setImageUrl(api, signer.address, imgUrl, injector);
   };
 
   const _setIdentity = async () => {
     checkSigner();
-    if (!injector) return;
+    if (!injector || !signer) return;
 
     setState((prev) => ({
       ...prev,
@@ -332,7 +333,14 @@ export const TabsMain = () => {
       web,
     };
 
-    await setIdentity(api, identity, signer, injector, () => {}, setLoading);
+    await setIdentity(
+      api,
+      identity,
+      signer.address,
+      injector,
+      () => {},
+      setLoading
+    );
   };
 
   const isSetRateDisabled = !rate || rate === 0;

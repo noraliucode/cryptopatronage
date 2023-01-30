@@ -10,7 +10,7 @@ interface IState {
   isRegisterToPaymentSystem: boolean;
 }
 
-export const useIdentity = (creator: string, network: INetwork) => {
+export const useIdentity = (creator: string | undefined, network: INetwork) => {
   const [state, setState] = useState<IState>({
     rate: 0,
     isRegisterToPaymentSystem: false,

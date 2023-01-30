@@ -29,9 +29,9 @@ export type IInjector = InjectedExtension | null;
 export type IWeb3ConnectedContextState = {
   network: INetwork;
   accounts: IAccounts;
-  signer: string;
+  signer: IAccount | null;
   injector: IInjector;
-  setSigner: (value: string) => any;
+  setSigner: (value: IAccount) => void;
   setNetwork: (value: string) => any;
 };
 

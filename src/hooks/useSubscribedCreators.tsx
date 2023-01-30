@@ -11,7 +11,7 @@ interface IState {
 }
 
 export const useSubscribedCreators = (
-  supporter: string,
+  supporter = "",
   rate: number,
   network: INetwork
 ) => {

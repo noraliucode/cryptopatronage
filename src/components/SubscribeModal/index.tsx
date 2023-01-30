@@ -123,13 +123,14 @@ export const SubscribeModal = (props: IProps) => {
       // await getSubscribedCreators();
     };
 
+    if (!signer) return;
     const apiService = new APIService(api);
-    const supporterProxies: any = await apiService.getProxies(signer);
-    const pure = findPure(supporterProxies, selectedCreator, signer);
+    const supporterProxies: any = await apiService.getProxies(signer.address);
+    const pure = findPure(supporterProxies, selectedCreator, signer.address);
     await subscribe(
       api,
       selectedCreator,
-      signer,
+      signer?.address,
       injector,
       isCommitted,
       network,
