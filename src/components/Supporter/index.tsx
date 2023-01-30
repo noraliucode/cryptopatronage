@@ -45,7 +45,7 @@ export const Supporter = () => {
     useWeb3ConnectedContext();
 
   const { committedCreators, uncommittedCreators, getSubscribedCreators } =
-    useSubscribedCreators(signer, rate, network);
+    useSubscribedCreators(signer?.address, rate, network);
 
   const { api } = useApi(network);
 
@@ -65,7 +65,7 @@ export const Supporter = () => {
 
   const _unsubscribe = async () => {
     checkSigner();
-    if (!injector) return;
+    if (!injector || !signer) return;
     const setLoading = (value: boolean) => {
       setState((prev) => ({
         ...prev,
@@ -74,7 +74,7 @@ export const Supporter = () => {
     };
     await unsubscribe(
       api,
-      signer,
+      signer.address,
       injector,
       selectedCreator,
       callback,

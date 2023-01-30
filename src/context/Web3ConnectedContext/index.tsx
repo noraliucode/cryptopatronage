@@ -4,7 +4,11 @@ import {
   web3Enable,
   web3FromAddress,
 } from "@polkadot/extension-dapp";
-import { IInjector, IWeb3ConnectedContextState } from "../../utils/types";
+import {
+  IAccount,
+  IInjector,
+  IWeb3ConnectedContextState,
+} from "../../utils/types";
 import { DEFAULT_NETWORK } from "../../utils/constants";
 
 interface IProps {
@@ -18,13 +22,13 @@ const Web3ConnectedContext = createContext<IWeb3ConnectedContextState>(null!);
 const useWeb3ConnectedContext = () => useContext(Web3ConnectedContext);
 
 const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
-  const setValue = (value: string, key: string) => {
+  const setValue = (value: string | IAccount, key: string) => {
     setState((prev: IWeb3ConnectedContextState) => ({ ...prev, [key]: value }));
   };
   const [state, setState] = useState<IWeb3ConnectedContextState>({
     network: DEFAULT_NETWORK,
     accounts: null,
-    signer: "",
+    signer: null,
     injector: null,
     setSigner: (value) => setValue(value, SIGNER),
     setNetwork: (value) => setValue(value, NETWORK),
@@ -43,7 +47,7 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
       const allAccounts = await web3Accounts();
       let injector: IInjector = null;
       if (signer) {
-        injector = await web3FromAddress(signer);
+        injector = await web3FromAddress(signer.address);
       }
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

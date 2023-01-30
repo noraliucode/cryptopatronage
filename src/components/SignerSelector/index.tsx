@@ -5,6 +5,32 @@ import MenuItem from "@mui/material/MenuItem";
 import { toShortAddress } from "../../utils/helpers";
 import { IAccount, IAccounts } from "../../utils/types";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import Identicon from "@polkadot/react-identicon";
+import { styled } from "@mui/material/styles";
+import { Keyring } from "@polkadot/keyring";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import config from "../../utils/ss58-registry.json";
+import { Hash } from "@polkadot/types/interfaces/runtime/types";
+
+export const Wrapper = styled("div")(() => ({
+  display: "flex",
+  flexDirection: "column",
+  marginLeft: 15,
+  textAlign: "left",
+}));
+export const Name = styled("div")(
+  ({ lineHeight = 18 }: { lineHeight?: number }) => ({
+    fontWeight: 700,
+    fontSize: 14,
+    lineHeight: `${lineHeight}px`,
+  })
+);
+export const Address = styled("div")(
+  ({ lineHeight = 18 }: { lineHeight?: number }) => ({
+    fontSize: 14,
+    lineHeight: `${lineHeight}px`,
+  })
+);
 
 type IState = {
   open: boolean;
@@ -12,12 +38,20 @@ type IState = {
 };
 
 type IProps = {
-  setSigner: (_: string) => void;
-  signer: string;
+  setSigner: (_: IAccount) => void;
+  signer: IAccount | null;
   accounts: IAccounts;
+  network: string;
+  genesisHash?: Hash | undefined;
 };
 
-export const SignerSelector = ({ setSigner, signer, accounts }: IProps) => {
+export const SignerSelector = ({
+  setSigner,
+  signer,
+  accounts,
+  network,
+  genesisHash,
+}: IProps) => {
   const [state, setState] = useState<IState>({
     open: false,
     anchorEl: null,
@@ -25,10 +59,11 @@ export const SignerSelector = ({ setSigner, signer, accounts }: IProps) => {
 
   const { open, anchorEl } = state;
 
-  const handleClose = (address: string) => {
-    if (typeof address === "string") {
-      setSigner(address);
+  const handleClose = (account: IAccount) => {
+    if (typeof account.address === "string") {
+      setSigner(account);
     }
+
     setState((prev) => ({
       ...prev,
       open: !prev.open,
@@ -42,14 +77,43 @@ export const SignerSelector = ({ setSigner, signer, accounts }: IProps) => {
     }));
   };
 
+  const size = 24;
+  // theme (optional), depicts the type of icon, one of
+  // 'polkadot', 'substrate' (default), 'beachball' or 'jdenticon'
+  const theme = "polkadot";
+
+  const renderAddress = (address: string, number?: number) => {
+    const keyring = new Keyring();
+    const registry = config.registry.find(
+      (x) => x.network.toLowerCase() === network.toLowerCase()
+    );
+    const encodedAddress = keyring.encodeAddress(address, registry?.prefix);
+    return toShortAddress(encodedAddress, number);
+  };
+
   return (
     <>
       <Button variant="contained" onClick={handleClick}>
-        <AccountBalanceWalletIcon />
+        {typeof signer?.address === "string" && signer ? (
+          <Identicon value={signer.address} size={size} theme={theme} />
+        ) : (
+          <AccountBalanceWalletIcon />
+        )}
         &nbsp;
-        {typeof signer === "string" && signer
-          ? toShortAddress(signer)
-          : "Connect"}
+        {typeof signer?.address === "string" && signer ? (
+          <>
+            <Wrapper>
+              <Name lineHeight={14}>{signer.meta.name}</Name>{" "}
+              <Address lineHeight={14}>{renderAddress(signer.address)}</Address>
+            </Wrapper>
+            <PlayArrowIcon
+              className="selector-image"
+              sx={{ fontSize: 14, marginLeft: "20px" }}
+            />
+          </>
+        ) : (
+          "Connect"
+        )}
       </Button>
       <Menu
         id="basic-menu"
@@ -66,14 +130,23 @@ export const SignerSelector = ({ setSigner, signer, accounts }: IProps) => {
         }}
       >
         {accounts?.map((account: IAccount, index: number) => {
-          return (
-            <MenuItem
-              key={`${account.address}_${index}`}
-              onClick={() => handleClose(account.address)}
-            >
-              {account.meta.name} {toShortAddress(account.address)}
-            </MenuItem>
-          );
+          if (
+            account.meta.genesisHash === genesisHash?.toHex() ||
+            !account.meta.genesisHash
+          ) {
+            return (
+              <MenuItem
+                key={`${account.address}_${index}`}
+                onClick={() => handleClose(account)}
+              >
+                <Identicon value={account.address} size={size} theme={theme} />
+                <Wrapper>
+                  <Name>{account.meta.name}</Name>{" "}
+                  <Address>{renderAddress(account.address, 10)}</Address>
+                </Wrapper>
+              </MenuItem>
+            );
+          }
         })}
       </Menu>
     </>

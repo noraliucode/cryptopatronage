@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "CryptoPatronage",
+  "name": "A platform that helps creators build a membership program",
   "icons": [
     {
       "src": "favicon.ico",

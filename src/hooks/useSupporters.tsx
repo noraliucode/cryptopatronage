@@ -14,7 +14,7 @@ interface IState {
 }
 
 export const useSupporters = (
-  creator: string,
+  creator: string | undefined,
   rate: number,
   network: INetwork
 ) => {
