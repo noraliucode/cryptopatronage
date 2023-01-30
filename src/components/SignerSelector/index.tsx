@@ -7,6 +7,7 @@ import { IAccount, IAccounts } from "../../utils/types";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import Identicon from "@polkadot/react-identicon";
 import { styled } from "@mui/material/styles";
+import { Keyring } from "@polkadot/keyring";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -61,6 +62,12 @@ export const SignerSelector = ({ setSigner, signer, accounts }: IProps) => {
   // 'polkadot', 'substrate' (default), 'beachball' or 'jdenticon'
   const theme = "polkadot";
 
+  const renderAddress = (address: string) => {
+    const keyring = new Keyring();
+    const encodedAddress = keyring.encodeAddress(address, 2);
+    return toShortAddress(encodedAddress, 10);
+  };
+
   return (
     <>
       <Button variant="contained" onClick={handleClick}>
@@ -97,7 +104,7 @@ export const SignerSelector = ({ setSigner, signer, accounts }: IProps) => {
               <Identicon value={account.address} size={size} theme={theme} />
               <Wrapper>
                 <Name>{account.meta.name}</Name>{" "}
-                <Address>{toShortAddress(account.address, 10)}</Address>
+                <Address>{renderAddress(account.address)}</Address>
               </Wrapper>
             </MenuItem>
           );
