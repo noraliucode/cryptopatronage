@@ -165,7 +165,13 @@ export const CreatorsPage = () => {
                           sx={{ maxWidth: 345, cursor: "pointer" }}
                           onClick={() => onCardClick(index)}
                         >
-                          <CardImage url={creator.imageUrl}>
+                          <CardImage
+                            url={
+                              creator.imageUrl
+                                ? creator.imageUrl
+                                : "/assets/images/default.webp"
+                            }
+                          >
                             <Blur
                               isClicked={selectedIndex === index ? true : false}
                             />
