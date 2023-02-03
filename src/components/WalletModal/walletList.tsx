@@ -35,6 +35,7 @@ export const WalletList = () => {
       {WALLETS.map((value: IWallet) => {
         return (
           <>
+            <Divider component="li" />
             <ListItem sx={{ width: "100%" }} key={value.name} disablePadding>
               <ListItemButton sx={{ height: 100 }}>
                 <ListItemAvatar>
@@ -49,7 +50,6 @@ export const WalletList = () => {
                 </Wrapper>
               </ListItemButton>
             </ListItem>
-            <Divider component="li" />
           </>
         );
       })}
