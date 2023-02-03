@@ -11,6 +11,7 @@ import { Keyring } from "@polkadot/keyring";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import config from "../../utils/ss58-registry.json";
 import { Hash } from "@polkadot/types/interfaces/runtime/types";
+import { WalletModal } from "../WalletModal";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -35,6 +36,7 @@ export const Address = styled("div")(
 type IState = {
   open: boolean;
   anchorEl: any;
+  walletModalOpen: boolean;
 };
 
 type IProps = {
@@ -55,9 +57,10 @@ export const SignerSelector = ({
   const [state, setState] = useState<IState>({
     open: false,
     anchorEl: null,
+    walletModalOpen: true,
   });
 
-  const { open, anchorEl } = state;
+  const { open, anchorEl, walletModalOpen } = state;
 
   const handleClose = (account: IAccount) => {
     if (typeof account.address === "string") {
@@ -93,6 +96,7 @@ export const SignerSelector = ({
 
   return (
     <>
+      <WalletModal open={walletModalOpen} onClose={() => {}} />
       <Button variant="contained" onClick={handleClick}>
         {typeof signer?.address === "string" && signer ? (
           <Identicon value={signer.address} size={size} theme={theme} />

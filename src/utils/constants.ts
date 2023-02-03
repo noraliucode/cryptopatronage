@@ -84,3 +84,9 @@ export const MENU = [
 
 export const NAV_BAR_HEIGHT = 64;
 export const FOOTER_HEIGHT = 58.5;
+
+export const WALLETS = [
+  { name: "subwallet-js", icon: "/assets/wallets/subwallet.svg" },
+  { name: "polkadot-js", icon: "/assets/wallets/polkadot.svg" },
+  { name: "talisman", icon: "/assets/wallets/talisman.svg" },
+];

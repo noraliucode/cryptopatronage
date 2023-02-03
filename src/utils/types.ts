@@ -77,3 +77,8 @@ export type Identity = {
   display: string;
   web: string;
 };
+
+export type IWallet = {
+  name: string;
+  icon: string;
+};
