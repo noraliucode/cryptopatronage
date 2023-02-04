@@ -22,7 +22,7 @@ export const Wrapper = styled("div")(() => ({
   alignItems: "center",
 }));
 
-export const WalletList = () => {
+export const WalletList = ({ onClick }: { onClick: (_: string) => void }) => {
   return (
     <List
       dense
@@ -36,7 +36,12 @@ export const WalletList = () => {
         return (
           <>
             <Divider component="li" />
-            <ListItem sx={{ width: "100%" }} key={value.name} disablePadding>
+            <ListItem
+              sx={{ width: "100%" }}
+              key={value.name}
+              disablePadding
+              onClick={() => onClick(value.name)}
+            >
               <ListItemButton sx={{ height: 100 }}>
                 <ListItemAvatar>
                   <Avatar alt={value.name} src={value.icon} />

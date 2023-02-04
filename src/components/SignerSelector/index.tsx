@@ -12,6 +12,8 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import config from "../../utils/ss58-registry.json";
 import { Hash } from "@polkadot/types/interfaces/runtime/types";
 import { WalletModal } from "../WalletModal";
+import { APP_SESSION } from "../../utils/constants";
+import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -40,8 +42,8 @@ type IState = {
 };
 
 type IProps = {
-  setSigner: (_: IAccount) => void;
-  signer: IAccount | null;
+  setSigner: (_: InjectedAccountWithMeta) => void;
+  signer: InjectedAccountWithMeta | null;
   accounts: IAccounts;
   network: string;
   genesisHash?: Hash | undefined;
@@ -54,15 +56,19 @@ export const SignerSelector = ({
   network,
   genesisHash,
 }: IProps) => {
+  console.log("accounts??", accounts);
+
   const [state, setState] = useState<IState>({
     open: false,
     anchorEl: null,
-    walletModalOpen: true,
+    walletModalOpen: false,
   });
 
   const { open, anchorEl, walletModalOpen } = state;
+  const connector = localStorage.getItem(APP_SESSION);
+  console.log("connector", connector);
 
-  const handleClose = (account: IAccount) => {
+  const handleClose = (account: InjectedAccountWithMeta) => {
     if (typeof account.address === "string") {
       setSigner(account);
     }
@@ -77,6 +83,12 @@ export const SignerSelector = ({
       ...prev,
       open: !prev.open,
       anchorEl: event.currentTarget,
+    }));
+  };
+  const toogleModal = () => {
+    setState((prev) => ({
+      ...prev,
+      walletModalOpen: !walletModalOpen,
     }));
   };
 
@@ -94,17 +106,25 @@ export const SignerSelector = ({
     return toShortAddress(encodedAddress, number);
   };
 
-  return (
-    <>
-      <WalletModal open={walletModalOpen} onClose={() => {}} />
-      <Button variant="contained" onClick={handleClick}>
-        {typeof signer?.address === "string" && signer ? (
-          <Identicon value={signer.address} size={size} theme={theme} />
-        ) : (
+  const renderWalletModal = () => {
+    return (
+      <>
+        <WalletModal open={walletModalOpen} onClose={toogleModal} />
+        <Button variant="contained" onClick={toogleModal}>
           <AccountBalanceWalletIcon />
-        )}
-        &nbsp;
-        {typeof signer?.address === "string" && signer ? (
+          &nbsp;Connect
+        </Button>
+      </>
+    );
+  };
+
+  const renderWallet = () => {
+    if (!signer) return;
+    return (
+      <>
+        <Button variant="contained" onClick={handleClick}>
+          <AccountBalanceWalletIcon />
+          <Identicon value={signer.address} size={size} theme={theme} />
           <>
             <Wrapper>
               <Name lineHeight={14}>{signer.meta.name}</Name>{" "}
@@ -115,44 +135,52 @@ export const SignerSelector = ({
               sx={{ fontSize: 14, marginLeft: "20px" }}
             />
           </>
-        ) : (
-          "Connect"
-        )}
-      </Button>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-      >
-        {accounts?.map((account: IAccount, index: number) => {
-          if (
-            account.meta.genesisHash === genesisHash?.toHex() ||
-            !account.meta.genesisHash
-          ) {
-            return (
-              <MenuItem
-                key={`${account.address}_${index}`}
-                onClick={() => handleClose(account)}
-              >
-                <Identicon value={account.address} size={size} theme={theme} />
-                <Wrapper>
-                  <Name>{account.meta.name}</Name>{" "}
-                  <Address>{renderAddress(account.address, 10)}</Address>
-                </Wrapper>
-              </MenuItem>
-            );
-          }
-        })}
-      </Menu>
+        </Button>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+        >
+          {accounts?.map((account: InjectedAccountWithMeta, index: number) => {
+            if (
+              account.meta.genesisHash === genesisHash?.toHex() ||
+              !account.meta.genesisHash
+            ) {
+              return (
+                <MenuItem
+                  key={`${account.address}_${index}`}
+                  onClick={() => handleClose(account)}
+                >
+                  <Identicon
+                    value={account.address}
+                    size={size}
+                    theme={theme}
+                  />
+                  <Wrapper>
+                    <Name>{account.meta.name}</Name>{" "}
+                    <Address>{renderAddress(account.address, 10)}</Address>
+                  </Wrapper>
+                </MenuItem>
+              );
+            }
+          })}
+        </Menu>
+      </>
+    );
+  };
+
+  return (
+    <>
+      {accounts && accounts.length > 0 ? renderWallet() : renderWalletModal()}
     </>
   );
 };

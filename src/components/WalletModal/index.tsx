@@ -1,4 +1,7 @@
 import { Dialog, DialogContent, DialogTitle, styled } from "@mui/material";
+import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
+import { APP_SESSION } from "../../utils/constants";
+import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Text } from "../Tabs";
 import { WalletList } from "./walletList";
 
@@ -14,9 +17,18 @@ type IProps = {
 };
 
 export const WalletModal = (props: IProps) => {
+  const { setSelectedWallet }: IWeb3ConnectedContextState =
+    useWeb3ConnectedContext();
   const { onClose, open } = props;
 
   const handleClose = () => {
+    onClose();
+  };
+
+  const handleClick = async (value: string) => {
+    console.log("value", value);
+
+    setSelectedWallet(value);
     onClose();
   };
 
@@ -28,7 +40,7 @@ export const WalletModal = (props: IProps) => {
       </DialogTitle>
 
       <DialogContent sx={{ padding: 0 }}>
-        <WalletList />
+        <WalletList onClick={handleClick} />
       </DialogContent>
     </Dialog>
   );

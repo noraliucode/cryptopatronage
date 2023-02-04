@@ -90,3 +90,6 @@ export const WALLETS = [
   { name: "polkadot-js", icon: "/assets/wallets/polkadot.svg" },
   { name: "talisman", icon: "/assets/wallets/talisman.svg" },
 ];
+
+export const SUBSTRATE_WALLET = "SUBSTRATE_WALLET";
+export const APP_SESSION = "APP_SESSION";
