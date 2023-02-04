@@ -4,12 +4,9 @@ import {
   web3Enable,
   web3FromAddress,
 } from "@polkadot/extension-dapp";
-import {
-  IAccount,
-  IInjector,
-  IWeb3ConnectedContextState,
-} from "../../utils/types";
-import { DEFAULT_NETWORK } from "../../utils/constants";
+import { IInjector, IWeb3ConnectedContextState } from "../../utils/types";
+import { APP_SESSION, DEFAULT_NETWORK } from "../../utils/constants";
+import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 
 interface IProps {
   children?: React.ReactElement;
@@ -17,12 +14,13 @@ interface IProps {
 
 const SIGNER = "signer";
 const NETWORK = "network";
+const SELECTED_WALLET = "selectedWallet";
 
 const Web3ConnectedContext = createContext<IWeb3ConnectedContextState>(null!);
 const useWeb3ConnectedContext = () => useContext(Web3ConnectedContext);
 
 const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
-  const setValue = (value: string | IAccount, key: string) => {
+  const setValue = (value: string | InjectedAccountWithMeta, key: string) => {
     setState((prev: IWeb3ConnectedContextState) => ({ ...prev, [key]: value }));
   };
   const [state, setState] = useState<IWeb3ConnectedContextState>({
@@ -32,19 +30,48 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
     injector: null,
     setSigner: (value) => setValue(value, SIGNER),
     setNetwork: (value) => setValue(value, NETWORK),
+    selectedWallet: "",
+    setSelectedWallet: (value) => setValue(value, SELECTED_WALLET),
   });
-  const { network, accounts, signer, injector, setSigner, setNetwork } = state;
+  const {
+    network,
+    accounts,
+    signer,
+    injector,
+    setSigner,
+    setNetwork,
+    selectedWallet,
+    setSelectedWallet,
+  } = state;
+
+  const connector = localStorage.getItem(APP_SESSION);
+  let allAccounts = [] as any;
+  let extensions = [] as any;
 
   const getAccounts = async () => {
     try {
-      const extensions = await web3Enable("Cryptopatronage");
+      if (selectedWallet || connector) {
+        extensions = await web3Enable("Cryptopatronage");
+      }
+
       if (extensions.length === 0) {
         // no extension installed, or the user did not accept the authorization
         // in this case we should inform the use and give a link to the extension
         return;
       }
+      const _selectedWallet = connector
+        ? JSON.parse(connector).connected
+        : selectedWallet;
 
-      const allAccounts = await web3Accounts();
+      const _allAccounts = await web3Accounts();
+      allAccounts = _allAccounts.filter(
+        (account) => account.meta.source === _selectedWallet
+      );
+
+      if (connector && allAccounts && allAccounts.length > 0 && !signer) {
+        setSigner(allAccounts[JSON.parse(connector).accountIndex]);
+      }
+
       let injector: IInjector = null;
       if (signer) {
         injector = await web3FromAddress(signer.address);
@@ -60,7 +87,7 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
 
   useEffect(() => {
     getAccounts();
-  }, [signer, network]);
+  }, [signer, network, selectedWallet]);
 
   const value = {
     network,
@@ -69,6 +96,8 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
     injector,
     setSigner,
     setNetwork,
+    selectedWallet,
+    setSelectedWallet,
   };
 
   return (

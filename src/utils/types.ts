@@ -1,4 +1,7 @@
-import { InjectedExtension } from "@polkadot/extension-inject/types";
+import {
+  InjectedExtension,
+  InjectedAccountWithMeta,
+} from "@polkadot/extension-inject/types";
 
 export type IProxyParsedSupporter = {
   supporter?: string;
@@ -18,7 +21,7 @@ export type IAccount = {
   address: string;
   meta: IMeta;
 };
-export type IAccounts = IAccount[] | null;
+export type IAccounts = InjectedAccountWithMeta[] | null;
 
 type IMeta = {
   name: string;
@@ -30,10 +33,12 @@ export type IInjector = InjectedExtension | null;
 export type IWeb3ConnectedContextState = {
   network: INetwork;
   accounts: IAccounts;
-  signer: IAccount | null;
+  signer: InjectedAccountWithMeta | null;
   injector: IInjector;
-  setSigner: (value: IAccount) => void;
+  setSigner: (value: InjectedAccountWithMeta) => void;
   setNetwork: (value: string) => any;
+  selectedWallet: string;
+  setSelectedWallet: (value: string) => any;
 };
 
 export type ICreator = {
@@ -76,4 +81,9 @@ export type Identity = {
   twitter: string;
   display: string;
   web: string;
+};
+
+export type IWallet = {
+  name: string;
+  icon: string;
 };

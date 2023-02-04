@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { toShortAddress } from "../../utils/helpers";
-import { IAccount, IAccounts } from "../../utils/types";
+import { IAccounts } from "../../utils/types";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import Identicon from "@polkadot/react-identicon";
 import { styled } from "@mui/material/styles";
@@ -11,6 +11,9 @@ import { Keyring } from "@polkadot/keyring";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import config from "../../utils/ss58-registry.json";
 import { Hash } from "@polkadot/types/interfaces/runtime/types";
+import { WalletModal } from "../WalletModal";
+import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import { APP_SESSION } from "../../utils/constants";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -35,11 +38,12 @@ export const Address = styled("div")(
 type IState = {
   open: boolean;
   anchorEl: any;
+  walletModalOpen: boolean;
 };
 
 type IProps = {
-  setSigner: (_: IAccount) => void;
-  signer: IAccount | null;
+  setSigner: (_: InjectedAccountWithMeta) => void;
+  signer: InjectedAccountWithMeta | null;
   accounts: IAccounts;
   network: string;
   genesisHash?: Hash | undefined;
@@ -55,15 +59,13 @@ export const SignerSelector = ({
   const [state, setState] = useState<IState>({
     open: false,
     anchorEl: null,
+    walletModalOpen: false,
   });
 
-  const { open, anchorEl } = state;
+  const { open, anchorEl, walletModalOpen } = state;
+  const connector = localStorage.getItem(APP_SESSION);
 
-  const handleClose = (account: IAccount) => {
-    if (typeof account.address === "string") {
-      setSigner(account);
-    }
-
+  const handleClose = () => {
     setState((prev) => ({
       ...prev,
       open: !prev.open,
@@ -75,6 +77,27 @@ export const SignerSelector = ({
       open: !prev.open,
       anchorEl: event.currentTarget,
     }));
+  };
+  const toogleModal = () => {
+    setState((prev) => ({
+      ...prev,
+      walletModalOpen: !walletModalOpen,
+    }));
+  };
+
+  const onItemClick = (account: InjectedAccountWithMeta, index: number) => {
+    if (typeof account.address === "string") {
+      setSigner(account);
+      localStorage.setItem(
+        APP_SESSION,
+        JSON.stringify({
+          accountIndex: index,
+          connected: JSON.parse(connector || "").connected,
+        })
+      );
+    }
+
+    handleClose();
   };
 
   const size = 24;
@@ -91,16 +114,24 @@ export const SignerSelector = ({
     return toShortAddress(encodedAddress, number);
   };
 
-  return (
-    <>
-      <Button variant="contained" onClick={handleClick}>
-        {typeof signer?.address === "string" && signer ? (
-          <Identicon value={signer.address} size={size} theme={theme} />
-        ) : (
+  const renderWalletModal = () => {
+    return (
+      <>
+        <WalletModal open={walletModalOpen} onClose={toogleModal} />
+        <Button variant="contained" onClick={toogleModal}>
           <AccountBalanceWalletIcon />
-        )}
-        &nbsp;
-        {typeof signer?.address === "string" && signer ? (
+          &nbsp;Connect
+        </Button>
+      </>
+    );
+  };
+
+  const renderWallet = () => {
+    if (!signer) return;
+    return (
+      <>
+        <Button variant="contained" onClick={handleClick}>
+          <Identicon value={signer.address} size={size} theme={theme} />
           <>
             <Wrapper>
               <Name lineHeight={14}>{signer.meta.name}</Name>{" "}
@@ -111,44 +142,52 @@ export const SignerSelector = ({
               sx={{ fontSize: 14, marginLeft: "20px" }}
             />
           </>
-        ) : (
-          "Connect"
-        )}
-      </Button>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-      >
-        {accounts?.map((account: IAccount, index: number) => {
-          if (
-            account.meta.genesisHash === genesisHash?.toHex() ||
-            !account.meta.genesisHash
-          ) {
-            return (
-              <MenuItem
-                key={`${account.address}_${index}`}
-                onClick={() => handleClose(account)}
-              >
-                <Identicon value={account.address} size={size} theme={theme} />
-                <Wrapper>
-                  <Name>{account.meta.name}</Name>{" "}
-                  <Address>{renderAddress(account.address, 10)}</Address>
-                </Wrapper>
-              </MenuItem>
-            );
-          }
-        })}
-      </Menu>
+        </Button>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+        >
+          {accounts?.map((account: InjectedAccountWithMeta, index: number) => {
+            if (
+              account.meta.genesisHash === genesisHash?.toHex() ||
+              !account.meta.genesisHash
+            ) {
+              return (
+                <MenuItem
+                  key={`${account.address}_${index}`}
+                  onClick={() => onItemClick(account, index)}
+                >
+                  <Identicon
+                    value={account.address}
+                    size={size}
+                    theme={theme}
+                  />
+                  <Wrapper>
+                    <Name>{account.meta.name}</Name>{" "}
+                    <Address>{renderAddress(account.address, 10)}</Address>
+                  </Wrapper>
+                </MenuItem>
+              );
+            }
+          })}
+        </Menu>
+      </>
+    );
+  };
+
+  return (
+    <>
+      {accounts && accounts.length > 0 ? renderWallet() : renderWalletModal()}
     </>
   );
 };
