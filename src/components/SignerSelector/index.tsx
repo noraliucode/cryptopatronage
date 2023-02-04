@@ -123,7 +123,6 @@ export const SignerSelector = ({
     return (
       <>
         <Button variant="contained" onClick={handleClick}>
-          <AccountBalanceWalletIcon />
           <Identicon value={signer.address} size={size} theme={theme} />
           <>
             <Wrapper>
