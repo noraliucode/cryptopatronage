@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { toShortAddress } from "../../utils/helpers";
-import { IAccount, IAccounts } from "../../utils/types";
+import { IAccounts } from "../../utils/types";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import Identicon from "@polkadot/react-identicon";
 import { styled } from "@mui/material/styles";
@@ -12,8 +12,8 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import config from "../../utils/ss58-registry.json";
 import { Hash } from "@polkadot/types/interfaces/runtime/types";
 import { WalletModal } from "../WalletModal";
-import { APP_SESSION } from "../../utils/constants";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import { APP_SESSION } from "../../utils/constants";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -63,12 +63,9 @@ export const SignerSelector = ({
   });
 
   const { open, anchorEl, walletModalOpen } = state;
+  const connector = localStorage.getItem(APP_SESSION);
 
-  const handleClose = (account: InjectedAccountWithMeta) => {
-    if (typeof account.address === "string") {
-      setSigner(account);
-    }
-
+  const handleClose = () => {
     setState((prev) => ({
       ...prev,
       open: !prev.open,
@@ -86,6 +83,21 @@ export const SignerSelector = ({
       ...prev,
       walletModalOpen: !walletModalOpen,
     }));
+  };
+
+  const onItemClick = (account: InjectedAccountWithMeta, index: number) => {
+    if (typeof account.address === "string") {
+      setSigner(account);
+      localStorage.setItem(
+        APP_SESSION,
+        JSON.stringify({
+          accountIndex: index,
+          connected: JSON.parse(connector || "").connected,
+        })
+      );
+    }
+
+    handleClose();
   };
 
   const size = 24;
@@ -153,7 +165,7 @@ export const SignerSelector = ({
               return (
                 <MenuItem
                   key={`${account.address}_${index}`}
-                  onClick={() => handleClose(account)}
+                  onClick={() => onItemClick(account, index)}
                 >
                   <Identicon
                     value={account.address}

@@ -46,10 +46,14 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
 
   const connector = localStorage.getItem(APP_SESSION);
   let allAccounts = [] as any;
+  let extensions = [] as any;
 
   const getAccounts = async () => {
     try {
-      const extensions = await web3Enable("Cryptopatronage");
+      if (selectedWallet || connector) {
+        extensions = await web3Enable("Cryptopatronage");
+      }
+
       if (extensions.length === 0) {
         // no extension installed, or the user did not accept the authorization
         // in this case we should inform the use and give a link to the extension
@@ -63,19 +67,11 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
       allAccounts = _allAccounts.filter(
         (account) => account.meta.source === _selectedWallet
       );
-      if (!connector) {
-        await localStorage.setItem(
-          APP_SESSION,
-          JSON.stringify({
-            accountIndex: 0,
-            connected: selectedWallet,
-          })
-        );
 
-        setSigner(allAccounts[0]);
-      } else {
+      if (connector && allAccounts && allAccounts.length > 0 && !signer) {
         setSigner(allAccounts[JSON.parse(connector).accountIndex]);
       }
+
       let injector: IInjector = null;
       if (signer) {
         injector = await web3FromAddress(signer.address);
@@ -88,22 +84,6 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
       console.error("Web3ConnectedContextProvider error", error);
     }
   };
-
-  useEffect(() => {
-    if (!connector) {
-      localStorage.setItem(
-        APP_SESSION,
-        JSON.stringify({
-          accountIndex: 0,
-          connected: selectedWallet,
-        })
-      );
-
-      setSigner(allAccounts[0]);
-    } else {
-      setSigner(allAccounts[JSON.parse(connector).accountIndex]);
-    }
-  }, []);
 
   useEffect(() => {
     getAccounts();

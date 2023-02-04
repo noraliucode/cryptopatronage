@@ -26,7 +26,13 @@ export const WalletModal = (props: IProps) => {
   };
 
   const handleClick = async (value: string) => {
-    console.log("value", value);
+    localStorage.setItem(
+      APP_SESSION,
+      JSON.stringify({
+        accountIndex: 0,
+        connected: value,
+      })
+    );
 
     setSelectedWallet(value);
     onClose();
