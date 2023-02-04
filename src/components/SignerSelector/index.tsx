@@ -56,8 +56,6 @@ export const SignerSelector = ({
   network,
   genesisHash,
 }: IProps) => {
-  console.log("accounts??", accounts);
-
   const [state, setState] = useState<IState>({
     open: false,
     anchorEl: null,
@@ -65,8 +63,6 @@ export const SignerSelector = ({
   });
 
   const { open, anchorEl, walletModalOpen } = state;
-  const connector = localStorage.getItem(APP_SESSION);
-  console.log("connector", connector);
 
   const handleClose = (account: InjectedAccountWithMeta) => {
     if (typeof account.address === "string") {

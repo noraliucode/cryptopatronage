@@ -55,20 +55,14 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
         // in this case we should inform the use and give a link to the extension
         return;
       }
-      console.log("selectedWallet", selectedWallet);
-
       const _selectedWallet = connector
         ? JSON.parse(connector).connected
         : selectedWallet;
-
-      console.log("extensions", extensions);
-      console.log("_selectedWallet", _selectedWallet);
 
       const _allAccounts = await web3Accounts();
       allAccounts = _allAccounts.filter(
         (account) => account.meta.source === _selectedWallet
       );
-      console.log("allAccounts", allAccounts);
       if (!connector) {
         await localStorage.setItem(
           APP_SESSION,
