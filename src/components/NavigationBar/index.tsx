@@ -109,7 +109,11 @@ export const NavigationBar = () => {
                 return (
                   <StyledLink to={item.link}>
                     <IconButton color="primary" aria-label="email icon">
-                      <Icon htmlColor="white" titleAccess={item.label} />
+                      <Icon
+                        htmlColor="white"
+                        titleAccess={item.label}
+                        sx={{ margin: "5px" }}
+                      />
                     </IconButton>
                   </StyledLink>
                 );
