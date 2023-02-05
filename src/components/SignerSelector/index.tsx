@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -14,6 +14,8 @@ import { Hash } from "@polkadot/types/interfaces/runtime/types";
 import { WalletModal } from "../WalletModal";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { APP_SESSION } from "../../utils/constants";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { Divider, IconButton } from "@mui/material";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -34,6 +36,15 @@ export const Address = styled("div")(
     lineHeight: `${lineHeight}px`,
   })
 );
+export const SelectedAddressWrapper = styled("div")(() => ({
+  display: "flex",
+  padding: "5px 5px 10px 10px",
+  alignItems: "center",
+}));
+export const SelectedAddressText = styled("div")(() => ({
+  fontWeight: 700,
+  fontSize: 18,
+}));
 
 type IState = {
   open: boolean;
@@ -100,6 +111,11 @@ export const SignerSelector = ({
     handleClose();
   };
 
+  const disconnect = () => {
+    localStorage.removeItem(APP_SESSION);
+    handleClose();
+  };
+
   const size = 24;
   // theme (optional), depicts the type of icon, one of
   // 'polkadot', 'substrate' (default), 'beachball' or 'jdenticon'
@@ -149,14 +165,32 @@ export const SignerSelector = ({
           open={open}
           onClose={handleClose}
           anchorOrigin={{
-            vertical: "top",
-            horizontal: "left",
+            vertical: "bottom",
+            horizontal: "right",
           }}
           transformOrigin={{
             vertical: "top",
             horizontal: "left",
           }}
         >
+          <SelectedAddressWrapper>
+            <>
+              <Identicon value={signer.address} size={size} theme={theme} />
+              <Wrapper>
+                <SelectedAddressText>{signer.meta.name}</SelectedAddressText>{" "}
+                <Address>{renderAddress(signer.address, 10)}</Address>
+              </Wrapper>
+            </>
+            <IconButton
+              color="primary"
+              aria-label="email icon"
+              onClick={disconnect}
+            >
+              <LogoutIcon titleAccess="Disconnect" />
+            </IconButton>
+          </SelectedAddressWrapper>
+
+          <Divider />
           {accounts?.map((account: InjectedAccountWithMeta, index: number) => {
             if (
               account.meta.genesisHash === genesisHash?.toHex() ||
@@ -187,7 +221,9 @@ export const SignerSelector = ({
 
   return (
     <>
-      {accounts && accounts.length > 0 ? renderWallet() : renderWalletModal()}
+      {connector && accounts && accounts.length > 0
+        ? renderWallet()
+        : renderWalletModal()}
     </>
   );
 };
