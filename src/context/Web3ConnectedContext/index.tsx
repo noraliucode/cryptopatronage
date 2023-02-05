@@ -85,9 +85,20 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
     }
   };
 
+  const updateInjector = async () => {
+    if (!signer) return;
+    const _injector = await web3FromAddress(signer.address);
+
+    setState((prev) => ({ ...prev, injector: _injector }));
+  };
+
+  useEffect(() => {
+    updateInjector();
+  }, [signer]);
+
   useEffect(() => {
     getAccounts();
-  }, [signer, network, selectedWallet]);
+  }, [network, selectedWallet]);
 
   const value = {
     network,
