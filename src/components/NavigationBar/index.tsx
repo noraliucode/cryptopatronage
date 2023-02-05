@@ -24,13 +24,13 @@ const Logo = styled("div")(() => ({
 }));
 export const DesktopContentWarpper = styled("div")(({ theme }) => ({
   display: "flex",
-  [theme.breakpoints.down("sm")]: {
+  [theme.breakpoints.down("md")]: {
     display: "none",
   },
 }));
 export const MobileContentWarpper = styled("div")(({ theme }) => ({
   display: "none",
-  [theme.breakpoints.down("sm")]: {
+  [theme.breakpoints.down("md")]: {
     display: "flex",
   },
 }));
@@ -108,13 +108,14 @@ export const NavigationBar = () => {
                 const Icon = item.icon;
                 return (
                   <StyledLink to={item.link}>
-                    <IconButton color="primary" aria-label="email icon">
+                    <Button color="primary" aria-label={item.label}>
                       <Icon
                         htmlColor="white"
                         titleAccess={item.label}
                         sx={{ margin: "5px" }}
                       />
-                    </IconButton>
+                      {/* <Text>{item.label}</Text> */}
+                    </Button>
                   </StyledLink>
                 );
               })}

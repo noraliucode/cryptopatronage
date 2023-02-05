@@ -67,12 +67,17 @@ export const NetworkSelector = ({ setNetwork, network }: IProps) => {
               alt="icon"
               src={selectedNework?.icon}
             />
-            <DesktopContentWarpper>{network}</DesktopContentWarpper>
+            <DesktopContentWarpper>&nbsp;{network}</DesktopContentWarpper>
           </Wrapper>
         ) : (
           "Select Network"
         )}
-        <PlayArrowIcon className="selector-image" sx={{ fontSize: 14 }} />
+        <DesktopContentWarpper>
+          &nbsp;
+          <Wrapper>
+            <PlayArrowIcon className="selector-image" sx={{ fontSize: 14 }} />
+          </Wrapper>
+        </DesktopContentWarpper>
       </Button>
       <Menu
         id="basic-menu"
