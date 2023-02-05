@@ -2,7 +2,7 @@ import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { NetworkSelector } from "../NetworkSelector";
 import { SignerSelector } from "../SignerSelector";
-import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, IconButton } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Text } from "../Tabs";
 import { useState } from "react";
@@ -24,13 +24,13 @@ const Logo = styled("div")(() => ({
 }));
 export const DesktopContentWarpper = styled("div")(({ theme }) => ({
   display: "flex",
-  [theme.breakpoints.down("sm")]: {
+  [theme.breakpoints.down("md")]: {
     display: "none",
   },
 }));
 export const MobileContentWarpper = styled("div")(({ theme }) => ({
   display: "none",
-  [theme.breakpoints.down("sm")]: {
+  [theme.breakpoints.down("md")]: {
     display: "flex",
   },
 }));
@@ -105,12 +105,18 @@ export const NavigationBar = () => {
           <ButtonsWarpper>
             <DesktopContentWarpper>
               {MENU.map((item) => {
+                const Icon = item.icon;
                 return (
-                  <Button>
-                    <StyledLink to={item.link}>
-                      <Text> {item.label}</Text>
-                    </StyledLink>
-                  </Button>
+                  <StyledLink to={item.link}>
+                    <Button color="primary" aria-label={item.label}>
+                      <Icon
+                        htmlColor="white"
+                        titleAccess={item.label}
+                        sx={{ margin: "5px" }}
+                      />
+                      {/* <Text>{item.label}</Text> */}
+                    </Button>
+                  </StyledLink>
                 );
               })}
             </DesktopContentWarpper>

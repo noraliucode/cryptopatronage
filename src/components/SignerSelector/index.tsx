@@ -16,6 +16,7 @@ import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { APP_SESSION } from "../../utils/constants";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Divider, IconButton } from "@mui/material";
+import { DesktopContentWarpper } from "../NavigationBar";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -153,10 +154,12 @@ export const SignerSelector = ({
               <Name lineHeight={14}>{signer.meta.name}</Name>{" "}
               <Address lineHeight={14}>{renderAddress(signer.address)}</Address>
             </Wrapper>
-            <PlayArrowIcon
-              className="selector-image"
-              sx={{ fontSize: 14, marginLeft: "20px" }}
-            />
+            <DesktopContentWarpper>
+              <PlayArrowIcon
+                className="selector-image"
+                sx={{ fontSize: 14, marginLeft: "20px" }}
+              />
+            </DesktopContentWarpper>
           </>
         </Button>
         <Menu
