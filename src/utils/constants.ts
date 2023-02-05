@@ -1,5 +1,8 @@
 import GitHubIcon from "@mui/icons-material/GitHub";
 import TwitterIcon from "@mui/icons-material/Twitter";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import SettingsIcon from "@mui/icons-material/Settings";
+import MuseumIcon from "@mui/icons-material/Museum";
 
 export const ROCOCO = "wss://rococo-rpc.polkadot.io";
 export const WESTEND = "wss://westend-rpc.polkadot.io";
@@ -71,14 +74,17 @@ export const MENU = [
   {
     label: "Explore",
     link: "/",
+    icon: MuseumIcon,
   },
   {
     label: "Manage",
     link: "/manage",
+    icon: SettingsIcon,
   },
   {
     label: "About",
     link: "/about",
+    icon: HelpOutlineIcon,
   },
 ];
 

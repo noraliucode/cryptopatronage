@@ -2,7 +2,7 @@ import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { NetworkSelector } from "../NetworkSelector";
 import { SignerSelector } from "../SignerSelector";
-import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, IconButton } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Text } from "../Tabs";
 import { useState } from "react";
@@ -105,12 +105,13 @@ export const NavigationBar = () => {
           <ButtonsWarpper>
             <DesktopContentWarpper>
               {MENU.map((item) => {
+                const Icon = item.icon;
                 return (
-                  <Button>
-                    <StyledLink to={item.link}>
-                      <Text> {item.label}</Text>
-                    </StyledLink>
-                  </Button>
+                  <StyledLink to={item.link}>
+                    <IconButton color="primary" aria-label="email icon">
+                      <Icon htmlColor="white" titleAccess={item.label} />
+                    </IconButton>
+                  </StyledLink>
                 );
               })}
             </DesktopContentWarpper>
