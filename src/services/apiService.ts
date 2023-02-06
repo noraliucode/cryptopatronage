@@ -207,7 +207,11 @@ class APIService {
     callback?: () => void,
     updatedInfo?: Identity
   ) => {
-    let _essentialInfo = formatEssentialInfo(essentialInfo.toHuman().info);
+    let _essentialInfo;
+    if (essentialInfo) {
+      _essentialInfo = formatEssentialInfo(essentialInfo.toHuman().info);
+    }
+
     _essentialInfo = updatedInfo
       ? { ..._essentialInfo, ...formatUpdatedInfo(updatedInfo) }
       : { ..._essentialInfo };
@@ -222,9 +226,25 @@ class APIService {
       .signAndSend(
         sender,
         { signer: injector.signer },
-        ({ status, events = [] }) => {
+        ({ status, events = [], dispatchError }) => {
           if (status.isInBlock) {
             callback && callback();
+          }
+          // status would still be set, but in the case of error we can shortcut
+          // to just check it (so an error would indicate InBlock or Finalized)
+          if (dispatchError) {
+            if (dispatchError.isModule) {
+              // for module errors, we have the section indexed, lookup
+              const decoded = this.api.registry.findMetaError(
+                dispatchError.asModule
+              );
+              const { docs, name, section } = decoded;
+
+              console.log(`${section}.${name}: ${docs.join(" ")}`);
+            } else {
+              // Other, CannotLookup, BadOrigin, no extra info
+              console.log(dispatchError.toString());
+            }
           }
         }
       );
