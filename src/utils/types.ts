@@ -42,7 +42,7 @@ export type IWeb3ConnectedContextState = {
 };
 
 export type ICreator = {
-  address?: string;
+  address: string;
   transferableBalance?: number;
   supporterBalance?: number;
   rate?: string;

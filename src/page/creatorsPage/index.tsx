@@ -1,29 +1,14 @@
 import React, { useState } from "react";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import { useCreators } from "../../hooks/useCreators";
 import { styled } from "@mui/material/styles";
 import { Box, CircularProgress, Grid } from "@mui/material";
-import {
-  DECIMALS,
-  FOOTER_HEIGHT,
-  NAV_BAR_HEIGHT,
-  SYMBOL,
-} from "../../utils/constants";
-import { formatUnit, toShortAddress } from "../../utils/helpers";
+import { FOOTER_HEIGHT, NAV_BAR_HEIGHT } from "../../utils/constants";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { SubscribeModal } from "../../components/SubscribeModal";
 import { Modal } from "../../components/Modal";
 import { useParams } from "react-router";
-import EmailIcon from "@mui/icons-material/Email";
-import TwitterIcon from "@mui/icons-material/Twitter";
-import IconButton from "@mui/material/IconButton";
-
-const IMAGE_HEIGHT = 140;
+import Creator from "./Creator";
 
 export const Root = styled("div")(() => ({
   padding: 30,
@@ -36,29 +21,11 @@ const Wrapper = styled("div")(() => ({
   alignItems: "center",
   marginTop: "100px",
 }));
-const CardImage = styled("div")(({ url }: { url: any }) => ({
-  backgroundColor: "rgba(255, 255, 255, 0.4)",
-  background: `url(${url}) no-repeat center`,
-  width: "100%",
-  height: IMAGE_HEIGHT,
-  backgroundSize: ["contain", "cover"],
-}));
-const Blur = styled("div")(({ isClicked }: { isClicked: boolean }) => ({
-  fontWeight: 700,
-  flex: 1,
-  textAlign: "center",
-  padding: "70px 10px",
-  backgroundColor: "rgba(255,255,255,.2)",
-  WebkitBackdropFilter: "blur(5px)",
-  backdropFilter: `blur(${isClicked ? 0 : "10px"})`,
-}));
+
 const Hint = styled("div")(({ theme }) => ({
   fontWeight: 700,
   color: theme.palette.text.primary,
   fontSize: 20,
-}));
-const ExtraHeight = styled("div")(({ theme }) => ({
-  marginBottom: 40,
 }));
 
 type IState = {
@@ -98,7 +65,7 @@ export const CreatorsPage = () => {
     }
   };
 
-  const onClick = (address: string) => {
+  const onSubscribeClick = (address: string) => {
     checkSigner();
     if (!signer) return;
     setState((prev) => ({
@@ -153,88 +120,16 @@ export const CreatorsPage = () => {
                 selectedCreator={selectedCreator}
               />
               <Grid container spacing={2}>
-                {_creators?.map((creator: any, index: number) => {
-                  return (
-                    <Grid item xs={12} sm={4} md={3}>
-                      <a
-                        href={creator.web ? creator.web : ""}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        <Card
-                          sx={{ maxWidth: 345, cursor: "pointer" }}
-                          onClick={() => onCardClick(index)}
-                        >
-                          <CardImage
-                            url={
-                              creator.imageUrl
-                                ? creator.imageUrl
-                                : "/assets/images/default.webp"
-                            }
-                          >
-                            <Blur
-                              isClicked={selectedIndex === index ? true : false}
-                            />
-                          </CardImage>
-
-                          <CardContent>
-                            <Typography
-                              gutterBottom
-                              variant="h5"
-                              component="div"
-                            >
-                              {creator.display
-                                ? creator.display
-                                : toShortAddress(creator.address)}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              Rate:{" "}
-                              {formatUnit(creator.rate, DECIMALS[network])}{" "}
-                              {SYMBOL[network]}
-                            </Typography>
-                            {creator.email ? (
-                              <a href={`mailto:${creator.email}`}>
-                                <IconButton
-                                  color="primary"
-                                  aria-label="email icon"
-                                >
-                                  <EmailIcon />
-                                </IconButton>
-                              </a>
-                            ) : null}
-
-                            {creator.twitter ? (
-                              <a
-                                href={creator.twitter}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                <IconButton
-                                  color="primary"
-                                  aria-label="twitter icon"
-                                >
-                                  <TwitterIcon />
-                                </IconButton>
-                              </a>
-                            ) : null}
-
-                            {!creator.twitter && !creator.email ? (
-                              <ExtraHeight />
-                            ) : null}
-                          </CardContent>
-                          <CardActions>
-                            <Button
-                              onClick={() => onClick(creator.address)}
-                              size="small"
-                            >
-                              Subscribe
-                            </Button>
-                          </CardActions>
-                        </Card>
-                      </a>
-                    </Grid>
-                  );
-                })}
+                {_creators.map((creator, index) => (
+                  <Creator
+                    creator={creator}
+                    selectedIndex={selectedIndex}
+                    index={index}
+                    network={network}
+                    onCardClick={onCardClick}
+                    onSubscribeClick={onSubscribeClick}
+                  />
+                ))}
               </Grid>
             </>
           )}
