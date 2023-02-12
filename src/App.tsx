@@ -6,6 +6,7 @@ import { Layout } from "./layout";
 import { CreatorsPage } from "./page/creatorsPage";
 import { TabsMain } from "./components/Tabs";
 import { AboutPage } from "./page/aboutPage";
+import Create from "./components/Create";
 
 function App() {
   return (
@@ -41,6 +42,14 @@ function App() {
           element={
             <Layout>
               <AboutPage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/create"
+          element={
+            <Layout>
+              <Create />
             </Layout>
           }
         />
