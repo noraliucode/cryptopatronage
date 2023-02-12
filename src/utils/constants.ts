@@ -99,3 +99,4 @@ export const WALLETS = [
 
 export const SUBSTRATE_WALLET = "SUBSTRATE_WALLET";
 export const APP_SESSION = "APP_SESSION";
+export const IMAGE_HEIGHT = 140;
