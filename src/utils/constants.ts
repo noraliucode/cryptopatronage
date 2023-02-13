@@ -33,7 +33,7 @@ export const M_DECIMALS = {
   WESTEND: 9,
   KUSAMA: 9,
 };
-export const DEFAULT_NETWORK = "ROCOCO";
+export const DEFAULT_NETWORK = "KUSAMA";
 export const NODE_ENDPOINT = {
   ROCOCO,
   WESTEND,
