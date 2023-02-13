@@ -13,6 +13,7 @@ import {
 import {
   DECIMALS,
   FOOTER_HEIGHT,
+  IDENTITY_LABELS,
   NAV_BAR_HEIGHT,
   SYMBOL,
 } from "../../utils/constants";
@@ -28,8 +29,6 @@ import { Modal } from "../Modal";
 import { Supporter } from "../Supporter";
 import { useApi } from "../../hooks/useApi";
 import { HintText } from "../SubscribeModal";
-
-const IDENTITY_LABELS = ["Display Name", "Email", "Twitter", "Web"];
 
 const Root = styled("div")(({ theme }) => ({
   width: 600,

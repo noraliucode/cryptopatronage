@@ -11,7 +11,12 @@ import {
   TextField,
 } from "@mui/material";
 import { InputWrapper, Title, TitleWrapper } from "../Tabs";
-import { FOOTER_HEIGHT, NAV_BAR_HEIGHT, SYMBOL } from "../../utils/constants";
+import {
+  FOOTER_HEIGHT,
+  IDENTITY_LABELS,
+  NAV_BAR_HEIGHT,
+  SYMBOL,
+} from "../../utils/constants";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 
@@ -41,6 +46,11 @@ const Instructions = styled("div")(({ theme }) => ({
 
 type IState = {
   rate: string;
+  imgUrl: string;
+  email: string;
+  twitter: string;
+  display: string;
+  web: string;
 };
 
 export default function Create() {
@@ -48,12 +58,17 @@ export default function Create() {
 
   const [state, setState] = useState<IState>({
     rate: "",
+    imgUrl: "",
+    email: "",
+    twitter: "",
+    display: "",
+    web: "",
   });
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
 
-  const { rate } = state;
+  const { rate, imgUrl, email, twitter, display, web } = state;
 
   const steps = getSteps();
 
@@ -80,14 +95,36 @@ export default function Create() {
     }));
   };
 
+  const handleIdentityInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    label: string
+  ) => {
+    let _label = label.toLowerCase();
+    _label = _label === "display name" ? "display" : _label;
+
+    setState((prev) => ({
+      ...prev,
+      [_label]: event.target.value,
+    }));
+  };
+
+  const handleImageUrlInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setState((prev) => ({
+      ...prev,
+      imgUrl: event.target.value,
+    }));
+  };
+
   function getStepContent(step: number) {
     switch (step) {
       case 0:
         return renderStep1();
       case 1:
-        return "Step 2: Add image";
+        return renderStep2();
       case 2:
-        return "Step 3: Add On-chain Identity";
+        return renderStep3();
       default:
         return "Unknown step";
     }
@@ -116,6 +153,52 @@ export default function Create() {
     );
   };
 
+  const renderStep2 = () => {
+    const value: any = {
+      "Display Name": display,
+      Email: email,
+      Twitter: twitter,
+      Web: web,
+    };
+    return (
+      <>
+        <TitleWrapper>
+          <Title>On-chain Identity (Optional)</Title>
+        </TitleWrapper>
+        {IDENTITY_LABELS.map((label) => (
+          <TextField
+            fullWidth
+            value={value[label]}
+            id="standard-basic"
+            label={label}
+            variant="standard"
+            placeholder={label}
+            onChange={(event) => handleIdentityInputChange(event, label)}
+          />
+        ))}
+      </>
+    );
+  };
+
+  const renderStep3 = () => {
+    return (
+      <>
+        <TitleWrapper>
+          <Title>Add Image (Optional)</Title>
+        </TitleWrapper>
+        <TextField
+          fullWidth
+          value={imgUrl}
+          id="standard-basic"
+          label="Image Url"
+          variant="standard"
+          placeholder={`Input image Url`}
+          onChange={handleImageUrlInputChange}
+        />
+      </>
+    );
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Stepper activeStep={activeStep} alternativeLabel>
@@ -139,7 +222,7 @@ export default function Create() {
             </BackgroundBox>
             <InputWrapper>
               <Button variant="contained" color="primary" onClick={handleNext}>
-                {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                {activeStep === steps.length - 1 ? "Sign Transaction" : "Next"}
               </Button>
               <BackButton>
                 <Button disabled={activeStep === 0} onClick={handleBack}>
