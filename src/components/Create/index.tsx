@@ -9,9 +9,6 @@ import {
   Box,
 } from "@mui/material";
 
-const Root = styled("div")(() => ({
-  width: "100%",
-}));
 const BackButton = styled("div")(({ theme }) => ({
   marginRight: theme.spacing(1),
 }));
