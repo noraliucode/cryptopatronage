@@ -43,6 +43,13 @@ const Instructions = styled("div")(({ theme }) => ({
   marginTop: theme.spacing(1),
   marginBottom: theme.spacing(1),
 }));
+export const MainTitle = styled("div")(() => ({
+  color: "white",
+  fontSize: 28,
+  fontWeight: 500,
+  marginBottom: 20,
+  textAlign: "left",
+}));
 
 type IState = {
   rate: string;
@@ -200,39 +207,48 @@ export default function Create() {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      <div>
-        {activeStep === steps.length ? (
-          <Instructions>
-            <Typography>All steps completed</Typography>
-          </Instructions>
-        ) : (
-          <Root>
-            <BackgroundBox>
-              <Instructions>
-                <Typography>{getStepContent(activeStep)}</Typography>
-              </Instructions>
-            </BackgroundBox>
-            <InputWrapper>
-              <Button variant="contained" color="primary" onClick={handleNext}>
-                {activeStep === steps.length - 1 ? "Sign Transaction" : "Next"}
-              </Button>
-              <BackButton>
-                <Button disabled={activeStep === 0} onClick={handleBack}>
-                  Back
+    <Root>
+      <Box sx={{ width: "100%" }}>
+        <MainTitle>Register as a creator</MainTitle>
+        <Stepper activeStep={activeStep} alternativeLabel>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <div>
+          {activeStep === steps.length ? (
+            <Instructions>
+              <Typography>All steps completed</Typography>
+            </Instructions>
+          ) : (
+            <>
+              <BackgroundBox>
+                <Instructions>
+                  <Typography>{getStepContent(activeStep)}</Typography>
+                </Instructions>
+              </BackgroundBox>
+              <InputWrapper>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNext}
+                >
+                  {activeStep === steps.length - 1
+                    ? "Sign Transaction"
+                    : "Next"}
                 </Button>
-              </BackButton>
-            </InputWrapper>
-          </Root>
-        )}
-      </div>
-    </Box>
+                <BackButton>
+                  <Button disabled={activeStep === 0} onClick={handleBack}>
+                    Back
+                  </Button>
+                </BackButton>
+              </InputWrapper>
+            </>
+          )}
+        </div>
+      </Box>
+    </Root>
   );
 }
