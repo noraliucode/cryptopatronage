@@ -59,6 +59,7 @@ export const Title = styled("div")(() => ({
   fontSize: 18,
   textAlign: "left",
   fontWeight: 700,
+  marginRight: 10,
 }));
 
 type IState = {
