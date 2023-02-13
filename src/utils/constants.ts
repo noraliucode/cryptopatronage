@@ -8,6 +8,7 @@ export const ROCOCO = "wss://rococo-rpc.polkadot.io";
 export const WESTEND = "wss://westend-rpc.polkadot.io";
 export const KUSAMA = "wss://kusama-rpc.polkadot.io";
 export const POLKADOT = "wss://rpc.polkadot.io";
+export const KABOCHA = "wss://kabocha.jelliedowl.net";
 
 export const SUPPORTER_LIST = "SUPPORTER_LIST";
 export const RATE = 1;
@@ -24,6 +25,8 @@ export const DECIMALS = {
   ROCOCO: 12,
   WESTEND: 12,
   KUSAMA: 12,
+  KABOCHA: 12,
+  POLKADOT: 10,
 };
 export const M_DECIMALS = {
   ROCOCO: 9,
@@ -36,19 +39,24 @@ export const NODE_ENDPOINT = {
   WESTEND,
   KUSAMA,
   POLKADOT,
+  KABOCHA,
 };
 export const SYMBOL = {
   ROCOCO: "ROC",
   WESTEND: "WND",
   KUSAMA: "KSM",
   POLKADOT: "DOT",
+  KABOCHA: "KAB",
 };
 
+const assetPath = "/assets/networks/";
+
 export const NETWORKS = [
-  { network: "ROCOCO", icon: "/assets/networks/rococo.svg" },
-  { network: "WESTEND", icon: "/assets/networks/westend.svg" },
-  { network: "KUSAMA", icon: "/assets/networks/kusama.gif" },
-  { network: "POLKADOT", icon: "/assets/networks/polkadot.svg" },
+  { network: "ROCOCO", icon: `${assetPath}rococo.svg` },
+  { network: "WESTEND", icon: `${assetPath}westend.svg` },
+  { network: "KUSAMA", icon: `${assetPath}kusama.gif` },
+  { network: "POLKADOT", icon: `${assetPath}polkadot.svg` },
+  { network: "KABOCHA", icon: `${assetPath}kabocha.svg` },
 ];
 export const SECONDS_IN_ONE_DAY = 60 * 60 * 24;
 export const DAYS_IN_ONE_MONTH = 30.4;

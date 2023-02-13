@@ -13,6 +13,9 @@ const Wrapper = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
 }));
+const TextWrapper = styled("div")(() => ({
+  marginLeft: 10,
+}));
 
 type IState = {
   open: boolean;
@@ -100,7 +103,7 @@ export const NetworkSelector = ({ setNetwork, network }: IProps) => {
               onClick={() => handleClose(network.network)}
             >
               <img className="network-icon" alt="icon" src={network.icon} />
-              {network.network}
+              <TextWrapper>{network.network}</TextWrapper>
             </MenuItem>
           );
         })}
