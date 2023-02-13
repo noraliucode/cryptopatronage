@@ -94,9 +94,7 @@ export const NavigationBar = () => {
               />
               <DesktopContentWarpper>
                 <Text>
-                  <Typography variant="h6" sx={{ my: 2 }}>
-                    CryptoPatronage
-                  </Typography>
+                  <Typography variant="h6">CryptoPatronage</Typography>
                 </Text>
               </DesktopContentWarpper>
             </Logo>
@@ -104,16 +102,17 @@ export const NavigationBar = () => {
 
           <ButtonsWarpper>
             <DesktopContentWarpper>
+              <StyledLink to={"/create"}>
+                <Button color="primary" aria-label="Create" variant="contained">
+                  <Text>Create</Text>
+                </Button>
+              </StyledLink>
               {MENU.map((item) => {
                 const Icon = item.icon;
                 return (
                   <StyledLink to={item.link}>
                     <Button color="primary" aria-label={item.label}>
-                      <Icon
-                        htmlColor="white"
-                        titleAccess={item.label}
-                        sx={{ margin: "5px" }}
-                      />
+                      <Icon htmlColor="white" titleAccess={item.label} />
                       {/* <Text>{item.label}</Text> */}
                     </Button>
                   </StyledLink>
