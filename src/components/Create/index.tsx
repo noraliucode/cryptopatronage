@@ -9,9 +9,11 @@ import {
   Box,
   Tooltip,
   TextField,
+  Snackbar,
 } from "@mui/material";
-import { InputWrapper, Title, TitleWrapper } from "../Tabs";
+import { InputWrapper, TitleWrapper } from "../Tabs";
 import {
+  DECIMALS,
   FOOTER_HEIGHT,
   IDENTITY_LABELS,
   NAV_BAR_HEIGHT,
@@ -19,6 +21,8 @@ import {
 } from "../../utils/constants";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
+import { create } from "../../utils/main";
+import { useApi } from "../../hooks/useApi";
 
 const Root = styled("div")(({ theme }) => ({
   width: 600,
@@ -34,7 +38,7 @@ const BackgroundBox = styled("div")(({ theme }) => ({
   borderRadius: "5px",
   padding: "20px",
   background: "#300f78",
-  marginBottom: 30,
+  margin: "30px 0",
 }));
 const BackButton = styled("div")(({ theme }) => ({
   marginRight: theme.spacing(1),
@@ -50,6 +54,12 @@ export const MainTitle = styled("div")(() => ({
   marginBottom: 20,
   textAlign: "left",
 }));
+export const Title = styled("div")(() => ({
+  color: "white",
+  fontSize: 18,
+  textAlign: "left",
+  fontWeight: 700,
+}));
 
 type IState = {
   rate: string;
@@ -58,6 +68,7 @@ type IState = {
   twitter: string;
   display: string;
   web: string;
+  open: boolean;
 };
 
 export default function Create() {
@@ -70,16 +81,38 @@ export default function Create() {
     twitter: "",
     display: "",
     web: "",
+    open: false,
   });
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
+  const { api } = useApi(network);
 
-  const { rate, imgUrl, email, twitter, display, web } = state;
+  const { rate, imgUrl, email, twitter, display, web, open } = state;
 
   const steps = getSteps();
 
   const handleNext = () => {
+    if (signer && injector && activeStep === steps.length - 1) {
+      const identity = {
+        email,
+        twitter,
+        display,
+        web,
+      };
+
+      create(
+        api,
+        Number(rate) * 10 ** DECIMALS[network],
+        imgUrl,
+        identity,
+        signer.address,
+        injector,
+        () => {},
+        setLoading
+      );
+      return;
+    }
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
@@ -121,6 +154,13 @@ export default function Create() {
     setState((prev) => ({
       ...prev,
       imgUrl: event.target.value,
+    }));
+  };
+
+  const setLoading = (value: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      open: value,
     }));
   };
 
@@ -208,6 +248,14 @@ export default function Create() {
 
   return (
     <Root>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={open}
+        message={"Signing Transaction..."}
+      />
       <Box sx={{ width: "100%" }}>
         <MainTitle>Register as a creator</MainTitle>
         <Stepper activeStep={activeStep} alternativeLabel>

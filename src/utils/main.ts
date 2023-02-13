@@ -487,3 +487,44 @@ export const setIdentity = async (
     setLoading && setLoading(false);
   }
 };
+
+export const create = async (
+  api: ApiPromise | null,
+  rate: number,
+  imgUrl: string,
+  identity: Identity,
+  sender: string,
+  injector: any,
+  callback?: () => void,
+  setLoading?: (_: boolean) => void
+) => {
+  try {
+    if (!api) return;
+    const apiService = new APIService(api);
+    setLoading && setLoading(true);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { essentialInfo, additionalInfo } = await getInfos(api, sender);
+    const _additionalInfo = {
+      ...additionalInfo,
+      rate,
+      imgUrl,
+    };
+    const _callBack = () => {
+      callback && callback();
+      setLoading && setLoading(false);
+    };
+
+    await apiService.signAndSendSetIdentity(
+      essentialInfo,
+      _additionalInfo,
+      sender,
+      injector,
+      _callBack,
+      identity
+    );
+  } catch (error) {
+    console.error("create error", error);
+    setLoading && setLoading(false);
+  }
+};
