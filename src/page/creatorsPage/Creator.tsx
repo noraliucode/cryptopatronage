@@ -14,6 +14,7 @@ import { formatUnit, toShortAddress } from "../../utils/helpers";
 import EmailIcon from "@mui/icons-material/Email";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import { ICreator, INetwork } from "../../utils/types";
+import { hexToString, isHex } from "@polkadot/util";
 
 const CardImage = styled("div")(({ url }: { url: any }) => ({
   backgroundColor: "rgba(255, 255, 255, 0.4)",
@@ -73,7 +74,9 @@ const Creator: React.FC<Props> = ({
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
               {creator.display
-                ? creator.display
+                ? isHex(creator.display)
+                  ? hexToString(creator.display)
+                  : creator.display
                 : toShortAddress(creator.address)}
             </Typography>
             {creator.rate && (
