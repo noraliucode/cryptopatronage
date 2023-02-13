@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useCreators } from "../../hooks/useCreators";
 import { styled } from "@mui/material/styles";
-import { Box, CircularProgress, Grid } from "@mui/material";
+import { Box, Button, CircularProgress, Grid } from "@mui/material";
 import { FOOTER_HEIGHT, NAV_BAR_HEIGHT } from "../../utils/constants";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
@@ -9,6 +9,7 @@ import { SubscribeModal } from "../../components/SubscribeModal";
 import { Modal } from "../../components/Modal";
 import { useParams } from "react-router";
 import Creator from "./Creator";
+import { Link } from "../../components/Link";
 
 export const Root = styled("div")(() => ({
   padding: 30,
@@ -26,6 +27,16 @@ const Hint = styled("div")(({ theme }) => ({
   fontWeight: 700,
   color: theme.palette.text.primary,
   fontSize: 20,
+}));
+const Title = styled("div")(({ theme }) => ({
+  color: theme.palette.text.primary,
+  fontSize: "2rem",
+  fontWeight: 500,
+  marginBottom: 30,
+  fontFamily: "RussoOne",
+}));
+const Container = styled("div")(({ theme }) => ({
+  marginTop: 50,
 }));
 
 type IState = {
@@ -114,23 +125,29 @@ export const CreatorsPage = () => {
             </Wrapper>
           ) : (
             <>
+              <Title> Membership driving creativity</Title>
+              <Link to={"/create"}>
+                <Button variant="contained">Become a creator</Button>
+              </Link>
               <SubscribeModal
                 open={open}
                 onClose={onClose}
                 selectedCreator={selectedCreator}
               />
-              <Grid container spacing={2}>
-                {_creators.map((creator, index) => (
-                  <Creator
-                    creator={creator}
-                    selectedIndex={selectedIndex}
-                    index={index}
-                    network={network}
-                    onCardClick={onCardClick}
-                    onSubscribeClick={onSubscribeClick}
-                  />
-                ))}
-              </Grid>
+              <Container>
+                <Grid container spacing={2}>
+                  {_creators.map((creator, index) => (
+                    <Creator
+                      creator={creator}
+                      selectedIndex={selectedIndex}
+                      index={index}
+                      network={network}
+                      onCardClick={onCardClick}
+                      onSubscribeClick={onSubscribeClick}
+                    />
+                  ))}
+                </Grid>
+              </Container>
             </>
           )}
         </>

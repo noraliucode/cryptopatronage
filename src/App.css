@@ -77,4 +77,10 @@ a:link { text-decoration: none; }
   border-radius: 10px;
 }
 
+@font-face {
+  font-family: "RussoOne";
+  font-weight: 500;
+  font-display: auto;
+  src: local('RussoOne'), url('/public/assets/fonts/RussoOne-Regular.ttf') format("woff");
+}
 
