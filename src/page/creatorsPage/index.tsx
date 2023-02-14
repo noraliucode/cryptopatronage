@@ -22,7 +22,6 @@ const Wrapper = styled("div")(() => ({
   alignItems: "center",
   marginTop: "100px",
 }));
-
 const Hint = styled("div")(({ theme }) => ({
   fontWeight: 700,
   color: theme.palette.text.primary,

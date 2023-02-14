@@ -18,6 +18,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { MENU } from "../../utils/constants";
 import { Link as StyledLink } from "../Link";
 import { useApi } from "../../hooks/useApi";
+import { Modal } from "../Modal";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -52,6 +53,7 @@ const MenuWarpper = styled("div")(() => ({
 
 type IState = {
   open: boolean;
+  isModalOpen: boolean;
 };
 
 export const NavigationBar = () => {
@@ -66,9 +68,10 @@ export const NavigationBar = () => {
   const [checked, setChecked] = useState(true);
   const [state, setState] = useState<IState>({
     open: false,
+    isModalOpen: false,
   });
 
-  const { open } = state;
+  const { open, isModalOpen } = state;
   const { api } = useApi(network);
 
   const toggleDrawer = (event?: any) => {
@@ -89,11 +92,26 @@ export const NavigationBar = () => {
   const handleChange = (event: {
     target: { checked: boolean | ((prevState: boolean) => boolean) };
   }) => {
-    setChecked(event.target.checked);
+    setState((prev) => ({
+      ...prev,
+      isModalOpen: !isModalOpen,
+    }));
+    // setChecked(event.target.checked);
   };
 
   return (
     <AppBar position="static" color="secondary" enableColorOnDark>
+      <Modal
+        title="Version Switch"
+        content="Are you sure you want to switch to a version where the creator's image has been specifically labeled as sensitive content?"
+        open={isModalOpen}
+        onClose={() =>
+          setState((prev) => ({
+            ...prev,
+            isModalOpen: false,
+          }))
+        }
+      />
       <MobileContentWarpper>
         <Drawer open={open} toggleDrawer={toggleDrawer} />
       </MobileContentWarpper>
