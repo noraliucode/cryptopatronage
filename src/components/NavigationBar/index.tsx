@@ -2,7 +2,14 @@ import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { NetworkSelector } from "../NetworkSelector";
 import { SignerSelector } from "../SignerSelector";
-import { AppBar, Toolbar, Typography, Button, IconButton } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Switch,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Text } from "../Tabs";
 import { useState } from "react";
@@ -56,6 +63,7 @@ export const NavigationBar = () => {
     network,
   }: IWeb3ConnectedContextState = useWeb3ConnectedContext();
 
+  const [checked, setChecked] = useState(true);
   const [state, setState] = useState<IState>({
     open: false,
   });
@@ -76,6 +84,12 @@ export const NavigationBar = () => {
       ...prev,
       open: !open,
     }));
+  };
+
+  const handleChange = (event: {
+    target: { checked: boolean | ((prevState: boolean) => boolean) };
+  }) => {
+    setChecked(event.target.checked);
   };
 
   return (
@@ -118,6 +132,11 @@ export const NavigationBar = () => {
                   </StyledLink>
                 );
               })}
+              <Switch
+                checked={checked}
+                onChange={handleChange}
+                inputProps={{ "aria-label": "controlled" }}
+              />
             </DesktopContentWarpper>
             <NetworkSelector setNetwork={setNetwork} network={network} />
             <SignerSelector
