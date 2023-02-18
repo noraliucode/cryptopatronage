@@ -128,8 +128,6 @@ export default function Create() {
   const handleInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    console.log("event.target.value", event.target.value);
-
     setState((prev) => ({
       ...prev,
       rate: event.target.value,
