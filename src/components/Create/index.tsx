@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useMemo, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import {
   Stepper,
   Step,
@@ -7,22 +7,17 @@ import {
   Typography,
   styled,
   Box,
-  Tooltip,
-  TextField,
   Snackbar,
 } from "@mui/material";
-import { InputWrapper, TitleWrapper } from "../Tabs";
-import {
-  DECIMALS,
-  FOOTER_HEIGHT,
-  IDENTITY_LABELS,
-  NAV_BAR_HEIGHT,
-  SYMBOL,
-} from "../../utils/constants";
+import { InputWrapper } from "../Tabs";
+import { DECIMALS, FOOTER_HEIGHT, NAV_BAR_HEIGHT } from "../../utils/constants";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { create } from "../../utils/main";
 import { useApi } from "../../hooks/useApi";
+import RateForm from "../CreatorInfoForms/RateForm";
+import IdentityForm from "../CreatorInfoForms/IdentityForm";
+import ImageForm from "../CreatorInfoForms/ImageForm";
 
 const Root = styled("div")(({ theme }) => ({
   width: 600,
@@ -61,6 +56,10 @@ export const Title = styled("div")(() => ({
   fontWeight: 700,
   marginRight: 10,
 }));
+export const Wrapper = styled("div")(() => ({
+  display: "flex",
+  alignItems: "center",
+}));
 
 type IState = {
   rate: string;
@@ -75,6 +74,7 @@ type IState = {
 export default function Create() {
   const [activeStep, setActiveStep] = useState(0);
 
+  const [checked, setChecked] = useState(true);
   const [state, setState] = useState<IState>({
     rate: "",
     imgUrl: "",
@@ -92,6 +92,12 @@ export default function Create() {
   const { rate, imgUrl, email, twitter, display, web, open } = state;
 
   const steps = getSteps();
+
+  const handleChange = (event: {
+    target: { checked: boolean | ((prevState: boolean) => boolean) };
+  }) => {
+    setChecked(event.target.checked);
+  };
 
   const handleNext = () => {
     if (signer && injector && activeStep === steps.length - 1) {
@@ -178,70 +184,34 @@ export default function Create() {
 
   const renderStep1 = () => {
     return (
-      <>
-        <TitleWrapper>
-          <Title>Add Monthly Rate</Title>
-          <Tooltip title="Add rate for current selected creator(signer)">
-            <img alt="question" src="/assets/icons/question.svg" />
-          </Tooltip>
-        </TitleWrapper>
-        <TextField
-          fullWidth
-          value={rate}
-          id="standard-basic"
-          label="Rate"
-          variant="standard"
-          placeholder={`Input the amount of ${SYMBOL[network]}`}
-          onChange={handleInputChange}
-          defaultValue={""}
-        />
-      </>
+      <RateForm
+        rate={rate}
+        network={network}
+        handleInputChange={handleInputChange}
+      />
     );
   };
 
   const renderStep2 = () => {
-    const value: any = {
-      "Display Name": display,
-      Email: email,
-      Twitter: twitter,
-      Web: web,
-    };
     return (
-      <>
-        <TitleWrapper>
-          <Title>On-chain Identity (Optional)</Title>
-        </TitleWrapper>
-        {IDENTITY_LABELS.map((label) => (
-          <TextField
-            fullWidth
-            value={value[label]}
-            id="standard-basic"
-            label={label}
-            variant="standard"
-            placeholder={label}
-            onChange={(event) => handleIdentityInputChange(event, label)}
-          />
-        ))}
-      </>
+      <IdentityForm
+        display={display}
+        email={email}
+        twitter={twitter}
+        web={web}
+        handleInputChange={handleIdentityInputChange}
+      />
     );
   };
 
   const renderStep3 = () => {
     return (
-      <>
-        <TitleWrapper>
-          <Title>Add Image (Optional)</Title>
-        </TitleWrapper>
-        <TextField
-          fullWidth
-          value={imgUrl}
-          id="standard-basic"
-          label="Image Url"
-          variant="standard"
-          placeholder={`Input image Url`}
-          onChange={handleImageUrlInputChange}
-        />
-      </>
+      <ImageForm
+        imgUrl={imgUrl}
+        checked={checked}
+        handleChange={handleChange}
+        handleInputChange={handleImageUrlInputChange}
+      />
     );
   };
 
