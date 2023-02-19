@@ -22,7 +22,7 @@ export const useApi = (network: INetwork) => {
         api,
       }));
     } catch (error) {
-      console.error("useCreators error", error);
+      console.error("createApiObj error", error);
     }
   };
   useEffect(() => {
