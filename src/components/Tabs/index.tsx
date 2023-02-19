@@ -29,6 +29,9 @@ import { Modal } from "../Modal";
 import { Supporter } from "../Supporter";
 import { useApi } from "../../hooks/useApi";
 import { HintText } from "../SubscribeModal";
+import RateForm from "../CreatorInfoForms/RateForm";
+import ImageForm from "../CreatorInfoForms/ImageForm";
+import IdentityForm from "../CreatorInfoForms/IdentityForm";
 
 const Root = styled("div")(({ theme }) => ({
   width: 600,
@@ -112,6 +115,7 @@ type IState = {
   twitter: string;
   display: string;
   web: string;
+  checked: boolean;
 };
 
 export const TabsMain = () => {
@@ -129,6 +133,7 @@ export const TabsMain = () => {
     twitter: "",
     display: "",
     web: "",
+    checked: true,
   });
 
   const {
@@ -144,6 +149,7 @@ export const TabsMain = () => {
     twitter,
     display,
     web,
+    checked,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -158,6 +164,13 @@ export const TabsMain = () => {
     useSupporters(signer?.address, currentRate, network);
 
   const { api } = useApi(network);
+
+  const handleCheck = () => {
+    setState((prev) => ({
+      ...prev,
+      checked: !checked,
+    }));
+  };
 
   const handleChange = (event: any, newValue: any) => {
     setState((prev) => ({
@@ -401,74 +414,24 @@ export const TabsMain = () => {
               {isRegisterToPaymentSystem ? "Cancel" : "Register"}
             </Button>
           </InputWrapper>
-          <InputWrapper>
-            <TitleWrapper>
-              <Title>Add Rate</Title>
-              <Tooltip title="Add rate for current selected creator(signer)">
-                <img alt="question" src="/assets/icons/question.svg" />
-              </Tooltip>
-            </TitleWrapper>
-            <TextField
-              id="standard-basic"
-              label="Rate"
-              variant="standard"
-              placeholder={`Input the amount of ${SYMBOL[network]}`}
-              onChange={handleInputChange}
-            />
-            &nbsp;
-            <Button
-              disabled={isSetRateDisabled}
-              onClick={_setRate}
-              variant="contained"
-            >
-              Set Rate
-            </Button>
-            <TitleWrapper>
-              <Title>Current Rate</Title>
-              <Tooltip title="Rate for current selected creator(signer)">
-                <img alt="question" src="/assets/icons/question.svg" />
-              </Tooltip>
-            </TitleWrapper>
-            <Text>
-              {currentRate
-                ? `${formatUnit(currentRate, DECIMALS[network])} ${network}`
-                : "N/A"}
-            </Text>
-          </InputWrapper>
-          <InputWrapper>
-            <TitleWrapper>
-              <Title>Add Image</Title>
-            </TitleWrapper>
-            <TextField
-              id="standard-basic"
-              label="Image Url"
-              variant="standard"
-              placeholder={`Input image Url`}
-              onChange={handleImageUrlInputChange}
-            />
-            &nbsp;
-            <Button onClick={_setImgUrl} variant="contained">
-              Set Image
-            </Button>
-          </InputWrapper>
-          <InputWrapper>
-            <TitleWrapper>
-              <Title>On-chain Identity</Title>
-            </TitleWrapper>
-            {IDENTITY_LABELS.map((label) => (
-              <TextField
-                id="standard-basic"
-                label={label}
-                variant="standard"
-                placeholder={label}
-                onChange={(event) => handleIdentityInputChange(event, label)}
-              />
-            ))}
-            &nbsp;
-            <Button onClick={_setIdentity} variant="contained">
-              Set On-chain identity
-            </Button>
-          </InputWrapper>
+          <RateForm
+            rate={rate}
+            network={network}
+            handleInputChange={handleInputChange}
+          />
+          <ImageForm
+            imgUrl={imgUrl}
+            checked={checked}
+            handleChange={handleCheck}
+            handleInputChange={handleImageUrlInputChange}
+          />
+          <IdentityForm
+            display={display}
+            email={email}
+            twitter={twitter}
+            web={web}
+            handleInputChange={handleIdentityInputChange}
+          />
           <TitleWrapper>
             <Title>Committed Supporters</Title>
             <Tooltip title="Supporters that are committed to transfer fund meets the rate. Creators can not pull payment manually once register to payment system">

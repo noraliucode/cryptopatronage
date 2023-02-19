@@ -365,8 +365,6 @@ export const executePreimages = async (
     if (!api) return;
     const apiService = new APIService(api);
     const status = await apiService.getPreimageStatus(hash);
-    console.log("status", status);
-
     const preimage = await apiService.getPreimageData(hash);
     await apiService.batchCalls(preimage, sender, injector);
   } catch (error) {

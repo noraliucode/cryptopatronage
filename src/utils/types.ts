@@ -2,6 +2,7 @@ import {
   InjectedExtension,
   InjectedAccountWithMeta,
 } from "@polkadot/extension-inject/types";
+import { ChangeEvent } from "react";
 
 export type IProxyParsedSupporter = {
   supporter?: string;
@@ -87,3 +88,11 @@ export type IWallet = {
   name: string;
   icon: string;
 };
+
+export type IHandleChange = (
+  _: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+) => void;
+
+export type IHandleCheck = (event: {
+  target: { checked: boolean | ((prevState: boolean) => boolean) };
+}) => void;
