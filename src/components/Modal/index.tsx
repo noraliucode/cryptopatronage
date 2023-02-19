@@ -1,53 +1,26 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  styled,
-} from "@mui/material";
+import { Dialog, DialogTitle } from "@mui/material";
 import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
-
-const ContentWrapper = styled("div")(() => ({
-  lineHeight: 1.5,
-}));
 
 type IProps = {
   open: boolean;
   onClose: () => void;
   title?: string;
-  content?: string;
-  action?: () => void;
 };
 
 export const Modal = (props: IProps) => {
-  const {
-    onClose,
-    open,
-    title = "Please select signer",
-    content,
-    action,
-  } = props;
+  const { onClose, open, title = "Please select signer" } = props;
 
   const handleClose = () => {
-    action && action();
     onClose();
   };
 
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>{title}</DialogTitle>
-      {content && (
-        <>
-          <Divider />
-          <DialogContent>
-            <ContentWrapper>{content}</ContentWrapper>
-          </DialogContent>
-        </>
-      )}
       <DialogActions>
         <Button onClick={handleClose} autoFocus>
-          OK
+          Got it
         </Button>
       </DialogActions>
     </Dialog>

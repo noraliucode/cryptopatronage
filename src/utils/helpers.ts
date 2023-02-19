@@ -165,14 +165,3 @@ export function parseEssentialInfo(info: any) {
   }
   return _info;
 }
-
-export const getUserProxyInfo = (address: string, nodes: any) => {
-  const proxyNodes = nodes.filter((node: any) => {
-    return (
-      // node[0] is real account, and node[1] is delegations
-      node[1].toHuman()[0][0].delegate === address ||
-      node[0].toHuman()[0] === address
-    );
-  });
-  return proxyNodes;
-};

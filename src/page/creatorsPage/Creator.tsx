@@ -29,10 +29,9 @@ const Blur = styled("div")(({ isClicked }: { isClicked: boolean }) => ({
   flex: 1,
   textAlign: "center",
   padding: "70px 10px",
-  // TODO: remove blur effect later
-  // backgroundColor: "rgba(255,255,255,.2)",
-  // WebkitBackdropFilter: "blur(5px)",
-  // backdropFilter: `blur(${isClicked ? 0 : "10px"})`,
+  backgroundColor: "rgba(255,255,255,.2)",
+  WebkitBackdropFilter: "blur(5px)",
+  backdropFilter: `blur(${isClicked ? 0 : "10px"})`,
 }));
 const ExtraHeight = styled("div")(() => ({
   marginBottom: 40,

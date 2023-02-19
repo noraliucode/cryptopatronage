@@ -34,11 +34,7 @@ export const useCreators = (network: INetwork) => {
       const allDelegations: string[] = [];
       const getAllDelegations = () => {
         nodes.forEach((proxy: any) => {
-          /* see apiService.ts `getProxies` method */
-          /* Retain the old code until a better solution for this issue becomes available. */
-          /* const delegations = proxy[1].toHuman()[0]; */
-
-          const delegations = proxy.toHuman()[0];
+          const delegations = proxy[1].toHuman()[0];
           delegations.forEach((delegation: any) => {
             allDelegations.push(delegation.delegate);
           });

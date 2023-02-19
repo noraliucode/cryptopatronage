@@ -7,7 +7,6 @@ import {
   formatAdditionalInfo,
   formatEssentialInfo,
   formatUpdatedInfo,
-  getUserProxyInfo,
 } from "../utils/helpers";
 import { Identity } from "../utils/types";
 
@@ -143,8 +142,6 @@ class APIService {
   };
 
   getProxies = async (address?: string) => {
-    /* Retain the old code until a better solution for this issue becomes available. */
-    /*
     let promise = new Promise((resolve, reject) => {
       this.api.query.proxy.proxies
         .entries(async (nodes: any) => {
@@ -168,44 +165,8 @@ class APIService {
           console.log("getProxies error: ", error);
         });
     });
-    */
 
-    let keys = await this.api.query.proxy.proxies.keys();
-
-    let proxyAddresses = [];
-    for (const key of keys) {
-      try {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        proxyAddresses.push(key.args.map((k) => k.toHuman()?.valueOf()));
-      } catch (error) {
-        console.log("parse proxy key value error", error);
-      }
-    }
-    proxyAddresses = proxyAddresses.map((address) => {
-      return address.flat()[0];
-    });
-
-    let proxyNodes;
-    try {
-      // unable to use `multi`
-      // throws an error in the next line: Unable to decode storage proxy.proxies: entry 197:: createType((Vec<PalletProxyProxyDefinition>,u128)):: decodeU8a: failed at 0x0898c8a3d01da9877b7b30877c717ae8… (index 1/2): Vec<PalletProxyProxyDefinition>:: decodeU8aVec: failed at 0x1da9877b7b30877c717ae8f2a7e726ce… (index 2/2):
-      // proxyNodes = await this.api.query.proxy.proxies.multi(proxyAddresses);
-      proxyNodes = await Promise.all(
-        proxyAddresses.map((address) => {
-          return this.api.query.proxy.proxies(address);
-        })
-      );
-    } catch (error) {
-      console.log("get proxy.proxy error", error);
-    }
-
-    if (address) {
-      proxyNodes = getUserProxyInfo(address, proxyNodes);
-    }
-
-    /* Retain the old code until a better solution for this issue becomes available. */
-    /* const proxyNodes = await promise; */
+    const proxyNodes = await promise;
     return proxyNodes;
   };
 
