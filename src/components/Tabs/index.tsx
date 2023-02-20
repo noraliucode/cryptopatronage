@@ -1,24 +1,15 @@
-import { Box, Tabs, Tab, Tooltip, Divider } from "@mui/material";
+import { Box, Tabs, Tab, Tooltip } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
 import {
   pullAllPayment,
   pullPayment,
-  setIdentity,
-  setImageUrl,
-  setRate,
   toggleIsRegisterToPaymentSystem,
+  updateInfo,
 } from "../../utils/main";
-import {
-  DECIMALS,
-  FOOTER_HEIGHT,
-  IDENTITY_LABELS,
-  NAV_BAR_HEIGHT,
-  SYMBOL,
-} from "../../utils/constants";
+import { DECIMALS, FOOTER_HEIGHT, NAV_BAR_HEIGHT } from "../../utils/constants";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
-import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
@@ -197,25 +188,6 @@ export const TabsMain = () => {
     }));
   };
 
-  const _setRate = async () => {
-    checkSigner();
-    if (!injector || !signer) return;
-
-    setState((prev) => ({
-      ...prev,
-      message: "Setting Rate...",
-    }));
-
-    await setRate(
-      api,
-      rate * 10 ** DECIMALS[network],
-      signer.address,
-      injector,
-      getRate,
-      setLoading
-    );
-  };
-
   const _pullPayment = async (
     real?: string,
     supporter?: string,
@@ -324,25 +296,13 @@ export const TabsMain = () => {
     }));
   };
 
-  const _setImgUrl = async () => {
+  const _updateInfo = async () => {
     checkSigner();
     if (!injector || !signer) return;
 
     setState((prev) => ({
       ...prev,
-      message: "Setting Image Url...",
-    }));
-
-    await setImageUrl(api, signer.address, imgUrl, injector);
-  };
-
-  const _setIdentity = async () => {
-    checkSigner();
-    if (!injector || !signer) return;
-
-    setState((prev) => ({
-      ...prev,
-      message: "Setting Identity...",
+      message: "Update Info...",
     }));
 
     const identity = {
@@ -352,9 +312,15 @@ export const TabsMain = () => {
       web,
     };
 
-    await setIdentity(
+    const additionalInfo = {
+      imgUrl,
+      rate: rate * 10 ** DECIMALS[network],
+    };
+
+    await updateInfo(
       api,
       identity,
+      additionalInfo,
       signer.address,
       injector,
       () => {},
@@ -442,7 +408,7 @@ export const TabsMain = () => {
             />
             <Wrapper>
               <InputWrapper>
-                <Button onClick={_setRate} variant="contained">
+                <Button onClick={_updateInfo} variant="contained">
                   Update Creator Info
                 </Button>
               </InputWrapper>

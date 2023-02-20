@@ -58,8 +58,9 @@ export type ICreator = {
 };
 
 export type IAdditionalInfo = {
-  rate: string;
-  ps: string;
+  rate: number;
+  imgUrl: string;
+  ps?: string;
 };
 
 export type INetwork = keyof ICreatorAddress;

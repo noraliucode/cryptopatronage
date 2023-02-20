@@ -6,7 +6,12 @@ import {
   SECONDS_IN_ONE_DAY,
 } from "./constants";
 import { getPaymentAmount, parseAdditionalInfo } from "./helpers";
-import { Identity, INetwork, IParsedSupporterProxies } from "./types";
+import {
+  IAdditionalInfo,
+  Identity,
+  INetwork,
+  IParsedSupporterProxies,
+} from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
 import { APIService } from "../services/apiService";
@@ -146,43 +151,6 @@ export const unsubscribe = async (
   } catch (error) {
     console.error("unsubscribe error >>", error);
   } finally {
-    setLoading && setLoading(false);
-  }
-};
-
-export const setRate = async (
-  api: ApiPromise | null,
-  rate: number,
-  sender: string,
-  injector: any,
-  callback?: () => void,
-  setLoading?: (_: boolean) => void
-) => {
-  try {
-    if (!api) return;
-    const apiService = new APIService(api);
-    setLoading && setLoading(true);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { essentialInfo, additionalInfo } = await getInfos(api, sender);
-    const _additionalInfo = {
-      ...additionalInfo,
-      rate,
-    };
-    const _callBack = () => {
-      callback && callback();
-      setLoading && setLoading(false);
-    };
-
-    await apiService.signAndSendSetIdentity(
-      essentialInfo,
-      _additionalInfo,
-      sender,
-      injector,
-      _callBack
-    );
-  } catch (error) {
-    console.error("setRate error", error);
     setLoading && setLoading(false);
   }
 };
@@ -372,37 +340,6 @@ export const executePreimages = async (
   }
 };
 
-// TODO: refactor set identity
-export const setImageUrl = async (
-  api: ApiPromise | null,
-  sender: string,
-  imgUrl: string,
-  injector: InjectedExtension
-) => {
-  try {
-    if (!api) return;
-    const apiService = new APIService(api);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { essentialInfo, additionalInfo } = await getInfos(api, sender);
-    const _additionalInfo = {
-      ...additionalInfo,
-      imgUrl,
-    };
-
-    const tx = await apiService.signAndSendSetIdentity(
-      essentialInfo,
-      _additionalInfo,
-      sender,
-      injector
-    );
-
-    return tx;
-  } catch (error) {
-    console.error("setImage error", error);
-  }
-};
-
 export const parseCreatorProxies = async (
   api: ApiPromise | null,
   // TODO: import type PalletProxyProxyDefinition
@@ -451,10 +388,10 @@ export const parseCreatorProxies = async (
   return result;
 };
 
-// TODO: refactor - same functionality as setRate
-export const setIdentity = async (
+export const updateInfo = async (
   api: ApiPromise | null,
   idetity: Identity,
+  updatedAdditionalInfo: IAdditionalInfo,
   sender: string,
   injector: any,
   callback?: () => void,
@@ -472,9 +409,14 @@ export const setIdentity = async (
       setLoading && setLoading(false);
     };
 
+    const _additionalInfo = {
+      ...additionalInfo,
+      ...updatedAdditionalInfo,
+    };
+
     await apiService.signAndSendSetIdentity(
       essentialInfo,
-      additionalInfo,
+      _additionalInfo,
       sender,
       injector,
       _callBack,
