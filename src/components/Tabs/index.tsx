@@ -1,4 +1,4 @@
-import { Box, Tabs, Tab, Tooltip } from "@mui/material";
+import { Box, Tabs, Tab, Tooltip, Divider } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useState } from "react";
 import Button from "@mui/material/Button";
@@ -99,6 +99,13 @@ export const TitleWrapper = styled("div")(() => ({
 }));
 export const Content = styled("div")(() => ({
   margin: 20,
+}));
+export const CreatorInfo = styled("div")(() => ({
+  background: "#42336d",
+  borderRadius: 15,
+  padding: 20,
+  boxSizing: "border-box",
+  margin: "31px 0",
 }));
 
 type IState = {
@@ -414,24 +421,33 @@ export const TabsMain = () => {
               {isRegisterToPaymentSystem ? "Cancel" : "Register"}
             </Button>
           </InputWrapper>
-          <RateForm
-            rate={rate}
-            network={network}
-            handleInputChange={handleInputChange}
-          />
-          <ImageForm
-            imgUrl={imgUrl}
-            checked={checked}
-            handleChange={handleCheck}
-            handleInputChange={handleImageUrlInputChange}
-          />
-          <IdentityForm
-            display={display}
-            email={email}
-            twitter={twitter}
-            web={web}
-            handleInputChange={handleIdentityInputChange}
-          />
+          <CreatorInfo>
+            <RateForm
+              rate={rate}
+              network={network}
+              handleInputChange={handleInputChange}
+            />
+            <ImageForm
+              imgUrl={imgUrl}
+              checked={checked}
+              handleChange={handleCheck}
+              handleInputChange={handleImageUrlInputChange}
+            />
+            <IdentityForm
+              display={display}
+              email={email}
+              twitter={twitter}
+              web={web}
+              handleInputChange={handleIdentityInputChange}
+            />
+            <Wrapper>
+              <InputWrapper>
+                <Button onClick={_setRate} variant="contained">
+                  Update Creator Info
+                </Button>
+              </InputWrapper>
+            </Wrapper>
+          </CreatorInfo>
           <TitleWrapper>
             <Title>Committed Supporters</Title>
             <Tooltip title="Supporters that are committed to transfer fund meets the rate. Creators can not pull payment manually once register to payment system">
