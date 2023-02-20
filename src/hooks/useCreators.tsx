@@ -12,7 +12,10 @@ interface IState {
   creators: (ICreator | undefined)[] | null;
   loading: boolean;
 }
-export const useCreators = (network: INetwork) => {
+export const useCreators = (
+  network: INetwork,
+  isShowSensitiveContent: boolean
+) => {
   const [state, setState] = useState<IState>({
     creators: null,
     loading: false,
@@ -74,7 +77,10 @@ export const useCreators = (network: INetwork) => {
         }
       });
 
-      const _creators = _.uniqBy(creators, "address") as ICreator[];
+      let _creators = _.uniqBy(creators, "address") as ICreator[];
+      if (isShowSensitiveContent) {
+        _creators = [];
+      }
 
       // TODO: filter with supporter and calculate funds
 
@@ -93,6 +99,6 @@ export const useCreators = (network: INetwork) => {
   };
   useEffect(() => {
     getCreators();
-  }, [network]);
+  }, [network, isShowSensitiveContent]);
   return { ...state, getCreators };
 };

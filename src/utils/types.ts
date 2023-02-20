@@ -40,6 +40,9 @@ export type IWeb3ConnectedContextState = {
   setNetwork: (value: string) => any;
   selectedWallet: string;
   setSelectedWallet: (value: string) => any;
+  // TODO: Move these to a global context later
+  isShowSensitiveContent: boolean;
+  setIsShowSensitiveContent: (value: boolean) => void;
 };
 
 export type ICreator = {

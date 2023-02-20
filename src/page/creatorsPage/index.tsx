@@ -52,9 +52,15 @@ export const CreatorsPage = () => {
     isModalOpen: false,
     selectedIndex: -1,
   });
-  const { signer, injector, network }: IWeb3ConnectedContextState =
-    useWeb3ConnectedContext();
-  const { creators, loading } = useCreators(network);
+  const {
+    signer,
+    injector,
+    network,
+    // TODO: Move this to a global context later
+    isShowSensitiveContent,
+  }: IWeb3ConnectedContextState = useWeb3ConnectedContext();
+
+  const { creators, loading } = useCreators(network, isShowSensitiveContent);
   const params = useParams();
   const { address } = params as any;
 
