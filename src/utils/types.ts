@@ -61,6 +61,7 @@ export type ICreator = {
 export type IAdditionalInfo = {
   rate: number;
   imgUrl: string;
+  isSensitive: boolean;
   ps?: string;
 };
 
