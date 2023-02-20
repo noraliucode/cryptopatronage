@@ -63,9 +63,11 @@ export const NavigationBar = () => {
     signer,
     setNetwork,
     network,
+    // TODO: Move these to a global context later
+    isShowSensitiveContent,
+    setIsShowSensitiveContent,
   }: IWeb3ConnectedContextState = useWeb3ConnectedContext();
 
-  const [checked, setChecked] = useState(true);
   const [state, setState] = useState<IState>({
     open: false,
     isModalOpen: false,
@@ -89,14 +91,15 @@ export const NavigationBar = () => {
     }));
   };
 
-  const handleChange = (event: {
-    target: { checked: boolean | ((prevState: boolean) => boolean) };
-  }) => {
-    setState((prev) => ({
-      ...prev,
-      isModalOpen: !isModalOpen,
-    }));
-    // setChecked(event.target.checked);
+  const handleChange = () => {
+    if (isShowSensitiveContent) {
+      setIsShowSensitiveContent(false);
+    } else {
+      setState((prev) => ({
+        ...prev,
+        isModalOpen: true,
+      }));
+    }
   };
 
   return (
@@ -111,6 +114,7 @@ export const NavigationBar = () => {
             isModalOpen: false,
           }))
         }
+        action={() => setIsShowSensitiveContent(true)}
       />
       <MobileContentWarpper>
         <Drawer open={open} toggleDrawer={toggleDrawer} />
@@ -151,7 +155,7 @@ export const NavigationBar = () => {
                 );
               })}
               <Switch
-                checked={checked}
+                checked={isShowSensitiveContent}
                 onChange={handleChange}
                 inputProps={{ "aria-label": "controlled" }}
               />

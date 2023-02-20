@@ -15,12 +15,16 @@ interface IProps {
 const SIGNER = "signer";
 const NETWORK = "network";
 const SELECTED_WALLET = "selectedWallet";
+const IS_SHOW_SENSITIVE_CONTENT = "isShowSensitiveContent";
 
 const Web3ConnectedContext = createContext<IWeb3ConnectedContextState>(null!);
 const useWeb3ConnectedContext = () => useContext(Web3ConnectedContext);
 
 const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
-  const setValue = (value: string | InjectedAccountWithMeta, key: string) => {
+  const setValue = (
+    value: string | InjectedAccountWithMeta | boolean,
+    key: string
+  ) => {
     setState((prev: IWeb3ConnectedContextState) => ({ ...prev, [key]: value }));
   };
   const [state, setState] = useState<IWeb3ConnectedContextState>({
@@ -32,6 +36,10 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
     setNetwork: (value) => setValue(value, NETWORK),
     selectedWallet: "",
     setSelectedWallet: (value) => setValue(value, SELECTED_WALLET),
+    // TODO: Move these to a global context later
+    isShowSensitiveContent: false,
+    setIsShowSensitiveContent: (value) =>
+      setValue(value, IS_SHOW_SENSITIVE_CONTENT),
   });
   const {
     network,
@@ -42,6 +50,9 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
     setNetwork,
     selectedWallet,
     setSelectedWallet,
+    // TODO: Move these to a global context later
+    isShowSensitiveContent,
+    setIsShowSensitiveContent,
   } = state;
 
   const connector = localStorage.getItem(APP_SESSION);
@@ -109,6 +120,9 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
     setNetwork,
     selectedWallet,
     setSelectedWallet,
+    // TODO: Move these to a global context later
+    isShowSensitiveContent,
+    setIsShowSensitiveContent,
   };
 
   return (

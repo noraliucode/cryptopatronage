@@ -198,6 +198,9 @@ class APIService {
       );
     } catch (error) {
       console.log("get proxy.proxy error", error);
+      if (!proxyNodes) {
+        return [];
+      }
     }
 
     if (address) {

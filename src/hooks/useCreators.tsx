@@ -12,7 +12,10 @@ interface IState {
   creators: (ICreator | undefined)[] | null;
   loading: boolean;
 }
-export const useCreators = (network: INetwork) => {
+export const useCreators = (
+  network: INetwork,
+  isShowSensitiveContent: boolean
+) => {
   const [state, setState] = useState<IState>({
     creators: null,
     loading: false,
@@ -69,12 +72,17 @@ export const useCreators = (network: INetwork) => {
             twitter: identity.twitter,
             display: identity.display,
             web: identity.web,
+            isSensitive: identity.isSensitive === "true" ? true : false,
           };
           creators.push(creator);
         }
       });
 
-      const _creators = _.uniqBy(creators, "address") as ICreator[];
+      let _creators = _.uniqBy(creators, "address") as ICreator[];
+
+      _creators = _creators.filter(
+        (creator) => creator.isSensitive === isShowSensitiveContent
+      );
 
       // TODO: filter with supporter and calculate funds
 
@@ -93,6 +101,6 @@ export const useCreators = (network: INetwork) => {
   };
   useEffect(() => {
     getCreators();
-  }, [network]);
+  }, [network, isShowSensitiveContent]);
   return { ...state, getCreators };
 };

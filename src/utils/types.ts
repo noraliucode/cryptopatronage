@@ -40,6 +40,9 @@ export type IWeb3ConnectedContextState = {
   setNetwork: (value: string) => any;
   selectedWallet: string;
   setSelectedWallet: (value: string) => any;
+  // TODO: Move these to a global context later
+  isShowSensitiveContent: boolean;
+  setIsShowSensitiveContent: (value: boolean) => void;
 };
 
 export type ICreator = {
@@ -52,11 +55,13 @@ export type ICreator = {
   twitter: string;
   display: string;
   web: string;
+  isSensitive: boolean;
 };
 
 export type IAdditionalInfo = {
-  rate: string;
-  ps: string;
+  rate: number;
+  imgUrl: string;
+  ps?: string;
 };
 
 export type INetwork = keyof ICreatorAddress;
@@ -65,6 +70,7 @@ export type ICreatorAddress = {
   ROCOCO: string;
   WESTEND: string;
   KUSAMA: string;
+  POLKADOT: string;
 };
 
 export type IParsedProxies = {
