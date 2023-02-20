@@ -72,15 +72,17 @@ export const useCreators = (
             twitter: identity.twitter,
             display: identity.display,
             web: identity.web,
+            isSensitive: identity.isSensitive === "true" ? true : false,
           };
           creators.push(creator);
         }
       });
 
       let _creators = _.uniqBy(creators, "address") as ICreator[];
-      if (isShowSensitiveContent) {
-        _creators = [];
-      }
+
+      _creators = _creators.filter(
+        (creator) => creator.isSensitive === isShowSensitiveContent
+      );
 
       // TODO: filter with supporter and calculate funds
 

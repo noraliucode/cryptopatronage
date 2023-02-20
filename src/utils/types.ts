@@ -55,6 +55,7 @@ export type ICreator = {
   twitter: string;
   display: string;
   web: string;
+  isSensitive: boolean;
 };
 
 export type IAdditionalInfo = {

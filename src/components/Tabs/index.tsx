@@ -315,6 +315,7 @@ export const TabsMain = () => {
     const additionalInfo = {
       imgUrl,
       rate: rate * 10 ** DECIMALS[network],
+      isSensitive: checked,
     };
 
     await updateInfo(
