@@ -65,6 +65,7 @@ export type ICreatorAddress = {
   ROCOCO: string;
   WESTEND: string;
   KUSAMA: string;
+  POLKADOT: string;
 };
 
 export type IParsedProxies = {
