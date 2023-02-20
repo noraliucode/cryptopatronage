@@ -1,6 +1,6 @@
-import { Box, Tabs, Tab, Tooltip } from "@mui/material";
+import { Box, Tabs, Tab, Tooltip, CircularProgress } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import {
   pullAllPayment,
@@ -98,6 +98,12 @@ export const CreatorInfo = styled("div")(() => ({
   boxSizing: "border-box",
   margin: "31px 0",
 }));
+export const LoadingContainer = styled("div")(() => ({
+  height: 200,
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+}));
 
 type IState = {
   value: number;
@@ -117,7 +123,7 @@ type IState = {
 };
 
 export const TabsMain = () => {
-  const [state, setState] = useState<IState>({
+  const defaultState = {
     value: 0,
     anonymous: "",
     rate: 0,
@@ -131,8 +137,9 @@ export const TabsMain = () => {
     twitter: "",
     display: "",
     web: "",
-    checked: true,
-  });
+    checked: false,
+  };
+  const [state, setState] = useState<IState>(defaultState);
 
   const {
     value,
@@ -156,12 +163,31 @@ export const TabsMain = () => {
     rate: currentRate,
     getRate,
     isRegisterToPaymentSystem,
+    additionalInfo,
+    identity,
+    loading: isInfoLoading,
   } = useIdentity(signer?.address, network);
 
   const { committedSupporters, getSupporters, uncommittedSupporters } =
     useSupporters(signer?.address, currentRate, network);
 
   const { api } = useApi(network);
+
+  useEffect(() => {
+    if (identity) {
+      const { email, twitter, display, web } = identity;
+      setState((prev) => ({ ...prev, email, twitter, display, web }));
+    }
+    if (additionalInfo) {
+      const { rate, imgUrl, isSensitive } = additionalInfo;
+      setState((prev) => ({
+        ...prev,
+        rate,
+        imgUrl: imgUrl,
+        isSensitive,
+      }));
+    }
+  }, [additionalInfo, identity, network, signer, isInfoLoading]);
 
   const handleCheck = () => {
     setState((prev) => ({
@@ -389,31 +415,42 @@ export const TabsMain = () => {
             </Button>
           </InputWrapper>
           <CreatorInfo>
-            <RateForm
-              rate={rate}
-              network={network}
-              handleInputChange={handleInputChange}
-            />
-            <ImageForm
-              imgUrl={imgUrl}
-              checked={checked}
-              handleChange={handleCheck}
-              handleInputChange={handleImageUrlInputChange}
-            />
-            <IdentityForm
-              display={display}
-              email={email}
-              twitter={twitter}
-              web={web}
-              handleInputChange={handleIdentityInputChange}
-            />
-            <Wrapper>
-              <InputWrapper>
-                <Button onClick={_updateInfo} variant="contained">
-                  Update Creator Info
-                </Button>
-              </InputWrapper>
-            </Wrapper>
+            <>
+              <Title>Personal Info</Title>
+              {isInfoLoading ? (
+                <LoadingContainer>
+                  <CircularProgress size={30} thickness={5} />
+                </LoadingContainer>
+              ) : (
+                <>
+                  <RateForm
+                    rate={rate}
+                    network={network}
+                    handleInputChange={handleInputChange}
+                  />
+                  <ImageForm
+                    imgUrl={imgUrl}
+                    checked={checked}
+                    handleChange={handleCheck}
+                    handleInputChange={handleImageUrlInputChange}
+                  />
+                  <IdentityForm
+                    display={display}
+                    email={email}
+                    twitter={twitter}
+                    web={web}
+                    handleInputChange={handleIdentityInputChange}
+                  />
+                  <Wrapper>
+                    <InputWrapper>
+                      <Button onClick={_updateInfo} variant="contained">
+                        Update Creator Info
+                      </Button>
+                    </InputWrapper>
+                  </Wrapper>
+                </>
+              )}
+            </>
           </CreatorInfo>
           <TitleWrapper>
             <Title>Committed Supporters</Title>
