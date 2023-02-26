@@ -55,7 +55,7 @@ export const NETWORKS = [
   { network: "ROCOCO", icon: `${assetPath}rococo.svg` },
   { network: "WESTEND", icon: `${assetPath}westend.svg` },
   { network: "KUSAMA", icon: `${assetPath}kusama.gif` },
-  { network: "POLKADOT", icon: `${assetPath}polkadot.svg` },
+  // { network: "POLKADOT", icon: `${assetPath}polkadot.svg` }, // We believe that a deposit of 20 DOT for setting up an identity is excessive. As a result, we have decided to suspend our support polkadot for the time being.
   { network: "KABOCHA", icon: `${assetPath}kabocha.svg` },
 ];
 export const SECONDS_IN_ONE_DAY = 60 * 60 * 24;
