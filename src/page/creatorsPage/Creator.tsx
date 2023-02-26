@@ -95,8 +95,7 @@ const Creator: React.FC<Props> = ({
               </Text>
               {creator.rate && (
                 <Typography variant="body2" color="text.secondary">
-                  Monthly Rate:{" "}
-                  {formatUnit(Number(creator.rate), DECIMALS[network])}{" "}
+                  Rate: {formatUnit(Number(creator.rate), DECIMALS[network])}{" "}
                   {SYMBOL[network]}
                 </Typography>
               )}
