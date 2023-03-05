@@ -182,7 +182,7 @@ export const TabsMain = () => {
       const { rate, imgUrl, isSensitive } = additionalInfo;
       setState((prev) => ({
         ...prev,
-        rate,
+        rate: rate ? formatUnit(rate, DECIMALS[network]) : 0,
         imgUrl: imgUrl,
         isSensitive,
       }));

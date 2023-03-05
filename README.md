@@ -10,6 +10,12 @@ foo@bar:~$ cd ./<cryptopatronage>
 foo@bar:cryptopatronage$ yarn 
 foo@bar:cryptopatronage$ yarn start
 ```
+## System Diagram
+The fundamental illustration of how the creator-supporter mechanism operates through a pure proxy.
+
+<img width="873" alt="image" src="https://user-images.githubusercontent.com/12429503/221556984-29f8f4b2-a1a0-4c7e-94ee-2373659e8598.png">
+
+
 
 ## Technological Overview
 ### @polkadot/api
