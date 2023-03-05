@@ -16,6 +16,8 @@ export const USER_PAYMENT = 1;
 export const ANONYMOUS_CREATED = "AnonymousCreated";
 export const PURE_CREATED = "PureCreated";
 export const RESERVED_AMOUNT = 0.001;
+export const ZERO_BAL = 0;
+
 export const SUPPORTER = {
   ROCOCO: "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",
   WESTEND: "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",

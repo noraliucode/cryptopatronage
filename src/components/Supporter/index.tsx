@@ -63,7 +63,11 @@ export const Supporter = () => {
     await getSubscribedCreators();
   };
 
-  const _unsubscribe = async () => {
+  const _unsubscribe = async (
+    isCommitted: boolean,
+    creator: string,
+    pureProxy?: string
+  ) => {
     checkSigner();
     if (!injector || !signer) return;
     const setLoading = (value: boolean) => {
@@ -73,12 +77,14 @@ export const Supporter = () => {
       }));
     };
     await unsubscribe(
+      isCommitted,
       api,
       signer.address,
       injector,
-      selectedCreator,
+      creator,
       callback,
-      setLoading
+      setLoading,
+      pureProxy
     );
   };
 
@@ -131,7 +137,12 @@ export const Supporter = () => {
               committedCreators.map((creator) => (
                 <SpaceBetweenWrapper>
                   <Text>{creator.creator}</Text>
-                  <Button onClick={_unsubscribe} variant="outlined">
+                  <Button
+                    onClick={() =>
+                      _unsubscribe(true, creator.creator, creator.pure)
+                    }
+                    variant="outlined"
+                  >
                     Unsubscribe
                   </Button>
                 </SpaceBetweenWrapper>
@@ -144,7 +155,15 @@ export const Supporter = () => {
             <Title>Uncommitted subscribed Creators</Title>
             {uncommittedCreators.length > 0 ? (
               uncommittedCreators.map((creator) => (
-                <Text>{creator.creator}</Text>
+                <SpaceBetweenWrapper>
+                  <Text>{creator.creator}</Text>
+                  <Button
+                    onClick={() => _unsubscribe(false, creator.creator)}
+                    variant="outlined"
+                  >
+                    Unsubscribe
+                  </Button>
+                </SpaceBetweenWrapper>
               ))
             ) : (
               <Content>
