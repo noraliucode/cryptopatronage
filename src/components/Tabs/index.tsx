@@ -8,7 +8,12 @@ import {
   toggleIsRegisterToPaymentSystem,
   updateInfo,
 } from "../../utils/main";
-import { DECIMALS, FOOTER_HEIGHT, NAV_BAR_HEIGHT } from "../../utils/constants";
+import {
+  DECIMALS,
+  FOOTER_HEIGHT,
+  NAV_BAR_HEIGHT,
+  ZERO_BAL,
+} from "../../utils/constants";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
 import Snackbar from "@mui/material/Snackbar";
 import { IWeb3ConnectedContextState } from "../../utils/types";
@@ -220,7 +225,7 @@ export const TabsMain = () => {
     balance?: number
   ) => {
     if (!real || !supporter || !balance || !signer) return;
-    if (currentRate > balance) {
+    if (balance === ZERO_BAL) {
       setState((prev) => ({
         ...prev,
         title: "Insufficient Fund",

@@ -158,6 +158,8 @@ class APIService {
               return (
                 // node[0] is real account, and node[1] is delegations
                 node[1].toHuman()[0][0].delegate === address ||
+                // supporter address might not be in order in delegates array
+                node[1].toHuman()[0][1]?.delegate === address ||
                 node[0].toHuman()[0] === address
               );
             });
@@ -217,7 +219,7 @@ class APIService {
   ) => {
     let _essentialInfo;
     if (essentialInfo) {
-      _essentialInfo = formatEssentialInfo(essentialInfo.toHuman().info);
+      _essentialInfo = formatEssentialInfo(essentialInfo.toHuman()?.info);
     }
 
     _essentialInfo = updatedInfo

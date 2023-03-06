@@ -112,6 +112,12 @@ export function parseSupporterProxies(
           creator: delegation.delegate,
         });
       });
+      // supporter address might not be in order in delegates array
+    } else if (proxy[1].toHuman()[0][1]?.delegate === supporter) {
+      committedCreators.push({
+        creator: proxy[1].toHuman()[0][0]?.delegate,
+        pure: proxy[0].toHuman()[0],
+      });
     } else {
       committedCreators.push({
         creator: proxy[1].toHuman()[0][1]?.delegate,
