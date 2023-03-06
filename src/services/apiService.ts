@@ -112,6 +112,14 @@ class APIService {
     );
   };
 
+  removeProxyViaProxy = async (real: string, proxy: string) => {
+    return this.api.tx.proxy.proxy(
+      real,
+      null,
+      this.api.tx.proxy.removeProxy(proxy, "any", 0)
+    );
+  };
+
   createAnonymousProxy = async (sender: string, injector: any, delay = 0) => {
     let promise = new Promise((resolve, reject) => {
       this.api.tx.proxy

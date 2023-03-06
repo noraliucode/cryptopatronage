@@ -4,6 +4,7 @@ import {
   USER_PAYMENT,
   RESERVED_AMOUNT,
   SECONDS_IN_ONE_DAY,
+  ZERO_BAL,
 } from "./constants";
 import { getPaymentAmount, parseAdditionalInfo } from "./helpers";
 import {
@@ -112,42 +113,36 @@ export const subscribe = async (
 };
 
 export const unsubscribe = async (
+  isCommitted: boolean,
   api: ApiPromise | null,
   sender: string,
   injector: any,
   creator: string,
   callback?: any,
-  setLoading?: (_: boolean) => void
+  setLoading?: (_: boolean) => void,
+  pureProxy?: string
 ) => {
   try {
     if (!api) return;
     const apiService = new APIService(api);
     setLoading && setLoading(true);
-    const creatorProxies: any = await apiService.getProxies(creator);
-    const creatorProxiesFiltered = creatorProxies.filter(
-      // filter all nodes that the property is sender
-      (node: any) => {
-        const _node = node[1].toHuman()[0][1];
-        if (_node) {
-          return _node.delegate === sender;
-        }
+    if (isCommitted && pureProxy) {
+      // check if there are funds in the pureProxy account
+      const balance = await apiService.getBalance(pureProxy);
+      // To use killPure, we need to pass block height and other parameters. Therefore, our conclusion is to simply break the relationship between creator and pureProxy by using removeProxy.
+      // https://www.notion.so/517be2b31a69450bb145d5b2e39314ab?v=0df5c9bf2d1144b387ae7a962c9ac8e0&p=cd914b3b0b3f4c53b156a5906f152d06&pm=s
+      const txs = [await apiService.removeProxyViaProxy(pureProxy, creator)];
+      // withdraw if there are still funds
+      if (balance > ZERO_BAL) {
+        txs.push(
+          await apiService.transferViaProxyPromise(pureProxy, sender, balance)
+        );
       }
-    );
-
-    const reals = creatorProxiesFiltered.map(
-      (node: any) => node[0].toHuman()[0]
-    );
-
-    // get all txs
-    const txs = await Promise.all([
-      ...reals.map((real: any) =>
-        apiService.removeProxiesViaProxy(apiService.removeProxies(), real)
-      ),
-      // uncommitted supporters
-      apiService.getRemoveProxyPromise(creator),
-    ]);
-
-    await apiService.batchCalls(txs, sender, injector, callback);
+      await apiService.batchCalls(txs, sender, injector, callback);
+    } else {
+      // simply removeProxy and signer is the supporter
+      apiService.removeProxyViaProxy(sender, creator);
+    }
   } catch (error) {
     console.error("unsubscribe error >>", error);
   } finally {
