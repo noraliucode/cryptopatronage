@@ -348,29 +348,23 @@ export const parseCreatorProxies = async (
   const uncommittedSupporters: any = [];
   const promise = new Promise(function (resolve, reject) {
     proxies.forEach((proxy: any) => {
+      const real = proxy[0].toHuman()[0];
       const delegations = proxy[1].toHuman()[0];
 
-      if (delegations) {
+      if (delegations && delegations[0]) {
         delegations.forEach(async (delegation: any) => {
-          if (delegation.delegate === creator) {
-            const pureProxyOrSupporter = proxy[0].toHuman()[0];
-            // In the case of subscribtion adding pure proxy, supporter address is the first element.
-            const committedSupporter = delegations[0].delegate;
-            const nodes: any = await apiService.getDelegations(
-              pureProxyOrSupporter
-            );
+          if (
+            delegations[0]?.delegate &&
+            delegations[0]?.delegate === creator
+          ) {
+            committedSupporters.push({
+              supporter: delegations[1]?.delegate,
+              pure: real,
+            });
 
-            // and validate if it is pure
-            const pureDelegations = nodes && nodes[0].toHuman();
-            // In the case of subscribtion adding pure proxy, creator address is the first element.
-            if (pureDelegations && pureDelegations[1]?.delegate === creator) {
-              committedSupporters.push({
-                supporter: committedSupporter,
-                pure: pureProxyOrSupporter,
-              });
-            } else {
+            if (real === creator) {
               uncommittedSupporters.push({
-                supporter: pureProxyOrSupporter,
+                supporter: delegations[0]?.delegate,
               });
             }
             resolve({ committedSupporters, uncommittedSupporters });

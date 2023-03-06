@@ -29,8 +29,9 @@ export const useSupporters = (
       const api = await ApiPromise.create({ provider: wsProvider });
       const apiService = new APIService(api);
       // get proxyNodes
-      const proxyNodes: any = await apiService.getProxies();
+      const proxyNodes: any = await apiService.getProxies(creator);
       const { committedSupporters, uncommittedSupporters } =
+        // TODO: naming issue
         await parseCreatorProxies(api, proxyNodes, creator);
 
       // get balances
