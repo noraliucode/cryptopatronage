@@ -104,7 +104,7 @@ export const subscribe = async (
       await apiService.batchCalls(txs, sender, injector, callback);
     } else {
       console.log("set creator as proxy...");
-      await apiService.signAndSendAddProxy(sender, injector, creator);
+      await apiService.signAndSendAddProxy(sender, injector, creator, callback);
     }
   } catch (error) {
     console.error("subscribe error >>", error);
@@ -141,12 +141,10 @@ export const unsubscribe = async (
       await apiService.batchCalls(txs, sender, injector, callback);
     } else {
       // simply removeProxy and signer is the supporter
-      apiService.removeProxyViaProxy(sender, creator);
+      apiService.signAndSendRemoveProxy(sender, injector, creator, callback);
     }
   } catch (error) {
     console.error("unsubscribe error >>", error);
-  } finally {
-    setLoading && setLoading(false);
   }
 };
 

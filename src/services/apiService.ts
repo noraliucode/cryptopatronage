@@ -27,23 +27,31 @@ class APIService {
   signAndSendAddProxy = async (
     sender: string,
     injector: InjectedExtension,
-    proxy: string
+    proxy: string,
+    callback?: () => void
   ) => {
     this.api.tx.proxy
       .addProxy(proxy, "Any", 0)
-      .signAndSend(sender, { signer: injector.signer });
+      .signAndSend(sender, { signer: injector.signer }, (status) => {
+        if (status.isInBlock) {
+          callback && callback();
+        }
+      });
   };
 
   signAndSendRemoveProxy = async (
     sender: string,
     injector: any,
-    proxy: string
+    proxy: string,
+    callback?: () => void
   ) => {
     try {
       await this.api.tx.proxy
         .removeProxy(proxy, "Any", 0)
         .signAndSend(sender, { signer: injector.signer }, (status) => {
-          console.log("removeProxy status >>", status);
+          if (status.isInBlock) {
+            callback && callback();
+          }
         });
     } catch (error) {
       console.error("removeProxy error", error);

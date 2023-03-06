@@ -61,6 +61,10 @@ export const Supporter = () => {
 
   const callback = async () => {
     await getSubscribedCreators();
+    setState((prev) => ({
+      ...prev,
+      isUnsubscribing: false,
+    }));
   };
 
   const _unsubscribe = async (
