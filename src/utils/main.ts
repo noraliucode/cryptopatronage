@@ -184,11 +184,7 @@ const getPaymentPromises = async (
 
   const lastPaymentTime = getLastPaymentTime(creatorIdentity);
 
-  const amount = getPaymentAmount(
-    currentRate,
-    decimals,
-    lastPaymentTime && lastPaymentTime
-  );
+  const amount = getPaymentAmount(currentRate, lastPaymentTime);
 
   const promises = [
     apiService.transferViaProxyPromise(real, receiver, amount),
