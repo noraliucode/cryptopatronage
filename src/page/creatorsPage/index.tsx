@@ -43,6 +43,7 @@ type IState = {
   selectedCreator: string;
   isModalOpen: boolean;
   selectedIndex: number;
+  selectedRate: string | undefined;
 };
 
 export const CreatorsPage = () => {
@@ -51,6 +52,7 @@ export const CreatorsPage = () => {
     selectedCreator: "",
     isModalOpen: false,
     selectedIndex: -1,
+    selectedRate: "",
   });
   const {
     signer,
@@ -81,13 +83,14 @@ export const CreatorsPage = () => {
     }
   };
 
-  const onSubscribeClick = (address: string) => {
+  const onSubscribeClick = (address: string, rate: string | undefined) => {
     checkSigner();
     if (!signer) return;
     setState((prev) => ({
       ...prev,
       open: true,
       selectedCreator: address,
+      selectedRate: rate,
     }));
   };
 
@@ -98,7 +101,8 @@ export const CreatorsPage = () => {
     }));
   };
 
-  const { open, selectedCreator, isModalOpen, selectedIndex } = state;
+  const { open, selectedCreator, isModalOpen, selectedIndex, selectedRate } =
+    state;
   const _creators = address
     ? creators?.filter(
         (x) => x?.address?.toLowerCase() === address.toLowerCase()
@@ -138,6 +142,7 @@ export const CreatorsPage = () => {
                 open={open}
                 onClose={onClose}
                 selectedCreator={selectedCreator}
+                rate={selectedRate}
               />
               <Container>
                 <Grid container spacing={2}>
@@ -148,7 +153,10 @@ export const CreatorsPage = () => {
                       index={index}
                       network={network}
                       onCardClick={onCardClick}
-                      onSubscribeClick={onSubscribeClick}
+                      onSubscribeClick={() => {
+                        creator &&
+                          onSubscribeClick(creator?.address, creator?.rate);
+                      }}
                     />
                   ))}
                 </Grid>

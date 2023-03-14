@@ -24,6 +24,7 @@ type IProps = {
   open: boolean;
   onClose: () => void;
   selectedCreator: string;
+  rate: string | undefined;
 };
 
 type IState = {
@@ -51,7 +52,7 @@ const WarningText = styled("div")(() => ({
 }));
 
 export const SubscribeModal = (props: IProps) => {
-  const { onClose, open, selectedCreator } = props;
+  const { onClose, open, selectedCreator, rate } = props;
   const [state, setState] = useState<IState>({
     isCommitted: true,
     isDelayed: false,
@@ -195,16 +196,22 @@ export const SubscribeModal = (props: IProps) => {
     return "Subscribe";
   };
 
+  const content = () => {
+    const total = Number(rate) + proxyDepositBase;
+    return `Rate: ${formatUnit(Number(rate), DECIMALS[network])} ${
+      SYMBOL[network]
+    } and desposits ${formatUnit(proxyDepositBase, DECIMALS[network])} ${
+      SYMBOL[network]
+    }, total transferable ${formatUnit(total, DECIMALS[network])} ${
+      SYMBOL[network]
+    } is required for this process. Deposits are fees that will be refunded upon cancellation of the subscription.`;
+  };
+
   return (
     <Dialog disableEscapeKeyDown onClose={handleClose} open={open}>
       <Modal
         title="Insufficient Balance"
-        content={`Desposits ${formatUnit(
-          proxyDepositBase,
-          DECIMALS[network]
-        )} ${
-          SYMBOL[network]
-        } is required for this process. Deposits are fees that will be refunded upon cancellation of the subscription.`}
+        content={content()}
         open={isModalOpen}
         onClose={() =>
           setState((prev) => ({
