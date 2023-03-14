@@ -475,3 +475,30 @@ export const create = async (
     setLoading && setLoading(false);
   }
 };
+
+export const clearIdentity = async (
+  api: ApiPromise | null,
+  sender: string,
+  injector: any,
+  callback?: () => void,
+  setLoading?: (_: boolean) => void
+) => {
+  if (!api) return;
+  const apiService = new APIService(api);
+  try {
+    setLoading && setLoading(true);
+    const { essentialInfo }: any = await getInfos(api, sender);
+    const _callBack = () => {
+      setLoading && setLoading(false);
+    };
+    await apiService.signAndSendSetIdentity(
+      essentialInfo,
+      null,
+      sender,
+      injector,
+      _callBack
+    );
+  } catch (error) {
+    console.log("clearIdentity error", error);
+  }
+};
