@@ -199,9 +199,12 @@ export const SubscribeModal = (props: IProps) => {
     <Dialog disableEscapeKeyDown onClose={handleClose} open={open}>
       <Modal
         title="Insufficient Balance"
-        content={`Desposit ${formatUnit(proxyDepositBase, DECIMALS[network])} ${
+        content={`Desposits ${formatUnit(
+          proxyDepositBase,
+          DECIMALS[network]
+        )} ${
           SYMBOL[network]
-        } is required for this process`}
+        } is required for this process. Deposits are fees that will be refunded upon cancellation of the subscription.`}
         open={isModalOpen}
         onClose={() =>
           setState((prev) => ({
