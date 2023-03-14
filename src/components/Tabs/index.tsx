@@ -222,7 +222,8 @@ export const TabsMain = () => {
   const _pullPayment = async (
     real?: string,
     supporter?: string,
-    balance?: number
+    balance?: number,
+    isCommitted?: boolean
   ) => {
     if (!real || !supporter || !balance || !signer) return;
     if (balance === ZERO_BAL) {
@@ -243,7 +244,8 @@ export const TabsMain = () => {
       signer.address,
       injector,
       currentRate,
-      DECIMALS[network]
+      DECIMALS[network],
+      (isCommitted = false)
     );
   };
 
@@ -490,7 +492,8 @@ export const TabsMain = () => {
                           _pullPayment(
                             supporter?.pure,
                             supporter?.supporter,
-                            supporter?.pureBalance
+                            supporter?.pureBalance,
+                            true
                           )
                         }
                         variant="contained"
@@ -549,7 +552,9 @@ export const TabsMain = () => {
                         onClick={() =>
                           _pullPayment(
                             supporter?.supporter as string,
-                            supporter?.supporter as string
+                            supporter?.supporter as string,
+                            0,
+                            false
                           )
                         }
                         variant="contained"

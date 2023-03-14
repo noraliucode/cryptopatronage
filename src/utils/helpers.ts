@@ -33,23 +33,15 @@ function parseUnit(amount: number, decimals: number): number {
   return amount * 10 ** decimals;
 }
 
-export function getPaymentAmount(
-  rate: number,
-  decimals: number,
-  lastPaymentTime?: number
-): number {
-  const now = Date.now();
-  // TODO: a better way to calculate PaymentAmount/better flow?
-  const months = lastPaymentTime
-    ? Math.round((now - lastPaymentTime) / 1000) /
-      SECONDS_IN_ONE_DAY /
-      DAYS_IN_ONE_MONTH
-    : 1;
-
-  const amount = months * rate;
-  console.log("getPaymentAmount amount: ", amount);
-
-  return amount;
+export function getPaymentAmount(rate: number, lastPaymentTime?: any): number {
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+  const today: any = new Date();
+  const _lastPaymentTime = lastPaymentTime ? lastPaymentTime : today;
+  const daysSinceWithdrawal = Math.floor(
+    (today - _lastPaymentTime) / millisecondsPerDay
+  );
+  const withdrawableAmount = rate * (daysSinceWithdrawal / 100);
+  return withdrawableAmount;
 }
 
 export function parseAdditionalInfo(identity: any) {

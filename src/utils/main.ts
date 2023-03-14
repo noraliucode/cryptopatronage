@@ -170,7 +170,8 @@ const getPaymentPromises = async (
   real: string,
   sender: string,
   currentRate: number,
-  decimals: number
+  decimals: number,
+  isCommitted: boolean
 ) => {
   if (!api) return;
   const apiService = new APIService(api);
@@ -184,14 +185,14 @@ const getPaymentPromises = async (
 
   const lastPaymentTime = getLastPaymentTime(creatorIdentity);
 
-  const amount = getPaymentAmount(
-    currentRate,
-    decimals,
-    lastPaymentTime && lastPaymentTime
-  );
+  const amount = getPaymentAmount(currentRate, lastPaymentTime);
+
+  const transferFn = isCommitted
+    ? apiService.transferViaProxyPromise(real, receiver, amount)
+    : apiService.transfer(receiver, amount);
 
   const promises = [
-    apiService.transferViaProxyPromise(real, receiver, amount),
+    transferFn,
     apiService.setIdentityPromise(creatorIdentity, {
       lastPaymentTime: Date.now(),
     }),
@@ -206,7 +207,8 @@ export const pullPayment = async (
   sender: string,
   injector: any,
   currentRate: number,
-  decimals: number
+  decimals: number,
+  isCommitted: boolean
 ) => {
   if (!api) return;
   const apiService = new APIService(api);
@@ -216,7 +218,8 @@ export const pullPayment = async (
       real,
       sender,
       currentRate,
-      decimals
+      decimals,
+      isCommitted
     )) as Promise<SubmittableExtrinsic<"promise">>[];
 
     const txs = await Promise.all(promises);
