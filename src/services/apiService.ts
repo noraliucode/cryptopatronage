@@ -340,6 +340,10 @@ class APIService {
   getPreimageData = async (hash: H256) => {
     await this.api.query.preimage.preimageFor(hash);
   };
+
+  getProxyDepositBase = () => {
+    return this.api.consts.proxy.proxyDepositBase.toHuman();
+  };
 }
 
 export { APIService };

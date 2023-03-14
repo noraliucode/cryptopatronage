@@ -6,7 +6,7 @@ import {
   SECONDS_IN_ONE_DAY,
   ZERO_BAL,
 } from "./constants";
-import { getPaymentAmount, parseAdditionalInfo } from "./helpers";
+import { getPaymentAmount, parseAdditionalInfo, removeComma } from "./helpers";
 import {
   IAdditionalInfo,
   Identity,
@@ -50,6 +50,23 @@ export const subscribe = async (
       // check if the supporter has created pure proxy to the creator
       if (!pureProxy) {
         console.log("ceate anonymous proxy...");
+        const proxyDepositBase: any = await apiService.getProxyDepositBase();
+        const formattedProxyDepositBase = removeComma(
+          proxyDepositBase.toString()
+        );
+        const bal = (await apiService.getBalance(sender)).toString();
+
+        if (
+          proxyDepositBase &&
+          Number(bal) < Number(formattedProxyDepositBase)
+        ) {
+          setLoading && setLoading(false);
+          // TODO: extract fee calculation code block
+          return {
+            text: "Insufficient Balance",
+            proxyDepositBase: formattedProxyDepositBase,
+          };
+        }
         const proxyData = (await apiService.createAnonymousProxy(
           sender,
           injector,

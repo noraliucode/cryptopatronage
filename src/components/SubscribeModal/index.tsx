@@ -13,9 +13,11 @@ import { useState } from "react";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useApi } from "../../hooks/useApi";
 import { APIService } from "../../services/apiService";
-import { findPure } from "../../utils/helpers";
+import { DECIMALS, SYMBOL } from "../../utils/constants";
+import { findPure, formatUnit } from "../../utils/helpers";
 import { subscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
+import { Modal } from "../Modal";
 import { CheckWrapper, Text } from "../Tabs";
 
 type IProps = {
@@ -30,6 +32,8 @@ type IState = {
   isSubscribing: boolean;
   isSubscribingSucceeded: boolean;
   isNoFundsExclusivelyConfirmed: boolean;
+  isModalOpen: boolean;
+  proxyDepositBase: number;
 };
 
 export const HintText = styled("div")(() => ({
@@ -54,6 +58,8 @@ export const SubscribeModal = (props: IProps) => {
     isSubscribing: false,
     isSubscribingSucceeded: false,
     isNoFundsExclusivelyConfirmed: false,
+    isModalOpen: false,
+    proxyDepositBase: 0,
   });
 
   const {
@@ -62,6 +68,8 @@ export const SubscribeModal = (props: IProps) => {
     isSubscribing,
     isSubscribingSucceeded,
     isNoFundsExclusivelyConfirmed,
+    isModalOpen,
+    proxyDepositBase,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -127,7 +135,7 @@ export const SubscribeModal = (props: IProps) => {
     const apiService = new APIService(api);
     const supporterProxies: any = await apiService.getProxies(signer.address);
     const pure = findPure(supporterProxies, selectedCreator, signer.address);
-    await subscribe(
+    const result = await subscribe(
       api,
       selectedCreator,
       signer?.address,
@@ -139,6 +147,13 @@ export const SubscribeModal = (props: IProps) => {
       pure,
       isDelayed
     );
+    if (result?.text) {
+      setState((prev) => ({
+        ...prev,
+        isModalOpen: true,
+        proxyDepositBase: Number(result.proxyDepositBase),
+      }));
+    }
   };
 
   const renderContent = () => {
@@ -182,6 +197,23 @@ export const SubscribeModal = (props: IProps) => {
 
   return (
     <Dialog disableEscapeKeyDown onClose={handleClose} open={open}>
+      <Modal
+        title="Insufficient Balance"
+        content={`Desposits ${formatUnit(
+          proxyDepositBase,
+          DECIMALS[network]
+        )} ${
+          SYMBOL[network]
+        } is required for this process. Deposits are fees that will be refunded upon cancellation of the subscription.`}
+        open={isModalOpen}
+        onClose={() =>
+          setState((prev) => ({
+            ...prev,
+            isModalOpen: false,
+          }))
+        }
+        action={handleClose}
+      />
       <DialogTitle>Subscribe</DialogTitle>
       <DialogContent dividers>{renderContent()}</DialogContent>
       <DialogActions>
