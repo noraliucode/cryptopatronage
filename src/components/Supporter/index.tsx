@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useApi } from "../../hooks/useApi";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
-import { unsubscribe } from "../../utils/main";
+import { clearIdentity, unsubscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Modal } from "../Modal";
 import {
@@ -67,6 +67,13 @@ export const Supporter = () => {
     }));
   };
 
+  const setLoading = (value: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      isUnsubscribing: value,
+    }));
+  };
+
   const _unsubscribe = async (
     isCommitted: boolean,
     creator: string,
@@ -74,12 +81,6 @@ export const Supporter = () => {
   ) => {
     checkSigner();
     if (!injector || !signer) return;
-    const setLoading = (value: boolean) => {
-      setState((prev) => ({
-        ...prev,
-        isUnsubscribing: value,
-      }));
-    };
     await unsubscribe(
       isCommitted,
       api,
@@ -94,6 +95,12 @@ export const Supporter = () => {
 
   const _unnotePreimage = async () => {
     // await signAndSendUnnotePreimage(signer, injector, "");
+  };
+
+  const _clearIdentity = async () => {
+    if (!signer) return;
+
+    clearIdentity(api, signer.address, injector, () => {}, setLoading);
   };
 
   return (
@@ -176,6 +183,17 @@ export const Supporter = () => {
             )}
           </Wrapper>
         </Wrapper>
+      </InputWrapper>
+      <TitleWrapper>
+        <Title>Clear Identity</Title>
+        <Tooltip title="Remove on-chain identity and get the refund">
+          <img alt="question" src="/assets/icons/question.svg" />
+        </Tooltip>
+      </TitleWrapper>
+      <InputWrapper>
+        <Button onClick={_clearIdentity} variant="contained">
+          Clear Identity
+        </Button>
       </InputWrapper>
     </>
   );

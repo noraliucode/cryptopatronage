@@ -3,6 +3,7 @@ import { styled } from "@mui/material/styles";
 import { ChangeEvent, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import {
+  clearIdentity,
   pullAllPayment,
   pullPayment,
   toggleIsRegisterToPaymentSystem,
@@ -362,6 +363,12 @@ export const TabsMain = () => {
     );
   };
 
+  const _clearIdentity = async () => {
+    if (!signer) return;
+
+    clearIdentity(api, signer.address, injector, () => {}, setLoading);
+  };
+
   const isSetRateDisabled = !rate || rate === 0;
   const isCreator = currentRate > 0;
   const isShowCommittedSupporters =
@@ -584,6 +591,17 @@ export const TabsMain = () => {
               </Button>
             </InputWrapper>
           )} */}
+          <TitleWrapper>
+            <Title>Clear Identity</Title>
+            <Tooltip title="Remove on-chain identity and get the refund">
+              <img alt="question" src="/assets/icons/question.svg" />
+            </Tooltip>
+          </TitleWrapper>
+          <InputWrapper>
+            <Button onClick={_clearIdentity} variant="contained">
+              Clear Identity
+            </Button>
+          </InputWrapper>
         </>
       )}
       {value === 1 && <Supporter />}
