@@ -168,3 +168,7 @@ export function parseEssentialInfo(info: any) {
   }
   return _info;
 }
+
+export const removeComma = (text: string) => {
+  return text.replace(/,/g, "");
+};
