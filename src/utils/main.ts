@@ -6,7 +6,12 @@ import {
   SECONDS_IN_ONE_DAY,
   ZERO_BAL,
 } from "./constants";
-import { getPaymentAmount, parseAdditionalInfo, removeComma } from "./helpers";
+import {
+  getPaymentAmount,
+  parseAdditionalInfo,
+  removeComma,
+  renderAddress,
+} from "./helpers";
 import {
   IAdditionalInfo,
   Identity,
@@ -354,6 +359,7 @@ export const executePreimages = async (
 };
 
 export const parseCreatorProxies = async (
+  network: string,
   api: ApiPromise | null,
   // TODO: import type PalletProxyProxyDefinition
   proxies: any,
@@ -373,7 +379,8 @@ export const parseCreatorProxies = async (
         delegations.forEach(async (delegation: any) => {
           if (
             delegations[0]?.delegate &&
-            delegations[0]?.delegate === creator
+            creator &&
+            delegations[0]?.delegate === renderAddress(creator, network)
           ) {
             committedSupporters.push({
               supporter: delegations[1]?.delegate,
