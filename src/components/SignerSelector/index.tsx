@@ -2,7 +2,7 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { toShortAddress } from "../../utils/helpers";
+import { renderAddress, toShortAddress } from "../../utils/helpers";
 import { IAccounts } from "../../utils/types";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import Identicon from "@polkadot/react-identicon";
@@ -122,15 +122,6 @@ export const SignerSelector = ({
   // 'polkadot', 'substrate' (default), 'beachball' or 'jdenticon'
   const theme = "polkadot";
 
-  const renderAddress = (address: string, number?: number) => {
-    const keyring = new Keyring();
-    const registry = config.registry.find(
-      (x) => x.network.toLowerCase() === network.toLowerCase()
-    );
-    const encodedAddress = keyring.encodeAddress(address, registry?.prefix);
-    return toShortAddress(encodedAddress, number);
-  };
-
   const renderWalletModal = () => {
     return (
       <>
@@ -152,7 +143,9 @@ export const SignerSelector = ({
           <>
             <Wrapper>
               <Name lineHeight={14}>{signer.meta.name}</Name>{" "}
-              <Address lineHeight={14}>{renderAddress(signer.address)}</Address>
+              <Address lineHeight={14}>
+                {renderAddress(signer.address, network, 6)}
+              </Address>
             </Wrapper>
             <DesktopContentWarpper>
               <PlayArrowIcon
@@ -181,7 +174,7 @@ export const SignerSelector = ({
               <Identicon value={signer.address} size={size} theme={theme} />
               <Wrapper>
                 <SelectedAddressText>{signer.meta.name}</SelectedAddressText>{" "}
-                <Address>{renderAddress(signer.address, 10)}</Address>
+                <Address>{renderAddress(signer.address, network, 10)}</Address>
               </Wrapper>
             </>
             <IconButton
@@ -211,7 +204,9 @@ export const SignerSelector = ({
                   />
                   <Wrapper>
                     <Name>{account.meta.name}</Name>{" "}
-                    <Address>{renderAddress(account.address, 10)}</Address>
+                    <Address>
+                      {renderAddress(account.address, network, 10)}
+                    </Address>
                   </Wrapper>
                 </MenuItem>
               );

@@ -1,6 +1,7 @@
 // Copyright 2017-2022 @polkadot/react-components authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { Keyring } from "@polkadot/api";
 import type {
   AccountId,
   AccountIndex,
@@ -13,6 +14,7 @@ import {
   IParsedSupporterProxies,
   IProxyParsedCreators,
 } from "./types";
+import config from "./ss58-registry.json";
 
 export function toShortAddress(
   _address?: AccountId | AccountIndex | Address | string | null | Uint8Array,
@@ -163,4 +165,21 @@ export function parseEssentialInfo(info: any) {
 
 export const removeComma = (text: string) => {
   return text.replace(/,/g, "");
+};
+
+export const renderAddress = (
+  address: string,
+  network: string,
+  number?: number
+) => {
+  const keyring = new Keyring();
+  const registry = config.registry.find(
+    (x) => x.network.toLowerCase() === network.toLowerCase()
+  );
+  const encodedAddress = keyring.encodeAddress(address, registry?.prefix);
+  if (number) {
+    return toShortAddress(encodedAddress, number);
+  } else {
+    return encodedAddress;
+  }
 };

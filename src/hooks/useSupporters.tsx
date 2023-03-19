@@ -29,10 +29,11 @@ export const useSupporters = (
       const api = await ApiPromise.create({ provider: wsProvider });
       const apiService = new APIService(api);
       // get proxyNodes
-      const proxyNodes: any = await apiService.getProxies(creator);
+      const proxyNodes: any = await apiService.getProxies();
+
       const { committedSupporters, uncommittedSupporters } =
         // TODO: naming issue
-        await parseCreatorProxies(api, proxyNodes, creator);
+        await parseCreatorProxies(network, api, proxyNodes, creator);
 
       // get balances
       const committedSupporterBalances = await apiService.getBalances(
@@ -58,12 +59,10 @@ export const useSupporters = (
           // format number wirh commas: '1,000,890,001,100'
           const balance = Number(_balance?.replace(/,/g, ""));
 
-          if (balance > rate) {
-            _committedSupporters.push({
-              ...supporter,
-              pureBalance: balance,
-            });
-          }
+          _committedSupporters.push({
+            ...supporter,
+            pureBalance: balance,
+          });
         }
       );
 

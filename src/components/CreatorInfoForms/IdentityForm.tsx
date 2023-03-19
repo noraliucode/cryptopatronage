@@ -1,7 +1,8 @@
 import { TextField } from "@mui/material";
 import React, { ChangeEvent } from "react";
-import { IDENTITY_LABELS } from "../../utils/constants";
+import { DISPLAY_NAME, IDENTITY_LABELS } from "../../utils/constants";
 import { Title, TitleWrapper } from "../Tabs";
+import { hexToString, isHex } from "@polkadot/util";
 
 type IProps = {
   display: string;
@@ -35,7 +36,11 @@ const IdentityForm = ({
       {IDENTITY_LABELS.map((label) => (
         <TextField
           fullWidth
-          value={value[label]}
+          value={
+            label === DISPLAY_NAME && isHex(value[label])
+              ? hexToString(value[label])
+              : value[label]
+          }
           id="standard-basic"
           label={label}
           variant="standard"

@@ -107,7 +107,12 @@ export const WALLETS = [
   { name: "talisman", icon: "/assets/wallets/talisman.svg" },
 ];
 
+export const DISPLAY_NAME = "Display Name";
+export const EMAIL = "Email";
+export const TWITTER = "Twitter";
+export const WEB = "Web";
+
 export const SUBSTRATE_WALLET = "SUBSTRATE_WALLET";
 export const APP_SESSION = "APP_SESSION";
 export const IMAGE_HEIGHT = 140;
-export const IDENTITY_LABELS = ["Display Name", "Email", "Twitter", "Web"];
+export const IDENTITY_LABELS = [DISPLAY_NAME, EMAIL, TWITTER, WEB];
