@@ -31,25 +31,13 @@ export const useCreators = (
       const api = await ApiPromise.create({ provider: wsProvider });
       const apiService = new APIService(api);
 
-      // get all prixies nodes.
-      const nodes = (await apiService.getProxies()) as any;
-      // getIdentity and see creator it has rate / ps
-      const allDelegations: string[] = [];
-      const getAllDelegations = () => {
-        nodes.forEach((proxy: any) => {
-          const delegations = proxy[1].toHuman()[0];
-          delegations.forEach((delegation: any) => {
-            allDelegations.push(delegation.delegate);
-          });
-        });
-        return allDelegations;
-      };
-      let identidies = await apiService.getIdentities(getAllDelegations());
+      let identidies = (await apiService.getAllRegisteredIdentities()) as any;
       identidies = identidies.map((identity: any) => {
         if (identity) {
           const _identity = {
-            ...parseEssentialInfo(identity.toHuman()?.info),
-            ...parseAdditionalInfo(identity),
+            address: identity.address,
+            ...parseEssentialInfo(identity.identity.toHuman()?.info),
+            ...parseAdditionalInfo(identity.identity),
           };
 
           return _identity;
@@ -59,9 +47,8 @@ export const useCreators = (
       let creators = [] as any;
       identidies.forEach((identity: any, index: number) => {
         if (identity && identity.rate > 0) {
-          const address = allDelegations[index];
           const creator: ICreator = {
-            address,
+            address: identity.address,
             rate: identity.rate,
             imageUrl: identity.imgUrl,
             email: identity.email,

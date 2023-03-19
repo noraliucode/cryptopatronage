@@ -344,6 +344,18 @@ class APIService {
   getProxyDepositBase = () => {
     return this.api.consts.proxy.proxyDepositBase.toHuman();
   };
+
+  getAllRegisteredIdentities = async () => {
+    const identities = await this.api.query.identity.identityOf.entries();
+
+    return identities.map(([key, identity]) => {
+      const accountId = key.args[0].toString();
+      return {
+        address: accountId,
+        identity,
+      };
+    });
+  };
 }
 
 export { APIService };
