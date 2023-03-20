@@ -80,9 +80,14 @@ export function formatAdditionalInfo(additionalInfo: any) {
 export function findPure(
   proxies: any,
   creator: string,
-  supporter: string
+  supporter: string,
+  network: string
 ): string {
-  const { committedCreators } = parseSupporterProxies(proxies, supporter);
+  const { committedCreators } = parseSupporterProxies(
+    proxies,
+    supporter,
+    network
+  );
   const proxy: ICreatorProxyParsed | undefined = committedCreators.find(
     (proxy: ICreatorProxyParsed) => proxy.creator === creator
   );
@@ -93,7 +98,8 @@ export function findPure(
 export function parseSupporterProxies(
   // TODO: import type PalletProxyProxyDefinition
   proxies: any,
-  supporter: string
+  supporter: string,
+  network: string
 ): IParsedProxies {
   // TODO: not assignable to parameter of type never" error in TypeScript
   const committedCreators: any = [];
@@ -109,7 +115,9 @@ export function parseSupporterProxies(
     }
 
     // supporter address is the second element in our flow
-    if (proxy[1].toHuman()[0][1]?.delegate === supporter) {
+    if (
+      proxy[1].toHuman()[0][1]?.delegate === renderAddress(supporter, network)
+    ) {
       committedCreators.push({
         creator: proxy[1].toHuman()[0][0]?.delegate,
         pure: proxy[0].toHuman()[0],
