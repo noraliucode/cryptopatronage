@@ -135,7 +135,12 @@ export const SubscribeModal = (props: IProps) => {
     if (!signer) return;
     const apiService = new APIService(api);
     const supporterProxies: any = await apiService.getProxies(signer.address);
-    const pure = findPure(supporterProxies, selectedCreator, signer.address);
+    const pure = findPure(
+      supporterProxies,
+      selectedCreator,
+      signer.address,
+      network
+    );
     const result = await subscribe(
       api,
       selectedCreator,

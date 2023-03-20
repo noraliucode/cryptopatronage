@@ -25,10 +25,11 @@ export const useSubscribedCreators = (
       const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
       const api = await ApiPromise.create({ provider: wsProvider });
       const apiService = new APIService(api);
-      const supporterProxies: any = await apiService.getProxies(supporter);
+      const supporterProxies: any = await apiService.getProxies();
       const { committedCreators, uncommittedCreators } = parseSupporterProxies(
         supporterProxies,
-        supporter
+        supporter,
+        network
       );
       const balances = await apiService.getBalances(
         committedCreators.map((proxy: any) => proxy.pure)
