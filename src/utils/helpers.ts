@@ -106,7 +106,7 @@ export function parseSupporterProxies(
   const uncommittedCreators: any = [];
   proxies.forEach((proxy: any) => {
     const delegations = proxy[1].toHuman()[0];
-    if (proxy[0].toHuman()[0] === supporter) {
+    if (proxy[0].toHuman()[0] === renderAddress(supporter, network)) {
       delegations.forEach((delegation: any) => {
         uncommittedCreators.push({
           creator: delegation.delegate,
