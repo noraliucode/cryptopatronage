@@ -238,6 +238,7 @@ export const TabsMain = () => {
     setState((prev) => ({
       ...prev,
       message: "Pulling Payment...",
+      open: true,
     }));
     await pullPayment(
       api,
@@ -493,7 +494,7 @@ export const TabsMain = () => {
                       <Button
                         disabled={
                           isRegisterToPaymentSystem ||
-                          supporter?.pureBalance < currentRate
+                          supporter?.pureBalance === ZERO_BAL
                         }
                         onClick={() =>
                           _pullPayment(

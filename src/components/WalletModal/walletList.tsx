@@ -6,9 +6,14 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { WALLETS } from "../../utils/constants";
-import { IWallet } from "../../utils/types";
+import { IExtension, IWallet } from "../../utils/types";
 import { Text } from "../Tabs";
 import { Divider, styled } from "@mui/material";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import * as _ from "lodash";
+import { web3Enable } from "@polkadot/extension-dapp";
+import { useEffect, useState } from "react";
 
 export const Name = styled("div")(({ theme }) => ({
   fontSize: 14,
@@ -23,6 +28,38 @@ export const Wrapper = styled("div")(() => ({
 }));
 
 export const WalletList = ({ onClick }: { onClick: (_: string) => void }) => {
+  const [extensions, setExtensions] = useState<any[] | null>(null);
+  const getExtensions = async () => {
+    const _extensions = await web3Enable("Cryptopatronage");
+    setExtensions(_extensions);
+  };
+  useEffect(() => {
+    getExtensions();
+  }, []);
+
+  const getWallets = () => {
+    const _wallets: IWallet[] = WALLETS.map((wallet) => {
+      const secondArrayItem = extensions?.find((item) => {
+        return item.name === wallet.name;
+      });
+
+      if (secondArrayItem) {
+        return { ...wallet, isInstalled: true, text: "Connect extension" };
+      } else {
+        return { ...wallet, isInstalled: false, text: "Install Extension" };
+      }
+    });
+    return _wallets;
+  };
+
+  const handleClick = (wallet: IWallet) => {
+    if (wallet.isInstalled) {
+      onClick(wallet.name);
+    } else {
+      window.open(wallet.url, "_blank");
+    }
+  };
+
   return (
     <List
       dense
@@ -32,15 +69,15 @@ export const WalletList = ({ onClick }: { onClick: (_: string) => void }) => {
         bgcolor: "rgba(0,0,0,0)",
       }}
     >
-      {WALLETS.map((value: IWallet) => {
+      {getWallets().map((value: IWallet) => {
         return (
-          <>
+          <div key={value.name}>
             <Divider component="li" />
             <ListItem
               sx={{ width: "100%" }}
               key={value.name}
               disablePadding
-              onClick={() => onClick(value.name)}
+              onClick={() => handleClick(value)}
             >
               <ListItemButton sx={{ height: 100 }}>
                 <ListItemAvatar>
@@ -49,13 +86,13 @@ export const WalletList = ({ onClick }: { onClick: (_: string) => void }) => {
                 <Wrapper>
                   <div>
                     <Name>{value.name}</Name>
-                    <Text>{`Connect extension`}</Text>
+                    <Text>{value.text}</Text>
                   </div>
                   <ArrowForwardIosIcon sx={{ width: 14, height: 14 }} />
                 </Wrapper>
               </ListItemButton>
             </ListItem>
-          </>
+          </div>
         );
       })}
     </List>

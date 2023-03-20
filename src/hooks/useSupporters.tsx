@@ -73,12 +73,10 @@ export const useSupporters = (
           uncommittedSupporterBalances[index]?.toHuman().data.free;
         // format number wirh commas: '1,000,890,001,100'
         const balance = Number(_balance?.replace(/,/g, ""));
-        if (balance > rate) {
-          _uncommittedSupporters.push({
-            ...supporter,
-            supporterBalance: balance,
-          });
-        }
+        _uncommittedSupporters.push({
+          ...supporter,
+          supporterBalance: balance,
+        });
       });
 
       setState((prev) => ({
