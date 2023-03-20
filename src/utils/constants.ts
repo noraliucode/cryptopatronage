@@ -102,9 +102,21 @@ export const NAV_BAR_HEIGHT = 64;
 export const FOOTER_HEIGHT = 58.5;
 
 export const WALLETS = [
-  { name: "subwallet-js", icon: "/assets/wallets/subwallet.svg", url: "" },
-  { name: "polkadot-js", icon: "/assets/wallets/polkadot.svg", url: "" },
-  { name: "talisman", icon: "/assets/wallets/talisman.svg", url: "" },
+  {
+    name: "subwallet-js",
+    icon: "/assets/wallets/subwallet.svg",
+    url: "https://subwallet.app/",
+  },
+  {
+    name: "polkadot-js",
+    icon: "/assets/wallets/polkadot.svg",
+    url: "https://polkadot.js.org/extension/",
+  },
+  {
+    name: "talisman",
+    icon: "/assets/wallets/talisman.svg",
+    url: "https://www.talisman.xyz/",
+  },
 ];
 
 export const DISPLAY_NAME = "Display Name";

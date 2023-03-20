@@ -37,7 +37,7 @@ export const WalletList = ({ onClick }: { onClick: (_: string) => void }) => {
     getExtensions();
   }, []);
 
-  const wallet = () => {
+  const getWallets = () => {
     const _wallets: IWallet[] = WALLETS.map((wallet) => {
       const secondArrayItem = extensions?.find((item) => {
         return item.name === wallet.name;
@@ -52,6 +52,14 @@ export const WalletList = ({ onClick }: { onClick: (_: string) => void }) => {
     return _wallets;
   };
 
+  const handleClick = (wallet: IWallet) => {
+    if (wallet.isInstalled) {
+      onClick(wallet.name);
+    } else {
+      window.open(wallet.url, "_blank");
+    }
+  };
+
   return (
     <List
       dense
@@ -61,7 +69,7 @@ export const WalletList = ({ onClick }: { onClick: (_: string) => void }) => {
         bgcolor: "rgba(0,0,0,0)",
       }}
     >
-      {wallet().map((value: IWallet) => {
+      {getWallets().map((value: IWallet) => {
         return (
           <div key={value.name}>
             <Divider component="li" />
@@ -69,7 +77,7 @@ export const WalletList = ({ onClick }: { onClick: (_: string) => void }) => {
               sx={{ width: "100%" }}
               key={value.name}
               disablePadding
-              onClick={() => onClick(value.name)}
+              onClick={() => handleClick(value)}
             >
               <ListItemButton sx={{ height: 100 }}>
                 <ListItemAvatar>
