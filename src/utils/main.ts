@@ -387,7 +387,7 @@ export const parseCreatorProxies = async (
               pure: real,
             });
 
-            if (real === creator) {
+            if (real === renderAddress(creator, network)) {
               uncommittedSupporters.push({
                 supporter: delegations[0]?.delegate,
               });
