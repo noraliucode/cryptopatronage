@@ -30,6 +30,7 @@ type IMeta = {
 };
 
 export type IInjector = InjectedExtension | null;
+export type IExtension = InjectedExtension[] | null;
 
 export type IWeb3ConnectedContextState = {
   network: INetwork;
@@ -94,6 +95,9 @@ export type Identity = {
 export type IWallet = {
   name: string;
   icon: string;
+  url: string;
+  text: string;
+  isInstalled: boolean;
 };
 
 export type IHandleChange = (

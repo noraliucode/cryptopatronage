@@ -61,15 +61,18 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
 
   const getAccounts = async () => {
     try {
-      if (selectedWallet || connector) {
-        extensions = await web3Enable("Cryptopatronage");
-      }
+      // TODO: The following code block can be deleted later after testing.
+      // if (selectedWallet || connector) {
+      //   extensions = await web3Enable("Cryptopatronage");
+      // }
 
-      if (extensions.length === 0) {
-        // no extension installed, or the user did not accept the authorization
-        // in this case we should inform the use and give a link to the extension
-        return;
-      }
+      // if (extensions.length === 0) {
+      //   // no extension installed, or the user did not accept the authorization
+      //   // in this case we should inform the use and give a link to the extension
+      //   return;
+      // }
+      extensions = await web3Enable("Cryptopatronage");
+
       const _selectedWallet = connector
         ? JSON.parse(connector).connected
         : selectedWallet;
