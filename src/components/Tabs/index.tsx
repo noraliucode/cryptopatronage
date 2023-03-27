@@ -350,19 +350,28 @@ export const TabsMain = () => {
       img: imgUrl,
       twitter,
     });
-    if (result) {
-      //set errormessage
-      setState((prev) => ({
-        ...prev,
-        errorMessage: result,
-      }));
-
+    const reset = () => {
       setTimeout(() => {
         setState((prev) => ({
           ...prev,
           errorMessage: "",
         }));
       }, 3000);
+    };
+    if (!display) {
+      setState((prev) => ({
+        ...prev,
+        errorMessage: "Disaply Name is required.",
+      }));
+      reset();
+      return;
+    }
+    if (result) {
+      setState((prev) => ({
+        ...prev,
+        errorMessage: result,
+      }));
+      reset();
       return;
     }
 

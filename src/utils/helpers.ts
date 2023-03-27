@@ -261,9 +261,9 @@ export function generateText(obj: { [key: string]: boolean }) {
 
 export function validateUrls(urlsObj: IUrls): string | null {
   const validationResults = {
-    web: isValidUrl(urlsObj.web),
-    img: isValidImageUrl(urlsObj.img),
-    twitter: isTwitterProfileUrl(urlsObj.twitter),
+    web: urlsObj.web ? isValidUrl(urlsObj.web) : true,
+    img: urlsObj.img ? isValidImageUrl(urlsObj.img) : true,
+    twitter: urlsObj.twitter ? isTwitterProfileUrl(urlsObj.twitter) : true,
   };
 
   return generateText(validationResults);
