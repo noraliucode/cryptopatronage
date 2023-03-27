@@ -191,3 +191,48 @@ export const renderAddress = (
     return encodedAddress;
   }
 };
+
+export function isValidUrl(url: string) {
+  const urlPattern = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$",
+    "i"
+  );
+
+  return !!urlPattern.test(url);
+}
+
+export function isValidImageUrl(url: string) {
+  // First, check if the URL is in a valid format
+  if (!isValidUrl(url)) {
+    return false;
+  }
+
+  // Next, check if the URL points to a valid image file
+  const imageExtensions = [
+    "jpg",
+    "jpeg",
+    "png",
+    "gif",
+    "bmp",
+    "webp",
+    "svg",
+    "tiff",
+  ];
+  const urlExtension = url.split(".")?.pop()?.toLowerCase();
+  if (!urlExtension) return;
+  return imageExtensions.includes(urlExtension);
+}
+
+export function isTwitterProfileUrl(url: string) {
+  const twitterProfilePattern = new RegExp(
+    "^(https?:\\/\\/)?(www\\.)?twitter\\.com\\/[A-Za-z0-9_]{1,15}$",
+    "i"
+  );
+
+  return !!twitterProfilePattern.test(url);
+}
