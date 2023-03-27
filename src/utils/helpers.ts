@@ -13,6 +13,7 @@ import {
   IParsedProxies,
   IParsedSupporterProxies,
   IProxyParsedCreators,
+  IUrls,
 } from "./types";
 import config from "./ss58-registry.json";
 
@@ -192,7 +193,7 @@ export const renderAddress = (
   }
 };
 
-export function isValidUrl(url: string) {
+export function isValidUrl(url: string): boolean {
   const urlPattern = new RegExp(
     "^(https?:\\/\\/)?" + // protocol
       "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
@@ -206,7 +207,7 @@ export function isValidUrl(url: string) {
   return !!urlPattern.test(url);
 }
 
-export function isValidImageUrl(url: string) {
+export function isValidImageUrl(url: string): boolean {
   // First, check if the URL is in a valid format
   if (!isValidUrl(url)) {
     return false;
@@ -228,11 +229,42 @@ export function isValidImageUrl(url: string) {
   return imageExtensions.includes(urlExtension);
 }
 
-export function isTwitterProfileUrl(url: string) {
+export function isTwitterProfileUrl(url: string): boolean {
   const twitterProfilePattern = new RegExp(
     "^(https?:\\/\\/)?(www\\.)?twitter\\.com\\/[A-Za-z0-9_]{1,15}$",
     "i"
   );
 
   return !!twitterProfilePattern.test(url);
+}
+
+export function generateText(obj: { [key: string]: boolean }) {
+  const incorrectFormats = [];
+
+  for (const key in obj) {
+    if (!obj[key]) {
+      incorrectFormats.push(`"${key}"`);
+    }
+  }
+
+  if (incorrectFormats.length > 0) {
+    const lastIncorrectFormat = incorrectFormats.pop();
+    const formattedIncorrectFormats =
+      incorrectFormats.length > 0
+        ? incorrectFormats.join(", ") + " and " + lastIncorrectFormat
+        : lastIncorrectFormat;
+    return `${formattedIncorrectFormats} format incorrect`;
+  } else {
+    return null;
+  }
+}
+
+export function validateUrls(urlsObj: IUrls): string | null {
+  const validationResults = {
+    web: isValidUrl(urlsObj.web),
+    img: isValidImageUrl(urlsObj.img),
+    twitter: isTwitterProfileUrl(urlsObj.twitter),
+  };
+
+  return generateText(validationResults);
 }

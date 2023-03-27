@@ -127,6 +127,7 @@ type IState = {
   display: string;
   web: string;
   checked: boolean;
+  incorrectFormatInputs: { [key: string]: boolean } | null;
 };
 
 export const TabsMain = () => {
@@ -145,6 +146,7 @@ export const TabsMain = () => {
     display: "",
     web: "",
     checked: false,
+    incorrectFormatInputs: null,
   };
   const [state, setState] = useState<IState>(defaultState);
 

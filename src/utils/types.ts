@@ -109,3 +109,9 @@ export type IHandleCheck = (event: {
 }) => void;
 
 export type IPlaceHoper = { [key: string]: string };
+
+export type IUrls = {
+  web: string;
+  img: string;
+  twitter: string;
+};
