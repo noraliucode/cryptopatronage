@@ -7,6 +7,7 @@ import {
   pullAllPayment,
   pullPayment,
   toggleIsRegisterToPaymentSystem,
+  unregister,
   updateInfo,
 } from "../../utils/main";
 import {
@@ -377,6 +378,17 @@ export const TabsMain = () => {
     clearIdentity(api, signer.address, injector, callback, setLoading);
   };
 
+  const _unregister = async () => {
+    if (!signer) return;
+    setState((prev) => ({
+      ...prev,
+      message: "Unregister...",
+      open: true,
+    }));
+
+    unregister(api, signer.address, injector, callback, setLoading);
+  };
+
   const isSetRateDisabled = !rate || rate === 0;
   const isCreator = currentRate > 0;
   const isShowCommittedSupporters =
@@ -608,6 +620,17 @@ export const TabsMain = () => {
           <InputWrapper>
             <Button onClick={_clearIdentity} variant="contained">
               Clear Identity
+            </Button>
+          </InputWrapper>
+          <TitleWrapper>
+            <Title>Unregister</Title>
+            <Tooltip title="Remove on-chain identity and get the refund">
+              <img alt="question" src="/assets/icons/question.svg" />
+            </Tooltip>
+          </TitleWrapper>
+          <InputWrapper>
+            <Button onClick={_unregister} variant="contained">
+              Unregister
             </Button>
           </InputWrapper>
         </>
