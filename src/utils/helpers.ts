@@ -225,7 +225,7 @@ export function isValidImageUrl(url: string): boolean {
     "tiff",
   ];
   const urlExtension = url.split(".")?.pop()?.toLowerCase();
-  if (!urlExtension) return;
+  if (!urlExtension) return false;
   return imageExtensions.includes(urlExtension);
 }
 
