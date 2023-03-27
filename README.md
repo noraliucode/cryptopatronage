@@ -1,5 +1,6 @@
 # Cryptopatronage
-<img width="800" margin="auto" alt="image" src="https://user-images.githubusercontent.com/12429503/205587221-d883a660-b04f-4023-8583-402371102bc0.png">
+<img width="800" alt="image" src="https://user-images.githubusercontent.com/12429503/227880495-82acd8b7-f4bb-4b10-b460-2c1cf3240f14.png">
+
 
 ## About Project
 CryptoPatronage is a platform that helps creators build a membership program by offering their followers exclusive content and a closer connection with their community.
