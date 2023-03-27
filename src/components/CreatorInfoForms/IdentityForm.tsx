@@ -1,6 +1,10 @@
 import { TextField } from "@mui/material";
 import React, { ChangeEvent } from "react";
-import { DISPLAY_NAME, IDENTITY_LABELS } from "../../utils/constants";
+import {
+  DISPLAY_NAME,
+  IDENTITY_LABELS,
+  PLACEHOLDER,
+} from "../../utils/constants";
 import { Title, TitleWrapper } from "../Tabs";
 import { hexToString, isHex } from "@polkadot/util";
 
@@ -44,7 +48,7 @@ const IdentityForm = ({
           id="standard-basic"
           label={label}
           variant="standard"
-          placeholder={label}
+          placeholder={PLACEHOLDER[label]}
           onChange={(event) => handleInputChange(event, label)}
         />
       ))}

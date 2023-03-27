@@ -3,6 +3,7 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import SettingsIcon from "@mui/icons-material/Settings";
 import MuseumIcon from "@mui/icons-material/Museum";
+import { IPlaceHoper } from "./types";
 
 export const ROCOCO = "wss://rococo-rpc.polkadot.io";
 export const WESTEND = "wss://westend-rpc.polkadot.io";
@@ -128,3 +129,9 @@ export const SUBSTRATE_WALLET = "SUBSTRATE_WALLET";
 export const APP_SESSION = "APP_SESSION";
 export const IMAGE_HEIGHT = 140;
 export const IDENTITY_LABELS = [DISPLAY_NAME, EMAIL, TWITTER, WEB];
+export const PLACEHOLDER: IPlaceHoper = {
+  [DISPLAY_NAME]: "userName",
+  [EMAIL]: "exampleUser@gmail.com",
+  [TWITTER]: "https://twitter.com/exampleUser",
+  [WEB]: "https://www.example.com/",
+};
