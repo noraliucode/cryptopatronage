@@ -34,7 +34,7 @@ const ImageForm = ({
         id="standard-basic"
         label="Image Url"
         variant="standard"
-        placeholder={`Input image Url`}
+        placeholder={"https://www.example.com/image.png"}
         onChange={handleInputChange}
       />
       <Container>

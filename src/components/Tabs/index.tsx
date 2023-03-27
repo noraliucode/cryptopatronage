@@ -16,7 +16,7 @@ import {
   NAV_BAR_HEIGHT,
   ZERO_BAL,
 } from "../../utils/constants";
-import { formatUnit, toShortAddress } from "../../utils/helpers";
+import { formatUnit, toShortAddress, validateUrls } from "../../utils/helpers";
 import Snackbar from "@mui/material/Snackbar";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
@@ -111,6 +111,11 @@ export const LoadingContainer = styled("div")(() => ({
   justifyContent: "center",
   alignItems: "center",
 }));
+export const ErrorMessage = styled("div")(({ theme }) => ({
+  fontSize: 14,
+  lineHeight: 2,
+  color: "#eb0116",
+}));
 
 type IState = {
   value: number;
@@ -127,6 +132,7 @@ type IState = {
   display: string;
   web: string;
   checked: boolean;
+  errorMessage: string;
 };
 
 export const TabsMain = () => {
@@ -145,6 +151,7 @@ export const TabsMain = () => {
     display: "",
     web: "",
     checked: false,
+    errorMessage: "",
   };
   const [state, setState] = useState<IState>(defaultState);
 
@@ -162,6 +169,7 @@ export const TabsMain = () => {
     display,
     web,
     checked,
+    errorMessage,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -337,6 +345,35 @@ export const TabsMain = () => {
   const _updateInfo = async () => {
     checkSigner();
     if (!injector || !signer) return;
+    const result = validateUrls({
+      web,
+      img: imgUrl,
+      twitter,
+    });
+    const reset = () => {
+      setTimeout(() => {
+        setState((prev) => ({
+          ...prev,
+          errorMessage: "",
+        }));
+      }, 3000);
+    };
+    if (!display) {
+      setState((prev) => ({
+        ...prev,
+        errorMessage: "Disaply Name is required.",
+      }));
+      reset();
+      return;
+    }
+    if (result) {
+      setState((prev) => ({
+        ...prev,
+        errorMessage: result,
+      }));
+      reset();
+      return;
+    }
 
     setState((prev) => ({
       ...prev,
@@ -476,6 +513,7 @@ export const TabsMain = () => {
                     handleInputChange={handleIdentityInputChange}
                   />
                   <Wrapper>
+                    <ErrorMessage>{errorMessage}</ErrorMessage>
                     <InputWrapper>
                       <Button onClick={_updateInfo} variant="contained">
                         Update Creator Info

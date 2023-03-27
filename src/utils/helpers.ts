@@ -13,6 +13,7 @@ import {
   IParsedProxies,
   IParsedSupporterProxies,
   IProxyParsedCreators,
+  IUrls,
 } from "./types";
 import config from "./ss58-registry.json";
 
@@ -191,3 +192,79 @@ export const renderAddress = (
     return encodedAddress;
   }
 };
+
+export function isValidUrl(url: string): boolean {
+  const urlPattern = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+      "(\\#[-a-z\\d_]*)?$",
+    "i"
+  );
+
+  return !!urlPattern.test(url);
+}
+
+export function isValidImageUrl(url: string): boolean {
+  // First, check if the URL is in a valid format
+  if (!isValidUrl(url)) {
+    return false;
+  }
+
+  // Next, check if the URL points to a valid image file
+  const imageExtensions = [
+    "jpg",
+    "jpeg",
+    "png",
+    "gif",
+    "bmp",
+    "webp",
+    "svg",
+    "tiff",
+  ];
+  const urlExtension = url.split(".")?.pop()?.toLowerCase();
+  if (!urlExtension) return false;
+  return imageExtensions.includes(urlExtension);
+}
+
+export function isTwitterProfileUrl(url: string): boolean {
+  const twitterProfilePattern = new RegExp(
+    "^(https?:\\/\\/)?(www\\.)?twitter\\.com\\/[A-Za-z0-9_]{1,15}$",
+    "i"
+  );
+
+  return !!twitterProfilePattern.test(url);
+}
+
+export function generateText(obj: { [key: string]: boolean }) {
+  const incorrectFormats = [];
+
+  for (const key in obj) {
+    if (!obj[key]) {
+      incorrectFormats.push(`"${key}"`);
+    }
+  }
+
+  if (incorrectFormats.length > 0) {
+    const lastIncorrectFormat = incorrectFormats.pop();
+    const formattedIncorrectFormats =
+      incorrectFormats.length > 0
+        ? incorrectFormats.join(", ") + " and " + lastIncorrectFormat
+        : lastIncorrectFormat;
+    return `${formattedIncorrectFormats} format incorrect`;
+  } else {
+    return null;
+  }
+}
+
+export function validateUrls(urlsObj: IUrls): string | null {
+  const validationResults = {
+    web: urlsObj.web ? isValidUrl(urlsObj.web) : true,
+    img: urlsObj.img ? isValidImageUrl(urlsObj.img) : true,
+    twitter: urlsObj.twitter ? isTwitterProfileUrl(urlsObj.twitter) : true,
+  };
+
+  return generateText(validationResults);
+}

@@ -107,3 +107,11 @@ export type IHandleChange = (
 export type IHandleCheck = (event: {
   target: { checked: boolean | ((prevState: boolean) => boolean) };
 }) => void;
+
+export type IPlaceHoper = { [key: string]: string };
+
+export type IUrls = {
+  web: string;
+  img: string;
+  twitter: string;
+};
