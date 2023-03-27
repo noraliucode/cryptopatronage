@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useApi } from "../../hooks/useApi";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
-import { clearIdentity, unsubscribe } from "../../utils/main";
+import { unsubscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Modal } from "../Modal";
 import {
@@ -97,12 +97,6 @@ export const Supporter = () => {
     // await signAndSendUnnotePreimage(signer, injector, "");
   };
 
-  const _clearIdentity = async () => {
-    if (!signer) return;
-
-    clearIdentity(api, signer.address, injector, () => {}, setLoading);
-  };
-
   return (
     <>
       <Modal
@@ -183,17 +177,6 @@ export const Supporter = () => {
             )}
           </Wrapper>
         </Wrapper>
-      </InputWrapper>
-      <TitleWrapper>
-        <Title>Clear Identity</Title>
-        <Tooltip title="Remove on-chain identity and get the refund">
-          <img alt="question" src="/assets/icons/question.svg" />
-        </Tooltip>
-      </TitleWrapper>
-      <InputWrapper>
-        <Button onClick={_clearIdentity} variant="contained">
-          Clear Identity
-        </Button>
       </InputWrapper>
     </>
   );

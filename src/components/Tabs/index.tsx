@@ -211,6 +211,8 @@ export const TabsMain = () => {
 
   const callback = async () => {
     await getSupporters();
+    await getRate();
+    setLoading(false);
   };
 
   const setLoading = (value: boolean) => {
@@ -366,8 +368,13 @@ export const TabsMain = () => {
 
   const _clearIdentity = async () => {
     if (!signer) return;
+    setState((prev) => ({
+      ...prev,
+      message: "Clear Identity...",
+      open: true,
+    }));
 
-    clearIdentity(api, signer.address, injector, () => {}, setLoading);
+    clearIdentity(api, signer.address, injector, callback, setLoading);
   };
 
   const isSetRateDisabled = !rate || rate === 0;
