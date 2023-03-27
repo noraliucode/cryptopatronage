@@ -494,6 +494,29 @@ export const clearIdentity = async (
   const apiService = new APIService(api);
   try {
     setLoading && setLoading(true);
+    await apiService.signAndSendSetIdentity(
+      null,
+      null,
+      sender,
+      injector,
+      callback
+    );
+  } catch (error) {
+    console.log("clearIdentity error", error);
+  }
+};
+
+export const unregister = async (
+  api: ApiPromise | null,
+  sender: string,
+  injector: any,
+  callback?: () => void,
+  setLoading?: (_: boolean) => void
+) => {
+  if (!api) return;
+  const apiService = new APIService(api);
+  try {
+    setLoading && setLoading(true);
     const { essentialInfo }: any = await getInfos(api, sender);
     const _callBack = () => {
       setLoading && setLoading(false);
