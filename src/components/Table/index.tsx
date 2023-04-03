@@ -7,11 +7,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import {
+  INetwork,
   IProxyParsedSupporter,
   IProxyParsedSupporters,
 } from "../../utils/types";
 import { Button } from "@mui/material";
-import { renderAddress } from "../../utils/helpers";
+import { formatUnit, renderAddress } from "../../utils/helpers";
+import { DECIMALS } from "../../utils/constants";
 
 export default function BasicTable({
   pull,
@@ -19,7 +21,7 @@ export default function BasicTable({
   committedSupporters,
 }: {
   pull: (isCommitted: boolean, supporter?: IProxyParsedSupporter) => void;
-  network: string;
+  network: INetwork;
   committedSupporters: IProxyParsedSupporters;
 }) {
   return (
@@ -29,8 +31,6 @@ export default function BasicTable({
           <TableRow>
             <TableCell>Address</TableCell>
             <TableCell align="right">Balance</TableCell>
-            {/* <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell> */}
             <TableCell align="right">Pull Payment</TableCell>
           </TableRow>
         </TableHead>
@@ -43,9 +43,10 @@ export default function BasicTable({
               <TableCell component="th" scope="row">
                 {row.supporter && renderAddress(row.supporter, network, 6)}
               </TableCell>
-              <TableCell align="right">{row.pureBalance}</TableCell>
-              {/* <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell> */}
+              <TableCell align="right">
+                {formatUnit(Number(row.pureBalance), DECIMALS[network])}{" "}
+                {network}
+              </TableCell>
               <TableCell align="right">
                 <Button onClick={() => pull(true, row)} variant="contained">
                   Pull Payment
