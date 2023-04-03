@@ -11,10 +11,15 @@ import {
   updateInfo,
 } from "../../utils/main";
 import {
+  Clear_Identity,
   DECIMALS,
   FOOTER_HEIGHT,
   MANAGE_SECTIONS,
+  My_Supporters,
   NAV_BAR_HEIGHT,
+  Payment_System,
+  Personal_Info,
+  Unregister,
   ZERO_BAL,
 } from "../../utils/constants";
 import { formatUnit, toShortAddress, validateUrls } from "../../utils/helpers";
@@ -71,6 +76,13 @@ export const Wrapper = styled("div")(() => ({
 export const Title = styled("div")(() => ({
   color: "white",
   fontSize: 18,
+  margin: "20px 10px 20px 0",
+  textAlign: "left",
+  fontWeight: 700,
+}));
+export const SectionTitle = styled("div")(() => ({
+  color: "white",
+  fontSize: 20,
   margin: "20px 10px 20px 0",
   textAlign: "left",
   fontWeight: 700,
@@ -476,7 +488,9 @@ export const TabsMain = () => {
                 message={message}
               />
               <TitleWrapper>
-                <Title>Register to payment system</Title>
+                <Title id={Payment_System.split(" ").join("")}>
+                  Register to payment system
+                </Title>
                 <Tooltip title="Register to Cryptopatronage payment system. Payment will automically transfer to your recipient account. (1% fee required)">
                   <img alt="question" src="/assets/icons/question.svg" />
                 </Tooltip>
@@ -499,7 +513,9 @@ export const TabsMain = () => {
               </InputWrapper>
               <CreatorInfo>
                 <>
-                  <Title>Personal Info</Title>
+                  <Title id={Personal_Info.split(" ").join("")}>
+                    {Personal_Info}
+                  </Title>
                   {isInfoLoading ? (
                     <LoadingContainer>
                       <CircularProgress size={30} thickness={5} />
@@ -536,8 +552,11 @@ export const TabsMain = () => {
                   )}
                 </>
               </CreatorInfo>
+              <SectionTitle id={My_Supporters.split(" ").join("")}>
+                My Supporters
+              </SectionTitle>
               <TitleWrapper>
-                <Title id="MySupporters">Committed Supporters</Title>
+                <Title>Committed Supporters</Title>
                 <Tooltip title="Supporters that are committed to transfer fund meets the rate. Creators can not pull payment manually once register to payment system">
                   <img alt="question" src="/assets/icons/question.svg" />
                 </Tooltip>
@@ -647,7 +666,9 @@ export const TabsMain = () => {
                 </InputWrapper>
               )}
               <TitleWrapper>
-                <Title>Clear Identity</Title>
+                <Title id={Clear_Identity.split(" ").join("")}>
+                  {Clear_Identity}
+                </Title>
                 <Tooltip title="Remove on-chain identity and get the refund">
                   <img alt="question" src="/assets/icons/question.svg" />
                 </Tooltip>
@@ -658,7 +679,7 @@ export const TabsMain = () => {
                 </Button>
               </InputWrapper>
               <TitleWrapper>
-                <Title>Unregister</Title>
+                <Title id={Unregister.split(" ").join("")}>{Unregister}</Title>
                 <Tooltip title="Remove on-chain identity and get the refund">
                   <img alt="question" src="/assets/icons/question.svg" />
                 </Tooltip>

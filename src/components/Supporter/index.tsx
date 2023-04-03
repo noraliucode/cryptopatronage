@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useApi } from "../../hooks/useApi";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
+import { My_Subscription, Unnote_Preimages } from "../../utils/constants";
 import { unsubscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Modal } from "../Modal";
@@ -15,6 +16,7 @@ import {
   Wrapper,
   Content,
   SpaceBetweenWrapper,
+  SectionTitle,
 } from "../Tabs";
 
 type IState = {
@@ -127,7 +129,9 @@ export const Supporter = () => {
         />
 
         <TitleWrapper>
-          <Title>Unnote Preimages</Title>
+          <Title id={Unnote_Preimages.split(" ").join("")}>
+            {Unnote_Preimages}
+          </Title>
           <Tooltip title="Withdraw the deposit for delay proxy">
             <img alt="question" src="/assets/icons/question.svg" />
           </Tooltip>
@@ -135,6 +139,10 @@ export const Supporter = () => {
         <Button disabled onClick={_unnotePreimage} variant="contained">
           Unnote Preimage
         </Button>
+
+        <SectionTitle id={My_Subscription.split(" ").join("")}>
+          {My_Subscription}
+        </SectionTitle>
         <Wrapper>
           <Wrapper>
             <Title>Committed subscribed Creators</Title>
