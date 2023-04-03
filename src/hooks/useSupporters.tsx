@@ -8,6 +8,7 @@ import {
   IProxyParsedSupporter,
   IProxyParsedSupporters,
 } from "../utils/types";
+import * as _ from "lodash";
 interface IState {
   committedSupporters: IProxyParsedSupporters;
   uncommittedSupporters: IProxyParsedSupporters;
@@ -81,8 +82,8 @@ export const useSupporters = (
 
       setState((prev) => ({
         ...prev,
-        committedSupporters: _committedSupporters,
-        uncommittedSupporters: _uncommittedSupporters,
+        committedSupporters: _.uniqBy(_committedSupporters, "supporter"),
+        uncommittedSupporters: _.uniqBy(_uncommittedSupporters, "supporter"),
       }));
     } catch (error) {
       console.error("getSupporters error", error);
