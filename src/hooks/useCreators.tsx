@@ -4,9 +4,6 @@ import { APIService } from "../services/apiService";
 import { NODE_ENDPOINT } from "../utils/constants";
 import { parseAdditionalInfo, parseEssentialInfo } from "../utils/helpers";
 import { ICreator, INetwork } from "../utils/types";
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import * as _ from "lodash";
 interface IState {
   creators: (ICreator | undefined)[] | null;
