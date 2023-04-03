@@ -145,6 +145,10 @@ const Unnote_Preimages = "Unnote Preimages";
 
 export const MANAGE_SECTIONS = [
   {
+    title: Payment_System,
+    id: Payment_System.split(" ").join(""),
+  },
+  {
     title: Personal_Info,
     id: Personal_Info.split(" ").join(""),
   },
@@ -157,19 +161,15 @@ export const MANAGE_SECTIONS = [
     id: My_Subscription.split(" ").join(""),
   },
   {
+    title: Unnote_Preimages,
+    id: Unnote_Preimages.split(" ").join(""),
+  },
+  {
     title: Clear_Identity,
     id: Clear_Identity.split(" ").join(""),
   },
   {
     title: Unregister,
     id: Unregister.split(" ").join(""),
-  },
-  {
-    title: Payment_System,
-    id: Payment_System.split(" ").join(""),
-  },
-  {
-    title: Unnote_Preimages,
-    id: Unnote_Preimages.split(" ").join(""),
   },
 ];
