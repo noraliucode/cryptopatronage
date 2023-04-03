@@ -133,6 +133,18 @@ export const ErrorMessage = styled("div")(({ theme }) => ({
   lineHeight: 2,
   color: "#eb0116",
 }));
+export const SectionText = styled("div")(
+  ({ isCicked }: { isCicked: boolean }) => ({
+    fontSize: 14,
+    lineHeight: 2,
+    color: "white",
+    textAlign: "left",
+    // background: isCicked ? "rgb(0,0,0,0.3)" : "none",
+    borderRadius: "10px",
+    padding: "5px 20px",
+    width: "80%",
+  })
+);
 
 type IState = {
   value: number;
@@ -150,6 +162,7 @@ type IState = {
   web: string;
   checked: boolean;
   errorMessage: string;
+  isCicked: boolean;
 };
 
 export const TabsMain = () => {
@@ -169,6 +182,7 @@ export const TabsMain = () => {
     web: "",
     checked: false,
     errorMessage: "",
+    isCicked: false,
   };
   const [state, setState] = useState<IState>(defaultState);
 
@@ -187,6 +201,7 @@ export const TabsMain = () => {
     web,
     checked,
     errorMessage,
+    isCicked,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -451,7 +466,7 @@ export const TabsMain = () => {
             {MANAGE_SECTIONS.map((x) => (
               <div>
                 <a href={x.id}>
-                  <Text>{x.title}</Text>
+                  <SectionText isCicked={isCicked}>{x.title}</SectionText>
                 </a>
               </div>
             ))}
