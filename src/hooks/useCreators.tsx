@@ -58,7 +58,8 @@ export const useCreators = (
         }
       });
 
-      let _creators = _.uniqBy(creators, "address") as ICreator[];
+      // TODO: remove any
+      let _creators = _.uniqBy(creators, "address") as any[];
 
       _creators = _creators.filter(
         (creator) => creator.isSensitive === isShowSensitiveContent
