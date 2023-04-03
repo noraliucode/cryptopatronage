@@ -4,7 +4,6 @@ import { ChangeEvent, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import {
   clearIdentity,
-  pullAllPayment,
   pullPayment,
   toggleIsRegisterToPaymentSystem,
   unregister,
@@ -39,6 +38,7 @@ import { HintText } from "../SubscribeModal";
 import RateForm from "../CreatorInfoForms/RateForm";
 import ImageForm from "../CreatorInfoForms/ImageForm";
 import IdentityForm from "../CreatorInfoForms/IdentityForm";
+import BasicTable from "../Table";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,
@@ -133,6 +133,18 @@ export const ErrorMessage = styled("div")(({ theme }) => ({
   lineHeight: 2,
   color: "#eb0116",
 }));
+export const SectionText = styled("div")(
+  ({ isCicked }: { isCicked: boolean }) => ({
+    fontSize: 14,
+    lineHeight: 2,
+    color: "white",
+    textAlign: "left",
+    // background: isCicked ? "rgb(0,0,0,0.3)" : "none",
+    borderRadius: "10px",
+    padding: "5px 20px",
+    width: "80%",
+  })
+);
 
 type IState = {
   value: number;
@@ -150,6 +162,7 @@ type IState = {
   web: string;
   checked: boolean;
   errorMessage: string;
+  isCicked: boolean;
 };
 
 export const TabsMain = () => {
@@ -169,6 +182,7 @@ export const TabsMain = () => {
     web: "",
     checked: false,
     errorMessage: "",
+    isCicked: false,
   };
   const [state, setState] = useState<IState>(defaultState);
 
@@ -187,6 +201,7 @@ export const TabsMain = () => {
     web,
     checked,
     errorMessage,
+    isCicked,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -282,27 +297,6 @@ export const TabsMain = () => {
       DECIMALS[network],
       isCommitted
     );
-  };
-
-  const _pullAll = async (isCommitted: boolean) => {
-    if (!signer) return;
-    setState((prev) => ({
-      ...prev,
-      message: "Pulling All Payment...",
-    }));
-
-    if (isCommitted) {
-      const reals = committedSupporters.map((x) => x.supporter) as string[];
-
-      await pullAllPayment(
-        api,
-        reals,
-        signer.address,
-        injector,
-        currentRate,
-        DECIMALS[network]
-      );
-    }
   };
 
   const handleRegisterClick = () => {
@@ -472,7 +466,7 @@ export const TabsMain = () => {
             {MANAGE_SECTIONS.map((x) => (
               <div>
                 <a href={x.id}>
-                  <Text>{x.title}</Text>
+                  <SectionText isCicked={isCicked}>{x.title}</SectionText>
                 </a>
               </div>
             ))}
@@ -564,34 +558,11 @@ export const TabsMain = () => {
 
               <Wrapper>
                 {isShowCommittedSupporters ? (
-                  committedSupporters.map(
-                    (supporter, index) =>
-                      supporter.pureBalance && (
-                        <SpaceBetweenWrapper key={index}>
-                          <Text>{toShortAddress(supporter?.supporter)}</Text>
-                          {/* for testing */}
-                          {/* <Text>{supporter?.pure}</Text> */}
-
-                          <Text>
-                            {`Balance: ${formatUnit(
-                              Number(supporter?.pureBalance),
-                              DECIMALS[network]
-                            )} ${network}`}
-                          </Text>
-
-                          <Button
-                            disabled={
-                              isRegisterToPaymentSystem ||
-                              supporter?.pureBalance === ZERO_BAL
-                            }
-                            onClick={() => _pullPayment(true, supporter)}
-                            variant="contained"
-                          >
-                            Pull Payment
-                          </Button>
-                        </SpaceBetweenWrapper>
-                      )
-                  )
+                  <BasicTable
+                    pull={_pullPayment}
+                    network={network}
+                    committedSupporters={committedSupporters}
+                  />
                 ) : (
                   <Content>
                     <Text>N/A</Text>
@@ -621,31 +592,11 @@ export const TabsMain = () => {
 
               <Wrapper>
                 {isShowUncommittedSupporters ? (
-                  uncommittedSupporters.map(
-                    (supporter, index) =>
-                      supporter?.supporter && (
-                        <SpaceBetweenWrapper key={index}>
-                          <Text>{toShortAddress(supporter?.supporter)}</Text>
-                          {/* for testing */}
-                          {/* <Text>{supporter?.pure}</Text> */}
-
-                          <Text>
-                            {`Balance: ${formatUnit(
-                              Number(supporter?.supporterBalance),
-                              DECIMALS[network]
-                            )} ${network}`}
-                          </Text>
-
-                          <Button
-                            disabled={isRegisterToPaymentSystem}
-                            onClick={() => _pullPayment(false, supporter)}
-                            variant="contained"
-                          >
-                            Pull Payment
-                          </Button>
-                        </SpaceBetweenWrapper>
-                      )
-                  )
+                  <BasicTable
+                    pull={_pullPayment}
+                    network={network}
+                    uncommittedSupporters={uncommittedSupporters}
+                  />
                 ) : (
                   <Content>
                     <Text>N/A</Text>

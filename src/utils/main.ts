@@ -247,32 +247,6 @@ export const pullPayment = async (
   }
 };
 
-export const pullAllPayment = async (
-  api: ApiPromise | null,
-  reals: string[],
-  sender: string,
-  injector: any,
-  currentRate: number,
-  decimals: number
-) => {
-  try {
-    if (!api) return;
-    const apiService = new APIService(api);
-    const promises: any[] = [];
-    reals.forEach(async (real) => {
-      promises.push(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        ...(await getPaymentPromises(api, real, sender, currentRate, decimals))
-      );
-    });
-    const txs = await Promise.all(promises);
-    await apiService.batchCalls(txs, sender, injector);
-  } catch (error) {
-    console.error("pull All Payment error", error);
-  }
-};
-
 export const getSetLastPaymentTimeTx = async (
   api: ApiPromise | null,
   sender: string
