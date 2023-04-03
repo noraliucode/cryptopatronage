@@ -459,7 +459,9 @@ export const TabsMain = () => {
           <Grid item xs={12} md={4}>
             {MANAGE_SECTIONS.map((x) => (
               <div>
-                <a href={x.id}>{x.title}</a>
+                <a href={x.id}>
+                  <Text>{x.title}</Text>
+                </a>
               </div>
             ))}
           </Grid>
