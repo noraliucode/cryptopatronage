@@ -285,27 +285,6 @@ export const TabsMain = () => {
     );
   };
 
-  const _pullAll = async (isCommitted: boolean) => {
-    if (!signer) return;
-    setState((prev) => ({
-      ...prev,
-      message: "Pulling All Payment...",
-    }));
-
-    if (isCommitted) {
-      const reals = committedSupporters.map((x) => x.supporter) as string[];
-
-      await pullAllPayment(
-        api,
-        reals,
-        signer.address,
-        injector,
-        currentRate,
-        DECIMALS[network]
-      );
-    }
-  };
-
   const handleRegisterClick = () => {
     checkSigner();
     if (!injector || !signer) return;
