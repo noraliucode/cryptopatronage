@@ -375,7 +375,7 @@ export const parseCreatorProxies = async (
       const real = proxy[0].toHuman()[0];
       const delegations = proxy[1].toHuman()[0];
 
-      if (delegations && delegations[0]) {
+      if (delegations && delegations[0] && delegations[0]?.proxyType === 'Any') {
         delegations.forEach(async (delegation: any) => {
           if (
             delegations[0]?.delegate &&
