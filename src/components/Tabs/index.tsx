@@ -203,7 +203,6 @@ export const TabsMain = () => {
 
   const { committedSupporters, getSupporters, uncommittedSupporters } =
     useSupporters(signer?.address, currentRate, network);
-  console.log("committedSupporters", committedSupporters);
 
   const { api } = useApi(network);
 
