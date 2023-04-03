@@ -64,6 +64,7 @@ export type IAdditionalInfo = {
   imgUrl: string;
   isSensitive: boolean;
   ps?: string;
+  [lt_address: string]: unknown;
 };
 
 export type INetwork = keyof ICreatorAddress;

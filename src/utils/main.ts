@@ -17,6 +17,7 @@ import {
   Identity,
   INetwork,
   IParsedSupporterProxies,
+  IProxyParsedSupporters,
 } from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
@@ -172,7 +173,7 @@ export const unsubscribe = async (
 
 const getPaymentPromises = async (
   api: ApiPromise | null,
-  real: string,
+  supporters: any, // pureProxies
   sender: string,
   currentRate: number,
   decimals: number,
@@ -181,34 +182,46 @@ const getPaymentPromises = async (
   if (!api) return;
   const apiService = new APIService(api);
   const receiver = sender;
-  const [creatorIdentity] = await Promise.all(
-    [sender].map((x) => apiService.getIdentity(x))
-  );
+  const creatorIdentity = apiService.getIdentity(sender);
+
   const getLastPaymentTime = (identity: any) => {
     return parseAdditionalInfo(identity).lastPaymentTime;
   };
 
   const lastPaymentTime = getLastPaymentTime(creatorIdentity);
 
-  const amount = getPaymentAmount(currentRate, lastPaymentTime);
+  const transactionInfos = supporters.map((supporter: any) => {
+    const amount = getPaymentAmount(
+      currentRate,
+      lastPaymentTime[supporter.supporter]
+    );
+    const real = isCommitted ? supporter.pure : supporter.supporter;
+    return {
+      real,
+      receiver,
+      amount,
+      supporter: supporter.supporter,
+    };
+  });
 
-  const transferFn = isCommitted
-    ? apiService.transferViaProxyPromise(real, receiver, amount)
-    : apiService.transfer(receiver, amount);
-
-  const promises = [
-    transferFn,
-    apiService.setIdentityPromise(creatorIdentity, {
-      lastPaymentTime: Date.now(),
-    }),
-  ];
+  const promises = transactionInfos.map((info: any) => {
+    const transferFn = isCommitted
+      ? apiService.transferViaProxyPromise(info.real, receiver, info.amount)
+      : apiService.transfer(receiver, info.amount);
+    return [
+      transferFn,
+      apiService.setIdentityPromise(creatorIdentity, {
+        [`lt_${renderAddress(info.supporter, "ROCOCO", 4)}`]: Date.now(),
+      }),
+    ];
+  });
 
   return promises;
 };
 
 export const pullPayment = async (
   api: ApiPromise | null,
-  real: string,
+  supporters: IProxyParsedSupporters,
   sender: string,
   injector: any,
   currentRate: number,
@@ -220,7 +233,7 @@ export const pullPayment = async (
   try {
     const promises = (await getPaymentPromises(
       api,
-      real,
+      supporters,
       sender,
       currentRate,
       decimals,
@@ -375,7 +388,11 @@ export const parseCreatorProxies = async (
       const real = proxy[0].toHuman()[0];
       const delegations = proxy[1].toHuman()[0];
 
-      if (delegations && delegations[0] && delegations[0]?.proxyType === 'Any') {
+      if (
+        delegations &&
+        delegations[0] &&
+        delegations[0]?.proxyType === "Any"
+      ) {
         delegations.forEach(async (delegation: any) => {
           if (
             delegations[0]?.delegate &&

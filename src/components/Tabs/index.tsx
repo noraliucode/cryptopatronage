@@ -18,7 +18,10 @@ import {
 } from "../../utils/constants";
 import { formatUnit, toShortAddress, validateUrls } from "../../utils/helpers";
 import Snackbar from "@mui/material/Snackbar";
-import { IWeb3ConnectedContextState } from "../../utils/types";
+import {
+  IProxyParsedSupporter,
+  IWeb3ConnectedContextState,
+} from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useIdentity } from "../../hooks/useIdentity";
 import { useSupporters } from "../../hooks/useSupporters";
@@ -232,20 +235,25 @@ export const TabsMain = () => {
   };
 
   const _pullPayment = async (
-    real?: string,
-    supporter?: string,
-    balance?: number,
-    isCommitted?: boolean
+    isCommitted: boolean,
+    supporter?: IProxyParsedSupporter
   ) => {
-    if (!real || !supporter || !balance || !signer) return;
-    if (balance === ZERO_BAL) {
-      setState((prev) => ({
-        ...prev,
-        title: "Insufficient Fund",
-        isModalOpen: true,
-      }));
-      return;
+    if (!signer) return;
+    let supporters: any = [];
+    if (!supporter) {
+      supporters = isCommitted ? committedSupporters : uncommittedSupporters;
+    } else {
+      supporters = [supporter];
     }
+    // TODO: calcilate if signer's balance is sufficient for fee
+    // if (signerBalance === ZERO_BAL) {
+    //   setState((prev) => ({
+    //     ...prev,
+    //     title: "Insufficient Fund",
+    //     isModalOpen: true,
+    //   }));
+    //   return;
+    // }
     setState((prev) => ({
       ...prev,
       message: "Pulling Payment...",
@@ -253,12 +261,12 @@ export const TabsMain = () => {
     }));
     await pullPayment(
       api,
-      real,
+      supporters,
       signer.address,
       injector,
       currentRate,
       DECIMALS[network],
-      (isCommitted = false)
+      isCommitted
     );
   };
 
@@ -553,14 +561,7 @@ export const TabsMain = () => {
                           isRegisterToPaymentSystem ||
                           supporter?.pureBalance === ZERO_BAL
                         }
-                        onClick={() =>
-                          _pullPayment(
-                            supporter?.pure,
-                            supporter?.supporter,
-                            supporter?.pureBalance,
-                            true
-                          )
-                        }
+                        onClick={() => _pullPayment(true, supporter)}
                         variant="contained"
                       >
                         Pull Payment
@@ -579,7 +580,7 @@ export const TabsMain = () => {
               <Button
                 disabled={isRegisterToPaymentSystem}
                 onClick={() => {
-                  _pullAll(true);
+                  _pullPayment(true);
                 }}
                 variant="contained"
               >
@@ -614,14 +615,7 @@ export const TabsMain = () => {
 
                       <Button
                         disabled={isRegisterToPaymentSystem}
-                        onClick={() =>
-                          _pullPayment(
-                            supporter?.supporter as string,
-                            supporter?.supporter as string,
-                            0,
-                            false
-                          )
-                        }
+                        onClick={() => _pullPayment(false, supporter)}
                         variant="contained"
                       >
                         Pull Payment
@@ -640,7 +634,7 @@ export const TabsMain = () => {
               <Button
                 disabled={isRegisterToPaymentSystem}
                 onClick={() => {
-                  _pullAll(false);
+                  _pullPayment(false);
                 }}
                 variant="contained"
               >
