@@ -635,8 +635,7 @@ export const TabsMain = () => {
               </Content>
             )}
           </Wrapper>
-          {/* TODO: comment out Uncommitted Pull All for now */}
-          {/* {isShowUncommittedSupporters && (
+          {isShowUncommittedSupporters && (
             <InputWrapper>
               <Button
                 disabled={isRegisterToPaymentSystem}
@@ -648,7 +647,7 @@ export const TabsMain = () => {
                 Pull All
               </Button>
             </InputWrapper>
-          )} */}
+          )}
           <TitleWrapper>
             <Title>Clear Identity</Title>
             <Tooltip title="Remove on-chain identity and get the refund">
