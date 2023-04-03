@@ -9,8 +9,6 @@ import { WALLETS } from "../../utils/constants";
 import { IExtension, IWallet } from "../../utils/types";
 import { Text } from "../Tabs";
 import { Divider, styled } from "@mui/material";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import * as _ from "lodash";
 import { web3Enable } from "@polkadot/extension-dapp";
 import { useEffect, useState } from "react";
