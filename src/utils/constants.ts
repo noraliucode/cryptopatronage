@@ -135,3 +135,41 @@ export const PLACEHOLDER: IPlaceHoper = {
   [TWITTER]: "https://twitter.com/exampleUser",
   [WEB]: "https://www.example.com/",
 };
+const Personal_Info = "Personal Info";
+const My_Supporters = "My Supporters";
+const My_Subscription = "My Subscription";
+const Clear_Identity = "Clear Identity";
+const Unregister = "Unregister";
+const Payment_System = "Payment System";
+const Unnote_Preimages = "Unnote Preimages";
+
+export const MANAGE_SECTIONS = [
+  {
+    title: Personal_Info,
+    id: Personal_Info.split(" ").join(""),
+  },
+  {
+    title: My_Supporters,
+    id: My_Supporters.split(" ").join(""),
+  },
+  {
+    title: My_Subscription,
+    id: My_Subscription.split(" ").join(""),
+  },
+  {
+    title: Clear_Identity,
+    id: Clear_Identity.split(" ").join(""),
+  },
+  {
+    title: Unregister,
+    id: Unregister.split(" ").join(""),
+  },
+  {
+    title: Payment_System,
+    id: Payment_System.split(" ").join(""),
+  },
+  {
+    title: Unnote_Preimages,
+    id: Unnote_Preimages.split(" ").join(""),
+  },
+];

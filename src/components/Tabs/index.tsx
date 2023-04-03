@@ -1,4 +1,4 @@
-import { Box, Tabs, Tab, Tooltip, CircularProgress } from "@mui/material";
+import { Box, Tabs, Tab, Tooltip, CircularProgress, Grid } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
@@ -13,6 +13,7 @@ import {
 import {
   DECIMALS,
   FOOTER_HEIGHT,
+  MANAGE_SECTIONS,
   NAV_BAR_HEIGHT,
   ZERO_BAL,
 } from "../../utils/constants";
@@ -35,7 +36,8 @@ import ImageForm from "../CreatorInfoForms/ImageForm";
 import IdentityForm from "../CreatorInfoForms/IdentityForm";
 
 const Root = styled("div")(({ theme }) => ({
-  width: 600,
+  maxWidth: 1920,
+  width: "80%",
   [theme.breakpoints.down("md")]: {
     width: "90%",
   },
@@ -452,241 +454,266 @@ export const TabsMain = () => {
         }
         title={title}
       />
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-          textColor="primary"
-        >
-          <Tab label="Creator" />
-          <Tab label="Supporter" />
-          {/* TODO: add disabled logic */}
-          <Tab disabled label="Payment System" />
-        </Tabs>
-      </Box>
-      {value === 0 && (
-        <>
-          <Snackbar
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "center",
-            }}
-            open={open}
-            message={message}
-          />
-          <TitleWrapper>
-            <Title>Register to payment system</Title>
-            <Tooltip title="Register to Cryptopatronage payment system. Payment will automically transfer to your recipient account. (1% fee required)">
-              <img alt="question" src="/assets/icons/question.svg" />
-            </Tooltip>
-            &nbsp;<HintText>*coming soon</HintText>
-          </TitleWrapper>
-
-          <InputWrapper>
-            <Text>
-              Status:{" "}
-              {isRegisterToPaymentSystem ? "Registered" : "Not Registered"}
-            </Text>
-            <br />
-            <Button disabled onClick={handleRegisterClick} variant="contained">
-              {isRegisterToPaymentSystem ? "Cancel" : "Register"}
-            </Button>
-          </InputWrapper>
-          <CreatorInfo>
+      <Box sx={{ flexGrow: 1 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={6} md={4}>
+            {MANAGE_SECTIONS.map((x) => (
+              <div>
+                <a href={x.id}>{x.title}</a>
+              </div>
+            ))}
+          </Grid>
+          <Grid item xs={6} md={8}>
             <>
-              <Title>Personal Info</Title>
-              {isInfoLoading ? (
-                <LoadingContainer>
-                  <CircularProgress size={30} thickness={5} />
-                </LoadingContainer>
-              ) : (
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  aria-label="basic tabs example"
+                  textColor="primary"
+                >
+                  <Tab label="Creator" />
+                  <Tab label="Supporter" />
+                  {/* TODO: add disabled logic */}
+                  <Tab disabled label="Payment System" />
+                </Tabs>
+              </Box>
+              {value === 0 && (
                 <>
-                  <RateForm
-                    rate={rate}
-                    network={network}
-                    handleInputChange={handleInputChange}
+                  <Snackbar
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "center",
+                    }}
+                    open={open}
+                    message={message}
                   />
-                  <ImageForm
-                    imgUrl={imgUrl}
-                    checked={checked}
-                    handleChange={handleCheck}
-                    handleInputChange={handleImageUrlInputChange}
-                  />
-                  <IdentityForm
-                    display={display}
-                    email={email}
-                    twitter={twitter}
-                    web={web}
-                    handleInputChange={handleIdentityInputChange}
-                  />
+                  <TitleWrapper>
+                    <Title>Register to payment system</Title>
+                    <Tooltip title="Register to Cryptopatronage payment system. Payment will automically transfer to your recipient account. (1% fee required)">
+                      <img alt="question" src="/assets/icons/question.svg" />
+                    </Tooltip>
+                    &nbsp;<HintText>*coming soon</HintText>
+                  </TitleWrapper>
+
+                  <InputWrapper>
+                    <Text>
+                      Status:{" "}
+                      {isRegisterToPaymentSystem
+                        ? "Registered"
+                        : "Not Registered"}
+                    </Text>
+                    <br />
+                    <Button
+                      disabled
+                      onClick={handleRegisterClick}
+                      variant="contained"
+                    >
+                      {isRegisterToPaymentSystem ? "Cancel" : "Register"}
+                    </Button>
+                  </InputWrapper>
+                  <CreatorInfo>
+                    <>
+                      <Title>Personal Info</Title>
+                      {isInfoLoading ? (
+                        <LoadingContainer>
+                          <CircularProgress size={30} thickness={5} />
+                        </LoadingContainer>
+                      ) : (
+                        <>
+                          <RateForm
+                            rate={rate}
+                            network={network}
+                            handleInputChange={handleInputChange}
+                          />
+                          <ImageForm
+                            imgUrl={imgUrl}
+                            checked={checked}
+                            handleChange={handleCheck}
+                            handleInputChange={handleImageUrlInputChange}
+                          />
+                          <IdentityForm
+                            display={display}
+                            email={email}
+                            twitter={twitter}
+                            web={web}
+                            handleInputChange={handleIdentityInputChange}
+                          />
+                          <Wrapper>
+                            <ErrorMessage>{errorMessage}</ErrorMessage>
+                            <InputWrapper>
+                              <Button onClick={_updateInfo} variant="contained">
+                                Update Creator Info
+                              </Button>
+                            </InputWrapper>
+                          </Wrapper>
+                        </>
+                      )}
+                    </>
+                  </CreatorInfo>
+                  <TitleWrapper>
+                    <Title id="MySupporters">Committed Supporters</Title>
+                    <Tooltip title="Supporters that are committed to transfer fund meets the rate. Creators can not pull payment manually once register to payment system">
+                      <img alt="question" src="/assets/icons/question.svg" />
+                    </Tooltip>
+                  </TitleWrapper>
+
                   <Wrapper>
-                    <ErrorMessage>{errorMessage}</ErrorMessage>
+                    {isShowCommittedSupporters ? (
+                      committedSupporters.map(
+                        (supporter, index) =>
+                          supporter.pureBalance && (
+                            <SpaceBetweenWrapper key={index}>
+                              <Text>
+                                {toShortAddress(supporter?.supporter)}
+                              </Text>
+                              {/* for testing */}
+                              {/* <Text>{supporter?.pure}</Text> */}
+
+                              <Text>
+                                {`Balance: ${formatUnit(
+                                  Number(supporter?.pureBalance),
+                                  DECIMALS[network]
+                                )} ${network}`}
+                              </Text>
+
+                              <Button
+                                disabled={
+                                  isRegisterToPaymentSystem ||
+                                  supporter?.pureBalance === ZERO_BAL
+                                }
+                                onClick={() => _pullPayment(true, supporter)}
+                                variant="contained"
+                              >
+                                Pull Payment
+                              </Button>
+                            </SpaceBetweenWrapper>
+                          )
+                      )
+                    ) : (
+                      <Content>
+                        <Text>N/A</Text>
+                      </Content>
+                    )}
+                  </Wrapper>
+                  {isShowCommittedSupporters && (
                     <InputWrapper>
-                      <Button onClick={_updateInfo} variant="contained">
-                        Update Creator Info
+                      <Button
+                        disabled={isRegisterToPaymentSystem}
+                        onClick={() => {
+                          _pullPayment(true);
+                        }}
+                        variant="contained"
+                      >
+                        Pull All
                       </Button>
                     </InputWrapper>
+                  )}
+
+                  <TitleWrapper>
+                    <Title>Uncommitted Supporters</Title>
+                    <Tooltip title="Supporters that are not committed to transfer fund meets the rate">
+                      <img alt="question" src="/assets/icons/question.svg" />
+                    </Tooltip>
+                  </TitleWrapper>
+
+                  <Wrapper>
+                    {isShowUncommittedSupporters ? (
+                      uncommittedSupporters.map(
+                        (supporter, index) =>
+                          supporter?.supporter && (
+                            <SpaceBetweenWrapper key={index}>
+                              <Text>
+                                {toShortAddress(supporter?.supporter)}
+                              </Text>
+                              {/* for testing */}
+                              {/* <Text>{supporter?.pure}</Text> */}
+
+                              <Text>
+                                {`Balance: ${formatUnit(
+                                  Number(supporter?.supporterBalance),
+                                  DECIMALS[network]
+                                )} ${network}`}
+                              </Text>
+
+                              <Button
+                                disabled={isRegisterToPaymentSystem}
+                                onClick={() => _pullPayment(false, supporter)}
+                                variant="contained"
+                              >
+                                Pull Payment
+                              </Button>
+                            </SpaceBetweenWrapper>
+                          )
+                      )
+                    ) : (
+                      <Content>
+                        <Text>N/A</Text>
+                      </Content>
+                    )}
                   </Wrapper>
+                  {isShowUncommittedSupporters && (
+                    <InputWrapper>
+                      <Button
+                        disabled={isRegisterToPaymentSystem}
+                        onClick={() => {
+                          _pullPayment(false);
+                        }}
+                        variant="contained"
+                      >
+                        Pull All
+                      </Button>
+                    </InputWrapper>
+                  )}
+                  <TitleWrapper>
+                    <Title>Clear Identity</Title>
+                    <Tooltip title="Remove on-chain identity and get the refund">
+                      <img alt="question" src="/assets/icons/question.svg" />
+                    </Tooltip>
+                  </TitleWrapper>
+                  <InputWrapper>
+                    <Button onClick={_clearIdentity} variant="contained">
+                      Clear Identity
+                    </Button>
+                  </InputWrapper>
+                  <TitleWrapper>
+                    <Title>Unregister</Title>
+                    <Tooltip title="Remove on-chain identity and get the refund">
+                      <img alt="question" src="/assets/icons/question.svg" />
+                    </Tooltip>
+                  </TitleWrapper>
+                  <InputWrapper>
+                    <Button onClick={_unregister} variant="contained">
+                      Unregister
+                    </Button>
+                  </InputWrapper>
+                </>
+              )}
+              {value === 1 && <Supporter />}
+
+              {value === 2 && (
+                <>
+                  <TitleWrapper>
+                    <Title>Creators registered to payment system</Title>
+                    <Tooltip title="Admins manually transfer fund to creators' account in case of failure">
+                      <img alt="question" src="/assets/icons/question.svg" />
+                    </Tooltip>
+                  </TitleWrapper>
+                  {isShowAllCreators ? (
+                    <PaymentSystem />
+                  ) : (
+                    <ActionWrapper>
+                      <Button onClick={showAllCreators} variant="contained">
+                        Show all creators
+                      </Button>
+                    </ActionWrapper>
+                  )}
                 </>
               )}
             </>
-          </CreatorInfo>
-          <TitleWrapper>
-            <Title>Committed Supporters</Title>
-            <Tooltip title="Supporters that are committed to transfer fund meets the rate. Creators can not pull payment manually once register to payment system">
-              <img alt="question" src="/assets/icons/question.svg" />
-            </Tooltip>
-          </TitleWrapper>
-
-          <Wrapper>
-            {isShowCommittedSupporters ? (
-              committedSupporters.map(
-                (supporter, index) =>
-                  supporter.pureBalance && (
-                    <SpaceBetweenWrapper key={index}>
-                      <Text>{toShortAddress(supporter?.supporter)}</Text>
-                      {/* for testing */}
-                      {/* <Text>{supporter?.pure}</Text> */}
-
-                      <Text>
-                        {`Balance: ${formatUnit(
-                          Number(supporter?.pureBalance),
-                          DECIMALS[network]
-                        )} ${network}`}
-                      </Text>
-
-                      <Button
-                        disabled={
-                          isRegisterToPaymentSystem ||
-                          supporter?.pureBalance === ZERO_BAL
-                        }
-                        onClick={() => _pullPayment(true, supporter)}
-                        variant="contained"
-                      >
-                        Pull Payment
-                      </Button>
-                    </SpaceBetweenWrapper>
-                  )
-              )
-            ) : (
-              <Content>
-                <Text>N/A</Text>
-              </Content>
-            )}
-          </Wrapper>
-          {isShowCommittedSupporters && (
-            <InputWrapper>
-              <Button
-                disabled={isRegisterToPaymentSystem}
-                onClick={() => {
-                  _pullPayment(true);
-                }}
-                variant="contained"
-              >
-                Pull All
-              </Button>
-            </InputWrapper>
-          )}
-
-          <TitleWrapper>
-            <Title>Uncommitted Supporters</Title>
-            <Tooltip title="Supporters that are not committed to transfer fund meets the rate">
-              <img alt="question" src="/assets/icons/question.svg" />
-            </Tooltip>
-          </TitleWrapper>
-
-          <Wrapper>
-            {isShowUncommittedSupporters ? (
-              uncommittedSupporters.map(
-                (supporter, index) =>
-                  supporter?.supporter && (
-                    <SpaceBetweenWrapper key={index}>
-                      <Text>{toShortAddress(supporter?.supporter)}</Text>
-                      {/* for testing */}
-                      {/* <Text>{supporter?.pure}</Text> */}
-
-                      <Text>
-                        {`Balance: ${formatUnit(
-                          Number(supporter?.supporterBalance),
-                          DECIMALS[network]
-                        )} ${network}`}
-                      </Text>
-
-                      <Button
-                        disabled={isRegisterToPaymentSystem}
-                        onClick={() => _pullPayment(false, supporter)}
-                        variant="contained"
-                      >
-                        Pull Payment
-                      </Button>
-                    </SpaceBetweenWrapper>
-                  )
-              )
-            ) : (
-              <Content>
-                <Text>N/A</Text>
-              </Content>
-            )}
-          </Wrapper>
-          {isShowUncommittedSupporters && (
-            <InputWrapper>
-              <Button
-                disabled={isRegisterToPaymentSystem}
-                onClick={() => {
-                  _pullPayment(false);
-                }}
-                variant="contained"
-              >
-                Pull All
-              </Button>
-            </InputWrapper>
-          )}
-          <TitleWrapper>
-            <Title>Clear Identity</Title>
-            <Tooltip title="Remove on-chain identity and get the refund">
-              <img alt="question" src="/assets/icons/question.svg" />
-            </Tooltip>
-          </TitleWrapper>
-          <InputWrapper>
-            <Button onClick={_clearIdentity} variant="contained">
-              Clear Identity
-            </Button>
-          </InputWrapper>
-          <TitleWrapper>
-            <Title>Unregister</Title>
-            <Tooltip title="Remove on-chain identity and get the refund">
-              <img alt="question" src="/assets/icons/question.svg" />
-            </Tooltip>
-          </TitleWrapper>
-          <InputWrapper>
-            <Button onClick={_unregister} variant="contained">
-              Unregister
-            </Button>
-          </InputWrapper>
-        </>
-      )}
-      {value === 1 && <Supporter />}
-
-      {value === 2 && (
-        <>
-          <TitleWrapper>
-            <Title>Creators registered to payment system</Title>
-            <Tooltip title="Admins manually transfer fund to creators' account in case of failure">
-              <img alt="question" src="/assets/icons/question.svg" />
-            </Tooltip>
-          </TitleWrapper>
-          {isShowAllCreators ? (
-            <PaymentSystem />
-          ) : (
-            <ActionWrapper>
-              <Button onClick={showAllCreators} variant="contained">
-                Show all creators
-              </Button>
-            </ActionWrapper>
-          )}
-        </>
-      )}
+          </Grid>
+        </Grid>
+      </Box>
     </Root>
   );
 };
