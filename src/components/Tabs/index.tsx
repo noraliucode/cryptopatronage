@@ -4,7 +4,6 @@ import { ChangeEvent, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import {
   clearIdentity,
-  pullAllPayment,
   pullPayment,
   toggleIsRegisterToPaymentSystem,
   unregister,
