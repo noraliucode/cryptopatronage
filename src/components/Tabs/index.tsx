@@ -39,6 +39,7 @@ import { HintText } from "../SubscribeModal";
 import RateForm from "../CreatorInfoForms/RateForm";
 import ImageForm from "../CreatorInfoForms/ImageForm";
 import IdentityForm from "../CreatorInfoForms/IdentityForm";
+import BasicTable from "../Table";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,
@@ -202,6 +203,7 @@ export const TabsMain = () => {
 
   const { committedSupporters, getSupporters, uncommittedSupporters } =
     useSupporters(signer?.address, currentRate, network);
+  console.log("committedSupporters", committedSupporters);
 
   const { api } = useApi(network);
 
@@ -564,34 +566,11 @@ export const TabsMain = () => {
 
               <Wrapper>
                 {isShowCommittedSupporters ? (
-                  committedSupporters.map(
-                    (supporter, index) =>
-                      supporter.pureBalance && (
-                        <SpaceBetweenWrapper key={index}>
-                          <Text>{toShortAddress(supporter?.supporter)}</Text>
-                          {/* for testing */}
-                          {/* <Text>{supporter?.pure}</Text> */}
-
-                          <Text>
-                            {`Balance: ${formatUnit(
-                              Number(supporter?.pureBalance),
-                              DECIMALS[network]
-                            )} ${network}`}
-                          </Text>
-
-                          <Button
-                            disabled={
-                              isRegisterToPaymentSystem ||
-                              supporter?.pureBalance === ZERO_BAL
-                            }
-                            onClick={() => _pullPayment(true, supporter)}
-                            variant="contained"
-                          >
-                            Pull Payment
-                          </Button>
-                        </SpaceBetweenWrapper>
-                      )
-                  )
+                  <BasicTable
+                    pull={_pullPayment}
+                    network={network}
+                    committedSupporters={committedSupporters}
+                  />
                 ) : (
                   <Content>
                     <Text>N/A</Text>
