@@ -23,7 +23,6 @@ import { Modal } from "../Modal";
 import LanguageSelector from "../LanguageSelector";
 import { useTranslation } from "react-i18next";
 import { drawerWidth } from "../../layout/Sidebar";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
