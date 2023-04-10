@@ -3,7 +3,7 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import SettingsIcon from "@mui/icons-material/Settings";
 import MuseumIcon from "@mui/icons-material/Museum";
-import { IPlaceHoper } from "./types";
+import { IPlaceHoper, Languages } from "./types";
 
 export const ROCOCO = "wss://rococo-rpc.polkadot.io";
 export const WESTEND = "wss://westend-rpc.polkadot.io";
@@ -173,3 +173,8 @@ export const MANAGE_SECTIONS = [
     id: `#${Unregister.split(" ").join("")}`,
   },
 ];
+
+export const lngs: Languages = {
+  en: { nativeName: "English" },
+  zh: { nativeName: "中文" },
+};
