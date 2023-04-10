@@ -493,6 +493,7 @@ export const clearIdentity = async (
       callback
     );
   } catch (error) {
+    callback && callback();
     console.log("clearIdentity error", error);
   }
 };

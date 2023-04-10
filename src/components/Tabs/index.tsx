@@ -164,6 +164,7 @@ type IState = {
   checked: boolean;
   errorMessage: string;
   isCicked: boolean;
+  isClearIdentityModalOpen: boolean;
 };
 
 export const TabsMain = () => {
@@ -184,6 +185,7 @@ export const TabsMain = () => {
     checked: false,
     errorMessage: "",
     isCicked: false,
+    isClearIdentityModalOpen: false,
   };
   const [state, setState] = useState<IState>(defaultState);
 
@@ -203,6 +205,7 @@ export const TabsMain = () => {
     checked,
     errorMessage,
     isCicked,
+    isClearIdentityModalOpen,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -423,14 +426,24 @@ export const TabsMain = () => {
   };
 
   const _clearIdentity = async () => {
+    setState((prev) => ({
+      ...prev,
+      isClearIdentityModalOpen: false,
+    }));
     if (!signer) return;
     setState((prev) => ({
       ...prev,
       message: "Clear Identity...",
       open: true,
     }));
-
-    clearIdentity(api, signer.address, injector, callback, setLoading);
+    try {
+      clearIdentity(api, signer.address, injector, callback, setLoading);
+    } catch (error) {
+      setState((prev) => ({
+        ...prev,
+        isClearIdentityModalOpen: false,
+      }));
+    }
   };
 
   const _unregister = async () => {
@@ -442,6 +455,13 @@ export const TabsMain = () => {
     }));
 
     unregister(api, signer.address, injector, callback, setLoading);
+  };
+
+  const handleClearIdentityClick = () => {
+    setState((prev) => ({
+      ...prev,
+      isClearIdentityModalOpen: true,
+    }));
   };
 
   const isSetRateDisabled = !rate || rate === 0;
@@ -461,6 +481,18 @@ export const TabsMain = () => {
           }))
         }
         title={title}
+      />
+      <Modal
+        title={t("manage sections.Clear Identity") || ""}
+        content={t("manage.Clear Identity Content") || ""}
+        open={isClearIdentityModalOpen}
+        onClose={() =>
+          setState((prev) => ({
+            ...prev,
+            isModalOpen: false,
+          }))
+        }
+        action={() => _clearIdentity()}
       />
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
@@ -629,7 +661,7 @@ export const TabsMain = () => {
                 </Tooltip>
               </TitleWrapper>
               <InputWrapper>
-                <Button onClick={_clearIdentity} variant="contained">
+                <Button onClick={handleClearIdentityClick} variant="contained">
                   {t("manage sections.Clear Identity")}
                 </Button>
               </InputWrapper>
