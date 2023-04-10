@@ -512,7 +512,7 @@ export const TabsMain = () => {
               <CreatorInfo>
                 <>
                   <Title id={Personal_Info.split(" ").join("")}>
-                    {Personal_Info}
+                    {t("manage sections.Personal Info")}
                   </Title>
                   {isInfoLoading ? (
                     <LoadingContainer>

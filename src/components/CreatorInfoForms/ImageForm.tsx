@@ -1,5 +1,6 @@
 import { Checkbox, styled, TextField } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { IHandleChange, IHandleCheck } from "../../utils/types";
 import { Title, TitleWrapper, Wrapper, Text } from "../Tabs";
 
@@ -23,10 +24,11 @@ const ImageForm = ({
   handleChange,
   handleInputChange,
 }: IProps) => {
+  const { t } = useTranslation();
   return (
     <>
       <TitleWrapper>
-        <Title>Add Image (Optional)</Title>
+        <Title>{t("manage.Add Image (Optional)")}</Title>
       </TitleWrapper>
       <TextField
         fullWidth
@@ -43,7 +45,7 @@ const ImageForm = ({
           onChange={handleChange}
           inputProps={{ "aria-label": "controlled" }}
         />
-        <Text>Label your image as sensitive content</Text>
+        <Text>{t("manage.Label your image as sensitive content")}</Text>
       </Container>
     </>
   );
