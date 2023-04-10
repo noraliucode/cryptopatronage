@@ -145,11 +145,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                 href={item.href}
                 key={item.href}
               >
-                <ListItem
-                  key={item.label}
-                  disablePadding
-                  // sx={{ display: "block" }}
-                >
+                <ListItem key={item.label} disablePadding>
                   <ListItemButton
                     sx={{
                       minHeight: 48,
