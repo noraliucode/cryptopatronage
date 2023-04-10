@@ -1,3 +1,8 @@
 {
-    "title": "會員驅動創造力"
+    "title": "會員驅動創造力",
+    "button": {
+        "becomeCreator": "成為創作者",
+        "create": "建立",
+        "connect": "連結錢包"
+      }
 }

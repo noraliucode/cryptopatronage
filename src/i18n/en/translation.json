@@ -1,7 +1,8 @@
 {
     "title": "Membership driving creativity",
-    "description": {
-      "part1": "This is a simple example.",
-      "part2": "😉"
+    "button": {
+      "becomeCreator": "Become a creator",
+      "create": "Create",
+      "connect": "Connect"
     }
 }

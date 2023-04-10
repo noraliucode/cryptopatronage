@@ -13,6 +13,7 @@ import { Link as StyledLink } from "../Link";
 import { useApi } from "../../hooks/useApi";
 import { Modal } from "../Modal";
 import LanguageSelector from "../LanguageSelector";
+import { useTranslation } from "react-i18next";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -69,6 +70,7 @@ export const NavigationBar = () => {
 
   const { open, isModalOpen } = state;
   const { api } = useApi(network);
+  const { t } = useTranslation();
 
   const toggleDrawer = (event?: any) => {
     if (
@@ -134,7 +136,7 @@ export const NavigationBar = () => {
             <DesktopContentWarpper>
               <StyledLink to={"/create"}>
                 <Button color="primary" aria-label="Create" variant="contained">
-                  <Text>Create</Text>
+                  <Text>{t("button.create")}</Text>
                 </Button>
               </StyledLink>
               {MENU.map((item) => {

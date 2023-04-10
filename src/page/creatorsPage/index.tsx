@@ -138,7 +138,7 @@ export const CreatorsPage = () => {
             <>
               <Title>{t("title")}</Title>
               <Link to={"/create"}>
-                <Button variant="contained">Become a creator</Button>
+                <Button variant="contained">{t("button.becomeCreator")}</Button>
               </Link>
               <SubscribeModal
                 open={open}
