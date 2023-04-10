@@ -436,14 +436,7 @@ export const TabsMain = () => {
       message: "Clear Identity...",
       open: true,
     }));
-    try {
-      clearIdentity(api, signer.address, injector, callback, setLoading);
-    } catch (error) {
-      setState((prev) => ({
-        ...prev,
-        isClearIdentityModalOpen: false,
-      }));
-    }
+    clearIdentity(api, signer.address, injector, callback, setLoading);
   };
 
   const _unregister = async () => {
