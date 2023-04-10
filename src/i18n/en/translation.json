@@ -23,6 +23,7 @@
     "Committed Supporters": "Committed Supporters",
     "Uncommitted Supporters": "Uncommitted Supporters",
     "Committed subscribed Creators": "Committed subscribed Creators",
-    "Uncommitted subscribed Creators": "Uncommitted subscribed Creators"
+    "Uncommitted subscribed Creators": "Uncommitted subscribed Creators",
+    "Clear Identity Content": "This action will irreversibly remove your on-chain identity. Are you sure you want to continue?"
   }
 }
