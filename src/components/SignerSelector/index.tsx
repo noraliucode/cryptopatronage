@@ -17,6 +17,7 @@ import { APP_SESSION } from "../../utils/constants";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Divider, IconButton } from "@mui/material";
 import { DesktopContentWarpper } from "../NavigationBar";
+import { useTranslation } from "react-i18next";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -75,6 +76,7 @@ export const SignerSelector = ({
   });
 
   const { open, anchorEl, walletModalOpen } = state;
+  const { t } = useTranslation();
   const connector = localStorage.getItem(APP_SESSION);
 
   const handleClose = () => {
@@ -128,7 +130,8 @@ export const SignerSelector = ({
         <WalletModal open={walletModalOpen} onClose={toogleModal} />
         <Button variant="contained" onClick={toogleModal}>
           <AccountBalanceWalletIcon />
-          &nbsp;Connect
+          &nbsp;
+          {t("button.connect")}
         </Button>
       </>
     );

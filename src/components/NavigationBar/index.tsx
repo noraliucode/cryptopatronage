@@ -2,14 +2,7 @@ import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { NetworkSelector } from "../NetworkSelector";
 import { SignerSelector } from "../SignerSelector";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  IconButton,
-  Switch,
-} from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, Switch } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Text } from "../Tabs";
 import { useState } from "react";
@@ -19,6 +12,8 @@ import { MENU } from "../../utils/constants";
 import { Link as StyledLink } from "../Link";
 import { useApi } from "../../hooks/useApi";
 import { Modal } from "../Modal";
+import LanguageSelector from "../LanguageSelector";
+import { useTranslation } from "react-i18next";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -75,6 +70,7 @@ export const NavigationBar = () => {
 
   const { open, isModalOpen } = state;
   const { api } = useApi(network);
+  const { t } = useTranslation();
 
   const toggleDrawer = (event?: any) => {
     if (
@@ -140,11 +136,14 @@ export const NavigationBar = () => {
             <DesktopContentWarpper>
               <StyledLink to={"/create"}>
                 <Button color="primary" aria-label="Create" variant="contained">
-                  <Text>Create</Text>
+                  <Text>{t("button.create")}</Text>
                 </Button>
               </StyledLink>
               {MENU.map((item) => {
                 const Icon = item.icon;
+                if (item.label === "Language") {
+                  return <LanguageSelector item={item} />;
+                }
                 return (
                   <StyledLink to={item.link}>
                     <Button color="primary" aria-label={item.label}>

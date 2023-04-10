@@ -1,5 +1,6 @@
 import { Button, Snackbar, Tooltip } from "@mui/material";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useApi } from "../../hooks/useApi";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
@@ -50,6 +51,7 @@ export const Supporter = () => {
     useSubscribedCreators(signer?.address, rate, network);
 
   const { api } = useApi(network);
+  const { t } = useTranslation();
 
   const checkSigner = () => {
     if (!signer || !injector) {
@@ -130,22 +132,22 @@ export const Supporter = () => {
 
         <TitleWrapper>
           <Title id={Unnote_Preimages.split(" ").join("")}>
-            {Unnote_Preimages}
+            {t("manage sections.Unnote Preimages")}
           </Title>
           <Tooltip title="Withdraw the deposit for delay proxy">
             <img alt="question" src="/assets/icons/question.svg" />
           </Tooltip>
         </TitleWrapper>
         <Button disabled onClick={_unnotePreimage} variant="contained">
-          Unnote Preimage
+          {t("manage sections.Unnote Preimages")}
         </Button>
 
         <SectionTitle id={My_Subscription.split(" ").join("")}>
-          {My_Subscription}
+          {t("manage sections.My Subscription")}
         </SectionTitle>
         <Wrapper>
           <Wrapper>
-            <Title>Committed subscribed Creators</Title>
+            <Title>{t("manage.Committed subscribed Creators")}</Title>
             {committedCreators.length > 0 ? (
               committedCreators.map((creator) => (
                 <SpaceBetweenWrapper>
@@ -165,7 +167,7 @@ export const Supporter = () => {
                 <Text> N/A</Text>
               </Content>
             )}
-            <Title>Uncommitted subscribed Creators</Title>
+            <Title>{t("manage.Uncommitted subscribed Creators")}</Title>
             {uncommittedCreators.length > 0 ? (
               uncommittedCreators.map((creator) => (
                 <SpaceBetweenWrapper>

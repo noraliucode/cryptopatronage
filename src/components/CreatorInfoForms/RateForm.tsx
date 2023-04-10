@@ -1,5 +1,6 @@
 import { TextField, Tooltip } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { SYMBOL } from "../../utils/constants";
 import { INetwork } from "../../utils/types";
 import { Title, TitleWrapper } from "../Tabs";
@@ -11,10 +12,11 @@ type IProps = {
 };
 
 const RateForm = ({ rate, network, handleInputChange }: IProps) => {
+  const { t } = useTranslation();
   return (
     <>
       <TitleWrapper>
-        <Title>Add Monthly Rate</Title>
+        <Title>{t("manage.Add Monthly Rate")}</Title>
         <Tooltip title="Add rate for current selected creator(signer)">
           <img alt="question" src="/assets/icons/question.svg" />
         </Tooltip>

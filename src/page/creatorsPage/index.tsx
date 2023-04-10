@@ -10,6 +10,7 @@ import { Modal } from "../../components/Modal";
 import { useParams } from "react-router";
 import Creator from "./Creator";
 import { Link } from "../../components/Link";
+import { useTranslation } from "react-i18next";
 
 export const Root = styled("div")(() => ({
   padding: 30,
@@ -64,6 +65,7 @@ export const CreatorsPage = () => {
 
   const { creators, loading } = useCreators(network, isShowSensitiveContent);
   const params = useParams();
+  const { t } = useTranslation();
   const { address } = params as any;
 
   const onClose = () => {
@@ -134,9 +136,9 @@ export const CreatorsPage = () => {
             </Wrapper>
           ) : (
             <>
-              <Title> Membership driving creativity</Title>
+              <Title>{t("title")}</Title>
               <Link to={"/create"}>
-                <Button variant="contained">Become a creator</Button>
+                <Button variant="contained">{t("button.becomeCreator")}</Button>
               </Link>
               <SubscribeModal
                 open={open}
