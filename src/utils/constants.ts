@@ -84,16 +84,6 @@ export const SOCIAL_ITEMS = [
 
 export const MENU = [
   {
-    label: "Explore",
-    link: "/",
-    icon: MuseumIcon,
-  },
-  {
-    label: "Manage",
-    link: "/manage",
-    icon: SettingsIcon,
-  },
-  {
     label: "About",
     link: "/about",
     icon: HelpOutlineIcon,
@@ -102,6 +92,19 @@ export const MENU = [
     label: "Language",
     link: "",
     icon: LanguageIcon,
+  },
+];
+
+export const SIDE_BAR = [
+  {
+    label: "Explore",
+    link: "/",
+    icon: MuseumIcon,
+  },
+  {
+    label: "Manage",
+    link: "/manage",
+    icon: SettingsIcon,
   },
 ];
 
