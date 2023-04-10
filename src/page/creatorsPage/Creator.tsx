@@ -5,10 +5,11 @@ import {
   CardContent,
   Grid,
   IconButton,
+  Snackbar,
   styled,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { DECIMALS, IMAGE_HEIGHT, SYMBOL } from "../../utils/constants";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
 import EmailIcon from "@mui/icons-material/Email";
@@ -16,6 +17,7 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import { ICreator, INetwork } from "../../utils/types";
 import { hexToString, isHex } from "@polkadot/util";
 import { Text } from "../../components/Tabs";
+import ShareIcon from "@mui/icons-material/Share";
 
 const CardImage = styled("div")(({ url }: { url: any }) => ({
   backgroundColor: "rgba(255, 255, 255, 0.4)",
@@ -37,6 +39,10 @@ const Blur = styled("div")(({ isClicked }: { isClicked: boolean }) => ({
 const ExtraHeight = styled("div")(() => ({
   marginBottom: 40,
 }));
+const Wrapper = styled("div")(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+}));
 
 interface Props {
   creator?: ICreator;
@@ -55,6 +61,8 @@ const Creator: React.FC<Props> = ({
   onCardClick,
   onSubscribeClick,
 }) => {
+  const [open, setOpen] = useState(false);
+
   if (!creator) return <></>;
   const WrapperComponent = ({ children }: { children: React.ReactElement }) =>
     creator.web ? (
@@ -64,6 +72,13 @@ const Creator: React.FC<Props> = ({
     ) : (
       <>{children}</>
     );
+
+  const onShareClick = () => {
+    setOpen(true);
+    navigator.clipboard.writeText(
+      `${window.location.host}/creators/${creator.address}`
+    );
+  };
 
   return (
     <Grid item xs={12} sm={4} md={3}>
@@ -122,15 +137,29 @@ const Creator: React.FC<Props> = ({
             </CardContent>
           </>
         </WrapperComponent>
-        <CardActions>
-          <Button
-            onClick={() => onSubscribeClick(creator.address)}
-            size="small"
-          >
-            Subscribe
-          </Button>
-        </CardActions>
+        <Wrapper>
+          <CardActions>
+            <Button
+              onClick={() => onSubscribeClick(creator.address)}
+              size="small"
+            >
+              <Text>Subscribe</Text>
+            </Button>
+          </CardActions>
+          <CardActions>
+            <Button onClick={onShareClick} size="small">
+              <ShareIcon color="action" />
+            </Button>
+          </CardActions>
+        </Wrapper>
       </Card>
+      <Snackbar
+        message="Copied to clibboard"
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        autoHideDuration={2000}
+        onClose={() => setOpen(false)}
+        open={open}
+      />
     </Grid>
   );
 };
