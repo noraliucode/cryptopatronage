@@ -1,3 +1,5 @@
+import { SvgIconTypeMap } from "@mui/material";
+import { OverridableComponent } from "@mui/material/OverridableComponent";
 import {
   InjectedExtension,
   InjectedAccountWithMeta,
@@ -122,4 +124,10 @@ interface LanguageInfo {
 
 export type Languages = {
   [key: string]: LanguageInfo;
+};
+
+export type IMenuItem = {
+  label: string;
+  link: string;
+  icon: OverridableComponent<SvgIconTypeMap<{}, "svg">> & { muiName: string };
 };
