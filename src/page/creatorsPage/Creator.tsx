@@ -75,8 +75,11 @@ const Creator: React.FC<Props> = ({
           <>
             <CardImage
               url={
+                // TODO: add node.js server to handle redirect url and remove this later
                 creator.imageUrl
-                  ? creator.imageUrl
+                  ? creator.display === "DatDot"
+                    ? "/assets/images/datdot.png"
+                    : creator.imageUrl
                   : "/assets/images/default.webp"
               }
             >
