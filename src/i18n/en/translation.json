@@ -1,8 +1,28 @@
 {
-    "title": "Membership driving creativity",
-    "button": {
-      "becomeCreator": "Become a creator",
-      "create": "Create",
-      "connect": "Connect"
-    }
+  "title": "Membership driving creativity",
+  "button": {
+    "become_Creator": "Become a creator",
+    "create": "Create",
+    "connect": "Connect"
+  },
+  "manage sections": {
+    "Payment System": "Payment System",
+    "Personal Info": "Personal Info",
+    "My Supporters": "My Supporters",
+    "My Subscription": "My Subscription",
+    "Unnote Preimages": "Unnote Preimages",
+    "Clear Identity": "Clear Identity",
+    "Unregister": "Unregister"
+  },
+  "manage": {
+    "Register to payment system": "Register to payment system",
+    "Add Monthly Rate": "Add Monthly Rate",
+    "Add Image (Optional)": "Add Image (Optional)",
+    "Label your image as sensitive content": "Label your image as sensitive content",
+    "On-chain Identity (Optional)": "On-chain Identity (Optional)",
+    "Committed Supporters": "Committed Supporters",
+    "Uncommitted Supporters": "Uncommitted Supporters",
+    "Committed subscribed Creators": "Committed subscribed Creators",
+    "Uncommitted subscribed Creators": "Uncommitted subscribed Creators"
+  }
 }

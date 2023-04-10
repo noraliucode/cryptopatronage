@@ -1,8 +1,28 @@
 {
-    "title": "會員驅動創造力",
-    "button": {
-        "becomeCreator": "成為創作者",
-        "create": "建立",
-        "connect": "連結錢包"
-      }
+  "title": "會員驅動創造力",
+  "button": {
+    "becomeCreator": "成為創作者",
+    "create": "建立",
+    "connect": "連結錢包"
+  },
+  "manage sections": {
+    "Payment System": "支付系統",
+    "Personal Info": "個人資料",
+    "My Supporters": "我的支持者",
+    "My Subscription": "我的訂閱",
+    "Unnote Preimages": "取消原像",
+    "Clear Identity": "移除身份",
+    "Unregister": "取消註冊"
+  },
+  "manage": {
+    "Register to payment system": "註冊支付系統",
+    "Add Monthly Rate": "添加月費",
+    "Add Image (Optional)": "添加圖像（可選）",
+    "Label your image as sensitive content": "將您的圖像標記為敏感內容",
+    "On-chain Identity (Optional)": "鏈上身份（可選）",
+    "Committed Supporters": "承諾的支持者",
+    "Uncommitted Supporters": "未承諾的支持者",
+    "Committed subscribed Creators": "承諾已訂閱的創作者",
+    "Uncommitted subscribed Creators": "未承諾的已訂閱創作者"
+  }
 }

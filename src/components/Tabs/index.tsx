@@ -39,6 +39,7 @@ import RateForm from "../CreatorInfoForms/RateForm";
 import ImageForm from "../CreatorInfoForms/ImageForm";
 import IdentityForm from "../CreatorInfoForms/IdentityForm";
 import BasicTable from "../Table";
+import { useTranslation } from "react-i18next";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,
@@ -219,6 +220,7 @@ export const TabsMain = () => {
     useSupporters(signer?.address, currentRate, network);
 
   const { api } = useApi(network);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (identity) {
@@ -466,7 +468,9 @@ export const TabsMain = () => {
             {MANAGE_SECTIONS.map((x) => (
               <div>
                 <a href={x.id}>
-                  <SectionText isCicked={isCicked}>{x.title}</SectionText>
+                  <SectionText isCicked={isCicked}>
+                    {t(`manage sections.${x.title}`)}
+                  </SectionText>
                 </a>
               </div>
             ))}
@@ -483,7 +487,7 @@ export const TabsMain = () => {
               />
               <TitleWrapper>
                 <Title id={Payment_System.split(" ").join("")}>
-                  Register to payment system
+                  {t("manage.Register to payment system")}
                 </Title>
                 <Tooltip title="Register to Cryptopatronage payment system. Payment will automically transfer to your recipient account. (1% fee required)">
                   <img alt="question" src="/assets/icons/question.svg" />
@@ -547,10 +551,10 @@ export const TabsMain = () => {
                 </>
               </CreatorInfo>
               <SectionTitle id={My_Supporters.split(" ").join("")}>
-                My Supporters
+                {t("manage sections.My Supporters")}
               </SectionTitle>
               <TitleWrapper>
-                <Title>Committed Supporters</Title>
+                <Title>{t("manage.Committed Supporters")}</Title>
                 <Tooltip title="Supporters that are committed to transfer fund meets the rate. Creators can not pull payment manually once register to payment system">
                   <img alt="question" src="/assets/icons/question.svg" />
                 </Tooltip>
@@ -584,7 +588,7 @@ export const TabsMain = () => {
               )}
 
               <TitleWrapper>
-                <Title>Uncommitted Supporters</Title>
+                <Title>{t("manage.Uncommitted Supporters")}</Title>
                 <Tooltip title="Supporters that are not committed to transfer fund meets the rate">
                   <img alt="question" src="/assets/icons/question.svg" />
                 </Tooltip>
@@ -618,7 +622,7 @@ export const TabsMain = () => {
               )}
               <TitleWrapper>
                 <Title id={Clear_Identity.split(" ").join("")}>
-                  {Clear_Identity}
+                  {t("manage sections.Clear Identity")}
                 </Title>
                 <Tooltip title="Remove on-chain identity and get the refund">
                   <img alt="question" src="/assets/icons/question.svg" />
@@ -626,18 +630,20 @@ export const TabsMain = () => {
               </TitleWrapper>
               <InputWrapper>
                 <Button onClick={_clearIdentity} variant="contained">
-                  Clear Identity
+                  {t("manage sections.Clear Identity")}
                 </Button>
               </InputWrapper>
               <TitleWrapper>
-                <Title id={Unregister.split(" ").join("")}>{Unregister}</Title>
+                <Title id={Unregister.split(" ").join("")}>
+                  {t("manage sections.Unregister")}
+                </Title>
                 <Tooltip title="Remove on-chain identity and get the refund">
                   <img alt="question" src="/assets/icons/question.svg" />
                 </Tooltip>
               </TitleWrapper>
               <InputWrapper>
                 <Button onClick={_unregister} variant="contained">
-                  Unregister
+                  {t("manage sections.Unregister")}
                 </Button>
               </InputWrapper>
             </>
