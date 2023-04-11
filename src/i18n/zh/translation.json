@@ -26,6 +26,20 @@
     "Uncommitted Supporters": "未承諾的支持者",
     "Committed subscribed Creators": "承諾已訂閱的創作者",
     "Uncommitted subscribed Creators": "未承諾的已訂閱創作者",
-    "Clear Identity Content": "此行動將會移除您的鏈上身份，並且無法復原。您確定要繼續嗎？"
+    "Clear Identity Content": "此行動將會移除您的鏈上身份，並且無法復原。您確定要繼續嗎？",
+    "Display Name": "顯示名稱",
+    "Email": "郵件地址",
+    "Twitter": "推特網址",
+    "Web": "網站網址",
+    "Image Url": "圖片網址",
+    "hint": {
+      "Committed Supporters": "承諾按照比率轉帳的支持者。一旦註冊到支付系統，創作者不能手動提取款項。",
+      "Uncommitted Supporters": "未承諾按照比率轉帳的支持者",
+      "Clear Identity": "清除鏈上身份並獲得退款",
+      "Unregister": "移除月費率並獲得退款",
+      "Unnote Preimages": "撤回延遲代理的押金",
+      "Register to payment system": "註冊到Cryptopatronage支付系統。付款將自動轉入您的收款賬戶。(需要支付1%手續費)",
+      "Add Monthly Rate": "您每月需要多少費用，以讓某人成為您的支持者"
+    }
   }
 }
