@@ -1,9 +1,11 @@
 {
   "title": "會員驅動創造力",
+  "Rate": "月費率",
   "button": {
     "becomeCreator": "成為創作者",
     "create": "建立",
-    "connect": "連結錢包"
+    "connect": "連結錢包",
+    "subscribe": "訂閱"
   },
   "manage sections": {
     "Payment System": "支付系統",

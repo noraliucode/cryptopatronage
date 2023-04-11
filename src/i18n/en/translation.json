@@ -1,9 +1,11 @@
 {
   "title": "Membership driving creativity",
+  "Rate": "Monthly Rate",
   "button": {
     "becomeCreator": "Become a creator",
     "create": "Create",
-    "connect": "Connect"
+    "connect": "Connect",
+    "subscribe": "Subscribe"
   },
   "manage sections": {
     "Payment System": "Payment System",

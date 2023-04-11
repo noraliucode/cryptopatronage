@@ -18,6 +18,7 @@ import { ICreator, INetwork } from "../../utils/types";
 import { hexToString, isHex } from "@polkadot/util";
 import { Text } from "../../components/Tabs";
 import ShareIcon from "@mui/icons-material/Share";
+import { useTranslation } from "react-i18next";
 
 const CardImage = styled("div")(({ url }: { url: any }) => ({
   backgroundColor: "rgba(255, 255, 255, 0.4)",
@@ -62,6 +63,7 @@ const Creator: React.FC<Props> = ({
   onSubscribeClick,
 }) => {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   if (!creator) return <></>;
   const WrapperComponent = ({ children }: { children: React.ReactElement }) =>
@@ -113,7 +115,8 @@ const Creator: React.FC<Props> = ({
               </Text>
               {creator.rate && (
                 <Typography variant="body2" color="text.secondary">
-                  Rate: {formatUnit(Number(creator.rate), DECIMALS[network])}{" "}
+                  {t("Rate")}:{" "}
+                  {formatUnit(Number(creator.rate), DECIMALS[network])}{" "}
                   {SYMBOL[network]}
                 </Typography>
               )}
@@ -143,7 +146,7 @@ const Creator: React.FC<Props> = ({
               onClick={() => onSubscribeClick(creator.address)}
               size="small"
             >
-              <Text>Subscribe</Text>
+              <Text>{t("button.subscribe")}</Text>
             </Button>
           </CardActions>
           <CardActions>
