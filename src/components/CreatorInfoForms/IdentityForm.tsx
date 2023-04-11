@@ -7,6 +7,7 @@ import {
 } from "../../utils/constants";
 import { Title, TitleWrapper } from "../Tabs";
 import { hexToString, isHex } from "@polkadot/util";
+import { useTranslation } from "react-i18next";
 
 type IProps = {
   display: string;
@@ -26,6 +27,7 @@ const IdentityForm = ({
   web,
   handleInputChange,
 }: IProps) => {
+  const { t } = useTranslation();
   const value: any = {
     "Display Name": display,
     Email: email,
@@ -37,21 +39,23 @@ const IdentityForm = ({
       <TitleWrapper>
         <Title>On-chain Identity (Optional)</Title>
       </TitleWrapper>
-      {IDENTITY_LABELS.map((label) => (
-        <TextField
-          fullWidth
-          value={
-            label === DISPLAY_NAME && isHex(value[label])
-              ? hexToString(value[label])
-              : value[label]
-          }
-          id="standard-basic"
-          label={label}
-          variant="standard"
-          placeholder={PLACEHOLDER[label]}
-          onChange={(event) => handleInputChange(event, label)}
-        />
-      ))}
+      {IDENTITY_LABELS.map((label) => {
+        return (
+          <TextField
+            fullWidth
+            value={
+              label === DISPLAY_NAME && isHex(value[label])
+                ? hexToString(value[label])
+                : value[label]
+            }
+            id="standard-basic"
+            label={t(`manage.${label}`)}
+            variant="standard"
+            placeholder={PLACEHOLDER[label]}
+            onChange={(event) => handleInputChange(event, label)}
+          />
+        );
+      })}
     </>
   );
 };

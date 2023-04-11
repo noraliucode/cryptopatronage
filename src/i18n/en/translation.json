@@ -1,9 +1,11 @@
 {
   "title": "Membership driving creativity",
+  "Rate": "Monthly Rate",
   "button": {
-    "become_Creator": "Become a creator",
+    "becomeCreator": "Become a creator",
     "create": "Create",
-    "connect": "Connect"
+    "connect": "Connect",
+    "subscribe": "Subscribe"
   },
   "manage sections": {
     "Payment System": "Payment System",
@@ -24,6 +26,20 @@
     "Uncommitted Supporters": "Uncommitted Supporters",
     "Committed subscribed Creators": "Committed subscribed Creators",
     "Uncommitted subscribed Creators": "Uncommitted subscribed Creators",
-    "Clear Identity Content": "This action will irreversibly remove your on-chain identity. Are you sure you want to continue?"
+    "Clear Identity Content": "This action will irreversibly remove your on-chain identity. Are you sure you want to continue?",
+    "Display Name": "Display Name",
+    "Email": "Email",
+    "Twitter": "Twitter",
+    "Web": "Web",
+    "Image Url": "Image Url",
+    "hint": {
+      "Committed Supporters": "Supporters that are committed to transfer fund meets the rate. Creators can not pull payment manually once register to payment system",
+      "Uncommitted Supporters": "Supporters that are not committed to transfer fund meets the rate",
+      "Clear Identity": "Remove on-chain identity and get the refund",
+      "Unregister": "Remove Monthly Rate and get the refund",
+      "Unnote Preimages": "Withdraw the deposit for delay proxy",
+      "Register to payment system": "Register to Cryptopatronage payment system. Payment will automically transfer to your recipient account. (1% fee required)",
+      "Add Monthly Rate": "How much you require, monthly, for someone to be your supporter"
+    }
   }
 }
