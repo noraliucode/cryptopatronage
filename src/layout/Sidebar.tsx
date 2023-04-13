@@ -164,7 +164,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
               // const Icon = item.icon;
 
               return (
-                <StyledLink to={`creators/${item.creator}`}>
+                <StyledLink to={`/creators/${item.creator}`}>
                   <ListItem
                     key={item.creator}
                     disablePadding

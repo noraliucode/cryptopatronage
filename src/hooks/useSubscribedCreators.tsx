@@ -2,7 +2,7 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { useEffect, useState } from "react";
 import { APIService } from "../services/apiService";
 import { NODE_ENDPOINT } from "../utils/constants";
-import { parseSupporterProxies } from "../utils/helpers";
+import { parseEssentialInfo, parseSupporterProxies } from "../utils/helpers";
 import { INetwork, IProxyParsedCreators } from "../utils/types";
 
 interface IState {
@@ -42,6 +42,17 @@ export const useSubscribedCreators = (supporter = "", network: INetwork) => {
       //     );
       //   }
       // });
+
+      const identities = await apiService.getIdentities(
+        committedCreators.map((x) => x.creator)
+      );
+      identities.map((x: any, index: number) => {
+        const essentialInfo = parseEssentialInfo(x.toHuman()?.info);
+        committedCreators[index] = {
+          ...committedCreators[index],
+          display: essentialInfo.display,
+        };
+      });
 
       setState((prev) => ({
         ...prev,
