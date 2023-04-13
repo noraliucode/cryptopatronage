@@ -18,6 +18,7 @@ import { useSubscribedCreators } from "../hooks/useSubscribedCreators";
 import { useWeb3ConnectedContext } from "../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../utils/types";
 import { Title, Text } from "../components/Tabs";
+import { stringShorten } from "@polkadot/util";
 
 export const drawerWidth = 240;
 
@@ -188,7 +189,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                         {/* <Icon /> */}
                       </ListItemIcon>
                       <ListItemText
-                        primary={item.creator}
+                        primary={item.display || stringShorten(item.creator, 5)}
                         sx={{ opacity: open ? 1 : 0 }}
                       />
                     </ListItemButton>
