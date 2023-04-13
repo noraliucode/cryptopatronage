@@ -14,6 +14,10 @@ import { NavigationBar } from "../components/NavigationBar";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { SIDE_BAR, SOCIAL_ITEMS } from "../utils/constants";
 import { Link as StyledLink } from "../components/Link";
+import { useSubscribedCreators } from "../hooks/useSubscribedCreators";
+import { useWeb3ConnectedContext } from "../context/Web3ConnectedContext";
+import { IWeb3ConnectedContextState } from "../utils/types";
+import { Title, Text } from "../components/Tabs";
 
 export const drawerWidth = 240;
 
@@ -72,6 +76,22 @@ const Link = styled("a")(() => ({
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = React.useState(false);
+  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const handleListItemClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    index: number
+  ) => {
+    setSelectedIndex(index);
+  };
+
+  const { signer, network }: IWeb3ConnectedContextState =
+    useWeb3ConnectedContext();
+
+  const { committedCreators, uncommittedCreators, getSubscribedCreators } =
+    useSubscribedCreators(signer?.address, network);
+
+  console.log("committedCreators", committedCreators);
+  console.log("uncommittedCreators", uncommittedCreators);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -133,6 +153,50 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
               </StyledLink>
             );
           })}
+        </List>
+        <Divider />
+        <Title>
+          <Text>My Subscribtion</Text>
+        </Title>
+        <List>
+          {committedCreators &&
+            committedCreators.map((item, index) => {
+              // const Icon = item.icon;
+
+              return (
+                <StyledLink to={`creators/${item.creator}`}>
+                  <ListItem
+                    key={item.creator}
+                    disablePadding
+                    sx={{ display: "block" }}
+                  >
+                    <ListItemButton
+                      selected={selectedIndex === index}
+                      onClick={(event) => handleListItemClick(event, index)}
+                      sx={{
+                        minHeight: 48,
+                        justifyContent: open ? "initial" : "center",
+                        px: 2.5,
+                      }}
+                    >
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: open ? 3 : "auto",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {/* <Icon /> */}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={item.creator}
+                        sx={{ opacity: open ? 1 : 0 }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </StyledLink>
+              );
+            })}
         </List>
         <Divider />
         <List>
