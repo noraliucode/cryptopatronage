@@ -159,7 +159,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 
         {!open && (
           <List>
-            <ListItemButton sx={listItemButtonStyle}>
+            <ListItemButton sx={listItemButtonStyle} onClick={handleDrawerOpen}>
               <ListItemIcon sx={listItemIconStyle}>
                 <CardMembershipIcon />
               </ListItemIcon>
