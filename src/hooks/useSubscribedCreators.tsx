@@ -2,7 +2,7 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { useEffect, useState } from "react";
 import { APIService } from "../services/apiService";
 import { NODE_ENDPOINT } from "../utils/constants";
-import { parseSupporterProxies } from "../utils/helpers";
+import { parseEssentialInfo, parseSupporterProxies } from "../utils/helpers";
 import { INetwork, IProxyParsedCreators } from "../utils/types";
 
 interface IState {
@@ -10,11 +10,7 @@ interface IState {
   uncommittedCreators: IProxyParsedCreators;
 }
 
-export const useSubscribedCreators = (
-  supporter = "",
-  rate: number,
-  network: INetwork
-) => {
+export const useSubscribedCreators = (supporter = "", network: INetwork) => {
   const [state, setState] = useState<IState>({
     committedCreators: [],
     uncommittedCreators: [],
@@ -31,23 +27,36 @@ export const useSubscribedCreators = (
         supporter,
         network
       );
-      const balances = await apiService.getBalances(
-        committedCreators.map((proxy: any) => proxy.pure)
-      );
 
-      const _committedCreators = committedCreators.filter((creator, index) => {
-        if (creator.creator) {
-          return (
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            balances[index].data.free.toNumber() >= rate
-          );
-        }
+      // TODO: creators can pull payment anytime, so the balance is not necessarily greater than rate. The code below can be deleted later.
+      // const balances = await apiService.getBalances(
+      //   committedCreators.map((proxy: any) => proxy.pure)
+      // );
+
+      // const _committedCreators = committedCreators.filter((creator, index) => {
+      //   if (creator.creator) {
+      //     return (
+      //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //       // @ts-ignore
+      //       balances[index].data.free.toNumber() >= rate
+      //     );
+      //   }
+      // });
+
+      const identities = await apiService.getIdentities(
+        committedCreators.map((x) => x.creator)
+      );
+      identities.map((x: any, index: number) => {
+        const essentialInfo = parseEssentialInfo(x.toHuman()?.info);
+        committedCreators[index] = {
+          ...committedCreators[index],
+          display: essentialInfo.display,
+        };
       });
 
       setState((prev) => ({
         ...prev,
-        committedCreators: _committedCreators,
+        committedCreators,
         uncommittedCreators,
       }));
     } catch (error) {
@@ -56,6 +65,6 @@ export const useSubscribedCreators = (
   };
   useEffect(() => {
     getSubscribedCreators();
-  }, [supporter, rate, network]);
+  }, [supporter, network]);
   return { ...state, getSubscribedCreators };
 };

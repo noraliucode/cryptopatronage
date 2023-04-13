@@ -14,6 +14,12 @@ import { NavigationBar } from "../components/NavigationBar";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { SIDE_BAR, SOCIAL_ITEMS } from "../utils/constants";
 import { Link as StyledLink } from "../components/Link";
+import { useSubscribedCreators } from "../hooks/useSubscribedCreators";
+import { useWeb3ConnectedContext } from "../context/Web3ConnectedContext";
+import { IWeb3ConnectedContextState } from "../utils/types";
+import { Title, Text } from "../components/Tabs";
+import { stringShorten } from "@polkadot/util";
+import CardMembershipIcon from "@mui/icons-material/CardMembership";
 
 export const drawerWidth = 240;
 
@@ -70,8 +76,34 @@ const Link = styled("a")(() => ({
   textDecoration: "none",
 }));
 
+const MarginLeftWrapper = styled("a")(() => ({
+  marginLeft: 10,
+}));
+
+const SectionTitle = styled("div")(({ theme }) => ({
+  color: theme.palette.text.primary,
+  fontSize: 14,
+  margin: 14,
+  textAlign: "left",
+}));
+
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = React.useState(false);
+  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const handleListItemClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    index: number
+  ) => {
+    setSelectedIndex(index);
+  };
+
+  const { signer, network }: IWeb3ConnectedContextState =
+    useWeb3ConnectedContext();
+
+  const { committedCreators, uncommittedCreators } = useSubscribedCreators(
+    signer?.address,
+    network
+  );
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -79,6 +111,18 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const listItemButtonStyle = {
+    minHeight: 48,
+    justifyContent: open ? "initial" : "center",
+    px: 2.5,
+  };
+
+  const listItemIconStyle = {
+    minWidth: 0,
+    mr: open ? 3 : "auto",
+    justifyContent: "center",
   };
 
   return (
@@ -108,20 +152,8 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                   disablePadding
                   sx={{ display: "block" }}
                 >
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
+                  <ListItemButton sx={listItemButtonStyle}>
+                    <ListItemIcon sx={listItemIconStyle}>
                       <Icon />
                     </ListItemIcon>
                     <ListItemText
@@ -135,6 +167,57 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
           })}
         </List>
         <Divider />
+
+        {!open && (
+          <List>
+            <ListItemButton sx={listItemButtonStyle} onClick={handleDrawerOpen}>
+              <ListItemIcon sx={listItemIconStyle}>
+                <CardMembershipIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={"My Subscribtion"}
+                sx={{ opacity: open ? 1 : 0 }}
+              />
+            </ListItemButton>
+          </List>
+        )}
+        {open && (
+          <MarginLeftWrapper>
+            <SectionTitle>My Subscribtion</SectionTitle>
+          </MarginLeftWrapper>
+        )}
+        {open && committedCreators && (
+          <List>
+            {committedCreators.map((item, index) => {
+              // const Icon = item.icon;
+
+              return (
+                <StyledLink to={`/creators/${item.creator}`}>
+                  <ListItem
+                    key={item.creator}
+                    disablePadding
+                    sx={{ display: "block" }}
+                  >
+                    <ListItemButton
+                      selected={selectedIndex === index}
+                      onClick={(event) => handleListItemClick(event, index)}
+                      sx={listItemButtonStyle}
+                    >
+                      <ListItemIcon sx={listItemIconStyle}>
+                        {/* <Icon /> */}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={item.display || stringShorten(item.creator, 5)}
+                        sx={{ opacity: open ? 1 : 0 }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </StyledLink>
+              );
+            })}
+          </List>
+        )}
+        <Divider />
         <List>
           {SOCIAL_ITEMS.map((item, index) => {
             const Icon = item.icon;
@@ -146,20 +229,8 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                 key={item.href}
               >
                 <ListItem key={item.label} disablePadding>
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
+                  <ListItemButton sx={listItemButtonStyle}>
+                    <ListItemIcon sx={listItemIconStyle}>
                       <Icon />
                     </ListItemIcon>
                     <ListItemText

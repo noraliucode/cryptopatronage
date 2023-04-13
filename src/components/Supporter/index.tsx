@@ -48,7 +48,7 @@ export const Supporter = () => {
     useWeb3ConnectedContext();
 
   const { committedCreators, uncommittedCreators, getSubscribedCreators } =
-    useSubscribedCreators(signer?.address, rate, network);
+    useSubscribedCreators(signer?.address, network);
 
   const { api } = useApi(network);
   const { t } = useTranslation();
