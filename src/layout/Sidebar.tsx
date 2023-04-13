@@ -19,6 +19,7 @@ import { useWeb3ConnectedContext } from "../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../utils/types";
 import { Title, Text } from "../components/Tabs";
 import { stringShorten } from "@polkadot/util";
+import CardMembershipIcon from "@mui/icons-material/CardMembership";
 
 export const drawerWidth = 240;
 
@@ -101,6 +102,18 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
     setOpen(false);
   };
 
+  const listItemButtonStyle = {
+    minHeight: 48,
+    justifyContent: open ? "initial" : "center",
+    px: 2.5,
+  };
+
+  const listItemIconStyle = {
+    minWidth: 0,
+    mr: open ? 3 : "auto",
+    justifyContent: "center",
+  };
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -173,19 +186,9 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                     <ListItemButton
                       selected={selectedIndex === index}
                       onClick={(event) => handleListItemClick(event, index)}
-                      sx={{
-                        minHeight: 48,
-                        justifyContent: open ? "initial" : "center",
-                        px: 2.5,
-                      }}
+                      sx={listItemButtonStyle}
                     >
-                      <ListItemIcon
-                        sx={{
-                          minWidth: 0,
-                          mr: open ? 3 : "auto",
-                          justifyContent: "center",
-                        }}
-                      >
+                      <ListItemIcon sx={listItemIconStyle}>
                         {/* <Icon /> */}
                       </ListItemIcon>
                       <ListItemText
