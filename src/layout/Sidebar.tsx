@@ -76,6 +76,17 @@ const Link = styled("a")(() => ({
   textDecoration: "none",
 }));
 
+const MarginLeftWrapper = styled("a")(() => ({
+  marginLeft: 10,
+}));
+
+const SectionTitle = styled("div")(({ theme }) => ({
+  color: theme.palette.text.primary,
+  fontSize: 14,
+  margin: 14,
+  textAlign: "left",
+}));
+
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(1);
@@ -171,9 +182,9 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
           </List>
         )}
         {open && (
-          <Title>
-            <Text>My Subscribtion</Text>
-          </Title>
+          <MarginLeftWrapper>
+            <SectionTitle>My Subscribtion</SectionTitle>
+          </MarginLeftWrapper>
         )}
         {open && committedCreators && (
           <List>
