@@ -87,11 +87,10 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
   const { signer, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
 
-  const { committedCreators, uncommittedCreators, getSubscribedCreators } =
-    useSubscribedCreators(signer?.address, network);
-
-  console.log("committedCreators", committedCreators);
-  console.log("uncommittedCreators", uncommittedCreators);
+  const { committedCreators, uncommittedCreators } = useSubscribedCreators(
+    signer?.address,
+    network
+  );
 
   const handleDrawerOpen = () => {
     setOpen(true);
