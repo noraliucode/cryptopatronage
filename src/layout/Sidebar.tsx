@@ -168,12 +168,28 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
           })}
         </List>
         <Divider />
-        <Title>
-          <Text>My Subscribtion</Text>
-        </Title>
-        <List>
-          {committedCreators &&
-            committedCreators.map((item, index) => {
+
+        {!open && (
+          <List>
+            <ListItemButton sx={listItemButtonStyle}>
+              <ListItemIcon sx={listItemIconStyle}>
+                <CardMembershipIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary={"My Subscribtion"}
+                sx={{ opacity: open ? 1 : 0 }}
+              />
+            </ListItemButton>
+          </List>
+        )}
+        {open && (
+          <Title>
+            <Text>My Subscribtion</Text>
+          </Title>
+        )}
+        {open && committedCreators && (
+          <List>
+            {committedCreators.map((item, index) => {
               // const Icon = item.icon;
 
               return (
@@ -200,7 +216,8 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                 </StyledLink>
               );
             })}
-        </List>
+          </List>
+        )}
         <Divider />
         <List>
           {SOCIAL_ITEMS.map((item, index) => {
