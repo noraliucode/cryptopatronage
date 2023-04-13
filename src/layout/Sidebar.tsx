@@ -141,20 +141,8 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                   disablePadding
                   sx={{ display: "block" }}
                 >
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
+                  <ListItemButton sx={listItemButtonStyle}>
+                    <ListItemIcon sx={listItemIconStyle}>
                       <Icon />
                     </ListItemIcon>
                     <ListItemText
@@ -230,20 +218,8 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                 key={item.href}
               >
                 <ListItem key={item.label} disablePadding>
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
+                  <ListItemButton sx={listItemButtonStyle}>
+                    <ListItemIcon sx={listItemIconStyle}>
                       <Icon />
                     </ListItemIcon>
                     <ListItemText
