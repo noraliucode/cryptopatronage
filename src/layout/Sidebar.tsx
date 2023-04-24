@@ -20,6 +20,7 @@ import { IWeb3ConnectedContextState } from "../utils/types";
 import { Title, Text } from "../components/Tabs";
 import { stringShorten } from "@polkadot/util";
 import CardMembershipIcon from "@mui/icons-material/CardMembership";
+import { useTranslation } from "react-i18next";
 
 export const drawerWidth = 240;
 
@@ -105,6 +106,8 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
     network
   );
 
+  const { t } = useTranslation();
+
   const isShowSubscribedCreators =
     open && (committedCreators.length > 0 || uncommittedCreators.length > 0);
 
@@ -160,7 +163,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                       <Icon />
                     </ListItemIcon>
                     <ListItemText
-                      primary={item.label}
+                      primary={t(`sidebar.${item.label}`)}
                       sx={{ opacity: open ? 1 : 0 }}
                     />
                   </ListItemButton>
