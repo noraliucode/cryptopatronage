@@ -64,5 +64,9 @@
       "content4": "If you want to have an experience similar to traditional crowdfunding websites, we (will soon) provide automatic payment execution as an always-optional, fee-added service, at a rate that outcompetes all comparable non-blockchain-based equivalents.",
       "italic_content": "We do not yet provide any service to cash out your crypto to fiat money, so, in practice if you do not already have affordable channels available for you to do so, we are likely not a solution that is right for you! CryptoPatronage is more useful, however, if you are based in any jurisdiction that has ready access to physical ways to cash out your crypto, has a community that accepts crypto for payment, or you simply want to get paid in and hold cryptocurrency instead of cash."
     }
+  },
+  "sidebar": {
+    "Explore": "Explore",
+    "Manage": "Manage"
   }
 }
