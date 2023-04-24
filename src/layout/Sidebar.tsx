@@ -105,6 +105,9 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
     network
   );
 
+  const isShowSubscribedCreators =
+    open && (committedCreators.length > 0 || uncommittedCreators.length > 0);
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -181,7 +184,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
             </ListItemButton>
           </List>
         )}
-        {open && (
+        {isShowSubscribedCreators && (
           <MarginLeftWrapper>
             <SectionTitle>My Subscribtion</SectionTitle>
           </MarginLeftWrapper>
@@ -217,7 +220,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
             })}
           </List>
         )}
-        <Divider />
+        {isShowSubscribedCreators && <Divider />}
         <List>
           {SOCIAL_ITEMS.map((item, index) => {
             const Icon = item.icon;
