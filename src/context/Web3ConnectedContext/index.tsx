@@ -5,15 +5,15 @@ import {
   web3FromAddress,
 } from "@polkadot/extension-dapp";
 import { IInjector, IWeb3ConnectedContextState } from "../../utils/types";
-import { APP_SESSION, DEFAULT_NETWORK } from "../../utils/constants";
+import { APP_SESSION, DEFAULT_NETWORK, NETWORK } from "../../utils/constants";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import { useLocation } from "react-router-dom";
 
 interface IProps {
   children?: React.ReactElement;
 }
 
 const SIGNER = "signer";
-const NETWORK = "network";
 const SELECTED_WALLET = "selectedWallet";
 const IS_SHOW_SENSITIVE_CONTENT = "isShowSensitiveContent";
 
@@ -21,6 +21,11 @@ const Web3ConnectedContext = createContext<IWeb3ConnectedContextState>(null!);
 const useWeb3ConnectedContext = () => useContext(Web3ConnectedContext);
 
 const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const networkParamFromUrl = queryParams.get(NETWORK) as any;
+  const networkParam = networkParamFromUrl || DEFAULT_NETWORK;
+
   const setValue = (
     value: string | InjectedAccountWithMeta | boolean,
     key: string
@@ -58,6 +63,10 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
   const connector = localStorage.getItem(APP_SESSION);
   let allAccounts = [] as any;
   let extensions = [] as any;
+
+  useEffect(() => {
+    setNetwork(networkParam);
+  }, []);
 
   const getAccounts = async () => {
     try {

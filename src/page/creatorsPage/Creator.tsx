@@ -78,7 +78,7 @@ const Creator: React.FC<Props> = ({
   const onShareClick = () => {
     setOpen(true);
     navigator.clipboard.writeText(
-      `${window.location.host}/creators/${creator.address}`
+      `${window.location.host}/creators/${creator.address}/?network=${network}`
     );
   };
 
