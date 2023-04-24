@@ -55,7 +55,7 @@ type IState = {
 };
 
 type IProps = {
-  setSigner: (_: InjectedAccountWithMeta) => void;
+  setSigner: (_: InjectedAccountWithMeta | null) => void;
   signer: InjectedAccountWithMeta | null;
   accounts: IAccounts;
   network: string;
@@ -115,6 +115,7 @@ export const SignerSelector = ({
   };
 
   const disconnect = () => {
+    setSigner(null);
     localStorage.removeItem(APP_SESSION);
     handleClose();
   };

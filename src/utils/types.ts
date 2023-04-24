@@ -40,7 +40,7 @@ export type IWeb3ConnectedContextState = {
   accounts: IAccounts;
   signer: InjectedAccountWithMeta | null;
   injector: IInjector;
-  setSigner: (value: InjectedAccountWithMeta) => void;
+  setSigner: (value: InjectedAccountWithMeta | null) => void;
   setNetwork: (value: string) => any;
   selectedWallet: string;
   setSelectedWallet: (value: string) => any;
