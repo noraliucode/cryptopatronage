@@ -18,6 +18,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Divider, IconButton } from "@mui/material";
 import { DesktopContentWarpper } from "../NavigationBar";
 import { useTranslation } from "react-i18next";
+import ConnectButton from "../ConnectButton";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -125,19 +126,6 @@ export const SignerSelector = ({
   // 'polkadot', 'substrate' (default), 'beachball' or 'jdenticon'
   const theme = "polkadot";
 
-  const renderWalletModal = () => {
-    return (
-      <>
-        <WalletModal open={walletModalOpen} onClose={toogleModal} />
-        <Button variant="contained" onClick={toogleModal}>
-          <AccountBalanceWalletIcon />
-          &nbsp;
-          {t("button.connect")}
-        </Button>
-      </>
-    );
-  };
-
   const renderWallet = () => {
     if (!signer) return;
     return (
@@ -223,9 +211,11 @@ export const SignerSelector = ({
 
   return (
     <>
-      {connector && accounts && accounts.length > 0
-        ? renderWallet()
-        : renderWalletModal()}
+      {connector && accounts && accounts.length > 0 ? (
+        renderWallet()
+      ) : (
+        <ConnectButton />
+      )}
     </>
   );
 };
