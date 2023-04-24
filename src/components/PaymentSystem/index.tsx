@@ -5,7 +5,7 @@ import { useCreators } from "../../hooks/useCreators";
 import { DECIMALS } from "../../utils/constants";
 import { formatUnit, toShortAddress } from "../../utils/helpers";
 import { IWeb3ConnectedContextState } from "../../utils/types";
-import { Text } from "../Tabs";
+import { Text } from "../Manage";
 const Wrapper = styled("div")(() => ({
   marginTop: "15px",
 }));

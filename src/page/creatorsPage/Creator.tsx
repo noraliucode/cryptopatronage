@@ -16,7 +16,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import { ICreator, INetwork } from "../../utils/types";
 import { hexToString, isHex } from "@polkadot/util";
-import { Text } from "../../components/Tabs";
+import { Text } from "../../components/Manage";
 import ShareIcon from "@mui/icons-material/Share";
 import { useTranslation } from "react-i18next";
 

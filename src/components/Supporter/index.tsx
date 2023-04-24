@@ -18,7 +18,7 @@ import {
   Content,
   SpaceBetweenWrapper,
   SectionTitle,
-} from "../Tabs";
+} from "../Manage";
 
 type IState = {
   rate: number;

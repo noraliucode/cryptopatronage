@@ -167,7 +167,7 @@ type IState = {
   isClearIdentityModalOpen: boolean;
 };
 
-export const TabsMain = () => {
+export const Manage = () => {
   const defaultState = {
     value: 0,
     anonymous: "",

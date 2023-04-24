@@ -5,7 +5,7 @@ import "./App.css";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { Layout } from "./layout";
 import { CreatorsPage } from "./page/creatorsPage";
-import { TabsMain } from "./components/Tabs";
+import { Manage } from "./components/Manage";
 import { AboutPage } from "./page/aboutPage";
 import Create from "./components/Create";
 
@@ -18,7 +18,7 @@ function App() {
           element={
             // TODO: refactor to render router
             <Layout>
-              <TabsMain />
+              <Manage />
             </Layout>
           }
         />

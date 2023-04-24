@@ -18,7 +18,7 @@ import { findPure, formatUnit } from "../../utils/helpers";
 import { subscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Modal } from "../Modal";
-import { CheckWrapper, Text } from "../Tabs";
+import { CheckWrapper, Text } from "../Manage";
 
 type IProps = {
   open: boolean;
