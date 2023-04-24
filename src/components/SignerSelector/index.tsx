@@ -2,22 +2,19 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { renderAddress, toShortAddress } from "../../utils/helpers";
+import { renderAddress } from "../../utils/helpers";
 import { IAccounts } from "../../utils/types";
-import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import Identicon from "@polkadot/react-identicon";
 import { styled } from "@mui/material/styles";
-import { Keyring } from "@polkadot/keyring";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import config from "../../utils/ss58-registry.json";
 import { Hash } from "@polkadot/types/interfaces/runtime/types";
-import { WalletModal } from "../WalletModal";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import { APP_SESSION } from "../../utils/constants";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Divider, IconButton } from "@mui/material";
 import { DesktopContentWarpper } from "../NavigationBar";
 import { useTranslation } from "react-i18next";
+import ConnectButton from "../ConnectButton";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
@@ -55,7 +52,7 @@ type IState = {
 };
 
 type IProps = {
-  setSigner: (_: InjectedAccountWithMeta) => void;
+  setSigner: (_: InjectedAccountWithMeta | null) => void;
   signer: InjectedAccountWithMeta | null;
   accounts: IAccounts;
   network: string;
@@ -115,6 +112,7 @@ export const SignerSelector = ({
   };
 
   const disconnect = () => {
+    setSigner(null);
     localStorage.removeItem(APP_SESSION);
     handleClose();
   };
@@ -123,19 +121,6 @@ export const SignerSelector = ({
   // theme (optional), depicts the type of icon, one of
   // 'polkadot', 'substrate' (default), 'beachball' or 'jdenticon'
   const theme = "polkadot";
-
-  const renderWalletModal = () => {
-    return (
-      <>
-        <WalletModal open={walletModalOpen} onClose={toogleModal} />
-        <Button variant="contained" onClick={toogleModal}>
-          <AccountBalanceWalletIcon />
-          &nbsp;
-          {t("button.connect")}
-        </Button>
-      </>
-    );
-  };
 
   const renderWallet = () => {
     if (!signer) return;
@@ -222,9 +207,11 @@ export const SignerSelector = ({
 
   return (
     <>
-      {connector && accounts && accounts.length > 0
-        ? renderWallet()
-        : renderWalletModal()}
+      {connector && accounts && accounts.length > 0 ? (
+        renderWallet()
+      ) : (
+        <ConnectButton />
+      )}
     </>
   );
 };

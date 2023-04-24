@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { SYMBOL } from "../../utils/constants";
 import { INetwork } from "../../utils/types";
-import { Title, TitleWrapper } from "../Tabs";
+import { Title, TitleWrapper } from "../Manage";
 
 type IProps = {
   rate: any;

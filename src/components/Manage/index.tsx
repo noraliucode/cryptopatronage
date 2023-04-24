@@ -1,4 +1,12 @@
-import { Box, Tabs, Tab, Tooltip, CircularProgress, Grid } from "@mui/material";
+import {
+  Box,
+  Tabs,
+  Tab,
+  Tooltip,
+  CircularProgress,
+  Grid,
+  Typography,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
@@ -40,6 +48,7 @@ import ImageForm from "../CreatorInfoForms/ImageForm";
 import IdentityForm from "../CreatorInfoForms/IdentityForm";
 import BasicTable from "../Table";
 import { useTranslation } from "react-i18next";
+import ConnectButton from "../ConnectButton";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,
@@ -147,6 +156,12 @@ export const SectionText = styled("div")(
   })
 );
 
+export const ConnectButtonText = styled("div")(({ theme }) => ({
+  margin: 20,
+  marginTop: 50,
+  fontSize: 20,
+}));
+
 type IState = {
   value: number;
   anonymous: string;
@@ -167,7 +182,7 @@ type IState = {
   isClearIdentityModalOpen: boolean;
 };
 
-export const TabsMain = () => {
+export const Manage = () => {
   const defaultState = {
     value: 0,
     anonymous: "",
@@ -463,6 +478,17 @@ export const TabsMain = () => {
     committedSupporters && committedSupporters.length > 0 && isCreator;
   const isShowUncommittedSupporters =
     uncommittedSupporters && uncommittedSupporters.length > 0 && isCreator;
+
+  if (!signer)
+    return (
+      <Root>
+        <ConnectButtonText>
+          Connect to view your manage details
+        </ConnectButtonText>
+        <ConnectButton />
+      </Root>
+    );
+
   return (
     <Root>
       <Modal

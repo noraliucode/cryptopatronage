@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import MuiAppBar from "@mui/material/AppBar";
 import { styled, useTheme } from "@mui/material/styles";
-import { Text } from "../Tabs";
+import { Text } from "../Manage";
 import { useState } from "react";
 import { Drawer } from "../Drawer";
 import MenuIcon from "@mui/icons-material/Menu";

@@ -27,7 +27,7 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
   const networkParam = networkParamFromUrl || DEFAULT_NETWORK;
 
   const setValue = (
-    value: string | InjectedAccountWithMeta | boolean,
+    value: string | InjectedAccountWithMeta | boolean | null,
     key: string
   ) => {
     setState((prev: IWeb3ConnectedContextState) => ({ ...prev, [key]: value }));

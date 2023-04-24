@@ -17,7 +17,7 @@ import { Link as StyledLink } from "../components/Link";
 import { useSubscribedCreators } from "../hooks/useSubscribedCreators";
 import { useWeb3ConnectedContext } from "../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../utils/types";
-import { Title, Text } from "../components/Tabs";
+import { Title, Text } from "../components/Manage";
 import { stringShorten } from "@polkadot/util";
 import CardMembershipIcon from "@mui/icons-material/CardMembership";
 import { useTranslation } from "react-i18next";
