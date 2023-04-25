@@ -88,6 +88,12 @@ const SectionTitle = styled("div")(({ theme }) => ({
   textAlign: "left",
 }));
 
+const DesktopOnly = styled("div")(({ theme }) => ({
+  [theme.breakpoints.down("md")]: {
+    display: "none",
+  },
+}));
+
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = React.useState(true);
   const [selectedIndex, setSelectedIndex] = React.useState(1);
@@ -131,81 +137,32 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <NavigationBar />
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={toggleDrawer}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
+      <DesktopOnly>
+        <Drawer variant="permanent" open={open}>
+          <DrawerHeader>
+            <IconButton onClick={toggleDrawer}>
+              <ChevronLeftIcon />
+            </IconButton>
+          </DrawerHeader>
+          <Divider />
 
-        <List>
-          {SIDE_BAR.map((item, index) => {
-            const Icon = item.icon;
-
-            return (
-              <StyledLink to={item.link}>
-                <ListItem
-                  key={item.label}
-                  disablePadding
-                  sx={{ display: "block" }}
-                >
-                  <ListItemButton sx={listItemButtonStyle}>
-                    <ListItemIcon sx={listItemIconStyle}>
-                      <Icon />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={t(`sidebar.${item.label}`)}
-                      sx={{ opacity: open ? 1 : 0 }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              </StyledLink>
-            );
-          })}
-        </List>
-        <Divider />
-
-        {!open && (
           <List>
-            <ListItemButton sx={listItemButtonStyle} onClick={toggleDrawer}>
-              <ListItemIcon sx={listItemIconStyle}>
-                <CardMembershipIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary={"My Subscribtion"}
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </List>
-        )}
-        {isShowSubscribedCreators && (
-          <MarginLeftWrapper>
-            <SectionTitle>My Subscribtion</SectionTitle>
-          </MarginLeftWrapper>
-        )}
-        {open && committedCreators && (
-          <List>
-            {committedCreators.map((item, index) => {
-              // const Icon = item.icon;
+            {SIDE_BAR.map((item, index) => {
+              const Icon = item.icon;
 
               return (
-                <StyledLink to={`/creators/${item.creator}`}>
+                <StyledLink to={item.link}>
                   <ListItem
-                    key={item.creator}
+                    key={item.label}
                     disablePadding
                     sx={{ display: "block" }}
                   >
-                    <ListItemButton
-                      selected={selectedIndex === index}
-                      onClick={(event) => handleListItemClick(event, index)}
-                      sx={listItemButtonStyle}
-                    >
+                    <ListItemButton sx={listItemButtonStyle}>
                       <ListItemIcon sx={listItemIconStyle}>
-                        {/* <Icon /> */}
+                        <Icon />
                       </ListItemIcon>
                       <ListItemText
-                        primary={item.display || stringShorten(item.creator, 5)}
+                        primary={t(`sidebar.${item.label}`)}
                         sx={{ opacity: open ? 1 : 0 }}
                       />
                     </ListItemButton>
@@ -214,34 +171,87 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
               );
             })}
           </List>
-        )}
-        {isShowSubscribedCreators && <Divider />}
-        <List>
-          {SOCIAL_ITEMS.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                target="_blank"
-                rel="noreferrer"
-                href={item.href}
-                key={item.href}
-              >
-                <ListItem key={item.label} disablePadding>
-                  <ListItemButton sx={listItemButtonStyle}>
-                    <ListItemIcon sx={listItemIconStyle}>
-                      <Icon />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={item.label}
-                      sx={{ opacity: open ? 1 : 0 }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              </Link>
-            );
-          })}
-        </List>
-      </Drawer>
+          <Divider />
+
+          {!open && (
+            <List>
+              <ListItemButton sx={listItemButtonStyle} onClick={toggleDrawer}>
+                <ListItemIcon sx={listItemIconStyle}>
+                  <CardMembershipIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={"My Subscribtion"}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </List>
+          )}
+          {isShowSubscribedCreators && (
+            <MarginLeftWrapper>
+              <SectionTitle>My Subscribtion</SectionTitle>
+            </MarginLeftWrapper>
+          )}
+          {open && committedCreators && (
+            <List>
+              {committedCreators.map((item, index) => {
+                // const Icon = item.icon;
+
+                return (
+                  <StyledLink to={`/creators/${item.creator}`}>
+                    <ListItem
+                      key={item.creator}
+                      disablePadding
+                      sx={{ display: "block" }}
+                    >
+                      <ListItemButton
+                        selected={selectedIndex === index}
+                        onClick={(event) => handleListItemClick(event, index)}
+                        sx={listItemButtonStyle}
+                      >
+                        <ListItemIcon sx={listItemIconStyle}>
+                          {/* <Icon /> */}
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={
+                            item.display || stringShorten(item.creator, 5)
+                          }
+                          sx={{ opacity: open ? 1 : 0 }}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  </StyledLink>
+                );
+              })}
+            </List>
+          )}
+          {isShowSubscribedCreators && <Divider />}
+          <List>
+            {SOCIAL_ITEMS.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  target="_blank"
+                  rel="noreferrer"
+                  href={item.href}
+                  key={item.href}
+                >
+                  <ListItem key={item.label} disablePadding>
+                    <ListItemButton sx={listItemButtonStyle}>
+                      <ListItemIcon sx={listItemIconStyle}>
+                        <Icon />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={item.label}
+                        sx={{ opacity: open ? 1 : 0 }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </Link>
+              );
+            })}
+          </List>
+        </Drawer>
+      </DesktopOnly>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         {children}
