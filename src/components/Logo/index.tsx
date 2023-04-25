@@ -8,6 +8,10 @@ const LogoWrapper = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
 }));
+const LogoText = styled("div")(() => ({
+  fontWeight: 700,
+  fontSize: 18,
+}));
 
 type Props = {};
 
@@ -18,7 +22,9 @@ const Logo = (props: Props) => {
         <img alt="question" src="/assets/icons/logo.png" className="logo" />
         <DesktopContentWarpper>
           <Text>
-            <Typography variant="h6">CryptoPatronage</Typography>
+            <Typography>
+              <LogoText>CryptoPatronage</LogoText>
+            </Typography>
           </Text>
         </DesktopContentWarpper>
       </LogoWrapper>

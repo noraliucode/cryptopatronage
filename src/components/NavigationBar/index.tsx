@@ -42,6 +42,9 @@ const MenuWarpper = styled("div")(() => ({
   marginLeft: "10px",
   display: "flex",
 }));
+const LogoWarpper = styled("div")(() => ({
+  marginLeft: "46px",
+}));
 
 type IState = {
   open: boolean;
@@ -120,8 +123,9 @@ export const NavigationBar = () => {
           </MenuWarpper>
         </MobileContentWarpper>
         <Wrapper>
-          <Logo />
-
+          <LogoWarpper>
+            <Logo />
+          </LogoWarpper>
           <ButtonsWarpper>
             <DesktopContentWarpper>
               <StyledLink to={"/create"}>
