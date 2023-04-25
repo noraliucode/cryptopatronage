@@ -6,12 +6,12 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import { NavigationBar } from "../components/NavigationBar";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import SidebarList from "./SidebarList";
 import { SwipeableDrawer } from "@mui/material";
 import Logo from "../components/Logo";
+import MenuIcon from "@mui/icons-material/Menu";
 
-export const drawerWidth = 240;
+export const drawerWidth = 232;
 
 const openedMixin = (theme: Theme) => ({
   width: drawerWidth,
@@ -37,7 +37,7 @@ const closedMixin = (theme: Theme) => ({
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  justifyContent: "flex-end",
+  justifyContent: "center",
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
@@ -95,10 +95,10 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
       <DesktopOnly>
         <Drawer variant="permanent" open={open}>
           <DrawerHeader>
-            {open && <Logo />}
             <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon />
+              <MenuIcon />
             </IconButton>
+            {open && <Logo />}
           </DrawerHeader>
           <Divider />
           <SidebarList open={open} toggleDrawer={toggleDrawer} />

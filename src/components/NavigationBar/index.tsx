@@ -43,7 +43,7 @@ const MenuWarpper = styled("div")(() => ({
   display: "flex",
 }));
 const LogoWarpper = styled("div")(() => ({
-  marginLeft: "46px",
+  marginLeft: "45px",
 }));
 
 type IState = {

@@ -11,6 +11,7 @@ const LogoWrapper = styled("div")(() => ({
 const LogoText = styled("div")(() => ({
   fontWeight: 700,
   fontSize: 18,
+  letterSpacing: "-1px",
 }));
 
 type Props = {};
