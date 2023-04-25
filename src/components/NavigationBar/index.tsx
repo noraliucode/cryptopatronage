@@ -2,15 +2,7 @@ import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { NetworkSelector } from "../NetworkSelector";
 import { SignerSelector } from "../SignerSelector";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Switch,
-  IconButton,
-} from "@mui/material";
-import MuiAppBar from "@mui/material/AppBar";
+import { AppBar, Toolbar, Button, Switch } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import { Text } from "../Manage";
 import { useState } from "react";
@@ -22,17 +14,13 @@ import { useApi } from "../../hooks/useApi";
 import { Modal } from "../Modal";
 import LanguageSelector from "../LanguageSelector";
 import { useTranslation } from "react-i18next";
-import { drawerWidth } from "../../layout/Sidebar";
+import Logo from "../Logo";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
   width: "100%",
   alignItems: "center",
   justifyContent: "space-between",
-}));
-const Logo = styled("div")(() => ({
-  display: "flex",
-  alignItems: "center",
 }));
 export const DesktopContentWarpper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -54,14 +42,8 @@ const MenuWarpper = styled("div")(() => ({
   marginLeft: "10px",
   display: "flex",
 }));
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
+const LogoWarpper = styled("div")(() => ({
+  marginLeft: "45px",
 }));
 
 type IState = {
@@ -69,15 +51,7 @@ type IState = {
   isModalOpen: boolean;
 };
 
-export const NavigationBar = ({
-  isSidebarOpen,
-  handleDrawerOpen,
-  handleDrawerClose,
-}: {
-  isSidebarOpen: boolean;
-  handleDrawerOpen: () => void;
-  handleDrawerClose: () => void;
-}) => {
+export const NavigationBar = () => {
   const {
     accounts,
     setSigner,
@@ -125,36 +99,8 @@ export const NavigationBar = ({
     }
   };
 
-  const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== "open",
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-  })(({ theme, open }) => ({
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    ...(open && {
-      marginLeft: drawerWidth,
-      width: `calc(100% - ${drawerWidth}px)`,
-      transition: theme.transitions.create(["width", "margin"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    }),
-  }));
-
   return (
-    <AppBar
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      // TODO: fix type checking errors out "open" is not a prop of AppBar. Sample code see: https://mui.com/material-ui/react-drawer/
-      open={isSidebarOpen}
-      position="fixed"
-      color="secondary"
-      enableColorOnDark
-    >
+    <AppBar position="fixed" color="secondary" enableColorOnDark>
       <Modal
         title="Version Switch"
         content="Are you sure you want to switch to a version where the creator's image has been specifically labeled as sensitive content?"
@@ -171,35 +117,15 @@ export const NavigationBar = ({
         <Drawer open={open} toggleDrawer={toggleDrawer} />
       </MobileContentWarpper>
       <Toolbar>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={handleDrawerOpen}
-          edge="start"
-          sx={{
-            marginRight: 5,
-            ...(isSidebarOpen && { display: "none" }),
-          }}
-        >
-          <MenuIcon />
-        </IconButton>
-
+        <MobileContentWarpper>
+          <MenuWarpper>
+            <MenuIcon onClick={toggleDrawer} />
+          </MenuWarpper>
+        </MobileContentWarpper>
         <Wrapper>
-          <StyledLink to={"/"}>
-            <Logo>
-              <img
-                alt="question"
-                src="/assets/icons/logo.png"
-                className="logo"
-              />
-              <DesktopContentWarpper>
-                <Text>
-                  <Typography variant="h6">CryptoPatronage</Typography>
-                </Text>
-              </DesktopContentWarpper>
-            </Logo>
-          </StyledLink>
-
+          <LogoWarpper>
+            <Logo />
+          </LogoWarpper>
           <ButtonsWarpper>
             <DesktopContentWarpper>
               <StyledLink to={"/create"}>
@@ -235,11 +161,6 @@ export const NavigationBar = ({
               network={network}
               genesisHash={api?.genesisHash}
             />
-            <MobileContentWarpper>
-              <MenuWarpper>
-                <MenuIcon onClick={toggleDrawer} />
-              </MenuWarpper>
-            </MobileContentWarpper>
           </ButtonsWarpper>
         </Wrapper>
       </Toolbar>
