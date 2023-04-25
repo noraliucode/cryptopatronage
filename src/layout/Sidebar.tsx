@@ -9,6 +9,7 @@ import { NavigationBar } from "../components/NavigationBar";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import SidebarList from "./SidebarList";
 import { SwipeableDrawer } from "@mui/material";
+import Logo from "../components/Logo";
 
 export const drawerWidth = 240;
 
@@ -94,6 +95,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
       <DesktopOnly>
         <Drawer variant="permanent" open={open}>
           <DrawerHeader>
+            {open && <Logo />}
             <IconButton onClick={toggleDrawer}>
               <ChevronLeftIcon />
             </IconButton>

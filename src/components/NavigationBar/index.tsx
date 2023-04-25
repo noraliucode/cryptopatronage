@@ -2,7 +2,7 @@ import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { NetworkSelector } from "../NetworkSelector";
 import { SignerSelector } from "../SignerSelector";
-import { AppBar, Toolbar, Typography, Button, Switch } from "@mui/material";
+import { AppBar, Toolbar, Button, Switch } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import { Text } from "../Manage";
 import { useState } from "react";
@@ -14,16 +14,13 @@ import { useApi } from "../../hooks/useApi";
 import { Modal } from "../Modal";
 import LanguageSelector from "../LanguageSelector";
 import { useTranslation } from "react-i18next";
+import Logo from "../Logo";
 
 export const Wrapper = styled("div")(() => ({
   display: "flex",
   width: "100%",
   alignItems: "center",
   justifyContent: "space-between",
-}));
-const Logo = styled("div")(() => ({
-  display: "flex",
-  alignItems: "center",
 }));
 export const DesktopContentWarpper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -123,20 +120,7 @@ export const NavigationBar = () => {
           </MenuWarpper>
         </MobileContentWarpper>
         <Wrapper>
-          <StyledLink to={"/"}>
-            <Logo>
-              <img
-                alt="question"
-                src="/assets/icons/logo.png"
-                className="logo"
-              />
-              <DesktopContentWarpper>
-                <Text>
-                  <Typography variant="h6">CryptoPatronage</Typography>
-                </Text>
-              </DesktopContentWarpper>
-            </Logo>
-          </StyledLink>
+          <Logo />
 
           <ButtonsWarpper>
             <DesktopContentWarpper>
