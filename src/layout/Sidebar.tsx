@@ -89,7 +89,7 @@ const SectionTitle = styled("div")(({ theme }) => ({
 }));
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -111,12 +111,8 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
   const isShowSubscribedCreators =
     open && (committedCreators.length > 0 || uncommittedCreators.length > 0);
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
+  const toggleDrawer = () => {
+    setOpen(!open);
   };
 
   const listItemButtonStyle = {
@@ -134,14 +130,10 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <NavigationBar
-        isSidebarOpen={open}
-        handleDrawerOpen={handleDrawerOpen}
-        handleDrawerClose={handleDrawerClose}
-      />
+      <NavigationBar />
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
+          <IconButton onClick={toggleDrawer}>
             <ChevronLeftIcon />
           </IconButton>
         </DrawerHeader>
@@ -176,7 +168,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 
         {!open && (
           <List>
-            <ListItemButton sx={listItemButtonStyle} onClick={handleDrawerOpen}>
+            <ListItemButton sx={listItemButtonStyle} onClick={toggleDrawer}>
               <ListItemIcon sx={listItemIconStyle}>
                 <CardMembershipIcon />
               </ListItemIcon>
