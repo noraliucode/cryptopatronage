@@ -117,6 +117,11 @@ export const NavigationBar = () => {
         <Drawer open={open} toggleDrawer={toggleDrawer} />
       </MobileContentWarpper>
       <Toolbar>
+        <MobileContentWarpper>
+          <MenuWarpper>
+            <MenuIcon onClick={toggleDrawer} />
+          </MenuWarpper>
+        </MobileContentWarpper>
         <Wrapper>
           <StyledLink to={"/"}>
             <Logo>
@@ -168,11 +173,6 @@ export const NavigationBar = () => {
               network={network}
               genesisHash={api?.genesisHash}
             />
-            <MobileContentWarpper>
-              <MenuWarpper>
-                <MenuIcon onClick={toggleDrawer} />
-              </MenuWarpper>
-            </MobileContentWarpper>
           </ButtonsWarpper>
         </Wrapper>
       </Toolbar>

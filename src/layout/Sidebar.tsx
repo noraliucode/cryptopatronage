@@ -8,6 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import { NavigationBar } from "../components/NavigationBar";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import SidebarList from "./SidebarList";
+import { SwipeableDrawer } from "@mui/material";
 
 export const drawerWidth = 240;
 
@@ -66,11 +67,24 @@ const DesktopOnly = styled("div")(({ theme }) => ({
   },
 }));
 
+type IState = {
+  open: boolean;
+  tabletMobileOpen: boolean;
+};
+
 export default function Sidebar({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = React.useState(true);
+  const [state, setState] = React.useState<IState>({
+    open: false,
+    tabletMobileOpen: false,
+  });
+
+  const { open, tabletMobileOpen } = state;
 
   const toggleDrawer = () => {
-    setOpen(!open);
+    setState((prev) => ({
+      ...prev,
+      open: !open,
+    }));
   };
 
   return (
@@ -88,6 +102,14 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
           <SidebarList open={open} toggleDrawer={toggleDrawer} />
         </Drawer>
       </DesktopOnly>
+      <SwipeableDrawer
+        anchor={"left"}
+        open={tabletMobileOpen}
+        onClose={toggleDrawer}
+        onOpen={toggleDrawer}
+      >
+        <SidebarList open={open} toggleDrawer={toggleDrawer} />
+      </SwipeableDrawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         {children}
