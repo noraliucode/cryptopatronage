@@ -308,9 +308,13 @@ export const Manage = () => {
       message: "Pulling Payment...",
       open: true,
     }));
+
+    const _supporters = supporters.filter(
+      (supporter: any) => supporter.supporter
+    );
     await pullPayment(
       api,
-      supporters,
+      _supporters,
       signer.address,
       injector,
       currentRate,
