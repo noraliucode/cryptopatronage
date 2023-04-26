@@ -17,6 +17,7 @@ import {
   Identity,
   INetwork,
   IParsedSupporterProxies,
+  IProxyParsedSupporter,
   IProxyParsedSupporters,
 } from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
@@ -182,38 +183,47 @@ const getPaymentPromises = async (
   if (!api) return;
   const apiService = new APIService(api);
   const receiver = sender;
-  const creatorIdentity = apiService.getIdentity(sender);
+  const creatorIdentity = await apiService.getIdentity(sender);
+
+  if (!creatorIdentity) return;
 
   const getLastPaymentTime = (identity: any) => {
-    return parseAdditionalInfo(identity).lastPaymentTime;
+    return parseAdditionalInfo(identity)?.lastPaymentTime;
   };
 
-  const lastPaymentTime = getLastPaymentTime(creatorIdentity);
+  let transactionInfos: any = [];
 
-  const transactionInfos = supporters.map((supporter: any) => {
-    const amount = getPaymentAmount(
-      currentRate,
-      lastPaymentTime[supporter.supporter]
-    );
+  supporters.forEach((supporter: IProxyParsedSupporter) => {
+    let lastPaymentTime = getLastPaymentTime(creatorIdentity);
+    const amount = getPaymentAmount(currentRate, lastPaymentTime);
     const real = isCommitted ? supporter.pure : supporter.supporter;
-    return {
-      real,
-      receiver,
-      amount,
-      supporter: supporter.supporter,
-    };
+    const isBalanceSufficient = isCommitted
+      ? supporter.pureBalance && supporter.pureBalance > amount
+      : supporter.supporterBalance && supporter.supporterBalance > amount;
+    if (!isBalanceSufficient && real) {
+      transactionInfos.push({
+        real,
+        receiver,
+        amount,
+        supporter: supporter.supporter,
+      });
+    }
   });
 
-  const promises = transactionInfos.map((info: any) => {
+  const promises: any = [];
+  const additionalInfo = parseAdditionalInfo(creatorIdentity);
+
+  transactionInfos.forEach((info: any) => {
     const transferFn = isCommitted
       ? apiService.transferViaProxyPromise(info.real, receiver, info.amount)
       : apiService.transfer(receiver, info.amount);
-    return [
+    promises.push(
       transferFn,
       apiService.setIdentityPromise(creatorIdentity, {
+        ...additionalInfo,
         [`lt_${renderAddress(info.supporter, "ROCOCO", 4)}`]: Date.now(),
-      }),
-    ];
+      })
+    );
   });
 
   return promises;

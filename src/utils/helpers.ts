@@ -39,11 +39,28 @@ function parseUnit(amount: number, decimals: number): number {
 export function getPaymentAmount(rate: number, lastPaymentTime?: any): number {
   const millisecondsPerDay = 1000 * 60 * 60 * 24;
   const today: any = new Date();
-  const _lastPaymentTime = lastPaymentTime ? lastPaymentTime : today;
+  const timestampToday = today.getTime();
+
+  const _lastPaymentTime = lastPaymentTime
+    ? lastPaymentTime
+    : getFirstDayOfMonthTimestamp(); // TODO: store user's subscription start time
+
+  /* user's subscription start time should be stored in the following format, in a ipfs storage:
+    {
+      [address]: {
+        last_pull_time: timestamp,
+        subscription_start_time: {
+          [creator_address]: timestamp
+        }
+      }
+    }
+    */
+
   const daysSinceWithdrawal = Math.floor(
-    (today - _lastPaymentTime) / millisecondsPerDay
+    (timestampToday - _lastPaymentTime) / millisecondsPerDay
   );
-  const withdrawableAmount = rate * (daysSinceWithdrawal / 100);
+
+  const withdrawableAmount = Math.floor(rate / 30) * daysSinceWithdrawal;
   return withdrawableAmount;
 }
 
@@ -267,4 +284,12 @@ export function validateUrls(urlsObj: IUrls): string | null {
   };
 
   return generateText(validationResults);
+}
+
+export function getFirstDayOfMonthTimestamp() {
+  const now = new Date();
+  now.setDate(1);
+  now.setHours(0, 0, 0, 0);
+  const timestamp = now.getTime();
+  return timestamp;
 }
