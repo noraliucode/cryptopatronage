@@ -69,6 +69,32 @@ const SidebarList = (props: Props) => {
 
   return (
     <div>
+      <List>
+        {SIDE_BAR.map((item, index) => {
+          const Icon = item.icon;
+
+          return (
+            <StyledLink to={item.link}>
+              <ListItem
+                key={item.label}
+                disablePadding
+                sx={{ display: "block" }}
+              >
+                <ListItemButton sx={listItemButtonStyle}>
+                  <ListItemIcon sx={listItemIconStyle}>
+                    <Icon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t(`sidebar.${item.label}`)}
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </StyledLink>
+          );
+        })}
+      </List>
+      <Divider />
       {!open && (
         <List>
           <ListItemButton sx={listItemButtonStyle} onClick={toggleDrawer}>
@@ -141,31 +167,6 @@ const SidebarList = (props: Props) => {
                 </ListItemButton>
               </ListItem>
             </Link>
-          );
-        })}
-      </List>
-      <List>
-        {SIDE_BAR.map((item, index) => {
-          const Icon = item.icon;
-
-          return (
-            <StyledLink to={item.link}>
-              <ListItem
-                key={item.label}
-                disablePadding
-                sx={{ display: "block" }}
-              >
-                <ListItemButton sx={listItemButtonStyle}>
-                  <ListItemIcon sx={listItemIconStyle}>
-                    <Icon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={t(`sidebar.${item.label}`)}
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            </StyledLink>
           );
         })}
       </List>
