@@ -17,6 +17,7 @@ import {
   Identity,
   INetwork,
   IParsedSupporterProxies,
+  IProxyParsedSupporter,
   IProxyParsedSupporters,
 } from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
@@ -190,17 +191,23 @@ const getPaymentPromises = async (
     return parseAdditionalInfo(identity)?.lastPaymentTime;
   };
 
-  const transactionInfos = supporters.map((supporter: any) => {
+  let transactionInfos: any = [];
+
+  supporters.forEach((supporter: IProxyParsedSupporter) => {
     let lastPaymentTime = getLastPaymentTime(creatorIdentity);
     const amount = getPaymentAmount(currentRate, lastPaymentTime);
     const real = isCommitted ? supporter.pure : supporter.supporter;
-
-    return {
-      real,
-      receiver,
-      amount,
-      supporter: supporter.supporter,
-    };
+    const isBalanceSufficient = isCommitted
+      ? supporter.pureBalance && supporter.pureBalance > amount
+      : supporter.supporterBalance && supporter.supporterBalance > amount;
+    if (!isBalanceSufficient && real) {
+      transactionInfos.push({
+        real,
+        receiver,
+        amount,
+        supporter: supporter.supporter,
+      });
+    }
   });
 
   const promises: any = [];
