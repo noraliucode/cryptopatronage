@@ -182,20 +182,19 @@ const getPaymentPromises = async (
   if (!api) return;
   const apiService = new APIService(api);
   const receiver = sender;
-  const creatorIdentity = apiService.getIdentity(sender);
+  const creatorIdentity = await apiService.getIdentity(sender);
+
+  if (!creatorIdentity) return;
 
   const getLastPaymentTime = (identity: any) => {
-    return parseAdditionalInfo(identity).lastPaymentTime;
+    return parseAdditionalInfo(identity)?.lastPaymentTime;
   };
 
-  const lastPaymentTime = getLastPaymentTime(creatorIdentity);
-
   const transactionInfos = supporters.map((supporter: any) => {
-    const amount = getPaymentAmount(
-      currentRate,
-      lastPaymentTime[supporter.supporter]
-    );
+    let lastPaymentTime = getLastPaymentTime(creatorIdentity);
+    const amount = getPaymentAmount(currentRate, lastPaymentTime);
     const real = isCommitted ? supporter.pure : supporter.supporter;
+
     return {
       real,
       receiver,
@@ -204,16 +203,20 @@ const getPaymentPromises = async (
     };
   });
 
-  const promises = transactionInfos.map((info: any) => {
+  const promises: any = [];
+  const additionalInfo = parseAdditionalInfo(creatorIdentity);
+
+  transactionInfos.forEach((info: any) => {
     const transferFn = isCommitted
       ? apiService.transferViaProxyPromise(info.real, receiver, info.amount)
       : apiService.transfer(receiver, info.amount);
-    return [
+    promises.push(
       transferFn,
       apiService.setIdentityPromise(creatorIdentity, {
+        ...additionalInfo,
         [`lt_${renderAddress(info.supporter, "ROCOCO", 4)}`]: Date.now(),
-      }),
-    ];
+      })
+    );
   });
 
   return promises;
