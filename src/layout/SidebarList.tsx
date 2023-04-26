@@ -1,6 +1,6 @@
 import { Divider, styled } from "@mui/material";
 import React from "react";
-import { SOCIAL_ITEMS } from "../utils/constants";
+import { MENU, SOCIAL_ITEMS } from "../utils/constants";
 import { stringShorten } from "@polkadot/util";
 import CardMembershipIcon from "@mui/icons-material/CardMembership";
 import ListItem from "@mui/material/ListItem";
@@ -14,6 +14,10 @@ import { useTranslation } from "react-i18next";
 import { useSubscribedCreators } from "../hooks/useSubscribedCreators";
 import { useWeb3ConnectedContext } from "../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../utils/types";
+import {
+  DesktopContentWarpper,
+  MobileContentWarpper,
+} from "../components/NavigationBar";
 
 const Link = styled("a")(() => ({
   textDecoration: "none",
@@ -170,6 +174,34 @@ const SidebarList = (props: Props) => {
           );
         })}
       </List>
+      <Divider />
+      <MobileContentWarpper>
+        <List>
+          {MENU.map((item, index) => {
+            const Icon = item.icon;
+
+            return (
+              <StyledLink to={item.link}>
+                <ListItem
+                  key={item.label}
+                  disablePadding
+                  sx={{ display: "block" }}
+                >
+                  <ListItemButton sx={listItemButtonStyle}>
+                    <ListItemIcon sx={listItemIconStyle}>
+                      <Icon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={t(`sidebar.${item.label}`)}
+                      sx={{ opacity: open ? 1 : 0 }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </StyledLink>
+            );
+          })}
+        </List>
+      </MobileContentWarpper>
     </div>
   );
 };
