@@ -1,4 +1,4 @@
-import { Divider, styled } from "@mui/material";
+import { Collapse, Divider, styled } from "@mui/material";
 import React from "react";
 import { MENU, SOCIAL_ITEMS } from "../utils/constants";
 import { stringShorten } from "@polkadot/util";
@@ -18,6 +18,7 @@ import {
   DesktopContentWarpper,
   MobileContentWarpper,
 } from "../components/NavigationBar";
+import { ExpandLess, ExpandMore, StarBorder } from "@mui/icons-material";
 
 const Link = styled("a")(() => ({
   textDecoration: "none",
@@ -48,12 +49,19 @@ const SidebarList = (props: Props) => {
     signer?.address,
     network
   );
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const [state, setState] = React.useState({
+    selectedIndex: 1,
+    isLanguageOpen: false,
+  });
+  const { selectedIndex, isLanguageOpen } = state;
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number
   ) => {
-    setSelectedIndex(index);
+    setState((prev) => ({
+      ...prev,
+      selectedIndex: index,
+    }));
   };
 
   const isShowSubscribedCreators =
@@ -195,7 +203,22 @@ const SidebarList = (props: Props) => {
                       primary={t(`sidebar.${item.label}`)}
                       sx={{ opacity: open ? 1 : 0 }}
                     />
+                    {item.label === "Language" && (
+                      <>{isLanguageOpen ? <ExpandLess /> : <ExpandMore />}</>
+                    )}
                   </ListItemButton>
+                  {item.label === "Language" && (
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding>
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText primary="English" />
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText primary="Chinese" />
+                        </ListItemButton>
+                      </List>
+                    </Collapse>
+                  )}
                 </ListItem>
               </StyledLink>
             );
