@@ -79,6 +79,13 @@ const SidebarList = (props: Props) => {
     justifyContent: "center",
   };
 
+  const handleLanguageClick = () => {
+    setState((prev) => ({
+      ...prev,
+      isLanguageOpen: !isLanguageOpen,
+    }));
+  };
+
   return (
     <div>
       <List>
@@ -195,7 +202,12 @@ const SidebarList = (props: Props) => {
                   disablePadding
                   sx={{ display: "block" }}
                 >
-                  <ListItemButton sx={listItemButtonStyle}>
+                  <ListItemButton
+                    onClick={() => {
+                      if (item.label === "Language") handleLanguageClick();
+                    }}
+                    sx={listItemButtonStyle}
+                  >
                     <ListItemIcon sx={listItemIconStyle}>
                       <Icon />
                     </ListItemIcon>
@@ -208,7 +220,7 @@ const SidebarList = (props: Props) => {
                     )}
                   </ListItemButton>
                   {item.label === "Language" && (
-                    <Collapse in={open} timeout="auto" unmountOnExit>
+                    <Collapse in={isLanguageOpen} timeout="auto" unmountOnExit>
                       <List component="div" disablePadding>
                         <ListItemButton sx={{ pl: 4 }}>
                           <ListItemText primary="English" />
