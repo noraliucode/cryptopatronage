@@ -1,6 +1,6 @@
 import { Collapse, Divider, styled } from "@mui/material";
 import React from "react";
-import { MENU, SOCIAL_ITEMS } from "../utils/constants";
+import { MENU, SOCIAL_ITEMS, lngs } from "../utils/constants";
 import { stringShorten } from "@polkadot/util";
 import CardMembershipIcon from "@mui/icons-material/CardMembership";
 import ListItem from "@mui/material/ListItem";
@@ -54,6 +54,7 @@ const SidebarList = (props: Props) => {
     isLanguageOpen: false,
   });
   const { selectedIndex, isLanguageOpen } = state;
+  const { i18n } = useTranslation();
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number
@@ -222,12 +223,17 @@ const SidebarList = (props: Props) => {
                   {item.label === "Language" && (
                     <Collapse in={isLanguageOpen} timeout="auto" unmountOnExit>
                       <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4 }}>
-                          <ListItemText primary="English" />
-                        </ListItemButton>
-                        <ListItemButton sx={{ pl: 4 }}>
-                          <ListItemText primary="Chinese" />
-                        </ListItemButton>
+                        {Object.keys(lngs).map((lng) => (
+                          <ListItemButton
+                            key={`${lng}`}
+                            sx={{ pl: 4 }}
+                            onClick={() => {
+                              i18n.changeLanguage(lng);
+                            }}
+                          >
+                            <ListItemText primary={lngs[lng].nativeName} />
+                          </ListItemButton>
+                        ))}
                       </List>
                     </Collapse>
                   )}
