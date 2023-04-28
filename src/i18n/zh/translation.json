@@ -67,6 +67,8 @@
   },
   "sidebar": {
     "Explore": "探索",
-    "Manage": "管理"
+    "Manage": "管理",
+    "About": "關於",
+    "Language": "語言"
   }
 }

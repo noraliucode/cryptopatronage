@@ -67,6 +67,8 @@
   },
   "sidebar": {
     "Explore": "Explore",
-    "Manage": "Manage"
+    "Manage": "Manage",
+    "About": "About",
+    "Language": "Language"
   }
 }

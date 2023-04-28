@@ -1,6 +1,6 @@
-import { Divider, styled } from "@mui/material";
+import { Collapse, Divider, styled } from "@mui/material";
 import React from "react";
-import { SOCIAL_ITEMS } from "../utils/constants";
+import { MENU, SOCIAL_ITEMS, lngs } from "../utils/constants";
 import { stringShorten } from "@polkadot/util";
 import CardMembershipIcon from "@mui/icons-material/CardMembership";
 import ListItem from "@mui/material/ListItem";
@@ -14,6 +14,11 @@ import { useTranslation } from "react-i18next";
 import { useSubscribedCreators } from "../hooks/useSubscribedCreators";
 import { useWeb3ConnectedContext } from "../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../utils/types";
+import {
+  DesktopContentWarpper,
+  MobileContentWarpper,
+} from "../components/NavigationBar";
+import { ExpandLess, ExpandMore, StarBorder } from "@mui/icons-material";
 
 const Link = styled("a")(() => ({
   textDecoration: "none",
@@ -44,12 +49,20 @@ const SidebarList = (props: Props) => {
     signer?.address,
     network
   );
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const [state, setState] = React.useState({
+    selectedIndex: 1,
+    isLanguageOpen: false,
+  });
+  const { selectedIndex, isLanguageOpen } = state;
+  const { i18n } = useTranslation();
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number
   ) => {
-    setSelectedIndex(index);
+    setState((prev) => ({
+      ...prev,
+      selectedIndex: index,
+    }));
   };
 
   const isShowSubscribedCreators =
@@ -67,8 +80,41 @@ const SidebarList = (props: Props) => {
     justifyContent: "center",
   };
 
+  const handleLanguageClick = () => {
+    setState((prev) => ({
+      ...prev,
+      isLanguageOpen: !isLanguageOpen,
+    }));
+  };
+
   return (
     <div>
+      <List>
+        {SIDE_BAR.map((item, index) => {
+          const Icon = item.icon;
+
+          return (
+            <StyledLink to={item.link}>
+              <ListItem
+                key={item.label}
+                disablePadding
+                sx={{ display: "block" }}
+              >
+                <ListItemButton sx={listItemButtonStyle}>
+                  <ListItemIcon sx={listItemIconStyle}>
+                    <Icon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t(`sidebar.${item.label}`)}
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </StyledLink>
+          );
+        })}
+      </List>
+      <Divider />
       {!open && (
         <List>
           <ListItemButton sx={listItemButtonStyle} onClick={toggleDrawer}>
@@ -144,31 +190,59 @@ const SidebarList = (props: Props) => {
           );
         })}
       </List>
-      <List>
-        {SIDE_BAR.map((item, index) => {
-          const Icon = item.icon;
+      <Divider />
+      <MobileContentWarpper>
+        <List>
+          {MENU.map((item, index) => {
+            const Icon = item.icon;
 
-          return (
-            <StyledLink to={item.link}>
-              <ListItem
-                key={item.label}
-                disablePadding
-                sx={{ display: "block" }}
-              >
-                <ListItemButton sx={listItemButtonStyle}>
-                  <ListItemIcon sx={listItemIconStyle}>
-                    <Icon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={t(`sidebar.${item.label}`)}
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            </StyledLink>
-          );
-        })}
-      </List>
+            return (
+              <StyledLink to={item.link}>
+                <ListItem
+                  key={item.label}
+                  disablePadding
+                  sx={{ display: "block" }}
+                >
+                  <ListItemButton
+                    onClick={() => {
+                      if (item.label === "Language") handleLanguageClick();
+                    }}
+                    sx={listItemButtonStyle}
+                  >
+                    <ListItemIcon sx={listItemIconStyle}>
+                      <Icon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={t(`sidebar.${item.label}`)}
+                      sx={{ opacity: open ? 1 : 0 }}
+                    />
+                    {item.label === "Language" && (
+                      <>{isLanguageOpen ? <ExpandLess /> : <ExpandMore />}</>
+                    )}
+                  </ListItemButton>
+                  {item.label === "Language" && (
+                    <Collapse in={isLanguageOpen} timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding>
+                        {Object.keys(lngs).map((lng) => (
+                          <ListItemButton
+                            key={`${lng}`}
+                            sx={{ pl: 4 }}
+                            onClick={() => {
+                              i18n.changeLanguage(lng);
+                            }}
+                          >
+                            <ListItemText primary={lngs[lng].nativeName} />
+                          </ListItemButton>
+                        ))}
+                      </List>
+                    </Collapse>
+                  )}
+                </ListItem>
+              </StyledLink>
+            );
+          })}
+        </List>
+      </MobileContentWarpper>
     </div>
   );
 };
