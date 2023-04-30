@@ -132,3 +132,7 @@ export type IMenuItem = {
   link: string;
   icon: OverridableComponent<SvgIconTypeMap<{}, "svg">> & { muiName: string };
 };
+
+export interface DataMapping {
+  [address: string]: { imgUrl: string };
+}
