@@ -49,6 +49,7 @@ import IdentityForm from "../CreatorInfoForms/IdentityForm";
 import BasicTable from "../Table";
 import { useTranslation } from "react-i18next";
 import ConnectButton from "../ConnectButton";
+import { fetchPersonalInfo } from "../../utils/ipfsHelpers";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,

@@ -14,11 +14,8 @@ import { useTranslation } from "react-i18next";
 import { useSubscribedCreators } from "../hooks/useSubscribedCreators";
 import { useWeb3ConnectedContext } from "../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../utils/types";
-import {
-  DesktopContentWarpper,
-  MobileContentWarpper,
-} from "../components/NavigationBar";
-import { ExpandLess, ExpandMore, StarBorder } from "@mui/icons-material";
+import { MobileContentWarpper } from "../components/NavigationBar";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 const Link = styled("a")(() => ({
   textDecoration: "none",

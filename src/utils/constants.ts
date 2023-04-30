@@ -188,3 +188,5 @@ export const lngs: Languages = {
   en: { nativeName: "English" },
   zh: { nativeName: "中文" },
 };
+
+export const INFURA_URL = "https://ipfs.infura.io:5001/api/v0/";
