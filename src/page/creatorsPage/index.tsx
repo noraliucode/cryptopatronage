@@ -197,6 +197,7 @@ export const CreatorsPage = () => {
                 <Button variant="contained">{t("button.becomeCreator")}</Button>
               </Link>
               <SubscribeModal
+                isSubscriber={isSubscriber}
                 open={open}
                 onClose={onClose}
                 selectedCreator={selectedCreator}
@@ -208,7 +209,6 @@ export const CreatorsPage = () => {
                   {_creators.map((creator, index) => (
                     <Creator
                       isSubscriber={isSubscriber}
-                      hasAddress={!!address}
                       tokenUsdPrice={tokenUsdPrice}
                       creator={creator}
                       selectedIndex={selectedIndex}

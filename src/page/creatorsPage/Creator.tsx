@@ -54,7 +54,6 @@ interface Props {
   onCardClick: (index: number) => void;
   onSubscribeClick: (_: string) => void;
   tokenUsdPrice: number;
-  hasAddress: boolean;
   isSubscriber: boolean;
 }
 
@@ -66,7 +65,6 @@ const Creator: React.FC<Props> = ({
   onCardClick,
   onSubscribeClick,
   tokenUsdPrice,
-  hasAddress,
   isSubscriber,
 }) => {
   const [open, setOpen] = useState(false);
@@ -160,7 +158,7 @@ const Creator: React.FC<Props> = ({
                   onClick={() => onSubscribeClick(creator.address)}
                   size="small"
                 >
-                  {hasAddress && isSubscriber ? (
+                  {isSubscriber ? (
                     <Text>{t("button.top up")}</Text>
                   ) : (
                     <Text>{t("button.subscribe")}</Text>

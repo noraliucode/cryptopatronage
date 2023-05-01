@@ -28,6 +28,7 @@ type IProps = {
   selectedCreator: string;
   rate: string | undefined;
   tokenUsdPrice: number;
+  isSubscriber: boolean;
 };
 
 type IState = {
@@ -56,7 +57,8 @@ const WarningText = styled("div")(() => ({
 }));
 
 export const SubscribeModal = (props: IProps) => {
-  const { onClose, open, selectedCreator, rate, tokenUsdPrice } = props;
+  const { onClose, open, selectedCreator, rate, tokenUsdPrice, isSubscriber } =
+    props;
   const { t } = useTranslation();
   const [state, setState] = useState<IState>({
     isCommitted: true,
@@ -187,7 +189,9 @@ export const SubscribeModal = (props: IProps) => {
     return (
       <Container>
         <Wrapper>
-          How many months you would like to subscribe to this creator?
+          {isSubscriber
+            ? t("subscribe_modal.text6")
+            : t("subscribe_modal.text5")}
           <TextField
             fullWidth
             value={months}
@@ -270,7 +274,11 @@ export const SubscribeModal = (props: IProps) => {
         }
         action={handleClose}
       />
-      <DialogTitle>{t("subscribe_modal.Subscribe")}</DialogTitle>
+      <DialogTitle>
+        {isSubscriber
+          ? t("subscribe_modal.top up")
+          : t("subscribe_modal.Subscribe")}
+      </DialogTitle>
       <DialogContent dividers>{renderContent()}</DialogContent>
       <DialogActions>
         <Button

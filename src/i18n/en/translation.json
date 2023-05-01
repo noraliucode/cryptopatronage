@@ -79,6 +79,9 @@
     "text1": "Earmark funds exclusively for this creator",
     "text2": "Delay transfer",
     "text3": "*coming soon",
-    "text4": " No creating proxy. Creators can withdraw from my account directly."
+    "text4": " No creating proxy. Creators can withdraw from my account directly.",
+    "top up": "Top up",
+    "text5": "How many months you would like to subscribe to this creator?",
+    "text6": "How many months you would like to top up to this creator?"
   }
 }
