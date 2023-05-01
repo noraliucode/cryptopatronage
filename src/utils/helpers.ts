@@ -293,3 +293,28 @@ export function getFirstDayOfMonthTimestamp() {
   const timestamp = now.getTime();
   return timestamp;
 }
+
+export const getCoinGeckoIDs = async (tokens: string[]) => {
+  const url = "https://api.coingecko.com/api/v3/coins/list";
+  const response = await fetch(url);
+  const coins = await response.json();
+  if (coins.error) throw coins.error;
+
+  return tokens.map((token) => {
+    const rateIds = [];
+    for (const coin of coins) {
+      if (coin.symbol.toLowerCase() === token.toLowerCase())
+        rateIds.push(coin.id);
+    }
+    return rateIds[0];
+  });
+};
+
+export const getTokenUsdPrice = async (tokenSymbol: string) => {
+  const tokenId = tokenSymbol.toLowerCase();
+  const url = `https://api.coingecko.com/api/v3/simple/price?ids=${tokenId}&vs_currencies=usd`;
+  const response = await fetch(url);
+  const result = await response.json();
+
+  return Number(result[tokenId].usd);
+};

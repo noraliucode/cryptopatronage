@@ -10,9 +10,14 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DECIMALS, IMAGE_HEIGHT, SYMBOL } from "../../utils/constants";
-import { formatUnit, toShortAddress } from "../../utils/helpers";
+import {
+  formatUnit,
+  getCoinGeckoIDs,
+  getTokenUsdPrice,
+  toShortAddress,
+} from "../../utils/helpers";
 import EmailIcon from "@mui/icons-material/Email";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import { ICreator, INetwork } from "../../utils/types";
@@ -64,7 +69,14 @@ const Creator: React.FC<Props> = ({
   onSubscribeClick,
 }) => {
   const [open, setOpen] = useState(false);
+  const [tokenUsdPrice, setTokenUsdPrice] = useState(0);
   const { t } = useTranslation();
+
+  console.log("tokenUsdPrice", tokenUsdPrice);
+
+  useEffect(() => {
+    updateTokenUsdPrice();
+  }, [network]);
 
   if (!creator) return <></>;
   const WrapperComponent = ({ children }: { children: React.ReactElement }) =>
@@ -81,6 +93,24 @@ const Creator: React.FC<Props> = ({
     navigator.clipboard.writeText(
       `${window.location.host}/creators/${creator.address}/?network=${network}`
     );
+  };
+
+  const updateTokenUsdPrice = async () => {
+    try {
+      const id = await getCoinGeckoIDs([SYMBOL[network]]);
+      setTokenUsdPrice(await getTokenUsdPrice(id[0]));
+    } catch (error) {
+      // token USD price not found
+      // reset it
+      setTokenUsdPrice(0);
+      console.error(error);
+    }
+  };
+
+  const getRate = () => {
+    const rate = formatUnit(Number(creator.rate), DECIMALS[network]);
+    const usdRate = rate * tokenUsdPrice;
+    return [usdRate.toFixed(2), rate];
   };
 
   return (
@@ -118,8 +148,7 @@ const Creator: React.FC<Props> = ({
                   </Text>
                   {creator.rate && (
                     <Typography variant="body2" color="text.secondary">
-                      {t("Rate")}:{" "}
-                      {formatUnit(Number(creator.rate), DECIMALS[network])}{" "}
+                      {t("Rate")}: {getRate()[0]} USD / {getRate()[1]}{" "}
                       {SYMBOL[network]}
                     </Typography>
                   )}
