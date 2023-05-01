@@ -72,8 +72,6 @@ const Creator: React.FC<Props> = ({
   const [tokenUsdPrice, setTokenUsdPrice] = useState(0);
   const { t } = useTranslation();
 
-  console.log("tokenUsdPrice", tokenUsdPrice);
-
   useEffect(() => {
     updateTokenUsdPrice();
   }, [network]);
