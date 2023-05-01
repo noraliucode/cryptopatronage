@@ -18,6 +18,7 @@ import { Link } from "../../components/Link";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { getTokenUsdPrice } from "../../utils/helpers";
+import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 
 export const Root = styled("div")(() => ({
   padding: 30,
@@ -84,6 +85,13 @@ export const CreatorsPage = () => {
   const params = useParams();
   const { t } = useTranslation();
   const { address } = params as any;
+  const { committedCreators, uncommittedCreators } = useSubscribedCreators(
+    signer?.address,
+    network
+  );
+
+  const isSubscriber =
+    committedCreators.length > 0 || uncommittedCreators.length > 0;
 
   const updateTokenUsdPrice = async () => {
     try {
@@ -199,6 +207,8 @@ export const CreatorsPage = () => {
                 <Grid container spacing={2}>
                   {_creators.map((creator, index) => (
                     <Creator
+                      isSubscriber={isSubscriber}
+                      hasAddress={!!address}
                       tokenUsdPrice={tokenUsdPrice}
                       creator={creator}
                       selectedIndex={selectedIndex}
