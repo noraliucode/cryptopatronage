@@ -5,11 +5,12 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  TextField,
   styled,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useApi } from "../../hooks/useApi";
 import { APIService } from "../../services/apiService";
@@ -26,6 +27,8 @@ type IProps = {
   onClose: () => void;
   selectedCreator: string;
   rate: string | undefined;
+  tokenUsdPrice: number;
+  isSubscriber: boolean;
 };
 
 type IState = {
@@ -36,6 +39,7 @@ type IState = {
   isNoFundsExclusivelyConfirmed: boolean;
   isModalOpen: boolean;
   proxyDepositBase: number;
+  months: number;
 };
 
 export const HintText = styled("div")(() => ({
@@ -53,7 +57,8 @@ const WarningText = styled("div")(() => ({
 }));
 
 export const SubscribeModal = (props: IProps) => {
-  const { onClose, open, selectedCreator, rate } = props;
+  const { onClose, open, selectedCreator, rate, tokenUsdPrice, isSubscriber } =
+    props;
   const { t } = useTranslation();
   const [state, setState] = useState<IState>({
     isCommitted: true,
@@ -63,6 +68,7 @@ export const SubscribeModal = (props: IProps) => {
     isNoFundsExclusivelyConfirmed: false,
     isModalOpen: false,
     proxyDepositBase: 0,
+    months: 6,
   });
 
   const {
@@ -73,6 +79,7 @@ export const SubscribeModal = (props: IProps) => {
     isNoFundsExclusivelyConfirmed,
     isModalOpen,
     proxyDepositBase,
+    months,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -81,6 +88,7 @@ export const SubscribeModal = (props: IProps) => {
   const { api } = useApi(network);
 
   const isSubscribDisabled = !isCommitted && !isNoFundsExclusivelyConfirmed;
+  const formattedRate = formatUnit(Number(rate), DECIMALS[network]);
 
   const handleClose = () => {
     onClose();
@@ -164,6 +172,15 @@ export const SubscribeModal = (props: IProps) => {
     }
   };
 
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setState((prev) => ({
+      ...prev,
+      months: Number(event.target.value),
+    }));
+  };
+
   const renderContent = () => {
     if (isSubscribingSucceeded)
       return <Wrapper> {t("subscribe_modal.Subscribed")}</Wrapper>;
@@ -172,6 +189,24 @@ export const SubscribeModal = (props: IProps) => {
     return (
       <Container>
         <Wrapper>
+          {isSubscriber
+            ? t("subscribe_modal.text6")
+            : t("subscribe_modal.text5")}
+          <TextField
+            fullWidth
+            value={months}
+            id="standard-basic"
+            label="Months"
+            variant="standard"
+            placeholder={`Input the amount of months you would like to subscribe to this creator`}
+            onChange={handleInputChange}
+            defaultValue={6}
+            type="number"
+            inputProps={{ min: 1 }}
+          />
+          ≈ ${(months * tokenUsdPrice * Number(formattedRate)).toFixed(2)} USD
+          <br />
+          <br />
           <CheckWrapper onClick={handleCommittedClick}>
             <Checkbox checked={isCommitted} />
             <Text>{t("subscribe_modal.text1")}</Text>
@@ -204,7 +239,7 @@ export const SubscribeModal = (props: IProps) => {
 
   const content = () => {
     const total = Number(rate) + proxyDepositBase;
-    return `Rate: ${formatUnit(Number(rate), DECIMALS[network])} ${
+    return `Rate: ${formattedRate} ${
       SYMBOL[network]
     } and desposits ${formatUnit(proxyDepositBase, DECIMALS[network])} ${
       SYMBOL[network]
@@ -213,8 +248,20 @@ export const SubscribeModal = (props: IProps) => {
     } is required for this process. Deposits are fees that will be refunded upon cancellation of the subscription.`;
   };
 
+  const dialogPaper = {
+    minHeight: "70vh",
+    maxHeight: "70vh",
+  };
+
   return (
-    <Dialog disableEscapeKeyDown onClose={handleClose} open={open}>
+    <Dialog
+      PaperProps={{
+        sx: dialogPaper,
+      }}
+      disableEscapeKeyDown
+      onClose={handleClose}
+      open={open}
+    >
       <Modal
         title="Insufficient Balance"
         content={content()}
@@ -227,7 +274,11 @@ export const SubscribeModal = (props: IProps) => {
         }
         action={handleClose}
       />
-      <DialogTitle>{t("subscribe_modal.Subscribe")}</DialogTitle>
+      <DialogTitle>
+        {isSubscriber
+          ? t("subscribe_modal.top up")
+          : t("subscribe_modal.Subscribe")}
+      </DialogTitle>
       <DialogContent dividers>{renderContent()}</DialogContent>
       <DialogActions>
         <Button

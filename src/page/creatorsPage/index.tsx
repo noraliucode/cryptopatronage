@@ -7,7 +7,6 @@ import {
   FOOTER_HEIGHT,
   NAV_BAR_HEIGHT,
   NETWORK,
-  SYMBOL,
 } from "../../utils/constants";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
@@ -18,7 +17,8 @@ import Creator from "./Creator";
 import { Link } from "../../components/Link";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { getCoinGeckoIDs, getTokenUsdPrice } from "../../utils/helpers";
+import { getTokenUsdPrice } from "../../utils/helpers";
+import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 
 export const Root = styled("div")(() => ({
   padding: 30,
@@ -85,6 +85,13 @@ export const CreatorsPage = () => {
   const params = useParams();
   const { t } = useTranslation();
   const { address } = params as any;
+  const { committedCreators, uncommittedCreators } = useSubscribedCreators(
+    signer?.address,
+    network
+  );
+
+  const isSubscriber =
+    committedCreators.length > 0 || uncommittedCreators.length > 0;
 
   const updateTokenUsdPrice = async () => {
     try {
@@ -190,15 +197,18 @@ export const CreatorsPage = () => {
                 <Button variant="contained">{t("button.becomeCreator")}</Button>
               </Link>
               <SubscribeModal
+                isSubscriber={isSubscriber}
                 open={open}
                 onClose={onClose}
                 selectedCreator={selectedCreator}
                 rate={selectedRate}
+                tokenUsdPrice={tokenUsdPrice}
               />
               <Container>
                 <Grid container spacing={2}>
                   {_creators.map((creator, index) => (
                     <Creator
+                      isSubscriber={isSubscriber}
                       tokenUsdPrice={tokenUsdPrice}
                       creator={creator}
                       selectedIndex={selectedIndex}

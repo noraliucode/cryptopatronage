@@ -5,7 +5,8 @@
     "becomeCreator": "Become a creator",
     "create": "Create",
     "connect": "Connect",
-    "subscribe": "Subscribe"
+    "subscribe": "Subscribe",
+    "top up": "Top up"
   },
   "manage sections": {
     "Payment System": "Payment System",
@@ -40,7 +41,8 @@
       "Unnote Preimages": "Withdraw the deposit for delay proxy",
       "Register to payment system": "Register to Cryptopatronage payment system. Payment will automically transfer to your recipient account. (1% fee required)",
       "Add Monthly Rate": "How much you require, monthly, for someone to be your supporter"
-    }
+    },
+    "In USD": "In USD"
   },
   "about": {
     "title": "About CryptoPatronage",
@@ -78,6 +80,9 @@
     "text1": "Earmark funds exclusively for this creator",
     "text2": "Delay transfer",
     "text3": "*coming soon",
-    "text4": " No creating proxy. Creators can withdraw from my account directly."
+    "text4": " No creating proxy. Creators can withdraw from my account directly.",
+    "top up": "Top up",
+    "text5": "How many months you would like to subscribe to this creator?",
+    "text6": "How many months you would like to top up to this creator?"
   }
 }

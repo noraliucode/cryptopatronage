@@ -54,6 +54,7 @@ interface Props {
   onCardClick: (index: number) => void;
   onSubscribeClick: (_: string) => void;
   tokenUsdPrice: number;
+  isSubscriber: boolean;
 }
 
 const Creator: React.FC<Props> = ({
@@ -64,6 +65,7 @@ const Creator: React.FC<Props> = ({
   onCardClick,
   onSubscribeClick,
   tokenUsdPrice,
+  isSubscriber,
 }) => {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
@@ -156,7 +158,11 @@ const Creator: React.FC<Props> = ({
                   onClick={() => onSubscribeClick(creator.address)}
                   size="small"
                 >
-                  <Text>{t("button.subscribe")}</Text>
+                  {isSubscriber ? (
+                    <Text>{t("button.top up")}</Text>
+                  ) : (
+                    <Text>{t("button.subscribe")}</Text>
+                  )}
                 </Button>
               </CardActions>
               <CardActions>
