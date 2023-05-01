@@ -107,6 +107,12 @@ const Creator: React.FC<Props> = ({
     }
   };
 
+  const getRate = () => {
+    const rate = formatUnit(Number(creator.rate), DECIMALS[network]);
+    const usdRate = rate * tokenUsdPrice;
+    return [usdRate.toFixed(2), rate];
+  };
+
   return (
     <Grid item xs={12} sm={4} md={3}>
       <Card
@@ -142,8 +148,7 @@ const Creator: React.FC<Props> = ({
                   </Text>
                   {creator.rate && (
                     <Typography variant="body2" color="text.secondary">
-                      {t("Rate")}:{" "}
-                      {formatUnit(Number(creator.rate), DECIMALS[network])}{" "}
+                      {t("Rate")}: {getRate()[0]} USD / {getRate()[1]}{" "}
                       {SYMBOL[network]}
                     </Typography>
                   )}
