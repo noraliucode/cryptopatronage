@@ -70,5 +70,14 @@
     "Manage": "管理",
     "About": "關於",
     "Language": "語言"
+  },
+  "subscribe_modal": {
+    "Subscribed": "已訂閱",
+    "Subscribe": "訂閱",
+    "Subscribing...": "訂閱中...",
+    "text1": "專門為這位創作者預留資金",
+    "text2": "延後傳送",
+    "text3": "*即將推出",
+    "text4": "無需創建代理。創作者可以直接從我的帳戶提款。"
   }
 }
