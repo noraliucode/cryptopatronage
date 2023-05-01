@@ -7,7 +7,6 @@ import {
   FOOTER_HEIGHT,
   NAV_BAR_HEIGHT,
   NETWORK,
-  SYMBOL,
 } from "../../utils/constants";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
@@ -18,7 +17,7 @@ import Creator from "./Creator";
 import { Link } from "../../components/Link";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { getCoinGeckoIDs, getTokenUsdPrice } from "../../utils/helpers";
+import { getTokenUsdPrice } from "../../utils/helpers";
 
 export const Root = styled("div")(() => ({
   padding: 30,
