@@ -70,5 +70,14 @@
     "Manage": "Manage",
     "About": "About",
     "Language": "Language"
+  },
+  "subscribe_modal": {
+    "Subscribed": "Subscribed",
+    "Subscribe": "Subscribe",
+    "Subscribing...": "Subscribing...",
+    "text1": "Earmark funds exclusively for this creator",
+    "text2": "Delay transfer",
+    "text3": "*coming soon",
+    "text4": " No creating proxy. Creators can withdraw from my account directly."
   }
 }

@@ -19,6 +19,7 @@ import { subscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Modal } from "../Modal";
 import { CheckWrapper, Text } from "../Manage";
+import { useTranslation } from "react-i18next";
 
 type IProps = {
   open: boolean;
@@ -53,6 +54,7 @@ const WarningText = styled("div")(() => ({
 
 export const SubscribeModal = (props: IProps) => {
   const { onClose, open, selectedCreator, rate } = props;
+  const { t } = useTranslation();
   const [state, setState] = useState<IState>({
     isCommitted: true,
     isDelayed: false,
@@ -163,14 +165,16 @@ export const SubscribeModal = (props: IProps) => {
   };
 
   const renderContent = () => {
-    if (isSubscribingSucceeded) return <Wrapper>Subscribed!</Wrapper>;
-    if (isSubscribing) return <Wrapper>Subscribing...</Wrapper>;
+    if (isSubscribingSucceeded)
+      return <Wrapper> {t("subscribe_modal.Subscribed")}</Wrapper>;
+    if (isSubscribing)
+      return <Wrapper>{t("subscribe_modal.Subscribing...")}</Wrapper>;
     return (
       <Container>
         <Wrapper>
           <CheckWrapper onClick={handleCommittedClick}>
             <Checkbox checked={isCommitted} />
-            <Text>Earmark funds exclusively for this creator</Text>
+            <Text>{t("subscribe_modal.text1")}</Text>
           </CheckWrapper>
           <CheckWrapper
             onClick={() => {
@@ -178,16 +182,13 @@ export const SubscribeModal = (props: IProps) => {
             }}
           >
             <Checkbox disabled checked={isDelayed} />
-            <Text>Delay transfer</Text>
-            &nbsp;<HintText>*coming soon</HintText>
+            <Text>{t("subscribe_modal.text2")}</Text>
+            &nbsp;<HintText>{t("subscribe_modal.text3")}</HintText>
           </CheckWrapper>
           {!isCommitted && (
             <CheckWrapper onClick={handleNoFundsExclusiveClick}>
               <Checkbox checked={isNoFundsExclusivelyConfirmed} />
-              <WarningText>
-                No creating proxy. Creators can withdraw from my account
-                directly.
-              </WarningText>
+              <WarningText>{t("subscribe_modal.text4")}</WarningText>
             </CheckWrapper>
           )}
         </Wrapper>
@@ -226,7 +227,7 @@ export const SubscribeModal = (props: IProps) => {
         }
         action={handleClose}
       />
-      <DialogTitle>Subscribe</DialogTitle>
+      <DialogTitle>{t("subscribe_modal.Subscribe")}</DialogTitle>
       <DialogContent dividers>{renderContent()}</DialogContent>
       <DialogActions>
         <Button
