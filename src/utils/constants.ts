@@ -190,3 +190,11 @@ export const lngs: Languages = {
 };
 
 export const INFURA_URL = "https://ipfs.infura.io:5001/api/v0/";
+
+export const COINGECKO_IDS = {
+  ROCOCO: "rococo",
+  WESTEND: "westend",
+  KUSAMA: "kusama",
+  POLKADOT: "polkadot",
+  KABOCHA: "kabocha",
+};
