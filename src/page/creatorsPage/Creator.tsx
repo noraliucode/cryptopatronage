@@ -10,14 +10,9 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { DECIMALS, IMAGE_HEIGHT, SYMBOL } from "../../utils/constants";
-import {
-  formatUnit,
-  getCoinGeckoIDs,
-  getTokenUsdPrice,
-  toShortAddress,
-} from "../../utils/helpers";
+import { formatUnit, toShortAddress } from "../../utils/helpers";
 import EmailIcon from "@mui/icons-material/Email";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import { ICreator, INetwork } from "../../utils/types";
@@ -58,6 +53,7 @@ interface Props {
   network: INetwork;
   onCardClick: (index: number) => void;
   onSubscribeClick: (_: string) => void;
+  tokenUsdPrice: number;
 }
 
 const Creator: React.FC<Props> = ({
@@ -67,14 +63,10 @@ const Creator: React.FC<Props> = ({
   network,
   onCardClick,
   onSubscribeClick,
+  tokenUsdPrice,
 }) => {
   const [open, setOpen] = useState(false);
-  const [tokenUsdPrice, setTokenUsdPrice] = useState(0);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    updateTokenUsdPrice();
-  }, [network]);
 
   if (!creator) return <></>;
   const WrapperComponent = ({ children }: { children: React.ReactElement }) =>
@@ -91,18 +83,6 @@ const Creator: React.FC<Props> = ({
     navigator.clipboard.writeText(
       `${window.location.host}/creators/${creator.address}/?network=${network}`
     );
-  };
-
-  const updateTokenUsdPrice = async () => {
-    try {
-      const id = await getCoinGeckoIDs([SYMBOL[network]]);
-      setTokenUsdPrice(await getTokenUsdPrice(id[0]));
-    } catch (error) {
-      // token USD price not found
-      // reset it
-      setTokenUsdPrice(0);
-      console.error(error);
-    }
   };
 
   const getRate = () => {
