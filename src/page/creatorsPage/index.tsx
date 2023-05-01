@@ -194,6 +194,7 @@ export const CreatorsPage = () => {
                 onClose={onClose}
                 selectedCreator={selectedCreator}
                 rate={selectedRate}
+                tokenUsdPrice={tokenUsdPrice}
               />
               <Container>
                 <Grid container spacing={2}>

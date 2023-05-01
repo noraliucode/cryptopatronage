@@ -27,6 +27,7 @@ type IProps = {
   onClose: () => void;
   selectedCreator: string;
   rate: string | undefined;
+  tokenUsdPrice: number;
 };
 
 type IState = {
@@ -55,7 +56,7 @@ const WarningText = styled("div")(() => ({
 }));
 
 export const SubscribeModal = (props: IProps) => {
-  const { onClose, open, selectedCreator, rate } = props;
+  const { onClose, open, selectedCreator, rate, tokenUsdPrice } = props;
   const { t } = useTranslation();
   const [state, setState] = useState<IState>({
     isCommitted: true,
@@ -85,6 +86,7 @@ export const SubscribeModal = (props: IProps) => {
   const { api } = useApi(network);
 
   const isSubscribDisabled = !isCommitted && !isNoFundsExclusivelyConfirmed;
+  const formattedRate = formatUnit(Number(rate), DECIMALS[network]);
 
   const handleClose = () => {
     onClose();
@@ -195,7 +197,12 @@ export const SubscribeModal = (props: IProps) => {
             placeholder={`Input the amount of months you would like to subscribe to this creator`}
             onChange={handleInputChange}
             defaultValue={6}
+            type="number"
+            inputProps={{ min: 1 }}
           />
+          ≈ ${months * tokenUsdPrice * Number(formattedRate)} USD
+          <br />
+          <br />
           <CheckWrapper onClick={handleCommittedClick}>
             <Checkbox checked={isCommitted} />
             <Text>{t("subscribe_modal.text1")}</Text>
@@ -228,7 +235,7 @@ export const SubscribeModal = (props: IProps) => {
 
   const content = () => {
     const total = Number(rate) + proxyDepositBase;
-    return `Rate: ${formatUnit(Number(rate), DECIMALS[network])} ${
+    return `Rate: ${formattedRate} ${
       SYMBOL[network]
     } and desposits ${formatUnit(proxyDepositBase, DECIMALS[network])} ${
       SYMBOL[network]
@@ -237,8 +244,20 @@ export const SubscribeModal = (props: IProps) => {
     } is required for this process. Deposits are fees that will be refunded upon cancellation of the subscription.`;
   };
 
+  const dialogPaper = {
+    minHeight: "70vh",
+    maxHeight: "70vh",
+  };
+
   return (
-    <Dialog disableEscapeKeyDown onClose={handleClose} open={open}>
+    <Dialog
+      PaperProps={{
+        sx: dialogPaper,
+      }}
+      disableEscapeKeyDown
+      onClose={handleClose}
+      open={open}
+    >
       <Modal
         title="Insufficient Balance"
         content={content()}
