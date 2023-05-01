@@ -5,11 +5,12 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  TextField,
   styled,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useApi } from "../../hooks/useApi";
 import { APIService } from "../../services/apiService";
@@ -36,6 +37,7 @@ type IState = {
   isNoFundsExclusivelyConfirmed: boolean;
   isModalOpen: boolean;
   proxyDepositBase: number;
+  months: number;
 };
 
 export const HintText = styled("div")(() => ({
@@ -63,6 +65,7 @@ export const SubscribeModal = (props: IProps) => {
     isNoFundsExclusivelyConfirmed: false,
     isModalOpen: false,
     proxyDepositBase: 0,
+    months: 6,
   });
 
   const {
@@ -73,6 +76,7 @@ export const SubscribeModal = (props: IProps) => {
     isNoFundsExclusivelyConfirmed,
     isModalOpen,
     proxyDepositBase,
+    months,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -164,6 +168,15 @@ export const SubscribeModal = (props: IProps) => {
     }
   };
 
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setState((prev) => ({
+      ...prev,
+      months: Number(event.target.value),
+    }));
+  };
+
   const renderContent = () => {
     if (isSubscribingSucceeded)
       return <Wrapper> {t("subscribe_modal.Subscribed")}</Wrapper>;
@@ -172,6 +185,17 @@ export const SubscribeModal = (props: IProps) => {
     return (
       <Container>
         <Wrapper>
+          How many months you would like to subscribe to this creator?
+          <TextField
+            fullWidth
+            value={months}
+            id="standard-basic"
+            label="Months"
+            variant="standard"
+            placeholder={`Input the amount of months you would like to subscribe to this creator`}
+            onChange={handleInputChange}
+            defaultValue={6}
+          />
           <CheckWrapper onClick={handleCommittedClick}>
             <Checkbox checked={isCommitted} />
             <Text>{t("subscribe_modal.text1")}</Text>
