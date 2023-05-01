@@ -200,7 +200,7 @@ export const SubscribeModal = (props: IProps) => {
             type="number"
             inputProps={{ min: 1 }}
           />
-          ≈ ${months * tokenUsdPrice * Number(formattedRate)} USD
+          ≈ ${(months * tokenUsdPrice * Number(formattedRate)).toFixed(2)} USD
           <br />
           <br />
           <CheckWrapper onClick={handleCommittedClick}>
