@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  CardActionArea,
   CardActions,
   CardContent,
   Grid,
@@ -88,73 +89,77 @@ const Creator: React.FC<Props> = ({
         sx={{ maxWidth: 345, cursor: "pointer" }}
         onClick={() => onCardClick(index)}
       >
-        <WrapperComponent>
+        <CardActionArea>
           <>
-            <CardImage
-              url={
-                // TODO: add node.js server to handle redirect url and remove this later
-                creator.imageUrl
-                  ? creator.display === "DatDot"
-                    ? "/assets/images/datdot.png"
-                    : creator.imageUrl
-                  : "/assets/images/default.webp"
-              }
-            >
-              <Blur isClicked={selectedIndex === index ? true : false} />
-            </CardImage>
+            <WrapperComponent>
+              <>
+                <CardImage
+                  url={
+                    // TODO: add node.js server to handle redirect url and remove this later
+                    creator.imageUrl
+                      ? creator.display === "DatDot"
+                        ? "/assets/images/datdot.png"
+                        : creator.imageUrl
+                      : "/assets/images/default.webp"
+                  }
+                >
+                  <Blur isClicked={selectedIndex === index ? true : false} />
+                </CardImage>
 
-            <CardContent>
-              <Text>
-                <Typography gutterBottom variant="h5" component="div">
-                  {creator.display
-                    ? isHex(creator.display)
-                      ? hexToString(creator.display)
-                      : creator.display
-                    : toShortAddress(creator.address)}
-                </Typography>
-              </Text>
-              {creator.rate && (
-                <Typography variant="body2" color="text.secondary">
-                  {t("Rate")}:{" "}
-                  {formatUnit(Number(creator.rate), DECIMALS[network])}{" "}
-                  {SYMBOL[network]}
-                </Typography>
-              )}
-              {creator.email ? (
-                <a href={`mailto:${creator.email}`}>
-                  <IconButton color="primary" aria-label="email icon">
-                    <EmailIcon />
-                  </IconButton>
-                </a>
-              ) : null}
+                <CardContent>
+                  <Text>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {creator.display
+                        ? isHex(creator.display)
+                          ? hexToString(creator.display)
+                          : creator.display
+                        : toShortAddress(creator.address)}
+                    </Typography>
+                  </Text>
+                  {creator.rate && (
+                    <Typography variant="body2" color="text.secondary">
+                      {t("Rate")}:{" "}
+                      {formatUnit(Number(creator.rate), DECIMALS[network])}{" "}
+                      {SYMBOL[network]}
+                    </Typography>
+                  )}
+                  {creator.email ? (
+                    <a href={`mailto:${creator.email}`}>
+                      <IconButton color="primary" aria-label="email icon">
+                        <EmailIcon />
+                      </IconButton>
+                    </a>
+                  ) : null}
 
-              {creator.twitter ? (
-                <a href={creator.twitter} target="_blank" rel="noreferrer">
-                  <IconButton color="primary" aria-label="twitter icon">
-                    <TwitterIcon />
-                  </IconButton>
-                </a>
-              ) : null}
+                  {creator.twitter ? (
+                    <a href={creator.twitter} target="_blank" rel="noreferrer">
+                      <IconButton color="primary" aria-label="twitter icon">
+                        <TwitterIcon />
+                      </IconButton>
+                    </a>
+                  ) : null}
 
-              {!creator.twitter && !creator.email ? <ExtraHeight /> : null}
-            </CardContent>
+                  {!creator.twitter && !creator.email ? <ExtraHeight /> : null}
+                </CardContent>
+              </>
+            </WrapperComponent>
+            <Wrapper>
+              <CardActions>
+                <Button
+                  onClick={() => onSubscribeClick(creator.address)}
+                  size="small"
+                >
+                  <Text>{t("button.subscribe")}</Text>
+                </Button>
+              </CardActions>
+              <CardActions>
+                <Button onClick={onShareClick} size="small">
+                  <ShareIcon color="action" />
+                </Button>
+              </CardActions>
+            </Wrapper>
           </>
-        </WrapperComponent>
-        <Wrapper>
-          <CardActions>
-            <Button
-              onClick={() => onSubscribeClick(creator.address)}
-              size="small"
-            >
-              <Text>{t("button.subscribe")}</Text>
-            </Button>
-          </CardActions>
-          <CardActions>
-            <Button onClick={onShareClick} size="small">
-              <ShareIcon color="action" />
-            </Button>
-          </CardActions>
-        </Wrapper>
+        </CardActionArea>
       </Card>
       <Snackbar
         message="Copied to clibboard"
