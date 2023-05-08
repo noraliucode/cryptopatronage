@@ -8,11 +8,18 @@ type IProps = {
   rate: any;
   network: INetwork;
   handleInputChange: any;
+  setIsUsd: (isUsd: boolean) => void;
+  isUsd: boolean;
 };
 
-const RateForm = ({ rate, network, handleInputChange }: IProps) => {
+const RateForm = ({
+  rate,
+  network,
+  handleInputChange,
+  setIsUsd,
+  isUsd,
+}: IProps) => {
   const { t } = useTranslation();
-  const [isUsd, setIsUsd] = React.useState(false);
   const handleIsUsdClick = () => {
     setIsUsd(!isUsd);
   };
