@@ -69,6 +69,7 @@ type IState = {
   display: string;
   web: string;
   open: boolean;
+  isUsd: boolean;
 };
 
 export default function Create() {
@@ -83,13 +84,14 @@ export default function Create() {
     display: "",
     web: "",
     open: false,
+    isUsd: false,
   });
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
   const { api } = useApi(network);
 
-  const { rate, imgUrl, email, twitter, display, web, open } = state;
+  const { rate, imgUrl, email, twitter, display, web, open, isUsd } = state;
 
   const steps = getSteps();
 
@@ -182,9 +184,18 @@ export default function Create() {
     }
   }
 
+  const setIsUsd = (value: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      isUsd: value,
+    }));
+  };
+
   const renderStep1 = () => {
     return (
       <RateForm
+        isUsd={isUsd}
+        setIsUsd={setIsUsd}
         rate={rate}
         network={network}
         handleInputChange={handleInputChange}
