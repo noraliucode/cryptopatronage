@@ -9,7 +9,6 @@ import { unsubscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Modal } from "../Modal";
 import {
-  ActionWrapper,
   InputWrapper,
   Title,
   TitleWrapper,
@@ -41,8 +40,7 @@ export const Supporter = () => {
     creatorUrl: "",
   });
 
-  const { rate, isSubscribing, isUnsubscribing, isModalOpen, selectedCreator } =
-    state;
+  const { isSubscribing, isUnsubscribing, isModalOpen } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
