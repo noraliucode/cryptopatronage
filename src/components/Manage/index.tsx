@@ -188,7 +188,7 @@ export const Manage = () => {
   const defaultState = {
     value: 0,
     anonymous: "",
-    rate: 0,
+    rate: 1,
     open: false,
     message: "",
     isModalOpen: false,

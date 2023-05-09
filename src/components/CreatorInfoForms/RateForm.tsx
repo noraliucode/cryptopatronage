@@ -44,7 +44,7 @@ const RateForm = ({
         <Text>{t("manage.In USD")}</Text>
       </CheckWrapper>
       <TextField
-        inputProps={{ min: isUsd ? 1 : 0.0000001 }}
+        inputProps={{ min: isUsd ? 1 : 0.01 }}
         type="number"
         fullWidth
         value={rate}

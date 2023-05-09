@@ -62,7 +62,7 @@ export const Wrapper = styled("div")(() => ({
 }));
 
 type IState = {
-  rate: string;
+  rate: number;
   imgUrl: string;
   email: string;
   twitter: string;
@@ -77,7 +77,7 @@ export default function Create() {
 
   const [checked, setChecked] = useState(true);
   const [state, setState] = useState<IState>({
-    rate: "",
+    rate: 1,
     imgUrl: "",
     email: "",
     twitter: "",
@@ -138,7 +138,7 @@ export default function Create() {
   ) => {
     setState((prev) => ({
       ...prev,
-      rate: event.target.value,
+      rate: Number(event.target.value),
     }));
   };
 
