@@ -1,12 +1,4 @@
-import {
-  Box,
-  Tabs,
-  Tab,
-  Tooltip,
-  CircularProgress,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Box, Tooltip, CircularProgress, Grid } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
@@ -27,9 +19,8 @@ import {
   Payment_System,
   Personal_Info,
   Unregister,
-  ZERO_BAL,
 } from "../../utils/constants";
-import { formatUnit, toShortAddress, validateUrls } from "../../utils/helpers";
+import { formatUnit, validateUrls } from "../../utils/helpers";
 import Snackbar from "@mui/material/Snackbar";
 import {
   IProxyParsedSupporter,
@@ -49,7 +40,6 @@ import IdentityForm from "../CreatorInfoForms/IdentityForm";
 import BasicTable from "../Table";
 import { useTranslation } from "react-i18next";
 import ConnectButton from "../ConnectButton";
-import { fetchPersonalInfo } from "../../utils/ipfsHelpers";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,
