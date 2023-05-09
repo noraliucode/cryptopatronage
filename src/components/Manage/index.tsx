@@ -181,13 +181,14 @@ type IState = {
   errorMessage: string;
   isCicked: boolean;
   isClearIdentityModalOpen: boolean;
+  isUsd: boolean;
 };
 
 export const Manage = () => {
   const defaultState = {
     value: 0,
     anonymous: "",
-    rate: 0,
+    rate: 1,
     open: false,
     message: "",
     isModalOpen: false,
@@ -202,6 +203,7 @@ export const Manage = () => {
     errorMessage: "",
     isCicked: false,
     isClearIdentityModalOpen: false,
+    isUsd: false,
   };
   const [state, setState] = useState<IState>(defaultState);
 
@@ -222,6 +224,7 @@ export const Manage = () => {
     errorMessage,
     isCicked,
     isClearIdentityModalOpen,
+    isUsd,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -432,6 +435,7 @@ export const Manage = () => {
       imgUrl,
       rate: rate * 10 ** DECIMALS[network],
       isSensitive: checked,
+      isUsd,
     };
 
     await updateInfo(
@@ -474,6 +478,13 @@ export const Manage = () => {
     setState((prev) => ({
       ...prev,
       isClearIdentityModalOpen: true,
+    }));
+  };
+
+  const setIsUsd = (value: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      isUsd: value,
     }));
   };
 
@@ -577,6 +588,8 @@ export const Manage = () => {
                   ) : (
                     <>
                       <RateForm
+                        isUsd={isUsd}
+                        setIsUsd={setIsUsd}
                         rate={rate}
                         network={network}
                         handleInputChange={handleInputChange}

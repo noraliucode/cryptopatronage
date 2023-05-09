@@ -1,13 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useCreators } from "../../hooks/useCreators";
 import { styled } from "@mui/material/styles";
 import { Box, Button, CircularProgress, Grid } from "@mui/material";
-import {
-  COINGECKO_IDS,
-  FOOTER_HEIGHT,
-  NAV_BAR_HEIGHT,
-  NETWORK,
-} from "../../utils/constants";
+import { FOOTER_HEIGHT, NAV_BAR_HEIGHT, NETWORK } from "../../utils/constants";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { SubscribeModal } from "../../components/SubscribeModal";
@@ -17,8 +12,8 @@ import Creator from "./Creator";
 import { Link } from "../../components/Link";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { getTokenUsdPrice } from "../../utils/helpers";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
+import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
 
 export const Root = styled("div")(() => ({
   padding: 30,
@@ -53,7 +48,6 @@ type IState = {
   isModalOpen: boolean;
   selectedIndex: number;
   selectedRate: string | undefined;
-  tokenUsdPrice: number;
 };
 
 export const CreatorsPage = () => {
@@ -63,7 +57,6 @@ export const CreatorsPage = () => {
     isModalOpen: false,
     selectedIndex: -1,
     selectedRate: "",
-    tokenUsdPrice: 0,
   });
   const {
     signer,
@@ -89,34 +82,10 @@ export const CreatorsPage = () => {
     signer?.address,
     network
   );
+  const { tokenUsdPrice } = useTokenUsdPrice(network);
 
   const isSubscriber =
     committedCreators.length > 0 || uncommittedCreators.length > 0;
-
-  const updateTokenUsdPrice = async () => {
-    try {
-      // TODO: getting 429 rate limit by fecthing ids, so hardcode it for now
-      // const id = await getCoinGeckoIDs([SYMBOL[network]]);
-      const price = await getTokenUsdPrice(COINGECKO_IDS[network]);
-
-      setState((prev) => ({
-        ...prev,
-        tokenUsdPrice: price,
-      }));
-    } catch (error) {
-      // token USD price not found
-      // reset it
-      setState((prev) => ({
-        ...prev,
-        tokenUsdPrice: 0,
-      }));
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    updateTokenUsdPrice();
-  }, [network]);
 
   const onClose = () => {
     setState((prev) => ({
@@ -153,14 +122,8 @@ export const CreatorsPage = () => {
     }));
   };
 
-  const {
-    open,
-    selectedCreator,
-    isModalOpen,
-    selectedIndex,
-    selectedRate,
-    tokenUsdPrice,
-  } = state;
+  const { open, selectedCreator, isModalOpen, selectedIndex, selectedRate } =
+    state;
   const _creators = address
     ? creators?.filter(
         (x) => x?.address?.toLowerCase() === address.toLowerCase()

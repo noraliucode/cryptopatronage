@@ -68,6 +68,7 @@ export type IAdditionalInfo = {
   isSensitive: boolean;
   ps?: string;
   [lt_address: string]: unknown;
+  isUsd: boolean;
 };
 
 export type INetwork = keyof ICreatorAddress;

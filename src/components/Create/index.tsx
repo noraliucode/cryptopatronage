@@ -62,13 +62,14 @@ export const Wrapper = styled("div")(() => ({
 }));
 
 type IState = {
-  rate: string;
+  rate: number;
   imgUrl: string;
   email: string;
   twitter: string;
   display: string;
   web: string;
   open: boolean;
+  isUsd: boolean;
 };
 
 export default function Create() {
@@ -76,20 +77,21 @@ export default function Create() {
 
   const [checked, setChecked] = useState(true);
   const [state, setState] = useState<IState>({
-    rate: "",
+    rate: 1,
     imgUrl: "",
     email: "",
     twitter: "",
     display: "",
     web: "",
     open: false,
+    isUsd: false,
   });
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
   const { api } = useApi(network);
 
-  const { rate, imgUrl, email, twitter, display, web, open } = state;
+  const { rate, imgUrl, email, twitter, display, web, open, isUsd } = state;
 
   const steps = getSteps();
 
@@ -136,7 +138,7 @@ export default function Create() {
   ) => {
     setState((prev) => ({
       ...prev,
-      rate: event.target.value,
+      rate: Number(event.target.value),
     }));
   };
 
@@ -182,9 +184,18 @@ export default function Create() {
     }
   }
 
+  const setIsUsd = (value: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      isUsd: value,
+    }));
+  };
+
   const renderStep1 = () => {
     return (
       <RateForm
+        isUsd={isUsd}
+        setIsUsd={setIsUsd}
         rate={rate}
         network={network}
         handleInputChange={handleInputChange}

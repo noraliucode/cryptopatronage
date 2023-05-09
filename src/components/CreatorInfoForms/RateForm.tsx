@@ -1,18 +1,32 @@
-import { Checkbox, TextField, Tooltip } from "@mui/material";
+import { Checkbox, TextField, Tooltip, styled } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { SYMBOL } from "../../utils/constants";
 import { INetwork } from "../../utils/types";
 import { Title, TitleWrapper, CheckWrapper, Text } from "../Manage";
+import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
+
+export const TextWrapper = styled("div")(() => ({
+  textAlign: "left",
+}));
+
 type IProps = {
   rate: any;
   network: INetwork;
   handleInputChange: any;
+  setIsUsd: (isUsd: boolean) => void;
+  isUsd: boolean;
 };
 
-const RateForm = ({ rate, network, handleInputChange }: IProps) => {
+const RateForm = ({
+  rate,
+  network,
+  handleInputChange,
+  setIsUsd,
+  isUsd,
+}: IProps) => {
   const { t } = useTranslation();
-  const [isUsd, setIsUsd] = React.useState(false);
+  const { tokenUsdPrice } = useTokenUsdPrice(network);
   const handleIsUsdClick = () => {
     setIsUsd(!isUsd);
   };
@@ -30,7 +44,7 @@ const RateForm = ({ rate, network, handleInputChange }: IProps) => {
         <Text>{t("manage.In USD")}</Text>
       </CheckWrapper>
       <TextField
-        inputProps={{ min: isUsd ? 1 : 0.0000001 }}
+        inputProps={{ min: isUsd ? 1 : 0.01 }}
         type="number"
         fullWidth
         value={rate}
@@ -41,6 +55,11 @@ const RateForm = ({ rate, network, handleInputChange }: IProps) => {
         onChange={handleInputChange}
         defaultValue={""}
       />
+      <TextWrapper>
+        {isUsd
+          ? `≈ ${rate} USD`
+          : `${rate} ${SYMBOL[network]} (≈ ${rate * tokenUsdPrice} USD)`}
+      </TextWrapper>
     </>
   );
 };
