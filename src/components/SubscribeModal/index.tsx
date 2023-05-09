@@ -29,6 +29,7 @@ type IProps = {
   rate: string | undefined;
   tokenUsdPrice: number;
   isSubscriber: boolean;
+  isUsd: boolean;
 };
 
 type IState = {
@@ -57,9 +58,16 @@ const WarningText = styled("div")(() => ({
 }));
 
 export const SubscribeModal = (props: IProps) => {
-  const { onClose, open, selectedCreator, rate, tokenUsdPrice, isSubscriber } =
-    props;
-  const { t } = useTranslation();
+  const {
+    onClose,
+    open,
+    selectedCreator,
+    rate,
+    tokenUsdPrice,
+    isSubscriber,
+    isUsd,
+  } = props;
+
   const [state, setState] = useState<IState>({
     isCommitted: true,
     isDelayed: false,
@@ -82,6 +90,7 @@ export const SubscribeModal = (props: IProps) => {
     months,
   } = state;
 
+  const { t } = useTranslation();
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
 
@@ -161,7 +170,8 @@ export const SubscribeModal = (props: IProps) => {
       callback,
       setLoading,
       pure,
-      isDelayed
+      isDelayed,
+      isUsd
     );
     if (result?.text) {
       setState((prev) => ({

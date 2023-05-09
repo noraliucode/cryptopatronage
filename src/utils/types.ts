@@ -60,6 +60,7 @@ export type ICreator = {
   display: string;
   web: string;
   isSensitive: boolean;
+  isUsd: boolean;
 };
 
 export type IAdditionalInfo = {

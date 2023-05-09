@@ -53,6 +53,7 @@ export const useCreators = (
             display: identity.display,
             web: identity.web,
             isSensitive: identity.isSensitive === "true" ? true : false,
+            isUsd: identity.isUsd,
           };
           creators.push(creator);
         }

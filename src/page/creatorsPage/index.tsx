@@ -130,6 +130,13 @@ export const CreatorsPage = () => {
       )
     : creators;
 
+  const getIsUsd = () => {
+    const selectedCratorIdentity = _creators?.find(
+      (x) => x?.address?.toLowerCase() === selectedCreator.toLowerCase()
+    );
+    return !!selectedCratorIdentity?.isUsd;
+  };
+
   return (
     <Root>
       <Modal
@@ -166,6 +173,7 @@ export const CreatorsPage = () => {
                 selectedCreator={selectedCreator}
                 rate={selectedRate}
                 tokenUsdPrice={tokenUsdPrice}
+                isUsd={getIsUsd()}
               />
               <Container>
                 <Grid container spacing={2}>

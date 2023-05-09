@@ -44,7 +44,8 @@ export const subscribe = async (
   callback?: any,
   setLoading?: (_: boolean) => void,
   pureProxy?: string,
-  isDelayed = false
+  isDelayed = false,
+  isUsd = false
 ) => {
   try {
     if (!api) return;
