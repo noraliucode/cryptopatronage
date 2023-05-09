@@ -108,23 +108,24 @@ export const subscribe = async (
 
       console.log("set creator as main proxy...");
       console.log("set last payment time...");
-      if (isDelayed) {
-        console.log(
-          "publish the hash of a proxy-call that will be made in the future...."
-        );
-        console.log("register a preimage on-chain....");
-        const tranferTx = txs[0] as any;
-        // remove transfer tx
-        txs.shift();
-        const extras = [
-          apiService.getAnnouncePromise(real, tranferTx.hash),
-          apiService.getNotePreimagePromise(tranferTx.data),
-        ];
-        const extraTxs = await Promise.all(extras);
-        txs = [...txs, ...extraTxs];
-      } else {
-        console.log("normal transfer to anonymous proxy...");
-      }
+      // TODO: add delay transfer later
+      // if (isDelayed) {
+      //   console.log(
+      //     "publish the hash of a proxy-call that will be made in the future...."
+      //   );
+      //   console.log("register a preimage on-chain....");
+      //   const tranferTx = txs[0] as any;
+      //   // remove transfer tx
+      //   txs.shift();
+      //   const extras = [
+      //     apiService.getAnnouncePromise(real, tranferTx.hash),
+      //     apiService.getNotePreimagePromise(tranferTx.data),
+      //   ];
+      //   const extraTxs = await Promise.all(extras);
+      //   txs = [...txs, ...extraTxs];
+      // } else {
+      //   console.log("normal transfer to anonymous proxy...");
+      // }
       await apiService.batchCalls(txs, sender, injector, callback);
     } else {
       console.log("set creator as proxy...");
