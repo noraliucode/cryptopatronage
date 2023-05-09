@@ -6,7 +6,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { WALLETS } from "../../utils/constants";
-import { IExtension, IWallet } from "../../utils/types";
+import { IWallet } from "../../utils/types";
 import { Text } from "../Manage";
 import { Divider, styled } from "@mui/material";
 import * as _ from "lodash";
