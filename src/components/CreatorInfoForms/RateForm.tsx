@@ -1,9 +1,15 @@
-import { Checkbox, TextField, Tooltip } from "@mui/material";
+import { Checkbox, TextField, Tooltip, styled } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { SYMBOL } from "../../utils/constants";
 import { INetwork } from "../../utils/types";
 import { Title, TitleWrapper, CheckWrapper, Text } from "../Manage";
+import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
+
+export const TextWrapper = styled("div")(() => ({
+  textAlign: "left",
+}));
+
 type IProps = {
   rate: any;
   network: INetwork;
@@ -20,6 +26,7 @@ const RateForm = ({
   isUsd,
 }: IProps) => {
   const { t } = useTranslation();
+  const { tokenUsdPrice } = useTokenUsdPrice(network);
   const handleIsUsdClick = () => {
     setIsUsd(!isUsd);
   };
@@ -48,6 +55,11 @@ const RateForm = ({
         onChange={handleInputChange}
         defaultValue={""}
       />
+      <TextWrapper>
+        {isUsd
+          ? `≈ ${rate} USD`
+          : `${rate} ${SYMBOL[network]} (≈ ${rate * tokenUsdPrice} USD)`}
+      </TextWrapper>
     </>
   );
 };
