@@ -72,7 +72,7 @@ export const SignerSelector = ({
     walletModalOpen: false,
   });
 
-  const { open, anchorEl, walletModalOpen } = state;
+  const { open, anchorEl } = state;
   const { t } = useTranslation();
   const connector = localStorage.getItem(APP_SESSION);
 
@@ -87,12 +87,6 @@ export const SignerSelector = ({
       ...prev,
       open: !prev.open,
       anchorEl: event.currentTarget,
-    }));
-  };
-  const toogleModal = () => {
-    setState((prev) => ({
-      ...prev,
-      walletModalOpen: !walletModalOpen,
     }));
   };
 

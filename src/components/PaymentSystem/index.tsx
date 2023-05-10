@@ -23,8 +23,7 @@ const InputWrapper = styled("div")(() => ({
 }));
 
 export const PaymentSystem = () => {
-  const { signer, injector, network }: IWeb3ConnectedContextState =
-    useWeb3ConnectedContext();
+  const { network }: IWeb3ConnectedContextState = useWeb3ConnectedContext();
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const { creators } = useCreators(network, api);

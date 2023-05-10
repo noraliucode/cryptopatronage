@@ -3,7 +3,7 @@ import { IWeb3ConnectedContextState } from "../../utils/types";
 import { NetworkSelector } from "../NetworkSelector";
 import { SignerSelector } from "../SignerSelector";
 import { AppBar, Toolbar, Button, Switch } from "@mui/material";
-import { styled, useTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import { Text } from "../Manage";
 import { useState } from "react";
 import { Drawer } from "../Drawer";
@@ -71,7 +71,6 @@ export const NavigationBar = () => {
   const { open, isModalOpen } = state;
   const { api } = useApi(network);
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const toggleDrawer = (event?: any) => {
     if (

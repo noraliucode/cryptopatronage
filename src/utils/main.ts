@@ -41,10 +41,14 @@ export const subscribe = async (
   injector: InjectedExtension,
   isCommitted = true,
   network: INetwork,
+  months = 1,
+  tokenUsdPrice: number,
+  rate: number,
   callback?: any,
   setLoading?: (_: boolean) => void,
   pureProxy?: string,
-  isDelayed = false
+  isDelayed = false,
+  isUsd = false
 ) => {
   try {
     if (!api) return;
@@ -85,8 +89,14 @@ export const subscribe = async (
         real = pureProxy;
       }
 
+      const KsmToPlanckUnit = 10 ** DECIMALS[network];
       console.log("pure proxy >>", real);
-      const amount = USER_PAYMENT * 10 ** DECIMALS[network];
+      let amount = 0;
+      if (isUsd) {
+        amount = (rate / tokenUsdPrice) * months * KsmToPlanckUnit;
+      } else {
+        amount = rate * months * KsmToPlanckUnit;
+      }
 
       const reserved = RESERVED_AMOUNT * 10 ** DECIMALS[network];
 
@@ -108,23 +118,24 @@ export const subscribe = async (
 
       console.log("set creator as main proxy...");
       console.log("set last payment time...");
-      if (isDelayed) {
-        console.log(
-          "publish the hash of a proxy-call that will be made in the future...."
-        );
-        console.log("register a preimage on-chain....");
-        const tranferTx = txs[0] as any;
-        // remove transfer tx
-        txs.shift();
-        const extras = [
-          apiService.getAnnouncePromise(real, tranferTx.hash),
-          apiService.getNotePreimagePromise(tranferTx.data),
-        ];
-        const extraTxs = await Promise.all(extras);
-        txs = [...txs, ...extraTxs];
-      } else {
-        console.log("normal transfer to anonymous proxy...");
-      }
+      // TODO: add delay transfer later
+      // if (isDelayed) {
+      //   console.log(
+      //     "publish the hash of a proxy-call that will be made in the future...."
+      //   );
+      //   console.log("register a preimage on-chain....");
+      //   const tranferTx = txs[0] as any;
+      //   // remove transfer tx
+      //   txs.shift();
+      //   const extras = [
+      //     apiService.getAnnouncePromise(real, tranferTx.hash),
+      //     apiService.getNotePreimagePromise(tranferTx.data),
+      //   ];
+      //   const extraTxs = await Promise.all(extras);
+      //   txs = [...txs, ...extraTxs];
+      // } else {
+      //   console.log("normal transfer to anonymous proxy...");
+      // }
       await apiService.batchCalls(txs, sender, injector, callback);
     } else {
       console.log("set creator as proxy...");
