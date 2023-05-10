@@ -21,6 +21,7 @@ import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Modal } from "../Modal";
 import { CheckWrapper, Text } from "../Manage";
 import { useTranslation } from "react-i18next";
+import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
 
 type IProps = {
   open: boolean;
@@ -167,6 +168,9 @@ export const SubscribeModal = (props: IProps) => {
       injector,
       isCommitted,
       network,
+      months,
+      tokenUsdPrice,
+      Number(rate),
       callback,
       setLoading,
       pure,

@@ -41,6 +41,9 @@ export const subscribe = async (
   injector: InjectedExtension,
   isCommitted = true,
   network: INetwork,
+  months = 1,
+  tokenUsdPrice: number,
+  rate: number,
   callback?: any,
   setLoading?: (_: boolean) => void,
   pureProxy?: string,
@@ -86,8 +89,14 @@ export const subscribe = async (
         real = pureProxy;
       }
 
+      const KsmToPlanckUnit = 10 ** DECIMALS[network];
       console.log("pure proxy >>", real);
-      const amount = USER_PAYMENT * 10 ** DECIMALS[network];
+      let amount = 0;
+      if (isUsd) {
+        amount = (rate / tokenUsdPrice) * months * KsmToPlanckUnit;
+      } else {
+        amount = rate * months * KsmToPlanckUnit;
+      }
 
       const reserved = RESERVED_AMOUNT * 10 ** DECIMALS[network];
 
