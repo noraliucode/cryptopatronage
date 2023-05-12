@@ -20,6 +20,7 @@ import { hexToString, isHex } from "@polkadot/util";
 import { Text } from "../../components/Manage";
 import ShareIcon from "@mui/icons-material/Share";
 import { useTranslation } from "react-i18next";
+import { Modal } from "../../components/Modal";
 
 const CardImage = styled("div")(({ url }: { url: any }) => ({
   backgroundColor: "rgba(255, 255, 255, 0.4)",
@@ -68,17 +69,10 @@ const Creator: React.FC<Props> = ({
   isSubscriber,
 }) => {
   const [open, setOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { t } = useTranslation();
 
   if (!creator) return <></>;
-  const WrapperComponent = ({ children }: { children: React.ReactElement }) =>
-    creator.web ? (
-      <a href={creator.web ? creator.web : ""} target="_blank" rel="noreferrer">
-        {children}
-      </a>
-    ) : (
-      <>{children}</>
-    );
 
   const onShareClick = () => {
     setOpen(true);
@@ -93,65 +87,81 @@ const Creator: React.FC<Props> = ({
     return [usdRate.toFixed(2), rate];
   };
 
+  const _onCardClick = () => {
+    if (creator.web) {
+      setIsModalOpen(true);
+    }
+  };
+
+  const onOpenWebsite = () => {
+    window.open(creator.web, "_blank");
+  };
+
   return (
     <Grid item xs={12} sm={4} md={3}>
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={
+          "You are about to open a new tab and go to the creator's website."
+        }
+        action={onOpenWebsite}
+      />
       <Card
         sx={{ maxWidth: 345, cursor: "pointer" }}
         onClick={() => onCardClick(index)}
       >
         <CardActionArea>
           <>
-            <WrapperComponent>
-              <>
-                <CardImage
-                  url={
-                    // TODO: add node.js server to handle redirect url and remove this later
-                    creator.imageUrl
-                      ? creator.display === "DatDot"
-                        ? "/assets/images/datdot.png"
-                        : creator.imageUrl
-                      : "/assets/images/default.webp"
-                  }
-                >
-                  <Blur isClicked={selectedIndex === index ? true : false} />
-                </CardImage>
+            <div onClick={_onCardClick}>
+              <CardImage
+                url={
+                  // TODO: add node.js server to handle redirect url and remove this later
+                  creator.imageUrl
+                    ? creator.display === "DatDot"
+                      ? "/assets/images/datdot.png"
+                      : creator.imageUrl
+                    : "/assets/images/default.webp"
+                }
+              >
+                <Blur isClicked={selectedIndex === index ? true : false} />
+              </CardImage>
 
-                <CardContent>
-                  <Text>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {creator.display
-                        ? isHex(creator.display)
-                          ? hexToString(creator.display)
-                          : creator.display
-                        : toShortAddress(creator.address)}
-                    </Typography>
-                  </Text>
-                  {creator.rate && (
-                    <Typography variant="body2" color="text.secondary">
-                      {t("Rate")}: {getRate()[0]} USD / {getRate()[1]}{" "}
-                      {SYMBOL[network]}
-                    </Typography>
-                  )}
-                  {creator.email ? (
-                    <a href={`mailto:${creator.email}`}>
-                      <IconButton color="primary" aria-label="email icon">
-                        <EmailIcon />
-                      </IconButton>
-                    </a>
-                  ) : null}
+              <CardContent>
+                <Text>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {creator.display
+                      ? isHex(creator.display)
+                        ? hexToString(creator.display)
+                        : creator.display
+                      : toShortAddress(creator.address)}
+                  </Typography>
+                </Text>
+                {creator.rate && (
+                  <Typography variant="body2" color="text.secondary">
+                    {t("Rate")}: {getRate()[0]} USD / {getRate()[1]}{" "}
+                    {SYMBOL[network]}
+                  </Typography>
+                )}
+                {creator.email ? (
+                  <a href={`mailto:${creator.email}`}>
+                    <IconButton color="primary" aria-label="email icon">
+                      <EmailIcon />
+                    </IconButton>
+                  </a>
+                ) : null}
 
-                  {creator.twitter ? (
-                    <a href={creator.twitter} target="_blank" rel="noreferrer">
-                      <IconButton color="primary" aria-label="twitter icon">
-                        <TwitterIcon />
-                      </IconButton>
-                    </a>
-                  ) : null}
+                {creator.twitter ? (
+                  <a href={creator.twitter} target="_blank" rel="noreferrer">
+                    <IconButton color="primary" aria-label="twitter icon">
+                      <TwitterIcon />
+                    </IconButton>
+                  </a>
+                ) : null}
 
-                  {!creator.twitter && !creator.email ? <ExtraHeight /> : null}
-                </CardContent>
-              </>
-            </WrapperComponent>
+                {!creator.twitter && !creator.email ? <ExtraHeight /> : null}
+              </CardContent>
+            </div>
             <Wrapper>
               <CardActions>
                 <Button
