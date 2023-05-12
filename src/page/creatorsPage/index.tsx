@@ -84,8 +84,25 @@ export const CreatorsPage = () => {
   );
   const { tokenUsdPrice } = useTokenUsdPrice(network);
 
-  const isSubscriber =
-    committedCreators.length > 0 || uncommittedCreators.length > 0;
+  const getIsSubscriber = (creator: string | undefined) => {
+    if (!creator) return false;
+    let committedCreator;
+    let uncommittedCreator;
+    if (committedCreators.length > 0) {
+      committedCreator = committedCreators.find(
+        (x) => x?.creator?.toLowerCase() === creator.toLowerCase()
+      );
+    }
+
+    if (uncommittedCreators.length > 0) {
+      uncommittedCreator = uncommittedCreators.find(
+        (x) => x?.creator?.toLowerCase() === creator.toLowerCase()
+      );
+    }
+
+    return !!(committedCreator || uncommittedCreator);
+    // committedCreators.length > 0 || uncommittedCreators.length > 0;
+  };
 
   const onClose = () => {
     setState((prev) => ({
@@ -167,7 +184,7 @@ export const CreatorsPage = () => {
                 <Button variant="contained">{t("button.becomeCreator")}</Button>
               </Link>
               <SubscribeModal
-                isSubscriber={isSubscriber}
+                isSubscriber={getIsSubscriber(selectedCreator)}
                 open={open}
                 onClose={onClose}
                 selectedCreator={selectedCreator}
@@ -179,7 +196,7 @@ export const CreatorsPage = () => {
                 <Grid container spacing={2}>
                   {_creators.map((creator, index) => (
                     <Creator
-                      isSubscriber={isSubscriber}
+                      isSubscriber={getIsSubscriber(creator?.address)}
                       tokenUsdPrice={tokenUsdPrice}
                       creator={creator}
                       selectedIndex={selectedIndex}
