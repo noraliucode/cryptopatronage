@@ -24,6 +24,7 @@ import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
 import { APIService } from "../services/apiService";
 import { SubmittableExtrinsic } from "@polkadot/api/types";
+import JsonBinService from "../services/jsonBinService";
 
 type AnonymousData = {
   pure: string;
@@ -543,5 +544,17 @@ export const unregister = async (
     );
   } catch (error) {
     console.log("clearIdentity error", error);
+  }
+};
+
+export const updateJsonBin = async (data: any) => {
+  const jsonBinService = new JsonBinService();
+  try {
+    const result = await jsonBinService.readData();
+    const updatedData = { ...result, ...data };
+    await jsonBinService.updateData(updatedData);
+    return result;
+  } catch (error) {
+    console.error("updateJsonBin error", error);
   }
 };
