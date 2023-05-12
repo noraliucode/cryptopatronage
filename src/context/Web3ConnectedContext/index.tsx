@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import {
   web3Accounts,
+  web3AccountsSubscribe,
   web3Enable,
   web3FromAddress,
 } from "@polkadot/extension-dapp";
@@ -87,6 +88,17 @@ const Web3ConnectedContextProvider: React.FC<IProps> = ({ children }) => {
         : selectedWallet;
 
       const _allAccounts = await web3Accounts();
+
+      // we subscribe to any account change and log the new list.
+      // note that `web3AccountsSubscribe` returns the function to unsubscribe
+      // TODO: need more testing for unsubscribe
+      await web3AccountsSubscribe((injectedAccounts) => {
+        allAccounts = injectedAccounts.filter(
+          (account) => account.meta.source === _selectedWallet
+        );
+        setState((prev) => ({ ...prev, accounts: allAccounts }));
+      });
+
       allAccounts = _allAccounts.filter(
         (account) => account.meta.source === _selectedWallet
       );
