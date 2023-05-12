@@ -21,7 +21,6 @@ import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Modal } from "../Modal";
 import { CheckWrapper, Text } from "../Manage";
 import { useTranslation } from "react-i18next";
-import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
 
 type IProps = {
   open: boolean;
