@@ -30,8 +30,12 @@ export const Modal = (props: IProps) => {
   } = props;
 
   const handleClose = () => {
-    action && action();
     onClose();
+  };
+
+  const onActionClick = () => {
+    action && action();
+    handleClose();
   };
 
   return (
@@ -46,7 +50,7 @@ export const Modal = (props: IProps) => {
         </>
       )}
       <DialogActions>
-        <Button onClick={handleClose} autoFocus>
+        <Button onClick={onActionClick} autoFocus>
           OK
         </Button>
       </DialogActions>
