@@ -163,7 +163,7 @@ export const CreatorsPage = () => {
         </Link>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <Link to={"/how-to-support"}>
-          <Button color="info" variant="outlined">
+          <Button color="success" variant="outlined">
             {t("button.how to support")}
           </Button>
         </Link>
