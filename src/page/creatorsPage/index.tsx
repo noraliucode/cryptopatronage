@@ -183,6 +183,10 @@ export const CreatorsPage = () => {
               <Link to={"/create"}>
                 <Button variant="contained">{t("button.becomeCreator")}</Button>
               </Link>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <Link to={"/how-to-support"}>
+                <Button variant="outlined">{t("button.how to support")}</Button>
+              </Link>
               <SubscribeModal
                 isSubscriber={getIsSubscriber(selectedCreator)}
                 open={open}
