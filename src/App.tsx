@@ -8,6 +8,7 @@ import { CreatorsPage } from "./page/creatorsPage";
 import { Manage } from "./components/Manage";
 import { AboutPage } from "./page/aboutPage";
 import Create from "./components/Create";
+import HowToSupport from "./page/howToSupportPage";
 
 function App() {
   return (
@@ -51,6 +52,14 @@ function App() {
           element={
             <Layout>
               <Create />
+            </Layout>
+          }
+        />
+        <Route
+          path="/how-to-support"
+          element={
+            <Layout>
+              <HowToSupport />
             </Layout>
           }
         />

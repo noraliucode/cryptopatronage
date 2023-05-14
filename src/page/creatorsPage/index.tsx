@@ -156,6 +156,18 @@ export const CreatorsPage = () => {
 
   return (
     <Root>
+      <>
+        <Title>{t("title")}</Title>
+        <Link to={"/create"}>
+          <Button variant="contained">{t("button.becomeCreator")}</Button>
+        </Link>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <Link to={"/how-to-support"}>
+          <Button color="success" variant="outlined">
+            {t("button.how to support")}
+          </Button>
+        </Link>
+      </>
       <Modal
         open={isModalOpen}
         onClose={() =>
@@ -179,10 +191,6 @@ export const CreatorsPage = () => {
             </Wrapper>
           ) : (
             <>
-              <Title>{t("title")}</Title>
-              <Link to={"/create"}>
-                <Button variant="contained">{t("button.becomeCreator")}</Button>
-              </Link>
               <SubscribeModal
                 isSubscriber={getIsSubscriber(selectedCreator)}
                 open={open}
