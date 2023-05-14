@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import { styled } from "@mui/material";
 import React from "react";
 import { Root } from "../creatorsPage";
 import { Link as StyledLink } from "../../components/Link";
@@ -41,6 +41,12 @@ export const LinkText2 = styled("div")(() => ({
   fontSize: 18,
   display: "inline-block",
 }));
+const Image = styled("img")(({ theme }) => ({
+  width: "600px",
+  [theme.breakpoints.down("sm")]: {
+    width: "100%",
+  },
+}));
 
 const HowToSupport = () => {
   return (
@@ -51,13 +57,13 @@ const HowToSupport = () => {
         <Text>
           Click on connect wallet button on the top right corner of the page.
         </Text>
-        <img width="350px" alt="question" src="/assets/images/step1-1.png" />
+        <img width="350px" alt="step1-1" src="/assets/images/step1-1.png" />
         <Text>
           Choose one of the following extensions to create an account. If you
           are new to Polkadot, it's recommended to create an account using the
           Polkadot extension.
         </Text>
-        <img width="300px" alt="question" src="/assets/images/step1-2.png" />
+        <img width="300px" alt="step1-2" src="/assets/images/step1-2.png" />
         <Text>
           The Polkadot extension, which is an officially endorsed account
           management tool created by Parity, can be downloaded and installed on
@@ -103,8 +109,11 @@ const HowToSupport = () => {
         </Text>
         <Subtitle>Step 3: Subscribe</Subtitle>
       </Container>
-      {/* /https://www.kraken.com// */}
-      {/* https://www.coinbase.com/ */}
+      <Image alt="step3-1" src="/assets/images/step3-1.png" />
+      <Text>
+        Go to Expore and click on the project you want to support. Click on the
+        "Subscribe" button.
+      </Text>
     </Root>
   );
 };
