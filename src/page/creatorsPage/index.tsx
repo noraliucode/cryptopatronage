@@ -185,7 +185,9 @@ export const CreatorsPage = () => {
               </Link>
               &nbsp;&nbsp;&nbsp;&nbsp;
               <Link to={"/how-to-support"}>
-                <Button variant="outlined">{t("button.how to support")}</Button>
+                <Button color="info" variant="outlined">
+                  {t("button.how to support")}
+                </Button>
               </Link>
               <SubscribeModal
                 isSubscriber={getIsSubscriber(selectedCreator)}
