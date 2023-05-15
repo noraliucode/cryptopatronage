@@ -20,6 +20,7 @@
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "add-to-calendar-button": "^2.2.8",
     "fs": "^0.0.1-security",
     "i18next": "^22.4.14",
     "ipfs-core": "^0.18.0",
