@@ -7,6 +7,7 @@ import {
   ZERO_BAL,
 } from "./constants";
 import {
+  calculateExpiryTimestamp,
   getPaymentAmount,
   parseAdditionalInfo,
   removeComma,
@@ -57,6 +58,7 @@ export const subscribe = async (
     setLoading && setLoading(true);
     let real = sender;
     let delay = isDelayed ? SECONDS_IN_ONE_DAY : 0;
+    const supporter = sender;
     // let delay = isDelayed ? 300 : 0; // for testing
     if (isCommitted) {
       // check if the supporter has created pure proxy to the creator
@@ -94,9 +96,9 @@ export const subscribe = async (
       console.log("pure proxy >>", real);
       let amount = 0;
       if (isUsd) {
-        amount = (rate / tokenUsdPrice) * months * KsmToPlanckUnit;
+        amount = (rate / KsmToPlanckUnit / tokenUsdPrice) * months;
       } else {
-        amount = rate * months * KsmToPlanckUnit;
+        amount = rate * months;
       }
 
       const reserved = RESERVED_AMOUNT * 10 ** DECIMALS[network];
@@ -118,7 +120,7 @@ export const subscribe = async (
       let txs = await Promise.all(promises);
 
       console.log("set creator as main proxy...");
-      console.log("set last payment time...");
+      console.log("set subscribed time...");
       // TODO: add delay transfer later
       // if (isDelayed) {
       //   console.log(
@@ -137,7 +139,12 @@ export const subscribe = async (
       // } else {
       //   console.log("normal transfer to anonymous proxy...");
       // }
-      await apiService.batchCalls(txs, sender, injector, callback);
+      const _callBack = async () => {
+        callback && callback();
+        setLoading && setLoading(false);
+      };
+      await apiService.batchCalls(txs, sender, injector, _callBack);
+      await updateSubscribedTime(creator, supporter, months);
     } else {
       console.log("set creator as proxy...");
       await apiService.signAndSendAddProxy(sender, injector, creator, callback);
@@ -550,11 +557,34 @@ export const unregister = async (
 export const updateJsonBin = async (data: any) => {
   const jsonBinService = new JsonBinService();
   try {
-    const result = await jsonBinService.readData();
+    let result = await jsonBinService.readData();
+    result = result.record.record.record;
     const updatedData = { ...result, ...data };
     await jsonBinService.updateData(updatedData);
-    return result;
   } catch (error) {
     console.error("updateJsonBin error", error);
   }
+};
+
+const updateSubscribedTime = async (
+  creator: string,
+  supporter: string,
+  months: number
+) => {
+  const now = new Date().getTime();
+  const expiresOn = calculateExpiryTimestamp(now, months);
+
+  const data = {
+    [creator]: {
+      supporters: {
+        [supporter]: {
+          subscribedTime: now,
+          expiresOn,
+        },
+      },
+    },
+  };
+
+  await updateJsonBin(data);
+  return expiresOn;
 };

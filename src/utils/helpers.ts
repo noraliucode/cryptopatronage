@@ -318,3 +318,17 @@ export const getTokenUsdPrice = async (tokenSymbol: string) => {
 
   return Number(result[tokenId].usd);
 };
+
+export function calculateExpiryTimestamp(
+  currentTimestamp: number,
+  months: number
+) {
+  // Create a new Date object from the current timestamp
+  let expiryDate = new Date(currentTimestamp);
+
+  // Add the number of months to the date
+  expiryDate.setMonth(expiryDate.getMonth() + months);
+
+  // Return the timestamp of the expiry date
+  return expiryDate.getTime();
+}
