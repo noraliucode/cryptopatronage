@@ -318,3 +318,33 @@ export const getTokenUsdPrice = async (tokenSymbol: string) => {
 
   return Number(result[tokenId].usd);
 };
+
+export function calculateExpiryTimestamp(
+  currentTimestamp: number,
+  months: number
+) {
+  // Create a new Date object from the current timestamp
+  let expiryDate = new Date(currentTimestamp);
+
+  // Add the number of months to the date
+  expiryDate.setMonth(expiryDate.getMonth() + months);
+
+  // Return the timestamp of the expiry date
+  return expiryDate.getTime();
+}
+
+export function formatTimestamp(timestamp: number): string {
+  const date = new Date(timestamp);
+
+  const year = date.getFullYear();
+  let month = date.getMonth() + 1; // JavaScript months are 0-11.
+  let day = date.getDate();
+
+  // Ensure month and day are two digits.
+  month = Number(("0" + month).slice(-2));
+  day = Number(("0" + day).slice(-2));
+
+  const formattedDate = `${year}-${month}-${day}`;
+
+  return formattedDate;
+}

@@ -15,12 +15,13 @@ import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useApi } from "../../hooks/useApi";
 import { APIService } from "../../services/apiService";
 import { DECIMALS, SYMBOL } from "../../utils/constants";
-import { findPure, formatUnit } from "../../utils/helpers";
+import { findPure, formatTimestamp, formatUnit } from "../../utils/helpers";
 import { subscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Modal } from "../Modal";
 import { CheckWrapper, Text } from "../Manage";
 import { useTranslation } from "react-i18next";
+import { AddToCalendarButton } from "add-to-calendar-button-react";
 
 type IProps = {
   open: boolean;
@@ -41,6 +42,7 @@ type IState = {
   isModalOpen: boolean;
   proxyDepositBase: number;
   months: number;
+  expiryDate: number;
 };
 
 export const HintText = styled("div")(() => ({
@@ -77,6 +79,7 @@ export const SubscribeModal = (props: IProps) => {
     isModalOpen: false,
     proxyDepositBase: 0,
     months: 6,
+    expiryDate: 0,
   });
 
   const {
@@ -88,6 +91,7 @@ export const SubscribeModal = (props: IProps) => {
     isModalOpen,
     proxyDepositBase,
     months,
+    expiryDate,
   } = state;
 
   const { t } = useTranslation();
@@ -160,7 +164,16 @@ export const SubscribeModal = (props: IProps) => {
       signer.address,
       network
     );
+    const setExpiryDate = (value: number) => {
+      if (!value) return;
+      setState((prev) => ({
+        ...prev,
+        expiryDate: value,
+      }));
+    };
+
     const result = await subscribe(
+      setExpiryDate,
       api,
       selectedCreator,
       signer?.address,
@@ -196,7 +209,17 @@ export const SubscribeModal = (props: IProps) => {
 
   const renderContent = () => {
     if (isSubscribingSucceeded)
-      return <Wrapper> {t("subscribe_modal.Subscribed")}</Wrapper>;
+      return (
+        <Wrapper>
+          {" "}
+          {t("subscribe_modal.Subscribed")}
+          <AddToCalendarButton
+            name="Subscription expiry Date"
+            startDate={formatTimestamp(expiryDate)}
+            options={["Apple", "Google", "Yahoo", "iCal"]}
+          ></AddToCalendarButton>
+        </Wrapper>
+      );
     if (isSubscribing)
       return <Wrapper>{t("subscribe_modal.Subscribing...")}</Wrapper>;
     return (
