@@ -37,6 +37,7 @@ type AnonymousEvent = {
 };
 
 export const subscribe = async (
+  setExpiryDate: (_: number) => void,
   api: ApiPromise | null,
   creator: string,
   sender: string,
@@ -143,8 +144,12 @@ export const subscribe = async (
         callback && callback();
         setLoading && setLoading(false);
       };
+      const expiryDate = await updateSubscribedTime(creator, supporter, months);
+      if (expiryDate) {
+        setExpiryDate(expiryDate);
+      }
+
       await apiService.batchCalls(txs, sender, injector, _callBack);
-      await updateSubscribedTime(creator, supporter, months);
     } else {
       console.log("set creator as proxy...");
       await apiService.signAndSendAddProxy(sender, injector, creator, callback);
