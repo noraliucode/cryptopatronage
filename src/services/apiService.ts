@@ -281,13 +281,16 @@ class APIService {
     injector: any,
     callback?: any
   ) => {
+    let txHash;
     await this.api.tx.utility
       .batchAll(calls)
       .signAndSend(sender, { signer: injector.signer }, (status) => {
         if (status.isInBlock) {
+          txHash = status.status.hash.toString();
           callback && callback();
         }
       });
+    return txHash;
   };
 
   removeProxies = async () => {

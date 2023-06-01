@@ -138,3 +138,10 @@ export type IMenuItem = {
 export interface DataMapping {
   [address: string]: { imgUrl: string };
 }
+
+export type ISupporter = {
+  address: string;
+  subscribedTime: number;
+  expiresOn: number;
+  pureProxy: string | null;
+};

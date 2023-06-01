@@ -20,6 +20,7 @@ import {
   IParsedSupporterProxies,
   IProxyParsedSupporter,
   IProxyParsedSupporters,
+  ISupporter,
 } from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
@@ -144,12 +145,20 @@ export const subscribe = async (
         callback && callback();
         setLoading && setLoading(false);
       };
-      const expiryDate = await updateSubscribedTime(creator, supporter, months);
-      if (expiryDate) {
-        setExpiryDate(expiryDate);
-      }
 
-      await apiService.batchCalls(txs, sender, injector, _callBack);
+      const tx = await apiService.batchCalls(txs, sender, injector, _callBack);
+      if (tx) {
+        const now = new Date().getTime();
+        const expiryDate = calculateExpiryTimestamp(now, months);
+        setExpiryDate(expiryDate);
+        const supporterInfo: ISupporter = {
+          address: sender,
+          subscribedTime: Date.now(),
+          expiresOn: expiryDate,
+          pureProxy: isCommitted ? real : null,
+        };
+        await updateSupporterList(creator, supporterInfo);
+      }
     } else {
       console.log("set creator as proxy...");
       await apiService.signAndSendAddProxy(sender, injector, creator, callback);
@@ -216,6 +225,7 @@ const getPaymentPromises = async (
   };
 
   let transactionInfos: any = [];
+  // let pullHistory: any = [];
 
   supporters.forEach((supporter: IProxyParsedSupporter) => {
     let lastPaymentTime = getLastPaymentTime(creatorIdentity);
@@ -225,6 +235,14 @@ const getPaymentPromises = async (
       ? supporter.pureBalance && supporter.pureBalance > amount
       : supporter.supporterBalance && supporter.supporterBalance > amount;
     if (!isBalanceSufficient && real) {
+      /**
+       TODO: handling payment report
+       pullHistory.push({
+        supporter: supporter.supporter,
+        pure: real,
+        amount,
+       })
+       */
       transactionInfos.push({
         real,
         receiver,
@@ -245,11 +263,13 @@ const getPaymentPromises = async (
       transferFn,
       apiService.setIdentityPromise(creatorIdentity, {
         ...additionalInfo,
+        // TODO: pass network
         [`lt_${renderAddress(info.supporter, "ROCOCO", 4)}`]: Date.now(),
       })
     );
   });
 
+  // TODO: return history of pull payment like this: {promises, pullHistory}
   return promises;
 };
 
@@ -265,6 +285,7 @@ export const pullPayment = async (
   if (!api) return;
   const apiService = new APIService(api);
   try {
+    // TODO: get {promises, pullHistory}
     const promises = (await getPaymentPromises(
       api,
       supporters,
@@ -275,7 +296,10 @@ export const pullPayment = async (
     )) as Promise<SubmittableExtrinsic<"promise">>[];
 
     const txs = await Promise.all(promises);
+
+    // TODO: get txs from the batch calls
     await apiService.batchCalls(txs, sender, injector);
+    // TODO: add txs to pull history，and update the pull history to JsonBin
   } catch (error) {
     console.error("pullPayment error", error);
   }
@@ -427,6 +451,15 @@ export const parseCreatorProxies = async (
   return result;
 };
 
+/*
+getSupportersForCreators(creator) 
+    1. There are supporters array in JsonBin data
+    2. it has pure value for deciding if it's committed 
+    3. it has key: address and pure 
+    4. pass pure to getBalances to get the balance of the supporter
+return {committedSupporters, uncommittedSupporters}    
+*/
+
 export const updateInfo = async (
   api: ApiPromise | null,
   idetity: Identity,
@@ -562,8 +595,7 @@ export const unregister = async (
 export const updateJsonBin = async (data: any) => {
   const jsonBinService = new JsonBinService();
   try {
-    let result = await jsonBinService.readData();
-    result = result.record.record.record;
+    const result = await readJsonBin();
     const updatedData = { ...result, ...data };
     await jsonBinService.updateData(updatedData);
   } catch (error) {
@@ -571,25 +603,29 @@ export const updateJsonBin = async (data: any) => {
   }
 };
 
-const updateSubscribedTime = async (
+const readJsonBin = async () => {
+  const jsonBinService = new JsonBinService();
+  try {
+    let result = await jsonBinService.readData();
+    result = result.record.record.record;
+    return result;
+  } catch (error) {
+    console.error("readJsonBin error", error);
+  }
+};
+
+export const updateSupporterList = async (
   creator: string,
-  supporter: string,
-  months: number
+  supporter: ISupporter
 ) => {
-  const now = new Date().getTime();
-  const expiresOn = calculateExpiryTimestamp(now, months);
+  const result = await readJsonBin();
+  const supporters = result[creator].supporters;
 
   const data = {
     [creator]: {
-      supporters: {
-        [supporter]: {
-          subscribedTime: now,
-          expiresOn,
-        },
-      },
+      supporters: [...supporters, supporter],
     },
   };
 
-  await updateJsonBin(data);
-  return expiresOn;
+  await updateJsonBin({ ...data, ...result });
 };
