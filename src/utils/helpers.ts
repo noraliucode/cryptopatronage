@@ -145,6 +145,39 @@ export function parseSupporterProxies(
   return { committedCreators, uncommittedCreators };
 }
 
+export const getSubscribedCreatorsForSupporters = (
+  supporter: string,
+  pure: string,
+  proxies: any,
+  network: string
+) => {
+  const committedCreators: any = [];
+  const uncommittedCreators: any = [];
+
+  proxies.forEach((proxy: any) => {
+    const delegations = proxy[1].toHuman()[0];
+    //1. 從entries裡去找，先找entry[0]就是pure的
+    if (proxy[0].toHuman()[0] === renderAddress(pure, network)) {
+      // 2. 找到delegates裡面有兩個地址，不是supporter的那個，就是creator
+      // 3. 這種就是committed supporter。照理來說應該只會有兩個delegate（但supporter可以自己簽，再新增delegate，先不考慮這種情況）
+      const creator =
+        delegations[0]?.delegate === renderAddress(supporter, network)
+          ? delegations[1]?.delegate
+          : delegations[0]?.delegate;
+      committedCreators.push(creator);
+    }
+    if (proxy[0].toHuman()[0] === renderAddress(supporter, network)) {
+      // 4. 從entries裡去找，先找entry[0]就是supporter的
+      // 5. 找到delegates裡面的地址有creator
+      // 6. 這種就是uncommitted supporter
+      const creator = delegations[0]?.delegate;
+      uncommittedCreators.push(creator);
+    }
+  });
+
+  return { committedCreators, uncommittedCreators };
+};
+
 export const checkProxyAssociation = async (
   account: string,
   proxyAddress: string,
