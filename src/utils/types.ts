@@ -145,3 +145,11 @@ export type ISupporter = {
   expiresOn: number;
   pureProxy: string | null;
 };
+
+export type IHistory = {
+  supporter: string;
+  pure: string;
+  time: number;
+  amount: number;
+  tx?: string;
+};

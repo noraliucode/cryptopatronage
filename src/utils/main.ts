@@ -5,6 +5,8 @@ import {
   RESERVED_AMOUNT,
   SECONDS_IN_ONE_DAY,
   ZERO_BAL,
+  SUPPORTERS,
+  PULL_HISTORY,
 } from "./constants";
 import {
   calculateExpiryTimestamp,
@@ -16,6 +18,7 @@ import {
 import {
   IAdditionalInfo,
   Identity,
+  IHistory,
   INetwork,
   IParsedSupporterProxies,
   IProxyParsedSupporter,
@@ -157,7 +160,7 @@ export const subscribe = async (
           expiresOn: expiryDate,
           pureProxy: isCommitted ? real : null,
         };
-        await updateSupporterList(creator, supporterInfo);
+        await updateCreatorKeyValue(creator, supporterInfo, SUPPORTERS);
       }
     } else {
       console.log("set creator as proxy...");
@@ -225,7 +228,7 @@ const getPaymentPromises = async (
   };
 
   let transactionInfos: any = [];
-  // let pullHistory: any = [];
+  let pullHistory: any = [];
 
   supporters.forEach((supporter: IProxyParsedSupporter) => {
     let lastPaymentTime = getLastPaymentTime(creatorIdentity);
@@ -235,14 +238,13 @@ const getPaymentPromises = async (
       ? supporter.pureBalance && supporter.pureBalance > amount
       : supporter.supporterBalance && supporter.supporterBalance > amount;
     if (!isBalanceSufficient && real) {
-      /**
-       TODO: handling payment report
-       pullHistory.push({
-        supporter: supporter.supporter,
+      pullHistory.push({
+        supporter: supporter.supporter || "",
         pure: real,
+        time: Date.now(),
         amount,
-       })
-       */
+      });
+
       transactionInfos.push({
         real,
         receiver,
@@ -269,8 +271,7 @@ const getPaymentPromises = async (
     );
   });
 
-  // TODO: return history of pull payment like this: {promises, pullHistory}
-  return promises;
+  return { promises, pullHistory };
 };
 
 export const pullPayment = async (
@@ -285,21 +286,24 @@ export const pullPayment = async (
   if (!api) return;
   const apiService = new APIService(api);
   try {
-    // TODO: get {promises, pullHistory}
-    const promises = (await getPaymentPromises(
+    const { promises, pullHistory } = (await getPaymentPromises(
       api,
       supporters,
       sender,
       currentRate,
       decimals,
       isCommitted
-    )) as Promise<SubmittableExtrinsic<"promise">>[];
+    )) as any;
 
     const txs = await Promise.all(promises);
 
-    // TODO: get txs from the batch calls
-    await apiService.batchCalls(txs, sender, injector);
-    // TODO: add txs to pull history，and update the pull history to JsonBin
+    const tx = await apiService.batchCalls(txs, sender, injector);
+    let _pullHistory;
+    if (tx) {
+      _pullHistory = pullHistory.map((x: IHistory) => ({ ...x, tx }));
+    }
+
+    await updateCreatorKeyValue(sender, _pullHistory, PULL_HISTORY);
   } catch (error) {
     console.error("pullPayment error", error);
   }
@@ -595,9 +599,7 @@ export const unregister = async (
 export const updateJsonBin = async (data: any) => {
   const jsonBinService = new JsonBinService();
   try {
-    const result = await readJsonBin();
-    const updatedData = { ...result, ...data };
-    await jsonBinService.updateData(updatedData);
+    await jsonBinService.updateData(data);
   } catch (error) {
     console.error("updateJsonBin error", error);
   }
@@ -614,17 +616,17 @@ const readJsonBin = async () => {
   }
 };
 
-export const updateSupporterList = async (
+export const updateCreatorKeyValue = async (
   creator: string,
-  supporter: ISupporter
+  value: any,
+  key: string
 ) => {
   const result = await readJsonBin();
-  const supporters = result[creator].supporters;
+  const originalKeyValue = result[creator][key];
 
   const data = {
-    [creator]: {
-      supporters: [...supporters, supporter],
-    },
+    ...result[creator],
+    [key]: [...originalKeyValue, value],
   };
 
   await updateJsonBin({ ...data, ...result });

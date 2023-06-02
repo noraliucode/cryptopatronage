@@ -26,6 +26,10 @@ export const SUPPORTER = {
   WESTEND: "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",
   KUSAMA: "G22qdn1U9dPQLZCxVJu8jmYe1Jdmm551aj9eNb9PT9iVzKh",
 };
+
+export const SUPPORTERS = "supporters";
+export const PULL_HISTORY = "pullHistory";
+
 export const DECIMALS = {
   ROCOCO: 12,
   WESTEND: 12,
