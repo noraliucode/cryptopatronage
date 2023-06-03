@@ -455,14 +455,18 @@ export const parseCreatorProxies = async (
   return result;
 };
 
-/*
-getSupportersForCreators(creator) 
-    1. There are supporters array in JsonBin data
-    2. it has pure value for deciding if it's committed 
-    3. it has key: address and pure 
-    4. pass pure to getBalances to get the balance of the supporter
-return {committedSupporters, uncommittedSupporters}    
-*/
+export const getSupportersForCreators = async (creator: string) => {
+  const result = await readJsonBin();
+  const supporters = result[creator].supporters;
+  const committedSupporters = supporters.filter(
+    (supporter: any) => supporter.pure
+  );
+  const uncommittedSupporters = supporters.filter(
+    (supporter: any) => !supporter.pure
+  );
+
+  return { committedSupporters, uncommittedSupporters };
+};
 
 export const updateInfo = async (
   api: ApiPromise | null,
