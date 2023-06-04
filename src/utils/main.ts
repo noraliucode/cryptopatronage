@@ -613,7 +613,8 @@ const readJsonBin = async () => {
   const jsonBinService = new JsonBinService();
   try {
     let result = await jsonBinService.readData();
-    result = result.record.record.record;
+
+    result = result.record;
     return result;
   } catch (error) {
     console.error("readJsonBin error", error);
@@ -623,7 +624,7 @@ const readJsonBin = async () => {
 export const readJsonBinKeyValue = async (signer: string, key: string) => {
   try {
     const result = await readJsonBin();
-    return result.signer.key;
+    return result[signer] ? result[signer][key] : null;
   } catch (error) {
     console.error("readJsonBinKeyValue error", error);
   }

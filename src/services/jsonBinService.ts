@@ -41,7 +41,6 @@ class JsonBinService {
       }
 
       const data = await response.json();
-      console.log(data);
       return data;
     } catch (error) {
       console.log("There was a network error:", error);

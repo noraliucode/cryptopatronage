@@ -14,7 +14,8 @@ export const usePureProxy = (signer = "") => {
   const getUserProxy = async () => {
     try {
       const result = await readJsonBinKeyValue(signer, USER_PURE_PROXY);
-      const userPureProxy = result[signer].pureProxy;
+      if (!result) return null;
+      const userPureProxy = result[signer]?.pureProxy;
 
       setState((prev) => ({
         ...prev,
