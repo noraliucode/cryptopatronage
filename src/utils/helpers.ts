@@ -147,7 +147,7 @@ export function parseSupporterProxies(
 
 export const getSubscribedCreatorsForSupporters = (
   supporter: string,
-  pure: string,
+  pure: string | null,
   proxies: any,
   network: string
 ) => {
@@ -156,22 +156,22 @@ export const getSubscribedCreatorsForSupporters = (
 
   proxies.forEach((proxy: any) => {
     const delegations = proxy[1].toHuman()[0];
-    //1. 從entries裡去找，先找entry[0]就是pure的
-    if (proxy[0].toHuman()[0] === renderAddress(pure, network)) {
-      // 2. 找到delegates裡面有兩個地址，不是supporter的那個，就是creator
-      // 3. 這種就是committed supporter。照理來說應該只會有兩個delegate（但supporter可以自己簽，再新增delegate，先不考慮這種情況）
+    //1. fine entry[0] is pure from entries
+    if (proxy[0].toHuman()[0] === renderAddress((pure = ""), network)) {
+      // 2. delegates shold only have 2 address, the one which is not supporter should be creator
+      // 3. addresses under this category is committed supporter (Not considering the situations that addresses are more than two when users can sign only their own)
       const creator =
         delegations[0]?.delegate === renderAddress(supporter, network)
           ? delegations[1]?.delegate
           : delegations[0]?.delegate;
-      committedCreators.push(creator);
+      committedCreators.push({ creator, pure });
     }
     if (proxy[0].toHuman()[0] === renderAddress(supporter, network)) {
-      // 4. 從entries裡去找，先找entry[0]就是supporter的
-      // 5. 找到delegates裡面的地址有creator
-      // 6. 這種就是uncommitted supporter
+      // 4. fine entry[0] is supporter from entries
+      // 5. delegates might have many addresses in this case.
+      // 6. addresses under this category is uncommitted supporter
       const creator = delegations[0]?.delegate;
-      uncommittedCreators.push(creator);
+      uncommittedCreators.push({ creator });
     }
   });
 
