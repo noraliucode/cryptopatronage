@@ -6,11 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import {
-  INetwork,
-  IProxyParsedSupporter,
-  IProxyParsedSupporters,
-} from "../../utils/types";
+import { INetwork, ISupporter } from "../../utils/types";
 import { Button } from "@mui/material";
 import { formatUnit, renderAddress } from "../../utils/helpers";
 import { DECIMALS } from "../../utils/constants";
@@ -21,10 +17,10 @@ export default function BasicTable({
   committedSupporters,
   uncommittedSupporters,
 }: {
-  pull: (isCommitted: boolean, supporter?: IProxyParsedSupporter) => void;
+  pull: (isCommitted: boolean, supporter?: ISupporter) => void;
   network: INetwork;
-  committedSupporters?: IProxyParsedSupporters;
-  uncommittedSupporters?: IProxyParsedSupporters;
+  committedSupporters?: ISupporter[];
+  uncommittedSupporters?: ISupporter[];
 }) {
   if (committedSupporters) {
     return (
@@ -39,16 +35,16 @@ export default function BasicTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {committedSupporters.map((row: IProxyParsedSupporter) => (
+            {committedSupporters.map((row: ISupporter) => (
               <TableRow
-                key={row.supporter}
+                key={row.address}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.supporter && renderAddress(row.supporter, network, 6)}
+                  {row.address && renderAddress(row.address, network, 6)}
                 </TableCell>
                 <TableCell align="right">
-                  {row.pure && renderAddress(row.pure, network, 6)}
+                  {row.pureProxy && renderAddress(row.pureProxy, network, 6)}
                 </TableCell>
                 <TableCell align="right">
                   {formatUnit(Number(row.pureBalance), DECIMALS[network])}{" "}
@@ -78,13 +74,13 @@ export default function BasicTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {uncommittedSupporters.map((row: IProxyParsedSupporter) => (
+            {uncommittedSupporters.map((row: ISupporter) => (
               <TableRow
-                key={row.supporter}
+                key={row.address}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.supporter && renderAddress(row.supporter, network, 6)}
+                  {row.address && renderAddress(row.address, network, 6)}
                 </TableCell>
                 <TableCell align="right">
                   {formatUnit(Number(row.supporterBalance), DECIMALS[network])}{" "}

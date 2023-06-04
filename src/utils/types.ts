@@ -87,8 +87,8 @@ export type IParsedProxies = {
 };
 
 export type IParsedSupporterProxies = {
-  committedSupporters: IProxyParsedSupporters;
-  uncommittedSupporters: IProxyParsedSupporters;
+  committedSupporters: ISupporters;
+  uncommittedSupporters: ISupporters;
 };
 
 export type Identity = {
@@ -144,7 +144,11 @@ export type ISupporter = {
   subscribedTime: number;
   expiresOn: number;
   pureProxy: string | null;
+  pureBalance?: number;
+  supporterBalance?: number;
 };
+
+export type ISupporters = ISupporter[] | [];
 
 export type IHistory = {
   supporter: string;

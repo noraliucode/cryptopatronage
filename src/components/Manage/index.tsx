@@ -22,10 +22,7 @@ import {
 } from "../../utils/constants";
 import { formatUnit, validateUrls } from "../../utils/helpers";
 import Snackbar from "@mui/material/Snackbar";
-import {
-  IProxyParsedSupporter,
-  IWeb3ConnectedContextState,
-} from "../../utils/types";
+import { ISupporter, IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useIdentity } from "../../hooks/useIdentity";
 import { useSupporters } from "../../hooks/useSupporters";
@@ -277,10 +274,7 @@ export const Manage = () => {
     }));
   };
 
-  const _pullPayment = async (
-    isCommitted: boolean,
-    supporter?: IProxyParsedSupporter
-  ) => {
+  const _pullPayment = async (isCommitted: boolean, supporter?: ISupporter) => {
     if (!signer) return;
     let supporters: any = [];
     if (!supporter) {

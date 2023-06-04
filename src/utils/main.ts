@@ -21,14 +21,11 @@ import {
   IHistory,
   INetwork,
   IParsedSupporterProxies,
-  IProxyParsedSupporter,
-  IProxyParsedSupporters,
   ISupporter,
 } from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
 import { APIService } from "../services/apiService";
-import { SubmittableExtrinsic } from "@polkadot/api/types";
 import JsonBinService from "../services/jsonBinService";
 
 type AnonymousData = {
@@ -53,7 +50,7 @@ export const subscribe = async (
   rate: number,
   callback?: any,
   setLoading?: (_: boolean) => void,
-  pureProxy?: string,
+  pureProxy?: string | null,
   isDelayed = false,
   isUsd = false
 ) => {
@@ -231,16 +228,16 @@ const getPaymentPromises = async (
   let transactionInfos: any = [];
   let pullHistory: any = [];
 
-  supporters.forEach((supporter: IProxyParsedSupporter) => {
+  supporters.forEach((supporter: ISupporter) => {
     let lastPaymentTime = getLastPaymentTime(creatorIdentity);
     const amount = getPaymentAmount(currentRate, lastPaymentTime);
-    const real = isCommitted ? supporter.pure : supporter.supporter;
+    const real = isCommitted ? supporter.pureProxy : supporter.address;
     const isBalanceSufficient = isCommitted
       ? supporter.pureBalance && supporter.pureBalance > amount
       : supporter.supporterBalance && supporter.supporterBalance > amount;
     if (!isBalanceSufficient && real) {
       pullHistory.push({
-        supporter: supporter.supporter || "",
+        supporter: supporter.address || "",
         pure: real,
         time: Date.now(),
         amount,
@@ -250,7 +247,7 @@ const getPaymentPromises = async (
         real,
         receiver,
         amount,
-        supporter: supporter.supporter,
+        supporter: supporter.address,
       });
     }
   });
@@ -277,7 +274,7 @@ const getPaymentPromises = async (
 
 export const pullPayment = async (
   api: ApiPromise | null,
-  supporters: IProxyParsedSupporters,
+  supporters: ISupporter,
   sender: string,
   injector: any,
   currentRate: number,
@@ -459,11 +456,15 @@ export const parseCreatorProxies = async (
 export const getSupportersForCreator = async (creator = "") => {
   const result = await readJsonBin();
   const supporters = result[creator].supporters;
+  console.log("supporters", supporters);
+
   const committedSupporters = supporters.filter(
-    (supporter: any) => supporter.pure
+    (supporter: any) => supporter.pureProxy
   );
+  console.log("committedSupporters");
+
   const uncommittedSupporters = supporters.filter(
-    (supporter: any) => !supporter.pure
+    (supporter: any) => !supporter.pureProxy
   );
 
   return { committedSupporters, uncommittedSupporters };
