@@ -16,6 +16,7 @@ import { useWeb3ConnectedContext } from "../context/Web3ConnectedContext";
 import { IWeb3ConnectedContextState } from "../utils/types";
 import { MobileContentWarpper } from "../components/NavigationBar";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { usePureProxy } from "../hooks/usePureProxy";
 
 const Link = styled("a")(() => ({
   textDecoration: "none",
@@ -42,9 +43,11 @@ const SidebarList = (props: Props) => {
   const { t } = useTranslation();
   const { signer, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
+  const { userPureProxy } = usePureProxy(signer?.address);
   const { committedCreators, uncommittedCreators } = useSubscribedCreators(
     signer?.address,
-    network
+    network,
+    userPureProxy
   );
   const [state, setState] = React.useState({
     selectedIndex: 1,

@@ -620,6 +620,15 @@ const readJsonBin = async () => {
   }
 };
 
+export const readJsonBinKeyValue = async (signer: string, key: string) => {
+  try {
+    const result = await readJsonBin();
+    return result.signer.key;
+  } catch (error) {
+    console.error("readJsonBinKeyValue error", error);
+  }
+};
+
 export const updateCreatorKeyValue = async (
   creator: string,
   value: any,

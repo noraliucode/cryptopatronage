@@ -18,6 +18,7 @@ import {
   SpaceBetweenWrapper,
   SectionTitle,
 } from "../Manage";
+import { usePureProxy } from "../../hooks/usePureProxy";
 
 type IState = {
   rate: number;
@@ -44,9 +45,9 @@ export const Supporter = () => {
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
-
+  const { userPureProxy } = usePureProxy(signer?.address);
   const { committedCreators, uncommittedCreators, getSubscribedCreators } =
-    useSubscribedCreators(signer?.address, network);
+    useSubscribedCreators(signer?.address, network, userPureProxy);
 
   const { api } = useApi(network);
   const { t } = useTranslation();

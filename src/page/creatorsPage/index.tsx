@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
+import { usePureProxy } from "../../hooks/usePureProxy";
 
 export const Root = styled("div")(() => ({
   padding: 30,
@@ -78,9 +79,12 @@ export const CreatorsPage = () => {
   const params = useParams();
   const { t } = useTranslation();
   const { address } = params as any;
+  const { userPureProxy } = usePureProxy(signer?.address);
+
   const { committedCreators, uncommittedCreators } = useSubscribedCreators(
     signer?.address,
-    network
+    network,
+    userPureProxy
   );
   const { tokenUsdPrice } = useTokenUsdPrice(network);
 
