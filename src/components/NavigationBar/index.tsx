@@ -135,7 +135,12 @@ export const NavigationBar = () => {
               {MENU.map((item, index) => {
                 const Icon = item.icon;
                 if (item.label === "Language") {
-                  return <LanguageSelector item={item} />;
+                  return (
+                    <LanguageSelector
+                      key={`${item.label}_${index}`}
+                      item={item}
+                    />
+                  );
                 }
                 return (
                   <StyledLink key={`${item.label}_${index}`} to={item.link}>
