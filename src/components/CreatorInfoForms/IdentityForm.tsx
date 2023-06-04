@@ -39,9 +39,10 @@ const IdentityForm = ({
       <TitleWrapper>
         <Title>On-chain Identity (Optional)</Title>
       </TitleWrapper>
-      {IDENTITY_LABELS.map((label) => {
+      {IDENTITY_LABELS.map((label, index) => {
         return (
           <TextField
+            key={`${label}_${index}`}
             fullWidth
             value={
               label === DISPLAY_NAME && isHex(value[label])

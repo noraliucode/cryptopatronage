@@ -148,8 +148,8 @@ export const Supporter = () => {
           <Wrapper>
             <Title>{t("manage.Committed subscribed Creators")}</Title>
             {committedCreators.length > 0 ? (
-              committedCreators.map((creator) => (
-                <SpaceBetweenWrapper>
+              committedCreators.map((creator, index) => (
+                <SpaceBetweenWrapper key={`${creator.creator}_${index}`}>
                   <Text>{creator.creator}</Text>
                   <Button
                     onClick={() =>
@@ -168,8 +168,8 @@ export const Supporter = () => {
             )}
             <Title>{t("manage.Uncommitted subscribed Creators")}</Title>
             {uncommittedCreators.length > 0 ? (
-              uncommittedCreators.map((creator) => (
-                <SpaceBetweenWrapper>
+              uncommittedCreators.map((creator, index) => (
+                <SpaceBetweenWrapper key={`${creator.creator}_${index}`}>
                   <Text>{creator.creator}</Text>
                   <Button
                     onClick={() => _unsubscribe(false, creator.creator)}

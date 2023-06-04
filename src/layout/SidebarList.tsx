@@ -94,7 +94,7 @@ const SidebarList = (props: Props) => {
           const Icon = item.icon;
 
           return (
-            <StyledLink to={item.link}>
+            <StyledLink key={`${item.label}_${index}`} to={item.link}>
               <ListItem
                 key={item.label}
                 disablePadding
@@ -139,7 +139,10 @@ const SidebarList = (props: Props) => {
             // const Icon = item.icon;
 
             return (
-              <StyledLink to={`/creators/${item.creator}`}>
+              <StyledLink
+                key={`${item.creator}_${index}`}
+                to={`/creators/${item.creator}`}
+              >
                 <ListItem
                   key={item.creator}
                   disablePadding
@@ -197,7 +200,7 @@ const SidebarList = (props: Props) => {
             const Icon = item.icon;
 
             return (
-              <StyledLink to={item.link}>
+              <StyledLink key={`${item.label}_${index}`} to={item.link}>
                 <ListItem
                   key={item.label}
                   disablePadding

@@ -522,8 +522,8 @@ export const Manage = () => {
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
-            {MANAGE_SECTIONS.map((x) => (
-              <div>
+            {MANAGE_SECTIONS.map((x, index) => (
+              <div key={`${x}_${index}`}>
                 <a href={x.id}>
                   <SectionText isCicked={isCicked}>
                     {t(`manage sections.${x.title}`)}
