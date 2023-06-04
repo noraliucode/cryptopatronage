@@ -279,9 +279,11 @@ export const pullPayment = async (
   injector: any,
   currentRate: number,
   decimals: number,
-  isCommitted: boolean
+  isCommitted: boolean,
+  setLoading: (_: boolean) => void
 ) => {
   if (!api) return;
+  setLoading(true);
   const apiService = new APIService(api);
   try {
     const { promises, pullHistory } = (await getPaymentPromises(
@@ -302,8 +304,10 @@ export const pullPayment = async (
     }
 
     await updateCreatorKeyValue(sender, _pullHistory, PULL_HISTORY);
+    setLoading(false);
   } catch (error) {
     console.error("pullPayment error", error);
+    setLoading(false);
   }
 };
 

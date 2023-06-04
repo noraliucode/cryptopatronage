@@ -225,8 +225,12 @@ export const Manage = () => {
     loading: isInfoLoading,
   } = useIdentity(signer?.address, network);
 
-  const { committedSupporters, getSupporters, uncommittedSupporters } =
-    useSupporters(signer?.address, currentRate, network);
+  const {
+    committedSupporters,
+    getSupporters,
+    uncommittedSupporters,
+    loading: isSupportersLoading,
+  } = useSupporters(signer?.address, currentRate, network);
 
   const { api } = useApi(network);
   const { t } = useTranslation();
@@ -291,14 +295,16 @@ export const Manage = () => {
     //   }));
     //   return;
     // }
-    setState((prev) => ({
-      ...prev,
-      message: "Pulling Payment...",
-      open: true,
-    }));
+    const setLoading = (value: boolean) => {
+      setState((prev) => ({
+        ...prev,
+        message: "Pulling Payment...",
+        open: value,
+      }));
+    };
 
     const _supporters = supporters.filter(
-      (supporter: any) => supporter.supporter
+      (supporter: any) => supporter.address
     );
     await pullPayment(
       api,
@@ -307,7 +313,8 @@ export const Manage = () => {
       injector,
       currentRate,
       DECIMALS[network],
-      isCommitted
+      isCommitted,
+      setLoading
     );
   };
 
@@ -614,7 +621,11 @@ export const Manage = () => {
               </TitleWrapper>
 
               <Wrapper>
-                {isShowCommittedSupporters ? (
+                {isSupportersLoading ? (
+                  <LoadingContainer>
+                    <CircularProgress size={30} thickness={5} />
+                  </LoadingContainer>
+                ) : isShowCommittedSupporters ? (
                   <BasicTable
                     pull={_pullPayment}
                     network={network}
@@ -648,7 +659,11 @@ export const Manage = () => {
               </TitleWrapper>
 
               <Wrapper>
-                {isShowUncommittedSupporters ? (
+                {isSupportersLoading ? (
+                  <LoadingContainer>
+                    <CircularProgress size={30} thickness={5} />
+                  </LoadingContainer>
+                ) : isShowUncommittedSupporters ? (
                   <BasicTable
                     pull={_pullPayment}
                     network={network}

@@ -8,6 +8,7 @@ import * as _ from "lodash";
 interface IState {
   committedSupporters: ISupporters;
   uncommittedSupporters: ISupporters;
+  loading: boolean;
 }
 
 export const useSupporters = (
@@ -18,10 +19,15 @@ export const useSupporters = (
   const [state, setState] = useState<IState>({
     committedSupporters: [],
     uncommittedSupporters: [],
+    loading: false,
   });
 
   const getSupporters = async () => {
     try {
+      setState((prev) => ({
+        ...prev,
+        loading: true,
+      }));
       const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
       const api = await ApiPromise.create({ provider: wsProvider });
       const apiService = new APIService(api);
@@ -72,11 +78,16 @@ export const useSupporters = (
 
       setState((prev) => ({
         ...prev,
-        committedSupporters: _.uniqBy(_committedSupporters, "supporter"),
-        uncommittedSupporters: _.uniqBy(_uncommittedSupporters, "supporter"),
+        committedSupporters: _committedSupporters,
+        uncommittedSupporters: _uncommittedSupporters,
       }));
     } catch (error) {
       console.error("getSupporters error", error);
+    } finally {
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+      }));
     }
   };
   useEffect(() => {
