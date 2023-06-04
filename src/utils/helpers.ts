@@ -146,7 +146,7 @@ export function parseSupporterProxies(
 }
 
 export const getSubscribedCreatorsForSupporters = (
-  supporter: string,
+  supporter = "",
   pure: string | null,
   proxies: any,
   network: string
@@ -231,6 +231,7 @@ export const renderAddress = (
   network: string,
   number?: number
 ) => {
+  if (!address) return "";
   const keyring = new Keyring();
   const registry = config.registry.find(
     (x) => x.network.toLowerCase() === network.toLowerCase()
