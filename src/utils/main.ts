@@ -455,7 +455,7 @@ export const parseCreatorProxies = async (
   return result;
 };
 
-export const getSupportersForCreators = async (creator: string) => {
+export const getSupportersForCreator = async (creator = "") => {
   const result = await readJsonBin();
   const supporters = result[creator].supporters;
   const committedSupporters = supporters.filter(

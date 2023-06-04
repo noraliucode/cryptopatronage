@@ -2,7 +2,7 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { useEffect, useState } from "react";
 import { APIService } from "../services/apiService";
 import { NODE_ENDPOINT } from "../utils/constants";
-import { parseCreatorProxies } from "../utils/main";
+import { getSupportersForCreator, parseCreatorProxies } from "../utils/main";
 import {
   INetwork,
   IProxyParsedSupporter,
@@ -29,12 +29,8 @@ export const useSupporters = (
       const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
       const api = await ApiPromise.create({ provider: wsProvider });
       const apiService = new APIService(api);
-      // get proxyNodes
-      const proxyNodes: any = await apiService.getProxies();
-
       const { committedSupporters, uncommittedSupporters } =
-        // TODO: naming issue
-        await parseCreatorProxies(network, api, proxyNodes, creator);
+        await getSupportersForCreator(creator);
 
       // get balances
       const committedSupporterBalances = await apiService.getBalances(
