@@ -125,7 +125,7 @@ export const subscribe = async (
       let txs = await Promise.all(promises);
 
       console.log("set creator as main proxy...");
-      console.log("set subscribed time...");
+
       // TODO: add delay transfer later
       // if (isDelayed) {
       //   console.log(
@@ -151,6 +151,7 @@ export const subscribe = async (
 
       const tx = await apiService.batchCalls(txs, sender, injector, _callBack);
       if (tx) {
+        console.log("set subscribed time...");
         const now = new Date().getTime();
         const expiryDate = calculateExpiryTimestamp(now, months);
         setExpiryDate(expiryDate);
@@ -160,7 +161,7 @@ export const subscribe = async (
           expiresOn: expiryDate,
           pureProxy: isCommitted ? real : null,
         };
-        await updateCreatorKeyValue(creator, supporterInfo, SUPPORTERS);
+        await updateCreatorKeyValue(creator, [supporterInfo], SUPPORTERS);
       }
     } else {
       console.log("set creator as proxy...");
@@ -636,12 +637,18 @@ export const updateCreatorKeyValue = async (
   key: string
 ) => {
   const result = await readJsonBin();
-  const originalKeyValue = result[creator][key];
+  const originalKeyValue = result[creator] ? result[creator][key] : null;
+  let data;
+  if (originalKeyValue) {
+    data = {
+      ...result[creator],
+      [key]: [...originalKeyValue, value],
+    };
+  } else {
+    data = {
+      [key]: value,
+    };
+  }
 
-  const data = {
-    ...result[creator],
-    [key]: [...originalKeyValue, value],
-  };
-
-  await updateJsonBin({ ...data, ...result });
+  await updateJsonBin({ [creator]: data, ...result });
 };
