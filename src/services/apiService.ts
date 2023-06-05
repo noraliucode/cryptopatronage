@@ -239,33 +239,24 @@ class APIService {
       additional: formatAdditionalInfo(additionalInfo),
     };
 
-    await this.api.tx.identity
-      .setIdentity(identity)
-      .signAndSend(
-        sender,
-        { signer: injector.signer },
-        ({ status, events = [], dispatchError }) => {
+    const txHash = await new Promise((resolve, reject) => {
+      this.api.tx.identity
+        .setIdentity(identity)
+        .signAndSend(sender, { signer: injector.signer }, (status) => {
           if (status.isInBlock) {
-            callback && callback();
-          }
-          // status would still be set, but in the case of error we can shortcut
-          // to just check it (so an error would indicate InBlock or Finalized)
-          if (dispatchError) {
-            if (dispatchError.isModule) {
-              // for module errors, we have the section indexed, lookup
-              const decoded = this.api.registry.findMetaError(
-                dispatchError.asModule
-              );
-              const { docs, name, section } = decoded;
+            console.log("signAndSendSetIdentity status: ", status);
 
-              console.log(`${section}.${name}: ${docs.join(" ")}`);
-            } else {
-              // Other, CannotLookup, BadOrigin, no extra info
-              console.log(dispatchError.toString());
-            }
+            const tx = status.txHash.toString();
+            callback && callback();
+            resolve(tx);
           }
-        }
-      );
+        })
+        .catch((error) => {
+          console.log("signAndSendSetIdentity error: ", error);
+          reject(error);
+        });
+    });
+    return txHash;
   };
 
   setIdentityPromise = async (essentialInfo: any, additionalInfo: any) => {

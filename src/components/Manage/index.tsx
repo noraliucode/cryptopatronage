@@ -324,11 +324,27 @@ export const Manage = () => {
   const handleRegisterClick = () => {
     checkSigner();
     if (!injector || !signer) return;
+    setState((prev) => ({
+      ...prev,
+      message: isRegisterToPaymentSystem
+        ? "Unregistering..."
+        : "Registering...",
+      open: true,
+    }));
+    const callback = async (value: boolean) => {
+      await getRate();
+      setState((prev) => ({
+        ...prev,
+        open: value,
+      }));
+    };
+
     toggleIsRegisterToPaymentSystem(
       api,
       signer.address,
       isRegisterToPaymentSystem ? !isRegisterToPaymentSystem : true,
-      injector
+      injector,
+      callback
     );
   };
 
@@ -553,7 +569,7 @@ export const Manage = () => {
                 <Tooltip title="Register to Cryptopatronage payment system. Payment will automically transfer to your recipient account. (1% fee required)">
                   <img alt="question" src="/assets/icons/question.svg" />
                 </Tooltip>
-                &nbsp;<HintText>*coming soon</HintText>
+                &nbsp;
               </TitleWrapper>
 
               <InputWrapper>
@@ -562,12 +578,8 @@ export const Manage = () => {
                   {isRegisterToPaymentSystem ? "Registered" : "Not Registered"}
                 </Text>
                 <br />
-                <Button
-                  disabled
-                  onClick={handleRegisterClick}
-                  variant="contained"
-                >
-                  {isRegisterToPaymentSystem ? "Cancel" : "Register"}
+                <Button onClick={handleRegisterClick} variant="contained">
+                  {isRegisterToPaymentSystem ? "Unregister" : "Register"}
                 </Button>
               </InputWrapper>
               <CreatorInfo>

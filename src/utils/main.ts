@@ -363,7 +363,8 @@ export const toggleIsRegisterToPaymentSystem = async (
   api: ApiPromise | null,
   sender: string,
   isRegisterToPaymentSystem: boolean,
-  injector: InjectedExtension
+  injector: InjectedExtension,
+  callback: (value: boolean) => Promise<void>
 ) => {
   try {
     if (!api) return;
@@ -383,9 +384,14 @@ export const toggleIsRegisterToPaymentSystem = async (
       injector
     );
 
+    if (tx) {
+      await callback(false);
+    }
+
     return tx;
   } catch (error) {
     console.error("toggleIsRegisterToPaymentSystem error", error);
+    await callback(false);
   }
 };
 
