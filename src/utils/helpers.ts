@@ -382,3 +382,11 @@ export function formatTimestamp(timestamp: number): string {
 
   return formattedDate;
 }
+
+export function formatTimestampClear(timestamp: number): string {
+  let date = new Date(timestamp);
+  let formatted_date = `${date.getDate()} ${date.toLocaleString("default", {
+    month: "long",
+  })}, ${date.getFullYear()}`;
+  return formatted_date;
+}

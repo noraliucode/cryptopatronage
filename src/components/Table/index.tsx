@@ -14,7 +14,7 @@ import {
 } from "../../utils/types";
 import { Button, styled } from "@mui/material";
 import {
-  formatTimestamp,
+  formatTimestampClear,
   formatUnit,
   renderAddress,
   toShortAddress,
@@ -145,7 +145,9 @@ export default function BasicTable({
                 <TableCell align="right">
                   {row.pure && renderAddress(row.pure, network, 6)}
                 </TableCell>
-                <TableCell align="right">{formatTimestamp(row.time)}</TableCell>
+                <TableCell align="right">
+                  {formatTimestampClear(row.time)}
+                </TableCell>
                 <TableCell align="right">
                   {formatUnit(Number(row.amount), DECIMALS[network])} {network}
                 </TableCell>
