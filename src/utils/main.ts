@@ -232,10 +232,7 @@ const getPaymentPromises = async (
     let lastPaymentTime = getLastPaymentTime(creatorIdentity);
     const amount = getPaymentAmount(currentRate, lastPaymentTime);
     const real = isCommitted ? supporter.pureProxy : supporter.address;
-    const isBalanceSufficient = isCommitted
-      ? supporter.pureBalance && supporter.pureBalance > amount
-      : supporter.supporterBalance && supporter.supporterBalance > amount;
-    if (!isBalanceSufficient && real) {
+    if (real) {
       pullHistory.push({
         supporter: supporter.address || "",
         pure: real,
@@ -646,7 +643,6 @@ export const updateCreatorKeyValue = async (
   let data;
   if (originalKeyValue) {
     data = {
-      ...result[creator],
       [key]: [...originalKeyValue, value],
     };
   } else {
@@ -655,5 +651,6 @@ export const updateCreatorKeyValue = async (
     };
   }
 
-  await updateJsonBin({ [creator]: data, ...result });
+  const creatorData = { ...result[creator], ...data };
+  await updateJsonBin({ ...result, [creator]: creatorData });
 };
