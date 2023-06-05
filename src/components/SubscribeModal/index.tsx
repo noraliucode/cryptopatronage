@@ -13,15 +13,15 @@ import DialogActions from "@mui/material/DialogActions";
 import { ChangeEvent, useState } from "react";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useApi } from "../../hooks/useApi";
-import { APIService } from "../../services/apiService";
 import { DECIMALS, SYMBOL } from "../../utils/constants";
-import { findPure, formatTimestamp, formatUnit } from "../../utils/helpers";
+import { formatTimestamp, formatUnit } from "../../utils/helpers";
 import { subscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Modal } from "../Modal";
 import { CheckWrapper, Text } from "../Manage";
 import { useTranslation } from "react-i18next";
 import { AddToCalendarButton } from "add-to-calendar-button-react";
+import { usePureProxy } from "../../hooks/usePureProxy";
 
 type IProps = {
   open: boolean;
@@ -99,6 +99,7 @@ export const SubscribeModal = (props: IProps) => {
     useWeb3ConnectedContext();
 
   const { api } = useApi(network);
+  const { userPureProxy } = usePureProxy(signer?.address);
 
   const isSubscribDisabled = !isCommitted && !isNoFundsExclusivelyConfirmed;
   const formattedRate = formatUnit(Number(rate), DECIMALS[network]);
@@ -156,14 +157,6 @@ export const SubscribeModal = (props: IProps) => {
     };
 
     if (!signer) return;
-    const apiService = new APIService(api);
-    const supporterProxies: any = await apiService.getProxies(signer.address);
-    const pure = findPure(
-      supporterProxies,
-      selectedCreator,
-      signer.address,
-      network
-    );
     const setExpiryDate = (value: number) => {
       if (!value) return;
       setState((prev) => ({
@@ -185,7 +178,7 @@ export const SubscribeModal = (props: IProps) => {
       Number(rate),
       callback,
       setLoading,
-      pure,
+      userPureProxy,
       isDelayed,
       isUsd
     );

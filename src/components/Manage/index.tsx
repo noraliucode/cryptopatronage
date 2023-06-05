@@ -22,10 +22,7 @@ import {
 } from "../../utils/constants";
 import { formatUnit, validateUrls } from "../../utils/helpers";
 import Snackbar from "@mui/material/Snackbar";
-import {
-  IProxyParsedSupporter,
-  IWeb3ConnectedContextState,
-} from "../../utils/types";
+import { ISupporter, IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useIdentity } from "../../hooks/useIdentity";
 import { useSupporters } from "../../hooks/useSupporters";
@@ -40,6 +37,7 @@ import IdentityForm from "../CreatorInfoForms/IdentityForm";
 import BasicTable from "../Table";
 import { useTranslation } from "react-i18next";
 import ConnectButton from "../ConnectButton";
+import { usePullPaymentHistory } from "../../hooks/usePullPaymentHistory";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,
@@ -228,11 +226,17 @@ export const Manage = () => {
     loading: isInfoLoading,
   } = useIdentity(signer?.address, network);
 
-  const { committedSupporters, getSupporters, uncommittedSupporters } =
-    useSupporters(signer?.address, currentRate, network);
+  const {
+    committedSupporters,
+    getSupporters,
+    uncommittedSupporters,
+    loading: isSupportersLoading,
+  } = useSupporters(signer?.address, currentRate, network);
 
   const { api } = useApi(network);
   const { t } = useTranslation();
+  const { pullPaymentHistory, loading: isHistoryLoading } =
+    usePullPaymentHistory(signer?.address, network);
 
   useEffect(() => {
     if (identity) {
@@ -277,10 +281,7 @@ export const Manage = () => {
     }));
   };
 
-  const _pullPayment = async (
-    isCommitted: boolean,
-    supporter?: IProxyParsedSupporter
-  ) => {
+  const _pullPayment = async (isCommitted: boolean, supporter?: ISupporter) => {
     if (!signer) return;
     let supporters: any = [];
     if (!supporter) {
@@ -297,14 +298,16 @@ export const Manage = () => {
     //   }));
     //   return;
     // }
-    setState((prev) => ({
-      ...prev,
-      message: "Pulling Payment...",
-      open: true,
-    }));
+    const setLoading = (value: boolean) => {
+      setState((prev) => ({
+        ...prev,
+        message: "Pulling Payment...",
+        open: value,
+      }));
+    };
 
     const _supporters = supporters.filter(
-      (supporter: any) => supporter.supporter
+      (supporter: any) => supporter.address
     );
     await pullPayment(
       api,
@@ -313,7 +316,8 @@ export const Manage = () => {
       injector,
       currentRate,
       DECIMALS[network],
-      isCommitted
+      isCommitted,
+      setLoading
     );
   };
 
@@ -522,8 +526,8 @@ export const Manage = () => {
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
-            {MANAGE_SECTIONS.map((x) => (
-              <div>
+            {MANAGE_SECTIONS.map((x, index) => (
+              <div key={`${x}_${index}`}>
                 <a href={x.id}>
                   <SectionText isCicked={isCicked}>
                     {t(`manage sections.${x.title}`)}
@@ -620,7 +624,11 @@ export const Manage = () => {
               </TitleWrapper>
 
               <Wrapper>
-                {isShowCommittedSupporters ? (
+                {isSupportersLoading ? (
+                  <LoadingContainer>
+                    <CircularProgress size={30} thickness={5} />
+                  </LoadingContainer>
+                ) : isShowCommittedSupporters ? (
                   <BasicTable
                     pull={_pullPayment}
                     network={network}
@@ -647,6 +655,26 @@ export const Manage = () => {
               )}
 
               <TitleWrapper>
+                <Title>Pull Payment History</Title>
+              </TitleWrapper>
+              <Wrapper>
+                {isHistoryLoading ? (
+                  <LoadingContainer>
+                    <CircularProgress size={30} thickness={5} />
+                  </LoadingContainer>
+                ) : isShowCommittedSupporters ? (
+                  <BasicTable
+                    network={network}
+                    pullPaymentHistory={pullPaymentHistory}
+                  />
+                ) : (
+                  <Content>
+                    <Text>N/A</Text>
+                  </Content>
+                )}
+              </Wrapper>
+
+              <TitleWrapper>
                 <Title>{t("manage.Uncommitted Supporters")}</Title>
                 <Tooltip title="Supporters that are not committed to transfer fund meets the rate">
                   <img alt="question" src="/assets/icons/question.svg" />
@@ -654,7 +682,11 @@ export const Manage = () => {
               </TitleWrapper>
 
               <Wrapper>
-                {isShowUncommittedSupporters ? (
+                {isSupportersLoading ? (
+                  <LoadingContainer>
+                    <CircularProgress size={30} thickness={5} />
+                  </LoadingContainer>
+                ) : isShowUncommittedSupporters ? (
                   <BasicTable
                     pull={_pullPayment}
                     network={network}

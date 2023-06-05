@@ -71,8 +71,8 @@ export const AboutPage = () => {
           <ItalicStyle>{t("about.for_creators.italic_content")}</ItalicStyle>
           <br />
         </Text>
-        {embedIds.map((id) => (
-          <div className="videowrapper">
+        {embedIds.map((id, index) => (
+          <div key={`${id}_${index}`} className="videowrapper">
             <iframe
               src={`https://www.youtube.com/embed/${id}?cc_load_policy=1`}
               allowFullScreen

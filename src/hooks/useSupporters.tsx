@@ -2,16 +2,13 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { useEffect, useState } from "react";
 import { APIService } from "../services/apiService";
 import { NODE_ENDPOINT } from "../utils/constants";
-import { parseCreatorProxies } from "../utils/main";
-import {
-  INetwork,
-  IProxyParsedSupporter,
-  IProxyParsedSupporters,
-} from "../utils/types";
+import { getSupportersForCreator } from "../utils/main";
+import { INetwork, ISupporter, ISupporters } from "../utils/types";
 import * as _ from "lodash";
 interface IState {
-  committedSupporters: IProxyParsedSupporters;
-  uncommittedSupporters: IProxyParsedSupporters;
+  committedSupporters: ISupporters;
+  uncommittedSupporters: ISupporters;
+  loading: boolean;
 }
 
 export const useSupporters = (
@@ -22,50 +19,49 @@ export const useSupporters = (
   const [state, setState] = useState<IState>({
     committedSupporters: [],
     uncommittedSupporters: [],
+    loading: false,
   });
 
   const getSupporters = async () => {
     try {
+      setState((prev) => ({
+        ...prev,
+        loading: true,
+      }));
       const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
       const api = await ApiPromise.create({ provider: wsProvider });
       const apiService = new APIService(api);
-      // get proxyNodes
-      const proxyNodes: any = await apiService.getProxies();
-
       const { committedSupporters, uncommittedSupporters } =
-        // TODO: naming issue
-        await parseCreatorProxies(network, api, proxyNodes, creator);
+        await getSupportersForCreator(creator);
 
       // get balances
       const committedSupporterBalances = await apiService.getBalances(
         committedSupporters.map(
-          (supporter: IProxyParsedSupporter) => supporter.pure as string
+          (supporter: ISupporter) => supporter.pureProxy as string
         )
       );
       const uncommittedSupporterBalances = await apiService.getBalances(
         uncommittedSupporters.map(
-          (supporter: IProxyParsedSupporter) => supporter.supporter as string
+          (supporter: ISupporter) => supporter.address as string
         )
       );
 
       const _committedSupporters: any[] = [];
       const _uncommittedSupporters: any[] = [];
       // filter accounts that has balances that is greater than the rate
-      committedSupporters.forEach(
-        (supporter: IProxyParsedSupporter, index: number) => {
-          const _balance =
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            committedSupporterBalances[index]?.toHuman().data.free;
-          // format number wirh commas: '1,000,890,001,100'
-          const balance = Number(_balance?.replace(/,/g, ""));
+      committedSupporters.forEach((supporter: ISupporter, index: number) => {
+        const _balance =
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          committedSupporterBalances[index]?.toHuman().data.free;
+        // format number wirh commas: '1,000,890,001,100'
+        const balance = Number(_balance?.replace(/,/g, ""));
 
-          _committedSupporters.push({
-            ...supporter,
-            pureBalance: balance,
-          });
-        }
-      );
+        _committedSupporters.push({
+          ...supporter,
+          pureBalance: balance,
+        });
+      });
 
       uncommittedSupporters.forEach((supporter: any, index: any) => {
         const _balance =
@@ -82,11 +78,16 @@ export const useSupporters = (
 
       setState((prev) => ({
         ...prev,
-        committedSupporters: _.uniqBy(_committedSupporters, "supporter"),
-        uncommittedSupporters: _.uniqBy(_uncommittedSupporters, "supporter"),
+        committedSupporters: _committedSupporters,
+        uncommittedSupporters: _uncommittedSupporters,
       }));
     } catch (error) {
       console.error("getSupporters error", error);
+    } finally {
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+      }));
     }
   };
   useEffect(() => {

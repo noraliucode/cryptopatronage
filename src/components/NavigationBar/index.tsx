@@ -132,13 +132,18 @@ export const NavigationBar = () => {
                   <Text>{t("button.create")}</Text>
                 </Button>
               </StyledLink>
-              {MENU.map((item) => {
+              {MENU.map((item, index) => {
                 const Icon = item.icon;
                 if (item.label === "Language") {
-                  return <LanguageSelector item={item} />;
+                  return (
+                    <LanguageSelector
+                      key={`${item.label}_${index}`}
+                      item={item}
+                    />
+                  );
                 }
                 return (
-                  <StyledLink to={item.link}>
+                  <StyledLink key={`${item.label}_${index}`} to={item.link}>
                     <Button color="primary" aria-label={item.label}>
                       <Icon htmlColor="white" titleAccess={item.label} />
                       {/* <Text>{item.label}</Text> */}

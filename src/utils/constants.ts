@@ -20,12 +20,16 @@ export const PURE_CREATED = "PureCreated";
 export const RESERVED_AMOUNT = 0.001;
 export const ZERO_BAL = 0;
 export const NETWORK = "network";
+export const SUPPORTERS = "supporters";
+export const PULL_HISTORY = "pullHistory";
+export const USER_PURE_PROXY = "userPureProxy";
 
 export const SUPPORTER = {
   ROCOCO: "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",
   WESTEND: "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",
   KUSAMA: "G22qdn1U9dPQLZCxVJu8jmYe1Jdmm551aj9eNb9PT9iVzKh",
 };
+
 export const DECIMALS = {
   ROCOCO: 12,
   WESTEND: 12,

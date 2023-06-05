@@ -145,6 +145,39 @@ export function parseSupporterProxies(
   return { committedCreators, uncommittedCreators };
 }
 
+export const getSubscribedCreatorsForSupporters = (
+  supporter = "",
+  pure: string | null,
+  proxies: any,
+  network: string
+) => {
+  const committedCreators: any = [];
+  const uncommittedCreators: any = [];
+
+  proxies.forEach((proxy: any) => {
+    const delegations = proxy[1].toHuman()[0];
+    //1. fine entry[0] is pure from entries
+    if (proxy[0].toHuman()[0] === renderAddress((pure = ""), network)) {
+      // 2. delegates shold only have 2 address, the one which is not supporter should be creator
+      // 3. addresses under this category is committed supporter (Not considering the situations that addresses are more than two when users can sign only their own)
+      const creator =
+        delegations[0]?.delegate === renderAddress(supporter, network)
+          ? delegations[1]?.delegate
+          : delegations[0]?.delegate;
+      committedCreators.push({ creator, pure });
+    }
+    if (proxy[0].toHuman()[0] === renderAddress(supporter, network)) {
+      // 4. fine entry[0] is supporter from entries
+      // 5. delegates might have many addresses in this case.
+      // 6. addresses under this category is uncommitted supporter
+      const creator = delegations[0]?.delegate;
+      uncommittedCreators.push({ creator });
+    }
+  });
+
+  return { committedCreators, uncommittedCreators };
+};
+
 export const checkProxyAssociation = async (
   account: string,
   proxyAddress: string,
@@ -198,6 +231,7 @@ export const renderAddress = (
   network: string,
   number?: number
 ) => {
+  if (!address) return "";
   const keyring = new Keyring();
   const registry = config.registry.find(
     (x) => x.network.toLowerCase() === network.toLowerCase()
@@ -347,4 +381,12 @@ export function formatTimestamp(timestamp: number): string {
   const formattedDate = `${year}-${month}-${day}`;
 
   return formattedDate;
+}
+
+export function formatTimestampClear(timestamp: number): string {
+  let date = new Date(timestamp);
+  let formatted_date = `${date.getDate()} ${date.toLocaleString("default", {
+    month: "long",
+  })}, ${date.getFullYear()}`;
+  return formatted_date;
 }

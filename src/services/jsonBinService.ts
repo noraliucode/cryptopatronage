@@ -1,3 +1,8 @@
+import Bottleneck from "bottleneck";
+
+const limiter = new Bottleneck({
+  minTime: 2000, // 1 request per second
+});
 class JsonBinService {
   updateData = async (jsonObject: any) => {
     try {
@@ -26,14 +31,13 @@ class JsonBinService {
 
   readData = async () => {
     try {
-      const response = await fetch(
-        `https://api.jsonbin.io/v3/b/${process.env.REACT_APP_BIN_ID}`,
-        {
+      const response = await limiter.schedule(() =>
+        fetch(`https://api.jsonbin.io/v3/b/${process.env.REACT_APP_BIN_ID}`, {
           method: "GET",
           headers: {
             "X-Master-Key": `${process.env.REACT_APP_BIN_SECRET_KEY}`,
           },
-        }
+        })
       );
 
       if (!response.ok) {
@@ -41,7 +45,6 @@ class JsonBinService {
       }
 
       const data = await response.json();
-      console.log(data);
       return data;
     } catch (error) {
       console.log("There was a network error:", error);

@@ -2,7 +2,10 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import { useEffect, useState } from "react";
 import { APIService } from "../services/apiService";
 import { NODE_ENDPOINT } from "../utils/constants";
-import { parseEssentialInfo, parseSupporterProxies } from "../utils/helpers";
+import {
+  getSubscribedCreatorsForSupporters,
+  parseEssentialInfo,
+} from "../utils/helpers";
 import { INetwork, IProxyParsedCreators } from "../utils/types";
 
 interface IState {
@@ -10,7 +13,11 @@ interface IState {
   uncommittedCreators: IProxyParsedCreators;
 }
 
-export const useSubscribedCreators = (supporter = "", network: INetwork) => {
+export const useSubscribedCreators = (
+  supporter = "",
+  network: INetwork,
+  pureProxy: string | null
+) => {
   const [state, setState] = useState<IState>({
     committedCreators: [],
     uncommittedCreators: [],
@@ -22,11 +29,14 @@ export const useSubscribedCreators = (supporter = "", network: INetwork) => {
       const api = await ApiPromise.create({ provider: wsProvider });
       const apiService = new APIService(api);
       const supporterProxies: any = await apiService.getProxies();
-      const { committedCreators, uncommittedCreators } = parseSupporterProxies(
-        supporterProxies,
-        supporter,
-        network
-      );
+
+      const { committedCreators, uncommittedCreators } =
+        getSubscribedCreatorsForSupporters(
+          supporter,
+          pureProxy,
+          supporterProxies,
+          network
+        );
 
       // TODO: creators can pull payment anytime, so the balance is not necessarily greater than rate. The code below can be deleted later.
       // const balances = await apiService.getBalances(
@@ -44,7 +54,7 @@ export const useSubscribedCreators = (supporter = "", network: INetwork) => {
       // });
 
       const identities = await apiService.getIdentities(
-        committedCreators.map((x) => x.creator)
+        committedCreators.map((x: any) => x.creator)
       );
       identities.map((x: any, index: number) => {
         const essentialInfo = parseEssentialInfo(x.toHuman()?.info);

@@ -5,6 +5,8 @@ import {
   RESERVED_AMOUNT,
   SECONDS_IN_ONE_DAY,
   ZERO_BAL,
+  SUPPORTERS,
+  PULL_HISTORY,
 } from "./constants";
 import {
   calculateExpiryTimestamp,
@@ -16,15 +18,14 @@ import {
 import {
   IAdditionalInfo,
   Identity,
+  IHistory,
   INetwork,
   IParsedSupporterProxies,
-  IProxyParsedSupporter,
-  IProxyParsedSupporters,
+  ISupporter,
 } from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
 import { APIService } from "../services/apiService";
-import { SubmittableExtrinsic } from "@polkadot/api/types";
 import JsonBinService from "../services/jsonBinService";
 
 type AnonymousData = {
@@ -49,7 +50,7 @@ export const subscribe = async (
   rate: number,
   callback?: any,
   setLoading?: (_: boolean) => void,
-  pureProxy?: string,
+  pureProxy?: string | null,
   isDelayed = false,
   isUsd = false
 ) => {
@@ -121,7 +122,7 @@ export const subscribe = async (
       let txs = await Promise.all(promises);
 
       console.log("set creator as main proxy...");
-      console.log("set subscribed time...");
+
       // TODO: add delay transfer later
       // if (isDelayed) {
       //   console.log(
@@ -144,12 +145,21 @@ export const subscribe = async (
         callback && callback();
         setLoading && setLoading(false);
       };
-      const expiryDate = await updateSubscribedTime(creator, supporter, months);
-      if (expiryDate) {
-        setExpiryDate(expiryDate);
-      }
 
-      await apiService.batchCalls(txs, sender, injector, _callBack);
+      const tx = await apiService.batchCalls(txs, sender, injector, _callBack);
+      if (tx) {
+        console.log("set subscribed time...");
+        const now = new Date().getTime();
+        const expiryDate = calculateExpiryTimestamp(now, months);
+        setExpiryDate(expiryDate);
+        const supporterInfo: ISupporter = {
+          address: sender,
+          subscribedTime: Date.now(),
+          expiresOn: expiryDate,
+          pureProxy: isCommitted ? real : null,
+        };
+        await updateCreatorKeyValue(creator, [supporterInfo], SUPPORTERS);
+      }
     } else {
       console.log("set creator as proxy...");
       await apiService.signAndSendAddProxy(sender, injector, creator, callback);
@@ -216,20 +226,25 @@ const getPaymentPromises = async (
   };
 
   let transactionInfos: any = [];
+  let pullHistory: any = [];
 
-  supporters.forEach((supporter: IProxyParsedSupporter) => {
+  supporters.forEach((supporter: ISupporter) => {
     let lastPaymentTime = getLastPaymentTime(creatorIdentity);
     const amount = getPaymentAmount(currentRate, lastPaymentTime);
-    const real = isCommitted ? supporter.pure : supporter.supporter;
-    const isBalanceSufficient = isCommitted
-      ? supporter.pureBalance && supporter.pureBalance > amount
-      : supporter.supporterBalance && supporter.supporterBalance > amount;
-    if (!isBalanceSufficient && real) {
+    const real = isCommitted ? supporter.pureProxy : supporter.address;
+    if (real) {
+      pullHistory.push({
+        supporter: supporter.address || "",
+        pure: real,
+        time: Date.now(),
+        amount,
+      });
+
       transactionInfos.push({
         real,
         receiver,
         amount,
-        supporter: supporter.supporter,
+        supporter: supporter.address,
       });
     }
   });
@@ -245,39 +260,51 @@ const getPaymentPromises = async (
       transferFn,
       apiService.setIdentityPromise(creatorIdentity, {
         ...additionalInfo,
+        // TODO: pass network
         [`lt_${renderAddress(info.supporter, "ROCOCO", 4)}`]: Date.now(),
       })
     );
   });
 
-  return promises;
+  return { promises, pullHistory };
 };
 
 export const pullPayment = async (
   api: ApiPromise | null,
-  supporters: IProxyParsedSupporters,
+  supporters: ISupporter,
   sender: string,
   injector: any,
   currentRate: number,
   decimals: number,
-  isCommitted: boolean
+  isCommitted: boolean,
+  setLoading: (_: boolean) => void
 ) => {
   if (!api) return;
+  setLoading(true);
   const apiService = new APIService(api);
   try {
-    const promises = (await getPaymentPromises(
+    const { promises, pullHistory } = (await getPaymentPromises(
       api,
       supporters,
       sender,
       currentRate,
       decimals,
       isCommitted
-    )) as Promise<SubmittableExtrinsic<"promise">>[];
+    )) as any;
 
     const txs = await Promise.all(promises);
-    await apiService.batchCalls(txs, sender, injector);
+
+    const tx = await apiService.batchCalls(txs, sender, injector);
+    let _pullHistory;
+    if (tx) {
+      _pullHistory = pullHistory.map((x: IHistory) => ({ ...x, tx }));
+    }
+
+    await updateCreatorKeyValue(sender, _pullHistory, PULL_HISTORY);
+    setLoading(false);
   } catch (error) {
     console.error("pullPayment error", error);
+    setLoading(false);
   }
 };
 
@@ -427,6 +454,30 @@ export const parseCreatorProxies = async (
   return result;
 };
 
+export const getSupportersForCreator = async (creator = "") => {
+  const result = await readJsonBin();
+  const supporters = result[creator].supporters;
+  console.log("supporters", supporters);
+
+  const committedSupporters = supporters.filter(
+    (supporter: any) => supporter.pureProxy
+  );
+  console.log("committedSupporters");
+
+  const uncommittedSupporters = supporters.filter(
+    (supporter: any) => !supporter.pureProxy
+  );
+
+  return { committedSupporters, uncommittedSupporters };
+};
+
+export const getPullPaymentHistory = async (creator = "") => {
+  const result = await readJsonBin();
+  const history = result[creator].pullHistory;
+
+  return history;
+};
+
 export const updateInfo = async (
   api: ApiPromise | null,
   idetity: Identity,
@@ -562,34 +613,51 @@ export const unregister = async (
 export const updateJsonBin = async (data: any) => {
   const jsonBinService = new JsonBinService();
   try {
-    let result = await jsonBinService.readData();
-    result = result.record.record.record;
-    const updatedData = { ...result, ...data };
-    await jsonBinService.updateData(updatedData);
+    await jsonBinService.updateData(data);
   } catch (error) {
     console.error("updateJsonBin error", error);
   }
 };
 
-const updateSubscribedTime = async (
+const readJsonBin = async () => {
+  const jsonBinService = new JsonBinService();
+  try {
+    let result = await jsonBinService.readData();
+
+    result = result.record;
+    return result;
+  } catch (error) {
+    console.error("readJsonBin error", error);
+  }
+};
+
+export const readJsonBinKeyValue = async (signer: string, key: string) => {
+  try {
+    const result = await readJsonBin();
+    return result[signer] ? result[signer][key] : null;
+  } catch (error) {
+    console.error("readJsonBinKeyValue error", error);
+  }
+};
+
+export const updateCreatorKeyValue = async (
   creator: string,
-  supporter: string,
-  months: number
+  value: any,
+  key: string
 ) => {
-  const now = new Date().getTime();
-  const expiresOn = calculateExpiryTimestamp(now, months);
+  const result = await readJsonBin();
+  const originalKeyValue = result[creator] ? result[creator][key] : null;
+  let data;
+  if (originalKeyValue) {
+    data = {
+      [key]: [...originalKeyValue, value],
+    };
+  } else {
+    data = {
+      [key]: value,
+    };
+  }
 
-  const data = {
-    [creator]: {
-      supporters: {
-        [supporter]: {
-          subscribedTime: now,
-          expiresOn,
-        },
-      },
-    },
-  };
-
-  await updateJsonBin(data);
-  return expiresOn;
+  const creatorData = { ...result[creator], ...data };
+  await updateJsonBin({ ...result, [creator]: creatorData });
 };

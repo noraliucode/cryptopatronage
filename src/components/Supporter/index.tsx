@@ -18,6 +18,7 @@ import {
   SpaceBetweenWrapper,
   SectionTitle,
 } from "../Manage";
+import { usePureProxy } from "../../hooks/usePureProxy";
 
 type IState = {
   rate: number;
@@ -44,9 +45,9 @@ export const Supporter = () => {
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
-
+  const { userPureProxy } = usePureProxy(signer?.address);
   const { committedCreators, uncommittedCreators, getSubscribedCreators } =
-    useSubscribedCreators(signer?.address, network);
+    useSubscribedCreators(signer?.address, network, userPureProxy);
 
   const { api } = useApi(network);
   const { t } = useTranslation();
@@ -147,8 +148,8 @@ export const Supporter = () => {
           <Wrapper>
             <Title>{t("manage.Committed subscribed Creators")}</Title>
             {committedCreators.length > 0 ? (
-              committedCreators.map((creator) => (
-                <SpaceBetweenWrapper>
+              committedCreators.map((creator, index) => (
+                <SpaceBetweenWrapper key={`${creator.creator}_${index}`}>
                   <Text>{creator.creator}</Text>
                   <Button
                     onClick={() =>
@@ -167,8 +168,8 @@ export const Supporter = () => {
             )}
             <Title>{t("manage.Uncommitted subscribed Creators")}</Title>
             {uncommittedCreators.length > 0 ? (
-              uncommittedCreators.map((creator) => (
-                <SpaceBetweenWrapper>
+              uncommittedCreators.map((creator, index) => (
+                <SpaceBetweenWrapper key={`${creator.creator}_${index}`}>
                   <Text>{creator.creator}</Text>
                   <Button
                     onClick={() => _unsubscribe(false, creator.creator)}

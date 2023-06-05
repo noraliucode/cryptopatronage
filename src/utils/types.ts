@@ -87,8 +87,8 @@ export type IParsedProxies = {
 };
 
 export type IParsedSupporterProxies = {
-  committedSupporters: IProxyParsedSupporters;
-  uncommittedSupporters: IProxyParsedSupporters;
+  committedSupporters: ISupporters;
+  uncommittedSupporters: ISupporters;
 };
 
 export type Identity = {
@@ -138,3 +138,24 @@ export type IMenuItem = {
 export interface DataMapping {
   [address: string]: { imgUrl: string };
 }
+
+export type ISupporter = {
+  address: string;
+  subscribedTime: number;
+  expiresOn: number;
+  pureProxy: string | null;
+  pureBalance?: number;
+  supporterBalance?: number;
+};
+
+export type ISupporters = ISupporter[] | [];
+
+export type IHistory = {
+  supporter: string;
+  pure: string;
+  time: number;
+  amount: number;
+  tx?: string;
+};
+
+export type IHistoryList = IHistory[] | [] | undefined;

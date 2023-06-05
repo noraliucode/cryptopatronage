@@ -281,13 +281,24 @@ class APIService {
     injector: any,
     callback?: any
   ) => {
-    await this.api.tx.utility
-      .batchAll(calls)
-      .signAndSend(sender, { signer: injector.signer }, (status) => {
-        if (status.isInBlock) {
-          callback && callback();
-        }
-      });
+    const txHash = await new Promise((resolve, reject) => {
+      this.api.tx.utility
+        .batchAll(calls)
+        .signAndSend(sender, { signer: injector.signer }, (status) => {
+          if (status.isInBlock) {
+            console.log("batchCalls status: ", status);
+
+            const tx = status.txHash.toString();
+            callback && callback();
+            resolve(tx);
+          }
+        })
+        .catch((error) => {
+          console.log("batchCalls error: ", error);
+          reject(error);
+        });
+    });
+    return txHash;
   };
 
   removeProxies = async () => {
