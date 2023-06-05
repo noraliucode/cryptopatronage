@@ -37,6 +37,7 @@ import IdentityForm from "../CreatorInfoForms/IdentityForm";
 import BasicTable from "../Table";
 import { useTranslation } from "react-i18next";
 import ConnectButton from "../ConnectButton";
+import { usePullPaymentHistory } from "../../hooks/usePullPaymentHistory";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,
@@ -234,6 +235,10 @@ export const Manage = () => {
 
   const { api } = useApi(network);
   const { t } = useTranslation();
+  const { pullPaymentHistory } = usePullPaymentHistory(
+    signer?.address,
+    network
+  );
 
   useEffect(() => {
     if (identity) {
@@ -650,6 +655,26 @@ export const Manage = () => {
                   </Button>
                 </InputWrapper>
               )}
+
+              <TitleWrapper>
+                <Title>Pull Payment History</Title>
+              </TitleWrapper>
+              <Wrapper>
+                {isSupportersLoading ? (
+                  <LoadingContainer>
+                    <CircularProgress size={30} thickness={5} />
+                  </LoadingContainer>
+                ) : isShowCommittedSupporters ? (
+                  <BasicTable
+                    network={network}
+                    pullPaymentHistory={pullPaymentHistory}
+                  />
+                ) : (
+                  <Content>
+                    <Text>N/A</Text>
+                  </Content>
+                )}
+              </Wrapper>
 
               <TitleWrapper>
                 <Title>{t("manage.Uncommitted Supporters")}</Title>

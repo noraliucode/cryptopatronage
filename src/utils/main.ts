@@ -471,6 +471,13 @@ export const getSupportersForCreator = async (creator = "") => {
   return { committedSupporters, uncommittedSupporters };
 };
 
+export const getPullPaymentHistory = async (creator = "") => {
+  const result = await readJsonBin();
+  const history = result[creator].pullHistory;
+
+  return history;
+};
+
 export const updateInfo = async (
   api: ApiPromise | null,
   idetity: Identity,

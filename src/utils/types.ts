@@ -157,3 +157,5 @@ export type IHistory = {
   amount: number;
   tx?: string;
 };
+
+export type IHistoryList = IHistory[] | [] | undefined;
