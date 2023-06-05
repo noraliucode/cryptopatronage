@@ -606,7 +606,7 @@ export const unregister = async (
       _callBack
     );
   } catch (error) {
-    console.log("clearIdentity error", error);
+    console.log("unregister error", error);
   }
 };
 
