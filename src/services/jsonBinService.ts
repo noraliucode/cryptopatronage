@@ -1,7 +1,7 @@
 import Bottleneck from "bottleneck";
 
 const limiter = new Bottleneck({
-  minTime: 5000, // 1 request per second
+  minTime: 2000, // 1 request per second
 });
 class JsonBinService {
   updateData = async (jsonObject: any) => {
