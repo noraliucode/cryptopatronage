@@ -235,10 +235,8 @@ export const Manage = () => {
 
   const { api } = useApi(network);
   const { t } = useTranslation();
-  const { pullPaymentHistory } = usePullPaymentHistory(
-    signer?.address,
-    network
-  );
+  const { pullPaymentHistory, loading: isHistoryLoading } =
+    usePullPaymentHistory(signer?.address, network);
 
   useEffect(() => {
     if (identity) {
@@ -660,7 +658,7 @@ export const Manage = () => {
                 <Title>Pull Payment History</Title>
               </TitleWrapper>
               <Wrapper>
-                {isSupportersLoading ? (
+                {isHistoryLoading ? (
                   <LoadingContainer>
                     <CircularProgress size={30} thickness={5} />
                   </LoadingContainer>

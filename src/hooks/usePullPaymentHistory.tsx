@@ -4,15 +4,21 @@ import { getPullPaymentHistory } from "../utils/main";
 
 interface IState {
   pullPaymentHistory: IHistoryList;
+  loading: boolean;
 }
 
 export const usePullPaymentHistory = (creator = "", network: INetwork) => {
   const [state, setState] = useState<IState>({
     pullPaymentHistory: [],
+    loading: false,
   });
 
   const getHistory = async () => {
     try {
+      setState((prev) => ({
+        ...prev,
+        loading: true,
+      }));
       const pullPaymentHistory = await getPullPaymentHistory(creator);
 
       setState((prev) => ({
@@ -21,6 +27,11 @@ export const usePullPaymentHistory = (creator = "", network: INetwork) => {
       }));
     } catch (error) {
       console.error("getHistory error", error);
+    } finally {
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+      }));
     }
   };
   useEffect(() => {

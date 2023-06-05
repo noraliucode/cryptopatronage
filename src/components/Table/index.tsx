@@ -12,13 +12,18 @@ import {
   INetwork,
   ISupporter,
 } from "../../utils/types";
-import { Button } from "@mui/material";
+import { Button, styled } from "@mui/material";
 import {
   formatTimestamp,
   formatUnit,
   renderAddress,
+  toShortAddress,
 } from "../../utils/helpers";
 import { DECIMALS } from "../../utils/constants";
+
+export const LinkText = styled("div")(() => ({
+  color: "#29b6f6",
+}));
 
 export default function BasicTable({
   network,
@@ -121,10 +126,11 @@ export default function BasicTable({
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Address</TableCell>
+              <TableCell>Supporter</TableCell>
               <TableCell align="right">Pure Proxy</TableCell>
-              <TableCell align="right">Pure Proxy Balance</TableCell>
-              <TableCell align="right">Pull Payment</TableCell>
+              <TableCell align="right">Date</TableCell>
+              <TableCell align="right">Amount</TableCell>
+              <TableCell align="right">Extrinsic Hash</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -142,6 +148,14 @@ export default function BasicTable({
                 <TableCell align="right">{formatTimestamp(row.time)}</TableCell>
                 <TableCell align="right">
                   {formatUnit(Number(row.amount), DECIMALS[network])} {network}
+                </TableCell>
+                <TableCell align="right">
+                  <a
+                    target="blank"
+                    href={`https://${network}.subscan.io/extrinsic/${row.tx}`}
+                  >
+                    <LinkText>{toShortAddress(row.tx)}</LinkText>
+                  </a>
                 </TableCell>
               </TableRow>
             ))}
