@@ -2,7 +2,7 @@ import { Typography, styled } from "@mui/material";
 import React from "react";
 import { DesktopContentWarpper } from "../NavigationBar";
 import { Link as StyledLink } from "../Link";
-import { Text } from "../Manage";
+import { Text } from "../../page/ManagePage";
 
 const LogoWrapper = styled("div")(() => ({
   display: "flex",

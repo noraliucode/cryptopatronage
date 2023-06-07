@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogTitle, styled } from "@mui/material";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { APP_SESSION } from "../../utils/constants";
 import { IWeb3ConnectedContextState } from "../../utils/types";
-import { Text } from "../Manage";
+import { Text } from "../../page/ManagePage";
 import { WalletList } from "./walletList";
 
 export const Title = styled("div")(({ theme }) => ({

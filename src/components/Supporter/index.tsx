@@ -17,7 +17,7 @@ import {
   Content,
   SpaceBetweenWrapper,
   SectionTitle,
-} from "../Manage";
+} from "../../page/ManagePage";
 import { usePureProxy } from "../../hooks/usePureProxy";
 
 type IState = {
