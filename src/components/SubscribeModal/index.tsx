@@ -251,7 +251,6 @@ export const SubscribeModal = (props: IProps) => {
           <CheckWrapper onClick={() => handleClick(IS_DELAYED)}>
             <Checkbox checked={isDelayed} />
             <Text>{t("subscribe_modal.text2")}</Text>
-            &nbsp;<HintText>{t("subscribe_modal.text3")}</HintText>
           </CheckWrapper>
           {!isCommitted && (
             <CheckWrapper onClick={handleNoFundsExclusiveClick}>
