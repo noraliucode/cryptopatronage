@@ -10,10 +10,15 @@ import {
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useApi } from "../../hooks/useApi";
-import { DECIMALS, SYMBOL } from "../../utils/constants";
+import {
+  DECIMALS,
+  IS_COMMITTED,
+  IS_DELAYED,
+  SYMBOL,
+} from "../../utils/constants";
 import { formatTimestamp, formatUnit } from "../../utils/helpers";
 import { subscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
@@ -122,12 +127,15 @@ export const SubscribeModal = (props: IProps) => {
     }));
   };
 
-  const handleCommittedClick = () => {
-    setState((prev) => ({
-      ...prev,
-      isCommitted: !prev.isCommitted,
-    }));
-  };
+  const handleClick = useCallback((key: keyof IState) => {
+    setState((prev) => {
+      const value: any = !prev[key];
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
+  }, []);
 
   const _subscribe = async () => {
     if (isSubscribingSucceeded) {
@@ -236,16 +244,12 @@ export const SubscribeModal = (props: IProps) => {
           ≈ ${(months * tokenUsdPrice * Number(formattedRate)).toFixed(2)} USD
           <br />
           <br />
-          <CheckWrapper onClick={handleCommittedClick}>
+          <CheckWrapper onClick={() => handleClick(IS_COMMITTED)}>
             <Checkbox checked={isCommitted} />
             <Text>{t("subscribe_modal.text1")}</Text>
           </CheckWrapper>
-          <CheckWrapper
-            onClick={() => {
-              // handleDelayedClick()
-            }}
-          >
-            <Checkbox disabled checked={isDelayed} />
+          <CheckWrapper onClick={() => handleClick(IS_DELAYED)}>
+            <Checkbox checked={isDelayed} />
             <Text>{t("subscribe_modal.text2")}</Text>
             &nbsp;<HintText>{t("subscribe_modal.text3")}</HintText>
           </CheckWrapper>

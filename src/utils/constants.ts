@@ -23,6 +23,8 @@ export const NETWORK = "network";
 export const SUPPORTERS = "supporters";
 export const PULL_HISTORY = "pullHistory";
 export const USER_PURE_PROXY = "userPureProxy";
+export const IS_COMMITTED = "isCommitted";
+export const IS_DELAYED = "isDelayed";
 
 export const SUPPORTER = {
   ROCOCO: "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",
