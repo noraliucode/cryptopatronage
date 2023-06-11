@@ -7,7 +7,7 @@ import Avatar from "@mui/material/Avatar";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { WALLETS } from "../../utils/constants";
 import { IWallet } from "../../utils/types";
-import { Text } from "../Manage";
+import { Text } from "../../page/ManagePage";
 import { Divider, styled } from "@mui/material";
 import * as _ from "lodash";
 import { web3Enable } from "@polkadot/extension-dapp";

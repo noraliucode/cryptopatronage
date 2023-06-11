@@ -5,7 +5,7 @@ import {
   IDENTITY_LABELS,
   PLACEHOLDER,
 } from "../../utils/constants";
-import { Title, TitleWrapper } from "../Manage";
+import { Title, TitleWrapper } from "../../page/ManagePage";
 import { hexToString, isHex } from "@polkadot/util";
 import { useTranslation } from "react-i18next";
 

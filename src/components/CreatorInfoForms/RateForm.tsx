@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { SYMBOL } from "../../utils/constants";
 import { INetwork } from "../../utils/types";
-import { Title, TitleWrapper, CheckWrapper, Text } from "../Manage";
+import { Title, TitleWrapper, CheckWrapper, Text } from "../../page/ManagePage";
 import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
 
 export const TextWrapper = styled("div")(() => ({

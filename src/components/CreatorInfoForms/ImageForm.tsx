@@ -2,7 +2,7 @@ import { Checkbox, styled, TextField } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { IHandleChange, IHandleCheck } from "../../utils/types";
-import { Title, TitleWrapper, Wrapper, Text } from "../Manage";
+import { Title, TitleWrapper, Wrapper, Text } from "../../page/ManagePage";
 
 export const Container = styled("div")(() => ({
   display: "flex",

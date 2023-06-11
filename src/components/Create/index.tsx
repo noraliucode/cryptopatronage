@@ -9,7 +9,7 @@ import {
   Box,
   Snackbar,
 } from "@mui/material";
-import { InputWrapper } from "../Manage";
+import { InputWrapper } from "../../page/ManagePage";
 import { DECIMALS, FOOTER_HEIGHT, NAV_BAR_HEIGHT } from "../../utils/constants";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";

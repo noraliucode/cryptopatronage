@@ -5,7 +5,7 @@ import "./App.css";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { Layout } from "./layout";
 import { CreatorsPage } from "./page/creatorsPage";
-import { Manage } from "./components/Manage";
+import { Manage } from "./page/ManagePage";
 import { AboutPage } from "./page/aboutPage";
 import Create from "./components/Create";
 import HowToSupport from "./page/howToSupportPage";

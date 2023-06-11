@@ -26,17 +26,17 @@ import { ISupporter, IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useIdentity } from "../../hooks/useIdentity";
 import { useSupporters } from "../../hooks/useSupporters";
-import { PaymentSystem } from "../PaymentSystem";
-import { Modal } from "../Modal";
-import { Supporter } from "../Supporter";
+import { PaymentSystem } from "../../components/PaymentSystem";
+import { Modal } from "../../components/Modal";
+import { Supporter } from "../../components/Supporter";
 import { useApi } from "../../hooks/useApi";
-import { HintText } from "../SubscribeModal";
-import RateForm from "../CreatorInfoForms/RateForm";
-import ImageForm from "../CreatorInfoForms/ImageForm";
-import IdentityForm from "../CreatorInfoForms/IdentityForm";
-import BasicTable from "../Table";
+import { HintText } from "../../components/SubscribeModal";
+import RateForm from "../../components/CreatorInfoForms/RateForm";
+import ImageForm from "../../components/CreatorInfoForms/ImageForm";
+import IdentityForm from "../../components/CreatorInfoForms/IdentityForm";
+import BasicTable from "../../components/Table";
 import { useTranslation } from "react-i18next";
-import ConnectButton from "../ConnectButton";
+import ConnectButton from "../../components/ConnectButton";
 import { usePullPaymentHistory } from "../../hooks/usePullPaymentHistory";
 
 const Root = styled("div")(({ theme }) => ({

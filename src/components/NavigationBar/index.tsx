@@ -4,7 +4,7 @@ import { NetworkSelector } from "../NetworkSelector";
 import { SignerSelector } from "../SignerSelector";
 import { AppBar, Toolbar, Button, Switch } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { Text } from "../Manage";
+import { Text } from "../../page/ManagePage";
 import { useState } from "react";
 import { Drawer } from "../Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
