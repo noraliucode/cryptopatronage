@@ -7,6 +7,7 @@ import {
   ZERO_BAL,
   SUPPORTERS,
   PULL_HISTORY,
+  ONE_MONTH_BLOCK_TIME,
 } from "./constants";
 import {
   calculateExpiryTimestamp,
@@ -59,7 +60,7 @@ export const subscribe = async (
     const apiService = new APIService(api);
     setLoading && setLoading(true);
     let real = sender;
-    let delay = isDelayed ? SECONDS_IN_ONE_DAY : 0;
+    let delay = isDelayed ? ONE_MONTH_BLOCK_TIME : 0;
     const supporter = sender;
     // let delay = isDelayed ? 300 : 0; // for testing
     if (isCommitted) {
@@ -463,12 +464,10 @@ export const parseCreatorProxies = async (
 export const getSupportersForCreator = async (creator = "") => {
   const result = await readJsonBin();
   const supporters = result[creator].supporters;
-  console.log("supporters", supporters);
 
   const committedSupporters = supporters.filter(
     (supporter: any) => supporter.pureProxy
   );
-  console.log("committedSupporters");
 
   const uncommittedSupporters = supporters.filter(
     (supporter: any) => !supporter.pureProxy
