@@ -25,6 +25,9 @@ export const PULL_HISTORY = "pullHistory";
 export const USER_PURE_PROXY = "userPureProxy";
 export const IS_COMMITTED = "isCommitted";
 export const IS_DELAYED = "isDelayed";
+// Kusama and Polkadot networks are currently operating at a rate of one block every six seconds.
+// In one minute (60 seconds), there are 60/6 = 10 block times.
+export const ONE_MONTH_BLOCK_TIME = 10 * (60 * 24 * 30.44);
 
 export const SUPPORTER = {
   ROCOCO: "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",
