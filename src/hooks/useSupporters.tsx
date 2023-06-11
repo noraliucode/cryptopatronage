@@ -13,7 +13,6 @@ interface IState {
 
 export const useSupporters = (
   creator: string | undefined,
-  rate: number,
   network: INetwork
 ) => {
   const [state, setState] = useState<IState>({
@@ -48,7 +47,6 @@ export const useSupporters = (
 
       const _committedSupporters: any[] = [];
       const _uncommittedSupporters: any[] = [];
-      // filter accounts that has balances that is greater than the rate
       committedSupporters.forEach((supporter: ISupporter, index: number) => {
         const _balance =
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -92,6 +90,6 @@ export const useSupporters = (
   };
   useEffect(() => {
     getSupporters();
-  }, [creator, rate]);
+  }, [creator]);
   return { ...state, getSupporters };
 };
