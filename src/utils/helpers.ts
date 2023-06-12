@@ -198,7 +198,7 @@ export function formatEssentialInfo(info: any) {
 export function formatUpdatedInfo(info: any) {
   const _info: any = {};
   for (const key in info) {
-    if (info[key] && info[key] !== "None") {
+    if ((info[key] && info[key] !== "None") || info[key] === "") {
       _info[key] = { Raw: info[key] };
     }
   }
