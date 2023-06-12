@@ -129,10 +129,19 @@ export const SubscribeModal = (props: IProps) => {
 
   const handleClick = useCallback((key: keyof IState) => {
     setState((prev) => {
-      const value: any = !prev[key];
+      let valueObject = {
+        [key]: !prev[key],
+      };
+      if (key === IS_COMMITTED) {
+        valueObject = {
+          ...valueObject,
+          isDelayed: false,
+        };
+      }
+
       return {
         ...prev,
-        [key]: value,
+        ...valueObject,
       };
     });
   }, []);
@@ -249,7 +258,10 @@ export const SubscribeModal = (props: IProps) => {
             <Text>{t("subscribe_modal.text1")}</Text>
           </CheckWrapper>
           <CheckWrapper onClick={() => handleClick(IS_DELAYED)}>
-            <Checkbox checked={isDelayed} />
+            <Checkbox
+              disabled={!isCommitted}
+              checked={isCommitted && isDelayed}
+            />
             <Text>{t("subscribe_modal.text2")}</Text>
           </CheckWrapper>
           {!isCommitted && (
