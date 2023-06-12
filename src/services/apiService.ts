@@ -358,6 +358,10 @@ class APIService {
       };
     });
   };
+
+  announce = async (real: string, call_hash: H256) => {
+    return this.api.tx.proxy.announce(real, call_hash);
+  };
 }
 
 export { APIService };

@@ -231,7 +231,7 @@ export const Manage = () => {
     getSupporters,
     uncommittedSupporters,
     loading: isSupportersLoading,
-  } = useSupporters(signer?.address, currentRate, network);
+  } = useSupporters(signer?.address, network);
 
   const { api } = useApi(network);
   const { t } = useTranslation();

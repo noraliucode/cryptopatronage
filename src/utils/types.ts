@@ -146,6 +146,7 @@ export type ISupporter = {
   pureProxy: string | null;
   pureBalance?: number;
   supporterBalance?: number;
+  callHash?: string;
 };
 
 export type ISupporters = ISupporter[] | [];

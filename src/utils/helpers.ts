@@ -7,14 +7,7 @@ import type {
   AccountIndex,
   Address,
 } from "@polkadot/types/interfaces";
-import { DAYS_IN_ONE_MONTH, SECONDS_IN_ONE_DAY } from "./constants";
-import {
-  ICreatorProxyParsed,
-  IParsedProxies,
-  IParsedSupporterProxies,
-  IProxyParsedCreators,
-  IUrls,
-} from "./types";
+import { ICreatorProxyParsed, IParsedProxies, IUrls } from "./types";
 import config from "./ss58-registry.json";
 
 export function toShortAddress(

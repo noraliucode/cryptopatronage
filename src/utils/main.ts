@@ -7,6 +7,7 @@ import {
   ZERO_BAL,
   SUPPORTERS,
   PULL_HISTORY,
+  ONE_MONTH_BLOCK_TIME,
 } from "./constants";
 import {
   calculateExpiryTimestamp,
@@ -59,7 +60,7 @@ export const subscribe = async (
     const apiService = new APIService(api);
     setLoading && setLoading(true);
     let real = sender;
-    let delay = isDelayed ? SECONDS_IN_ONE_DAY : 0;
+    let delay = isDelayed ? ONE_MONTH_BLOCK_TIME : 0;
     const supporter = sender;
     // let delay = isDelayed ? 300 : 0; // for testing
     if (isCommitted) {
@@ -112,35 +113,22 @@ export const subscribe = async (
       // const totalAmount =
       //   Math.ceil(Number(fee)) * 10 ** M_DECIMALS[NETWORK] + amount + reserved;
 
-      const promises = [
-        apiService.transfer(real, amount + reserved),
-        apiService.addProxyViaProxy(creator, real, delay),
-        // TODO: debug last payment time error
-        // getSetLastPaymentTimeTx(api, sender),
-      ];
+      const transferCall = apiService.transfer(real, amount + reserved);
+      const proxyCall = apiService.addProxyViaProxy(creator, real, delay);
+      let callHash;
 
-      let txs = await Promise.all(promises);
+      let txs;
 
       console.log("set creator as main proxy...");
+      if (isDelayed) {
+        // announce the hash of a proxy-call that will be made in the future
+        callHash = api.createType("Call", transferCall).hash.toHex() as any;
+        txs = [proxyCall, callHash];
+      } else {
+        const promises = [transferCall, proxyCall];
+        txs = await Promise.all(promises);
+      }
 
-      // TODO: add delay transfer later
-      // if (isDelayed) {
-      //   console.log(
-      //     "publish the hash of a proxy-call that will be made in the future...."
-      //   );
-      //   console.log("register a preimage on-chain....");
-      //   const tranferTx = txs[0] as any;
-      //   // remove transfer tx
-      //   txs.shift();
-      //   const extras = [
-      //     apiService.getAnnouncePromise(real, tranferTx.hash),
-      //     apiService.getNotePreimagePromise(tranferTx.data),
-      //   ];
-      //   const extraTxs = await Promise.all(extras);
-      //   txs = [...txs, ...extraTxs];
-      // } else {
-      //   console.log("normal transfer to anonymous proxy...");
-      // }
       const _callBack = async () => {
         callback && callback();
         setLoading && setLoading(false);
@@ -151,13 +139,20 @@ export const subscribe = async (
         console.log("set subscribed time...");
         const now = new Date().getTime();
         const expiryDate = calculateExpiryTimestamp(now, months);
+        let supporterInfo: ISupporter;
         setExpiryDate(expiryDate);
-        const supporterInfo: ISupporter = {
+        supporterInfo = {
           address: sender,
           subscribedTime: Date.now(),
           expiresOn: expiryDate,
           pureProxy: isCommitted ? real : null,
         };
+        if (isDelayed) {
+          supporterInfo = {
+            ...supporterInfo,
+            callHash,
+          };
+        }
         await updateCreatorKeyValue(creator, [supporterInfo], SUPPORTERS);
       }
     } else {
@@ -463,12 +458,10 @@ export const parseCreatorProxies = async (
 export const getSupportersForCreator = async (creator = "") => {
   const result = await readJsonBin();
   const supporters = result[creator].supporters;
-  console.log("supporters", supporters);
 
   const committedSupporters = supporters.filter(
     (supporter: any) => supporter.pureProxy
   );
-  console.log("committedSupporters");
 
   const uncommittedSupporters = supporters.filter(
     (supporter: any) => !supporter.pureProxy
