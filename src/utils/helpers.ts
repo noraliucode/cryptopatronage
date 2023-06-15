@@ -9,6 +9,8 @@ import type {
 } from "@polkadot/types/interfaces";
 import { ICreatorProxyParsed, IParsedProxies, IUrls } from "./types";
 import config from "./ss58-registry.json";
+import Papa from "papaparse";
+import { PAYMENT_HISTORY } from "./constants";
 
 export function toShortAddress(
   _address?: AccountId | AccountIndex | Address | string | null | Uint8Array,
@@ -383,3 +385,18 @@ export function formatTimestampClear(timestamp: number): string {
   })}, ${date.getFullYear()}`;
   return formatted_date;
 }
+
+export const convertToCSV = (data: any) => {
+  // Unparse the data to CSV format
+  const csv = Papa.unparse(data);
+
+  // Now, you can download the csv file
+  const csvData = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+  const csvURL = window.URL.createObjectURL(csvData);
+  const tempLink = document.createElement("a");
+
+  tempLink.href = csvURL;
+  tempLink.setAttribute("download", `${PAYMENT_HISTORY}.csv`);
+  tempLink.click();
+};

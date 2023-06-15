@@ -1,6 +1,6 @@
 import { Box, Tooltip, CircularProgress, Grid } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import {
   clearIdentity,
@@ -20,7 +20,7 @@ import {
   Personal_Info,
   Unregister,
 } from "../../utils/constants";
-import { formatUnit, validateUrls } from "../../utils/helpers";
+import { convertToCSV, formatUnit, validateUrls } from "../../utils/helpers";
 import Snackbar from "@mui/material/Snackbar";
 import { ISupporter, IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
@@ -498,6 +498,10 @@ export const Manage = () => {
     }));
   };
 
+  const _convertToCSV = () => {
+    convertToCSV(pullPaymentHistory);
+  };
+
   const isSetRateDisabled = !rate || rate === 0;
   const isCreator = currentRate > 0;
   const isShowCommittedSupporters =
@@ -685,6 +689,13 @@ export const Manage = () => {
                   </Content>
                 )}
               </Wrapper>
+              {isShowCommittedSupporters && (
+                <InputWrapper>
+                  <Button onClick={_convertToCSV} variant="contained">
+                    Downloadn CSV
+                  </Button>
+                </InputWrapper>
+              )}
 
               <TitleWrapper>
                 <Title>{t("manage.Uncommitted Supporters")}</Title>
