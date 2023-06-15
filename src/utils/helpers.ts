@@ -10,6 +10,7 @@ import type {
 import { ICreatorProxyParsed, IParsedProxies, IUrls } from "./types";
 import config from "./ss58-registry.json";
 import Papa from "papaparse";
+import { PAYMENT_HISTORY } from "./constants";
 
 export function toShortAddress(
   _address?: AccountId | AccountIndex | Address | string | null | Uint8Array,
@@ -396,6 +397,6 @@ export const convertToCSV = (data: any) => {
   const tempLink = document.createElement("a");
 
   tempLink.href = csvURL;
-  tempLink.setAttribute("download", "data.csv");
+  tempLink.setAttribute("download", `${PAYMENT_HISTORY}.csv`);
   tempLink.click();
 };

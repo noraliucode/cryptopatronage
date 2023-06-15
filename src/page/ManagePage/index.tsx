@@ -689,9 +689,13 @@ export const Manage = () => {
                   </Content>
                 )}
               </Wrapper>
-              <Button onClick={_convertToCSV} variant="contained">
-                Downloadn CSV
-              </Button>
+              {isShowCommittedSupporters && (
+                <InputWrapper>
+                  <Button onClick={_convertToCSV} variant="contained">
+                    Downloadn CSV
+                  </Button>
+                </InputWrapper>
+              )}
 
               <TitleWrapper>
                 <Title>{t("manage.Uncommitted Supporters")}</Title>
