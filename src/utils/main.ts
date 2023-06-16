@@ -3,11 +3,10 @@ import {
   DECIMALS,
   USER_PAYMENT,
   RESERVED_AMOUNT,
-  SECONDS_IN_ONE_DAY,
   ZERO_BAL,
   SUPPORTERS,
   PULL_HISTORY,
-  ONE_MONTH_BLOCK_TIME,
+  TRIAL_PERIOD_BLOCK_TIME,
 } from "./constants";
 import {
   calculateExpiryTimestamp,
@@ -60,7 +59,7 @@ export const subscribe = async (
     const apiService = new APIService(api);
     setLoading && setLoading(true);
     let real = sender;
-    let delay = isDelayed ? ONE_MONTH_BLOCK_TIME : 0;
+    let delay = isDelayed ? TRIAL_PERIOD_BLOCK_TIME : 0;
     const supporter = sender;
     // let delay = isDelayed ? 300 : 0; // for testing
     if (isCommitted) {
