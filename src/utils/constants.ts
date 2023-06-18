@@ -28,7 +28,8 @@ export const IS_DELAYED = "isDelayed";
 export const PAYMENT_HISTORY = "payment_history";
 // Kusama and Polkadot networks are currently operating at a rate of one block every six seconds.
 // In one minute (60 seconds), there are 60/6 = 10 block times.
-export const ONE_MONTH_BLOCK_TIME = 10 * (60 * 24 * 30.44); // 438,336 blocks
+// Trial period is usually 7 days.
+export const TRIAL_PERIOD_BLOCK_TIME = 10 * 60 * 24 * 7;
 
 export const SUPPORTER = {
   ROCOCO: "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",
