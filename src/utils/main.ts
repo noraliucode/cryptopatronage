@@ -120,9 +120,9 @@ export const subscribe = async (
 
       console.log("set creator as main proxy...");
       if (isDelayed) {
-        // announce the hash of a proxy-call that will be made in the future
         callHash = api.createType("Call", transferCall).hash.toHex() as any;
-        txs = [proxyCall, callHash];
+        const announceCall = apiService.getAnnouncePromise(real, callHash);
+        txs = [proxyCall, announceCall];
       } else {
         const promises = [transferCall, proxyCall];
         txs = await Promise.all(promises);
