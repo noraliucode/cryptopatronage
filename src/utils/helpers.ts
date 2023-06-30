@@ -10,15 +10,10 @@ import type {
 import { ICreatorProxyParsed, IParsedProxies, IUrls } from "./types";
 import config from "./ss58-registry.json";
 import Papa from "papaparse";
-import { PAYMENT_HISTORY, PUB_KEY, TEMP_KEY } from "./constants";
-import {
-  signatureVerify,
-  naclDecrypt,
-  naclEncrypt,
-} from "@polkadot/util-crypto";
-import { stringToU8a, u8aToString, u8aToHex } from "@polkadot/util";
-import { mnemonicGenerate, ed25519PairFromSeed } from "@polkadot/util-crypto";
-import { readJsonBinKeyValue, updateCreatorKeyValue } from "./main";
+import { PAYMENT_HISTORY } from "./constants";
+
+const crypto = window.crypto;
+const subtle = crypto.subtle;
 
 export function toShortAddress(
   _address?: AccountId | AccountIndex | Address | string | null | Uint8Array,
@@ -409,78 +404,45 @@ export const convertToCSV = (data: any) => {
   tempLink.click();
 };
 
-export const encryptLink = async (
-  link: string,
-  supporter: string,
-  creator: string
-) => {
-  const tempKey = localStorage.getItem(TEMP_KEY);
-  let creatorTempSecretKey;
-  let creatorTempMnemonic;
-  if (!tempKey) {
-    creatorTempMnemonic = mnemonicGenerate(12);
-    const { publicKey, secretKey } = ed25519PairFromSeed(
-      creatorTempMnemonic as any
-    );
-    await updateCreatorKeyValue(creator, publicKey, PUB_KEY);
-    await localStorage.setItem(TEMP_KEY, secretKey as any);
-  } else {
-    creatorTempSecretKey = tempKey;
-  }
-  // Step 1: The creator signs a message using temp private key
-  const creatorKeyring = new Keyring().addFromMnemonic(
-    creatorTempMnemonic as any
-  );
-  const message = stringToU8a(link);
-  const signedMessage = creatorKeyring.sign(message);
-
-  // Step 2: The creator encrypts the signed message using the supporter's public key
-  const supporterPubKey = await readJsonBinKeyValue(supporter, PUB_KEY);
-  const supporterKeyring = new Keyring().addFromAddress(supporterPubKey);
-  const { encrypted, nonce } = naclEncrypt(
-    signedMessage,
-    supporterKeyring.publicKey
-  );
-
-  return { encrypted, nonce };
+// Defining the algorithm objects
+// https://developer.mozilla.org/en-US/docs/Web/API/CryptoKeyPair
+// https://github.com/mdn/dom-examples/blob/main/web-crypto/encrypt-decrypt/rsa-oaep.js#L46
+const keyAlgorithm = {
+  name: "RSA-OAEP",
+  modulusLength: 2048,
+  publicExponent: new Uint8Array([1, 0, 1]),
+  hash: "SHA-256",
+};
+const encryptionAlgorithm = {
+  name: "RSA-OAEP",
 };
 
-export const decryptLink = async (
-  encrypted: Uint8Array,
-  supporter: string,
-  nonce: Uint8Array,
-  encryptLink: string,
-  creator: string
+export const generateKey = async () => {
+  const keyPair = await subtle.generateKey(keyAlgorithm, true, [
+    "encrypt",
+    "decrypt",
+  ]);
+  return keyPair;
+};
+
+export const encrypt = async (message: string, publicKey: CryptoKey) => {
+  const encodedMessage = new TextEncoder().encode(message);
+  const encryptedMessage = await subtle.encrypt(
+    encryptionAlgorithm,
+    publicKey,
+    encodedMessage
+  );
+  return encryptedMessage;
+};
+
+export const decrypt = async (
+  encryptedMessage: BufferSource,
+  privateKey: CryptoKey
 ) => {
-  // Step 1: The supporter decrypts the message using temp private key
-  const tempKey = localStorage.getItem(TEMP_KEY);
-  let supporterTempSecretKey;
-  if (!tempKey) {
-    const supporterTempMnemonic = mnemonicGenerate(12);
-    const { publicKey, secretKey } = ed25519PairFromSeed(
-      supporterTempMnemonic as any
-    );
-    await updateCreatorKeyValue(supporter, publicKey, PUB_KEY);
-    await localStorage.setItem(TEMP_KEY, secretKey as any);
-  } else {
-    supporterTempSecretKey = tempKey;
-  }
-
-  const decryptedMessage = naclDecrypt(
-    encrypted,
-    nonce,
-    supporterTempSecretKey as any
+  const decryptedMessage = await subtle.decrypt(
+    encryptionAlgorithm,
+    privateKey,
+    encryptedMessage
   );
-
-  // Step 2: The supporter verifies the signature using the creator's temp  public key
-  const creatorAddress = await readJsonBinKeyValue(creator, PUB_KEY);
-  const creatorKeyringPublic = new Keyring().addFromAddress(creatorAddress);
-  const { isValid } = signatureVerify(
-    encryptLink,
-    decryptedMessage as any,
-    creatorKeyringPublic.address
-  );
-
-  console.log(`Is the decrypted message valid? ${isValid}`);
-  return { decryptedMessage, isValid };
+  return new TextDecoder().decode(decryptedMessage);
 };
