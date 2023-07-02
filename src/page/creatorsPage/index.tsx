@@ -15,6 +15,7 @@ import { useLocation } from "react-router-dom";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
 import { usePureProxy } from "../../hooks/usePureProxy";
+import ContentLinkTable from "./ContentLinkTable";
 
 export const Root = styled("div")(() => ({
   padding: 30,
@@ -224,6 +225,11 @@ export const CreatorsPage = () => {
                   ))}
                 </Grid>
               </Container>
+              <p />
+              <p />
+              {getIsSubscriber(selectedCreator) && address && (
+                <ContentLinkTable />
+              )}
             </>
           )}
         </>
