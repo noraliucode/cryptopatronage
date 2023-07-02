@@ -38,6 +38,7 @@ import BasicTable from "../../components/Table";
 import { useTranslation } from "react-i18next";
 import ConnectButton from "../../components/ConnectButton";
 import { usePullPaymentHistory } from "../../hooks/usePullPaymentHistory";
+import ContentLinkSection from "./ContentLinkSection";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,
@@ -762,6 +763,10 @@ export const Manage = () => {
               </InputWrapper>
             </>
             <Supporter />
+            <ContentLinkSection
+              creator={signer.address}
+              supporters={[...committedSupporters, ...uncommittedSupporters]}
+            />
             {/* TODO: add payment system */}
             {/* <>
                 <TitleWrapper>

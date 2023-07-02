@@ -684,7 +684,7 @@ const getSupporterLinkInfo = async (supporters: string[], key: CryptoKey) => {
   return supportersInfo;
 };
 
-export const getCreatorLinkInfo = async (
+const getCreatorLinkInfo = async (
   creator: string,
   link: string,
   title: string,
@@ -707,4 +707,23 @@ export const getCreatorLinkInfo = async (
     encryptedSymKey,
     keys,
   };
+};
+
+export const publishLink = async (
+  creator: string,
+  link: string,
+  title: string,
+  supporters: string[]
+) => {
+  try {
+    const creatorLinkInfo = await getCreatorLinkInfo(
+      creator,
+      link,
+      title,
+      supporters
+    );
+    await updateCreatorKeyValue(creator, creatorLinkInfo, "links");
+  } catch (error) {
+    console.error("publishLink error", error);
+  }
 };
