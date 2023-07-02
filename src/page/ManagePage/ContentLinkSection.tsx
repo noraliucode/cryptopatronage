@@ -1,6 +1,11 @@
 import { Button, TextField } from "@mui/material";
 import { useState } from "react";
-import { Title, TitleWrapper, InputWrapper } from "../../page/ManagePage";
+import {
+  Title,
+  TitleWrapper,
+  InputWrapper,
+  Wrapper,
+} from "../../page/ManagePage";
 import { publishLink } from "../../utils/main";
 import { ISupporter } from "../../utils/types";
 
@@ -57,11 +62,13 @@ const ContentLinkSection = ({ creator, supporters }: IProps) => {
         }
         onChange={handleInputChange}
       />
-      <InputWrapper>
-        <Button variant="contained" onClick={_publishLink}>
-          Publish Content Link
-        </Button>
-      </InputWrapper>
+      <Wrapper>
+        <InputWrapper>
+          <Button variant="contained" onClick={_publishLink}>
+            Publish Content Link
+          </Button>
+        </InputWrapper>
+      </Wrapper>
     </>
   );
 };
