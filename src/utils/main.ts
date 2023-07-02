@@ -10,6 +10,7 @@ import {
 } from "./constants";
 import {
   calculateExpiryTimestamp,
+  getOrCreateUserTempKey,
   getPaymentAmount,
   parseAdditionalInfo,
   removeComma,
@@ -131,6 +132,9 @@ export const subscribe = async (
       const _callBack = async () => {
         callback && callback();
         setLoading && setLoading(false);
+
+        // create user temp key when user subscribes for them to decrypt the encrypted symmetric key
+        await getOrCreateUserTempKey(sender);
       };
 
       const tx = await apiService.batchCalls(txs, sender, injector, _callBack);
@@ -638,6 +642,7 @@ export const readJsonBinKeyValue = async (signer: string, key: string) => {
   }
 };
 
+// TODO: rename to updateUserKeyValue
 export const updateCreatorKeyValue = async (
   creator: string,
   value: any,

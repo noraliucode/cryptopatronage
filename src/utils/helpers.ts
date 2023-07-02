@@ -10,7 +10,8 @@ import type {
 import { ICreatorProxyParsed, IParsedProxies, IUrls } from "./types";
 import config from "./ss58-registry.json";
 import Papa from "papaparse";
-import { PAYMENT_HISTORY } from "./constants";
+import { PAYMENT_HISTORY, PUB_KEY, TEMP_KEY } from "./constants";
+import { updateCreatorKeyValue } from "./main";
 
 const crypto = window.crypto;
 const subtle = crypto.subtle;
@@ -445,4 +446,21 @@ export const decrypt = async (
     encryptedMessage
   );
   return new TextDecoder().decode(decryptedMessage);
+};
+
+export const getOrCreateUserTempKey = async (user: string) => {
+  // see if the user has key stored in localstorage
+  const userTempKey = localStorage.getItem(TEMP_KEY);
+
+  if (userTempKey) {
+    return userTempKey;
+  } else {
+    // generate a new key
+    const { publicKey, privateKey } = await generateKey();
+    // store the public key in the database
+    await updateCreatorKeyValue(user, publicKey, PUB_KEY);
+    // store the private key in localstorage
+    localStorage.setItem(TEMP_KEY, JSON.stringify(privateKey));
+    return privateKey;
+  }
 };
