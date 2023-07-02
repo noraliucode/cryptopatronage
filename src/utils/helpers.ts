@@ -418,6 +418,15 @@ const encryptionAlgorithm = {
   name: "RSA-OAEP",
 };
 
+const symKeyAlgorithm = {
+  name: "AES-GCM",
+  length: 256, // Key size equals block size for AES
+};
+const symEncryptionAlgorithm = {
+  name: "AES-GCM",
+  iv: window.crypto.getRandomValues(new Uint8Array(12)), // IV size for GCM mode is 12 bytes
+};
+
 export const generateKey = async () => {
   const keyPair = await subtle.generateKey(keyAlgorithm, true, [
     "encrypt",
@@ -443,6 +452,34 @@ export const decrypt = async (
   const decryptedMessage = await subtle.decrypt(
     encryptionAlgorithm,
     privateKey,
+    encryptedMessage
+  );
+  return new TextDecoder().decode(decryptedMessage);
+};
+
+const symGenerateKey = async () => {
+  const key = await subtle.generateKey(
+    keyAlgorithm,
+    true, // Key can be exported
+    ["encrypt", "decrypt"]
+  );
+  return key;
+};
+
+const symEncrypt = async (message: string, key: CryptoKey) => {
+  const encodedMessage = new TextEncoder().encode(message);
+  const encryptedMessage = await subtle.encrypt(
+    encryptionAlgorithm,
+    key,
+    encodedMessage
+  );
+  return encryptedMessage;
+};
+
+const symDecrypt = async (encryptedMessage: BufferSource, key: CryptoKey) => {
+  const decryptedMessage = await subtle.decrypt(
+    encryptionAlgorithm,
+    key,
     encryptedMessage
   );
   return new TextDecoder().decode(decryptedMessage);
