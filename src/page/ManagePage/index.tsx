@@ -672,33 +672,6 @@ export const Manage = () => {
               )}
 
               <TitleWrapper>
-                <Title>Pull Payment History</Title>
-              </TitleWrapper>
-              <Wrapper>
-                {isHistoryLoading ? (
-                  <LoadingContainer>
-                    <CircularProgress size={30} thickness={5} />
-                  </LoadingContainer>
-                ) : isShowCommittedSupporters ? (
-                  <BasicTable
-                    network={network}
-                    pullPaymentHistory={pullPaymentHistory}
-                  />
-                ) : (
-                  <Content>
-                    <Text>N/A</Text>
-                  </Content>
-                )}
-              </Wrapper>
-              {isShowCommittedSupporters && (
-                <InputWrapper>
-                  <Button onClick={_convertToCSV} variant="contained">
-                    Downloadn CSV
-                  </Button>
-                </InputWrapper>
-              )}
-
-              <TitleWrapper>
                 <Title>{t("manage.Uncommitted Supporters")}</Title>
                 <Tooltip title="Supporters that are not committed to transfer fund meets the rate">
                   <img alt="question" src="/assets/icons/question.svg" />
