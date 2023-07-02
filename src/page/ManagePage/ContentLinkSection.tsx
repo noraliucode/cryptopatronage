@@ -1,12 +1,6 @@
 import { Button, TextField } from "@mui/material";
 import { useState } from "react";
-import {
-  Title,
-  TitleWrapper,
-  Wrapper,
-  Text,
-  InputWrapper,
-} from "../../page/ManagePage";
+import { Title, TitleWrapper, InputWrapper } from "../../page/ManagePage";
 import { publishLink } from "../../utils/main";
 import { ISupporter } from "../../utils/types";
 
