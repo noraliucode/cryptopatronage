@@ -15,6 +15,8 @@ import {
   parseAdditionalInfo,
   removeComma,
   renderAddress,
+  symEncrypt,
+  symGenerateKey,
 } from "./helpers";
 import {
   IAdditionalInfo,
@@ -23,6 +25,7 @@ import {
   INetwork,
   IParsedSupporterProxies,
   ISupporter,
+  ISupporterInfo,
 } from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
@@ -663,4 +666,45 @@ export const updateCreatorKeyValue = async (
 
   const creatorData = { ...result[creator], ...data };
   await updateJsonBin({ ...result, [creator]: creatorData });
+};
+
+const getSupporterLinkInfo = async (supporters: string[], key: CryptoKey) => {
+  const data = await readJsonBin();
+
+  const encryptedSymKeys = await Promise.all(
+    supporters.map((supporter) => symEncrypt(data[supporter].pubKey, key))
+  );
+
+  const supportersInfo = supporters.map((supporter, index) => ({
+    address: supporter,
+    encryptedSymKey: encryptedSymKeys[index],
+    pubKey: data[supporter].pubKey,
+  }));
+
+  return supportersInfo;
+};
+
+export const getCreatorLinkInfo = async (
+  creator: string,
+  link: string,
+  title: string,
+  supporters: string[]
+) => {
+  const data = await readJsonBin();
+  const key = await symGenerateKey();
+  const encryptedContent = await symEncrypt(link, key);
+  const keys = {} as any;
+  const supportersInfo = await getSupporterLinkInfo(supporters, key);
+  supportersInfo.forEach((info) => {
+    keys[info.pubKey] = info.encryptedSymKey;
+  });
+  const encryptedSymKey = await symEncrypt(data[creator].pubKey, key);
+
+  return {
+    date: new Date().getTime(),
+    title,
+    content: encryptedContent,
+    encryptedSymKey,
+    keys,
+  };
 };

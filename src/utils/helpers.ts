@@ -457,19 +457,19 @@ export const decrypt = async (
   return new TextDecoder().decode(decryptedMessage);
 };
 
-const symGenerateKey = async () => {
+export const symGenerateKey = async () => {
   const key = await subtle.generateKey(
-    keyAlgorithm,
+    symKeyAlgorithm,
     true, // Key can be exported
     ["encrypt", "decrypt"]
   );
   return key;
 };
 
-const symEncrypt = async (message: string, key: CryptoKey) => {
+export const symEncrypt = async (message: string, key: CryptoKey) => {
   const encodedMessage = new TextEncoder().encode(message);
   const encryptedMessage = await subtle.encrypt(
-    encryptionAlgorithm,
+    symEncryptionAlgorithm,
     key,
     encodedMessage
   );
@@ -478,7 +478,7 @@ const symEncrypt = async (message: string, key: CryptoKey) => {
 
 const symDecrypt = async (encryptedMessage: BufferSource, key: CryptoKey) => {
   const decryptedMessage = await subtle.decrypt(
-    encryptionAlgorithm,
+    symEncryptionAlgorithm,
     key,
     encryptedMessage
   );

@@ -160,3 +160,8 @@ export type IHistory = {
 };
 
 export type IHistoryList = IHistory[] | [] | undefined;
+
+export type ISupporterInfo = {
+  address: string;
+  pubKey: string;
+};
