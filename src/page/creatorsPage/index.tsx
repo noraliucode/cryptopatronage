@@ -15,7 +15,7 @@ import { useLocation } from "react-router-dom";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
 import { usePureProxy } from "../../hooks/usePureProxy";
-import ContentLinkTable from "./ContentLinkTable";
+import ContentLinkTable from "../../components/ContentLinkTable";
 
 export const Root = styled("div")(() => ({
   padding: 30,
