@@ -652,12 +652,13 @@ export const readJsonBinKeyValue = async (signer: string, key: string) => {
 export const updateCreatorKeyValue = async (
   creator: string,
   value: any,
-  key: string
+  key: string,
+  isOverwrite?: boolean
 ) => {
   const result = await readJsonBin();
   const originalKeyValue = result[creator] ? result[creator][key] : null;
   let data;
-  if (originalKeyValue) {
+  if (originalKeyValue && !isOverwrite) {
     data = {
       [key]: [...originalKeyValue, value],
     };
@@ -730,7 +731,7 @@ export const publishLink = async (
       title,
       supporters
     );
-    await updateCreatorKeyValue(creator, creatorLinkInfo, "links");
+    await updateCreatorKeyValue(creator, creatorLinkInfo, "links", true);
   } catch (error) {
     console.error("publishLink error", error);
   }

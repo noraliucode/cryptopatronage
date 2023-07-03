@@ -508,7 +508,12 @@ export const getOrCreateUserTempKey = async (user: string) => {
     // store the public key in the database
     const serializedPubKey = await exportKey(publicKey);
     const serializedPrivateKey = await exportKey(privateKey);
-    await updateCreatorKeyValue(user, ToBase64(serializedPubKey), PUB_KEY);
+    await updateCreatorKeyValue(
+      user,
+      ToBase64(serializedPubKey),
+      PUB_KEY,
+      true
+    );
 
     // store the private key in localstorage
     localStorage.setItem(attribute, serializedPrivateKey);
