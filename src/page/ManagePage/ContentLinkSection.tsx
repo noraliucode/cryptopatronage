@@ -45,6 +45,7 @@ const ContentLinkSection = ({ creator, supporters }: IProps) => {
         <Title>Publish Content Link</Title>
       </TitleWrapper>
       <TextField
+        name={"title"}
         fullWidth
         value={title}
         id="standard-basic"
@@ -54,6 +55,7 @@ const ContentLinkSection = ({ creator, supporters }: IProps) => {
         onChange={handleInputChange}
       />
       <TextField
+        name={"link"}
         fullWidth
         value={link}
         id="standard-basic"
