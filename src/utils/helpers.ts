@@ -485,6 +485,12 @@ const symDecrypt = async (encryptedMessage: BufferSource, key: CryptoKey) => {
   return new TextDecoder().decode(decryptedMessage);
 };
 
+export const serializeKey = async (key: any) => {
+  const keyJwk = await subtle.exportKey("jwk", key);
+  const keyString = JSON.stringify(keyJwk);
+  return keyString;
+};
+
 export const getOrCreateUserTempKey = async (user: string) => {
   // see if the user has key stored in localstorage
   const userTempKey = localStorage.getItem(TEMP_KEY);
@@ -495,9 +501,12 @@ export const getOrCreateUserTempKey = async (user: string) => {
     // generate a new key
     const { publicKey, privateKey } = await generateKey();
     // store the public key in the database
-    await updateCreatorKeyValue(user, publicKey, PUB_KEY);
+    const stringserializedPubKey = await serializeKey(publicKey);
+    const stringserializedPrivateKey = await serializeKey(publicKey);
+    await updateCreatorKeyValue(user, stringserializedPubKey, PUB_KEY);
+
     // store the private key in localstorage
-    localStorage.setItem(TEMP_KEY, JSON.stringify(privateKey));
+    localStorage.setItem(TEMP_KEY, stringserializedPrivateKey);
     return privateKey;
   }
 };
