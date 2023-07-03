@@ -26,8 +26,8 @@ export const USER_PURE_PROXY = "userPureProxy";
 export const IS_COMMITTED = "isCommitted";
 export const IS_DELAYED = "isDelayed";
 export const PAYMENT_HISTORY = "payment_history";
-export const TEMP_KEY = "temp_key";
-export const PUB_KEY = "pub_key";
+export const TEMP_KEY = "tempkey";
+export const PUB_KEY = "pubkey";
 // Kusama and Polkadot networks are currently operating at a rate of one block every six seconds.
 // In one minute (60 seconds), there are 60/6 = 10 block times.
 // Trial period is usually 7 days.
