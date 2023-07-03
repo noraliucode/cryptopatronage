@@ -9,6 +9,7 @@ import { Manage } from "./page/ManagePage";
 import { AboutPage } from "./page/aboutPage";
 import Create from "./components/Create";
 import HowToSupport from "./page/howToSupportPage";
+import TestPage from "./page/TestPage";
 
 function App() {
   return (
@@ -63,6 +64,15 @@ function App() {
             </Layout>
           }
         />
+        {/* TODO: a better way for arranging testing components */}
+        {/* <Route
+          path="/test"
+          element={
+            <Layout>
+              <TestPage />
+            </Layout>
+          }
+        /> */}
       </Routes>
     </BrowserRouter>
   );
