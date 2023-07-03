@@ -9,7 +9,9 @@ import {
   TRIAL_PERIOD_BLOCK_TIME,
 } from "./constants";
 import {
+  ToBase64,
   calculateExpiryTimestamp,
+  exportKey,
   getOrCreateUserTempKey,
   getPaymentAmount,
   parseAdditionalInfo,
@@ -677,10 +679,14 @@ const getSupporterLinkInfo = async (supporters: string[], key: CryptoKey) => {
     _supporters.map((supporter) => symEncrypt(data[supporter]?.pubKey, key))
   );
 
+  const serializedPubKeys = await Promise.all(
+    _supporters.map((supporter) => exportKey(data[supporter]?.pubKey))
+  );
+
   const supportersInfo = _supporters.map((supporter, index) => ({
     address: supporter,
     encryptedSymKey: encryptedSymKeys[index],
-    pubKey: data[supporter].pubKey,
+    pubKey: ToBase64(serializedPubKeys[index]),
   }));
 
   return supportersInfo;

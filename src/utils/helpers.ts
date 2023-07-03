@@ -485,10 +485,14 @@ const symDecrypt = async (encryptedMessage: BufferSource, key: CryptoKey) => {
   return new TextDecoder().decode(decryptedMessage);
 };
 
-export const serializeKey = async (key: any) => {
+export const exportKey = async (key: any) => {
   const keyJwk = await subtle.exportKey("jwk", key);
-  const keyString = JSON.stringify(keyJwk);
+  const keyString = JSON.stringify(keyJwk); // '{"kty":"RSA","e":"AQAB","n":"vT3u_0LpXs2...","alg":"RSA-OAEP-256","ext...'
   return keyString;
+};
+
+export const ToBase64 = (str: string) => {
+  return window.btoa(str);
 };
 
 export const getOrCreateUserTempKey = async (user: string) => {
@@ -502,12 +506,12 @@ export const getOrCreateUserTempKey = async (user: string) => {
     // generate a new key
     const { publicKey, privateKey } = await generateKey();
     // store the public key in the database
-    const stringserializedPubKey = await serializeKey(publicKey);
-    const stringserializedPrivateKey = await serializeKey(publicKey);
-    await updateCreatorKeyValue(user, stringserializedPubKey, PUB_KEY);
+    const serializedPubKey = await exportKey(publicKey);
+    const serializedPrivateKey = await exportKey(privateKey);
+    await updateCreatorKeyValue(user, ToBase64(serializedPubKey), PUB_KEY);
 
     // store the private key in localstorage
-    localStorage.setItem(attribute, stringserializedPrivateKey);
+    localStorage.setItem(attribute, serializedPrivateKey);
     return privateKey;
   }
 };
