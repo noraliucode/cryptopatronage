@@ -37,6 +37,8 @@ const ContentLinkSection = ({ creator, supporters }: IProps) => {
     );
   };
 
+  const hasSupporter = supporters.length > 0;
+
   return (
     <>
       <TitleWrapper>
@@ -64,7 +66,11 @@ const ContentLinkSection = ({ creator, supporters }: IProps) => {
       />
       <Wrapper>
         <InputWrapper>
-          <Button variant="contained" onClick={_publishLink}>
+          <Button
+            variant="contained"
+            onClick={_publishLink}
+            disabled={!hasSupporter}
+          >
             Publish Content Link
           </Button>
         </InputWrapper>
