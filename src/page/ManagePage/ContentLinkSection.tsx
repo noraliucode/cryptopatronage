@@ -23,8 +23,6 @@ const ContentLinkSection = ({ creator, supporters }: IProps) => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    console.log("name", name);
-
     setStateValue(name, value);
   };
 
