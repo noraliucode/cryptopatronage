@@ -495,6 +495,16 @@ export const ToBase64 = (str: string) => {
   return window.btoa(str);
 };
 
+export const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
+  let binary = "";
+  let bytes = new Uint8Array(buffer);
+  let len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return ToBase64(binary);
+};
+
 export const getOrCreateUserTempKey = async (user: string) => {
   const attribute = `${TEMP_KEY}_${user}`;
   // see if the user has key stored in localstorage

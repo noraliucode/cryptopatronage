@@ -10,6 +10,7 @@ import {
 } from "./constants";
 import {
   ToBase64,
+  arrayBufferToBase64,
   calculateExpiryTimestamp,
   exportKey,
   getOrCreateUserTempKey,
@@ -677,17 +678,12 @@ const getSupporterLinkInfo = async (supporters: string[], key: CryptoKey) => {
   const _supporters = uniqBy(supporters, "address") as any[];
 
   const encryptedSymKeys = await Promise.all(
-    _supporters.map((supporter) => symEncrypt(data[supporter]?.pubKey, key))
+    _supporters.map((supporter) => symEncrypt(data[supporter].pubKey, key))
   );
-
-  const serializedPubKeys = await Promise.all(
-    _supporters.map((supporter) => exportKey(data[supporter]?.pubKey))
-  );
-
   const supportersInfo = _supporters.map((supporter, index) => ({
     address: supporter,
     encryptedSymKey: encryptedSymKeys[index],
-    pubKey: ToBase64(serializedPubKeys[index]),
+    pubKey: data[supporter].pubKey,
   }));
 
   return supportersInfo;
@@ -712,7 +708,7 @@ const getCreatorLinkInfo = async (
   return {
     date: new Date().getTime(),
     title,
-    content: encryptedContent,
+    content: arrayBufferToBase64(encryptedContent),
     encryptedSymKey,
     keys,
   };
