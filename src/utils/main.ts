@@ -31,6 +31,7 @@ import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
 import { APIService } from "../services/apiService";
 import JsonBinService from "../services/jsonBinService";
+import { uniqBy } from "lodash";
 
 type AnonymousData = {
   pure: string;
@@ -670,12 +671,13 @@ export const updateCreatorKeyValue = async (
 
 const getSupporterLinkInfo = async (supporters: string[], key: CryptoKey) => {
   const data = await readJsonBin();
+  const _supporters = uniqBy(supporters, "address") as any[];
 
   const encryptedSymKeys = await Promise.all(
-    supporters.map((supporter) => symEncrypt(data[supporter].pubKey, key))
+    _supporters.map((supporter) => symEncrypt(data[supporter]?.pubKey, key))
   );
 
-  const supportersInfo = supporters.map((supporter, index) => ({
+  const supportersInfo = _supporters.map((supporter, index) => ({
     address: supporter,
     encryptedSymKey: encryptedSymKeys[index],
     pubKey: data[supporter].pubKey,
