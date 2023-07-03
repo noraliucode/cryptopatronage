@@ -492,8 +492,9 @@ export const serializeKey = async (key: any) => {
 };
 
 export const getOrCreateUserTempKey = async (user: string) => {
+  const attribute = `${TEMP_KEY}_${user}`;
   // see if the user has key stored in localstorage
-  const userTempKey = localStorage.getItem(TEMP_KEY);
+  const userTempKey = localStorage.getItem(attribute);
 
   if (userTempKey) {
     return userTempKey;
@@ -506,7 +507,7 @@ export const getOrCreateUserTempKey = async (user: string) => {
     await updateCreatorKeyValue(user, stringserializedPubKey, PUB_KEY);
 
     // store the private key in localstorage
-    localStorage.setItem(TEMP_KEY, stringserializedPrivateKey);
+    localStorage.setItem(attribute, stringserializedPrivateKey);
     return privateKey;
   }
 };
