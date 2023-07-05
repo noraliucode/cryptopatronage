@@ -9,6 +9,7 @@ import {
   getOrCreateUserTempKey,
   importKey,
   symDecrypt,
+  symEncrypt,
   symGenerateKey,
 } from "../../utils/helpers";
 
@@ -76,12 +77,22 @@ const encryptionDecryptionFlow = async () => {
   console.log("importedSymKey: ", importedSymKey);
 
   // 2. encrypt / decrypt content with symKey
+  console.log("2. encrypt / decrypt content with symKey");
   //encrypt ->
-  //export key ->
+  const encryptedContent = await symEncrypt(message, importedSymKey);
+  console.log("encryptedContent: ", encryptedContent);
   //ToBase64 ->
+  const encryptedContentBase64 = arrayBufferToBase64(encryptedContent);
+  console.log("encryptedContentBase64: ", encryptedContentBase64);
   //to buffer ->
-  //import key ->
+  const encryptedContentBuffer = base64ToArrayBuffer(encryptedContentBase64);
+  console.log("encryptedContentBuffer: ", encryptedContentBuffer);
   //decrypt
+  const decryptedContent = await symDecrypt(
+    encryptedContentBuffer,
+    importedSymKey
+  );
+  console.log("decryptedContent: ", decryptedContent);
 };
 
 const TestPage = () => {
