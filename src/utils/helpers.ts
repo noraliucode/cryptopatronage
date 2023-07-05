@@ -476,7 +476,10 @@ export const symEncrypt = async (message: string, key: CryptoKey) => {
   return encryptedMessage;
 };
 
-const symDecrypt = async (encryptedMessage: BufferSource, key: CryptoKey) => {
+export const symDecrypt = async (
+  encryptedMessage: BufferSource,
+  key: CryptoKey
+) => {
   const decryptedMessage = await subtle.decrypt(
     symEncryptionAlgorithm,
     key,
@@ -503,6 +506,32 @@ export const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
     binary += String.fromCharCode(bytes[i]);
   }
   return ToBase64(binary);
+};
+
+export const base64ToArrayBuffer = (base64: string) => {
+  let binary_string = window.atob(base64);
+  let len = binary_string.length;
+  let bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary_string.charCodeAt(i);
+  }
+  return bytes.buffer;
+};
+
+export const base64ToJwk = (base64: string) => {
+  const jwkString = window.atob(base64); // decode the base64 back to a string
+  const jwk = JSON.parse(jwkString);
+  return jwk;
+};
+
+export const importKey = async (keyString: string, isSymKey?: boolean) => {
+  const keyJwk = JSON.parse(keyString);
+  const algorithm = isSymKey ? symKeyAlgorithm : keyAlgorithm;
+  const key = await subtle.importKey("jwk", keyJwk, algorithm, true, [
+    "encrypt",
+    "decrypt",
+  ]);
+  return key;
 };
 
 export const getOrCreateUserTempKey = async (user: string) => {
