@@ -1,7 +1,14 @@
 import React from "react";
 import {
+  arrayBufferToBase64,
+  base64ToArrayBuffer,
+  decrypt,
+  encrypt,
+  exportKey,
   generateKey,
   getOrCreateUserTempKey,
+  importKey,
+  symDecrypt,
   symGenerateKey,
 } from "../../utils/helpers";
 
@@ -23,6 +30,60 @@ const _getOrCreateUserTempKey = async () => {
   console.log(key);
 };
 
+// encrypt -> export key -> ToBase64 -> to buffer -> import key -> decrypt
+const encryptionDecryptionFlow = async () => {
+  // const key = await getOrCreateUserTempKey(
+  //   // "5HWUV4XjVRpBkJY3Sbo5LDneSHRmxYgQaz9oBzvP351qwKCt"
+  //   "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr"
+  // );
+  // console.log(key);
+  const keyPair = await generateKey();
+
+  // 1. asym encrypt / decrypt symKey with uer asymetric temp pubKey / privKey
+  console.log(
+    "1. encrypt / decrypt symKey with uer asymetric temp pubKey / privKey"
+  );
+  //generate symKey ->
+  const symKey = await symGenerateKey();
+  console.log("symKey: ", symKey);
+
+  const message =
+    "https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto";
+
+  //export key ->
+  const symKeyString = await exportKey(symKey);
+  console.log("symKeyString: ", symKeyString);
+  //encrypt ->
+  const encryptedSymKey = await encrypt(symKeyString, keyPair.publicKey);
+  console.log("encryptedSymKey: ", encryptedSymKey); // ArrayBuffer(256)
+  //buffer ToBase64 ->
+  const encryptedSymKeyBase64 = arrayBufferToBase64(encryptedSymKey);
+  console.log("encryptedSymKeyBase64: ", encryptedSymKeyBase64);
+
+  console.log("==================================================");
+
+  //base64 to buffer ->
+  const encryptedSymKeyBuffer = base64ToArrayBuffer(encryptedSymKeyBase64);
+  console.log("encryptedSymKeyBuffer: ", encryptedSymKeyBuffer);
+  //decrypt
+  const decryptedSymKey = await decrypt(
+    encryptedSymKeyBuffer,
+    keyPair.privateKey
+  );
+  console.log("decryptedSymKey: ", decryptedSymKey);
+  //import key ->
+  const importedSymKey = await importKey(decryptedSymKey, true);
+  console.log("importedSymKey: ", importedSymKey);
+
+  // 2. encrypt / decrypt content with symKey
+  //encrypt ->
+  //export key ->
+  //ToBase64 ->
+  //to buffer ->
+  //import key ->
+  //decrypt
+};
+
 const TestPage = () => {
   return (
     <div>
@@ -31,6 +92,10 @@ const TestPage = () => {
       <button onClick={_generateKey}>generate asymKey</button>
       <br />
       <button onClick={_getOrCreateUserTempKey}>getOrCreateUserTempKey</button>
+      <br />
+      <button onClick={encryptionDecryptionFlow}>
+        encryptionDecryptionFlow
+      </button>
     </div>
   );
 };
