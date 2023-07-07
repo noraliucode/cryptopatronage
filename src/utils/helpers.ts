@@ -498,6 +498,10 @@ export const ToBase64 = (str: string) => {
   return window.btoa(str);
 };
 
+export const decodeBase64 = (str: string) => {
+  return window.atob(str);
+};
+
 export const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
   let binary = "";
   let bytes = new Uint8Array(buffer);
@@ -524,13 +528,21 @@ export const base64ToJwk = (base64: string) => {
   return jwk;
 };
 
-export const importKey = async (keyString: string, isSymKey?: boolean) => {
+export const importKey = async (
+  keyString: string,
+  isSymKey?: boolean,
+  isPubKey?: boolean
+) => {
   const keyJwk = JSON.parse(keyString);
   const algorithm = isSymKey ? symKeyAlgorithm : keyAlgorithm;
-  const key = await subtle.importKey("jwk", keyJwk, algorithm, true, [
-    "encrypt",
-    "decrypt",
-  ]);
+  const key_ops = isSymKey
+    ? ["encrypt", "decrypt"]
+    : isPubKey
+    ? ["encrypt"]
+    : ["decrypt"];
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const key = await subtle.importKey("jwk", keyJwk, algorithm, true, key_ops);
   return key;
 };
 
