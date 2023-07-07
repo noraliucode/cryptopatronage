@@ -12,6 +12,7 @@ import {
   symEncrypt,
   symGenerateKey,
 } from "../../utils/helpers";
+import { getBase64edAsymKeys, getImportedAsymKeys } from "../../utils/main";
 
 const _symGenerateKey = async () => {
   const key = await symGenerateKey();
@@ -40,6 +41,19 @@ const encryptionDecryptionFlow = async () => {
   // console.log(key);
   const keyPair = await generateKey();
 
+  // 0. serialize / deserialize keyPair
+  console.log("0. serialize / deserialize keyPair");
+  const { base64edAsymPubKey, base64edAsymPrivateKey } =
+    await getBase64edAsymKeys(keyPair);
+  console.log("base64edAsymPubKey: ", base64edAsymPubKey);
+  console.log("base64edAsymPrivateKey: ", base64edAsymPrivateKey);
+  console.log("==================================================");
+  const { importedAsymPubKey, importedAsymPrivateKey } =
+    await getImportedAsymKeys(base64edAsymPubKey, base64edAsymPrivateKey);
+
+  const pubKey = importedAsymPubKey;
+  const privKey = importedAsymPrivateKey;
+
   // 1. asym encrypt / decrypt symKey with uer asymetric temp pubKey / privKey
   console.log(
     "1. encrypt / decrypt symKey with uer asymetric temp pubKey / privKey"
@@ -55,7 +69,7 @@ const encryptionDecryptionFlow = async () => {
   const symKeyString = await exportKey(symKey);
   console.log("symKeyString: ", symKeyString);
   //encrypt ->
-  const encryptedSymKey = await encrypt(symKeyString, keyPair.publicKey);
+  const encryptedSymKey = await encrypt(symKeyString, pubKey);
   console.log("encryptedSymKey: ", encryptedSymKey); // ArrayBuffer(256)
   //buffer ToBase64 ->
   const encryptedSymKeyBase64 = arrayBufferToBase64(encryptedSymKey);
@@ -67,10 +81,7 @@ const encryptionDecryptionFlow = async () => {
   const encryptedSymKeyBuffer = base64ToArrayBuffer(encryptedSymKeyBase64);
   console.log("encryptedSymKeyBuffer: ", encryptedSymKeyBuffer);
   //decrypt
-  const decryptedSymKey = await decrypt(
-    encryptedSymKeyBuffer,
-    keyPair.privateKey
-  );
+  const decryptedSymKey = await decrypt(encryptedSymKeyBuffer, privKey);
   console.log("decryptedSymKey: ", decryptedSymKey);
   //import key ->
   const importedSymKey = await importKey(decryptedSymKey, true);
