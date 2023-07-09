@@ -7,6 +7,7 @@ import {
   SUPPORTERS,
   PULL_HISTORY,
   TRIAL_PERIOD_BLOCK_TIME,
+  TEMP_KEY,
 } from "./constants";
 import {
   ToBase64,
@@ -685,12 +686,19 @@ const getSupporterLinkInfo = async (supporters: string[], symKey: string) => {
   const data = await readJsonBin();
   const _supporters = uniqBy(supporters, "address") as any[];
 
-  const encryptedSymKeys = await Promise.all(
-    _supporters.map((supporter) => encrypt(symKey, data[supporter].pubKey))
+  // get encryptedSymKeys encrypted by supporter's asymPubKey
+  const importedAsymKeys = await Promise.all(
+    _supporters.map((supporter) => getImportedAsymKeys(data[supporter].pubKey))
   );
+  const encryptedSymKeys = await Promise.all(
+    _supporters.map((supporter, index) =>
+      encrypt(symKey, importedAsymKeys[index].importedAsymPubKey)
+    )
+  );
+
   const supportersInfo = _supporters.map((supporter, index) => ({
     address: supporter,
-    encryptedSymKey: encryptedSymKeys[index],
+    encryptedSymKey: arrayBufferToBase64(encryptedSymKeys[index]),
     pubKey: data[supporter].pubKey,
   }));
 
@@ -713,27 +721,28 @@ const getCreatorLinkInfo = async (
     keys[info.pubKey] = info.encryptedSymKey;
   });
 
+  // get base64ed Asym Keys
   const base64edAsymPubKey = data[creator].pubKey;
-  const base64edAsymPrivateKey = data[creator].privKey;
+  const base64edAsymprivateKey = localStorage.getItem(
+    `${TEMP_KEY}_${creator}`
+  ) as any;
 
-  const { importedAsymPubKey } = await getImportedAsymKeys(
-    base64edAsymPubKey,
-    base64edAsymPrivateKey
-  );
+  // get imported Asym Keys
+  const { importedAsymPubKey, importedAsymPrivateKey } =
+    await getImportedAsymKeys(base64edAsymPubKey, base64edAsymprivateKey);
 
-  const decryptedSymKey = await getDecryptedSymKey(
-    symKeyString,
-    data[creator].privKey
-  );
-  const importedSymKey = await importKey(decryptedSymKey, true);
-  const encryptedContent = await symEncrypt(link, importedSymKey);
-  const encryptedSymKey = await symEncrypt(symKeyString, importedAsymPubKey);
+  // get encryptedSymKey for storing in database
+  const encryptedSymKey = await encrypt(symKeyString, importedAsymPubKey);
+  const encryptedSymKeyBase64 = arrayBufferToBase64(encryptedSymKey);
+
+  // encrypt link
+  const encryptedContent = await symEncrypt(link, symKey);
 
   return {
     date: new Date().getTime(),
     title,
     content: arrayBufferToBase64(encryptedContent),
-    encryptedSymKey,
+    encryptedSymKey: encryptedSymKeyBase64,
     keys,
   };
 };
@@ -770,28 +779,16 @@ export const getBase64edAsymKeys = async (keyPair: CryptoKeyPair) => {
 
 export const getImportedAsymKeys = async (
   pubKeyString: string,
-  privateKeyString: string
+  privateKeyString?: string
 ) => {
   // decode base64 ->
   const decodedPubKeyBase64 = decodeBase64(pubKeyString);
-  const decodedPrivateKeyBase64 = decodeBase64(privateKeyString);
   //import key ->
   const importedAsymPubKey = await importKey(decodedPubKeyBase64, false, true);
-  const importedAsymPrivateKey = await importKey(decodedPrivateKeyBase64);
-
-  return { importedAsymPubKey, importedAsymPrivateKey };
-};
-
-const getDecryptedSymKey = async (
-  encryptedSymKeyBase64: string,
-  keyPair: CryptoKeyPair
-) => {
-  //base64 to buffer ->
-  const encryptedSymKeyBuffer = base64ToArrayBuffer(encryptedSymKeyBase64);
-  //decrypt
-  const decryptedSymKey = await decrypt(
-    encryptedSymKeyBuffer,
-    keyPair.privateKey
-  );
-  return decryptedSymKey;
+  if (privateKeyString) {
+    const decodedPrivateKeyBase64 = decodeBase64(privateKeyString);
+    const importedAsymPrivateKey = await importKey(decodedPrivateKeyBase64);
+    return { importedAsymPubKey, importedAsymPrivateKey };
+  }
+  return { importedAsymPubKey };
 };
