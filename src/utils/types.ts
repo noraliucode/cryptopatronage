@@ -165,3 +165,11 @@ export type ISupporterInfo = {
   address: string;
   pubKey: string;
 };
+
+export type IContentLink = {
+  title: string;
+  link: string;
+  date: number;
+};
+
+export type IContentLinks = IContentLink[] | [];

@@ -31,6 +31,7 @@ import {
 } from "./helpers";
 import {
   IAdditionalInfo,
+  IContentLinks,
   Identity,
   IHistory,
   INetwork,
@@ -791,4 +792,13 @@ export const getImportedAsymKeys = async (
     return { importedAsymPubKey, importedAsymPrivateKey };
   }
   return { importedAsymPubKey };
+};
+
+export const getCreatorsContentLinks = async (creators: string[]) => {
+  const data = await readJsonBin();
+  const links = [] as any;
+  creators.forEach((creator) => {
+    links.push(data[creator].links);
+  });
+  return links as IContentLinks;
 };
