@@ -567,7 +567,7 @@ export const getOrCreateUserTempKey = async (user: string) => {
     );
 
     // store the private key in localstorage
-    localStorage.setItem(attribute, serializedPrivateKey);
+    localStorage.setItem(attribute, ToBase64(serializedPrivateKey));
     return privateKey;
   }
 };
