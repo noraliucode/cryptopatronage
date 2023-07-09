@@ -52,7 +52,7 @@ const encryptionDecryptionFlow = async () => {
     await getImportedAsymKeys(base64edAsymPubKey, base64edAsymPrivateKey);
 
   const pubKey = importedAsymPubKey;
-  const privKey = importedAsymPrivateKey;
+  const privKey = importedAsymPrivateKey as any;
 
   // 1. asym encrypt / decrypt symKey with uer asymetric temp pubKey / privKey
   console.log(
