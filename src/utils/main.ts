@@ -22,29 +22,30 @@ import {
   generateKey,
   getOrCreateUserTempKey,
   getPaymentAmount,
+  getUserTempKey,
   importKey,
   parseAdditionalInfo,
   removeComma,
   renderAddress,
+  symDecrypt,
   symEncrypt,
   symGenerateKey,
 } from "./helpers";
 import {
   IAdditionalInfo,
-  IContentLinks,
+  IContentLink,
+  IContentLinkDatabase,
   Identity,
   IHistory,
   INetwork,
   IParsedSupporterProxies,
   ISupporter,
-  ISupporterInfo,
 } from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
 import { APIService } from "../services/apiService";
 import JsonBinService from "../services/jsonBinService";
 import { uniqBy } from "lodash";
-import { decode } from "punycode";
 
 type AnonymousData = {
   pure: string;
@@ -778,6 +779,12 @@ export const getBase64edAsymKeys = async (keyPair: CryptoKeyPair) => {
   return { base64edAsymPubKey, base64edAsymPrivateKey };
 };
 
+export const getImportedAsymPrivateKey = async (privateKeyString: string) => {
+  const decodedPrivateKeyBase64 = decodeBase64(privateKeyString);
+  const importedAsymPrivateKey = await importKey(decodedPrivateKeyBase64);
+  return importedAsymPrivateKey;
+};
+
 export const getImportedAsymKeys = async (
   pubKeyString: string,
   privateKeyString?: string
@@ -794,11 +801,60 @@ export const getImportedAsymKeys = async (
   return { importedAsymPubKey };
 };
 
-export const getCreatorsContentLinks = async (creators: string[]) => {
+export const getCreatorsContentLinks = async (
+  creators: string[],
+  supporter?: string
+) => {
   const data = await readJsonBin();
-  const links = [] as any;
+  let links = [] as any;
+  let _data = {} as any;
+  let encryptedSymKey;
+  const user = supporter ? supporter : creators[0];
+  const base64edAsymPrivateKey = getUserTempKey(user) as any;
+  const importedAsymPrivateKey = await getImportedAsymPrivateKey(
+    base64edAsymPrivateKey
+  );
+
   creators.forEach((creator) => {
-    links.push(data[creator].links);
+    _data = {
+      creator,
+    };
+    links = data[creator].links;
+    links.forEach((link: IContentLinkDatabase) => {
+      encryptedSymKey = supporter
+        ? link.keys[data[supporter].pubKey]
+        : link.encryptedSymKey;
+
+      _data = {
+        ..._data,
+        title: link.title,
+        encryptedContent: link.content,
+        date: link.date,
+        encryptedSymKey: base64ToArrayBuffer(encryptedSymKey),
+      };
+      links.push(_data);
+    });
   });
-  return links as IContentLinks;
+
+  const decryptedSymKeys = await Promise.all(
+    links.map((link: IContentLink) =>
+      decrypt(base64ToArrayBuffer(link.encryptedSymKey), importedAsymPrivateKey)
+    )
+  );
+
+  const decryptedContents = await Promise.all(
+    links.map((link: IContentLink, index: number) => {
+      return symDecrypt(
+        base64ToArrayBuffer(link.encryptedContent),
+        decryptedSymKeys[index]
+      );
+    })
+  );
+
+  links = links.map((link: IContentLink, index: number) => ({
+    ...link,
+    decryptedContent: decryptedContents[index],
+  }));
+
+  return links;
 };

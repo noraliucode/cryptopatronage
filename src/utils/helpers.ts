@@ -7,7 +7,12 @@ import type {
   AccountIndex,
   Address,
 } from "@polkadot/types/interfaces";
-import { ICreatorProxyParsed, IParsedProxies, IUrls } from "./types";
+import {
+  IContentLinkDatabase,
+  ICreatorProxyParsed,
+  IParsedProxies,
+  IUrls,
+} from "./types";
 import config from "./ss58-registry.json";
 import Papa from "papaparse";
 import { PAYMENT_HISTORY, PUB_KEY, TEMP_KEY } from "./constants";
@@ -548,8 +553,7 @@ export const importKey = async (
 
 export const getOrCreateUserTempKey = async (user: string) => {
   const attribute = `${TEMP_KEY}_${user}`;
-  // see if the user has key stored in localstorage
-  const userTempKey = localStorage.getItem(attribute);
+  const userTempKey = getUserTempKey(user);
 
   if (userTempKey) {
     return userTempKey;
@@ -570,4 +574,11 @@ export const getOrCreateUserTempKey = async (user: string) => {
     localStorage.setItem(attribute, ToBase64(serializedPrivateKey));
     return privateKey;
   }
+};
+
+export const getUserTempKey = (user: string) => {
+  const attribute = `${TEMP_KEY}_${user}`;
+  // see if the user has key stored in localstorage
+  const userTempKey = localStorage.getItem(attribute);
+  return userTempKey;
 };

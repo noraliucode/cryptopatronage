@@ -168,8 +168,22 @@ export type ISupporterInfo = {
 
 export type IContentLink = {
   title: string;
-  link: string;
+  encryptedContent: string;
+  decryptedContent: string;
   date: number;
+  creator: string;
+  encryptedSymKey: string;
 };
 
 export type IContentLinks = IContentLink[] | [];
+
+type IContentLinkKeys = {
+  [pubKey: string]: string;
+};
+export interface IContentLinkDatabase {
+  date: number;
+  title: string;
+  content: string;
+  encryptedSymKey: string;
+  keys: IContentLinkKeys;
+}
