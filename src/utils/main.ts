@@ -809,12 +809,17 @@ export const getCreatorsContentLinks = async (
   let links = [] as any;
   let _data = {} as any;
   let encryptedSymKey;
+
+  // for getting the correct asym key
   const user = supporter ? supporter : creators[0];
+
+  // private asym key for decrypting sym key
   const base64edAsymPrivateKey = getUserTempKey(user) as any;
   const importedAsymPrivateKey = await getImportedAsymPrivateKey(
     base64edAsymPrivateKey
   );
 
+  // nesting for loops for multiple creators and links
   creators.forEach((creator) => {
     _data = {
       creator,
@@ -836,12 +841,14 @@ export const getCreatorsContentLinks = async (
     });
   });
 
+  // decrypt all sym keys
   const decryptedSymKeys = await Promise.all(
     links.map((link: IContentLink) =>
       decrypt(base64ToArrayBuffer(link.encryptedSymKey), importedAsymPrivateKey)
     )
   );
 
+  // decrypt all contents with decrypted sym keys
   const decryptedContents = await Promise.all(
     links.map((link: IContentLink, index: number) => {
       return symDecrypt(
@@ -851,6 +858,7 @@ export const getCreatorsContentLinks = async (
     })
   );
 
+  // add decrypted contents to links
   links = links.map((link: IContentLink, index: number) => ({
     ...link,
     decryptedContent: decryptedContents[index],
