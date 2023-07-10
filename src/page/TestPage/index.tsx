@@ -12,7 +12,11 @@ import {
   symEncrypt,
   symGenerateKey,
 } from "../../utils/helpers";
-import { getBase64edAsymKeys, getImportedAsymKeys } from "../../utils/main";
+import {
+  getBase64edAsymKeys,
+  getCreatorsContentLinks,
+  getImportedAsymKeys,
+} from "../../utils/main";
 
 const _symGenerateKey = async () => {
   const key = await symGenerateKey();
@@ -26,8 +30,8 @@ const _generateKey = async () => {
 
 const _getOrCreateUserTempKey = async () => {
   const key = await getOrCreateUserTempKey(
-    // "5HWUV4XjVRpBkJY3Sbo5LDneSHRmxYgQaz9oBzvP351qwKCt"
-    "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr"
+    "5HWUV4XjVRpBkJY3Sbo5LDneSHRmxYgQaz9oBzvP351qwKCt"
+    // "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr"
   );
   console.log(key);
 };
@@ -106,6 +110,15 @@ const encryptionDecryptionFlow = async () => {
   console.log("decryptedContent: ", decryptedContent);
 };
 
+const _getCreatorsContentLinks = async () => {
+  const contentLinks = await getCreatorsContentLinks(
+    // "5HWUV4XjVRpBkJY3Sbo5LDneSHRmxYgQaz9oBzvP351qwKCt"
+    ["5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr"],
+    "5HWUV4XjVRpBkJY3Sbo5LDneSHRmxYgQaz9oBzvP351qwKCt"
+  );
+  console.log(contentLinks);
+};
+
 const TestPage = () => {
   return (
     <div>
@@ -117,6 +130,10 @@ const TestPage = () => {
       <br />
       <button onClick={encryptionDecryptionFlow}>
         encryptionDecryptionFlow
+      </button>
+      <br />
+      <button onClick={_getCreatorsContentLinks}>
+        getCreatorsContentLinks
       </button>
     </div>
   );
