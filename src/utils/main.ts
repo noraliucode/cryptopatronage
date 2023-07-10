@@ -762,7 +762,7 @@ export const publishLink = async (
       title,
       supporters
     );
-    await updateCreatorKeyValue(creator, creatorLinkInfo, "links", true);
+    await updateCreatorKeyValue(creator, creatorLinkInfo, "links");
   } catch (error) {
     console.error("publishLink error", error);
   }
