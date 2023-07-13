@@ -7,7 +7,7 @@ interface IState {
   loading: boolean;
 }
 
-export const useContentLinks = (creators = []) => {
+export const useContentLinks = (creators = [], supporter?: string) => {
   const [state, setState] = useState<IState>({
     links: [],
     loading: false,
@@ -19,7 +19,7 @@ export const useContentLinks = (creators = []) => {
         ...prev,
         loading: true,
       }));
-      const links = await getCreatorsContentLinks(creators);
+      const links = await getCreatorsContentLinks(creators, supporter);
 
       setState((prev) => ({
         ...prev,
