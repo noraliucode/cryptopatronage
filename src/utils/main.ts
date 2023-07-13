@@ -738,7 +738,7 @@ const getCreatorLinkInfo = async (
   const encryptedSymKeyBase64 = arrayBufferToBase64(encryptedSymKey);
 
   // encrypt link
-  const encryptedContent = await symEncrypt(link, symKey);
+  const { encryptedContent } = await symEncrypt("link", symKey);
 
   return {
     date: new Date().getTime(),
@@ -830,33 +830,58 @@ export const getCreatorsContentLinks = async (
         ? link.keys[data[supporter].pubKey]
         : link.encryptedSymKey;
 
-      _data = {
-        ..._data,
-        title: link.title,
-        encryptedContent: link.content,
-        date: link.date,
-        encryptedSymKey: base64ToArrayBuffer(encryptedSymKey),
-      };
-      links.push(_data);
+      if (encryptedSymKey) {
+        _data = {
+          ..._data,
+          title: link.title,
+          encryptedContent: link.content,
+          date: link.date,
+          encryptedSymKey,
+        };
+        links.push(_data);
+      }
     });
   });
 
-  // decrypt all sym keys
-  const decryptedSymKeys = await Promise.all(
-    links.map((link: IContentLink) =>
-      decrypt(base64ToArrayBuffer(link.encryptedSymKey), importedAsymPrivateKey)
-    )
-  );
+  let decryptedContents = [] as any;
+  let decryptedSymKeys = [] as any;
+  try {
+    // decrypt all sym keys
+    decryptedSymKeys = await Promise.all(
+      links.map((link: IContentLink) =>
+        decrypt(
+          base64ToArrayBuffer(link.encryptedSymKey),
+          importedAsymPrivateKey
+        )
+      )
+    );
 
-  // decrypt all contents with decrypted sym keys
-  const decryptedContents = await Promise.all(
-    links.map((link: IContentLink, index: number) => {
-      return symDecrypt(
-        base64ToArrayBuffer(link.encryptedContent),
-        decryptedSymKeys[index]
-      );
-    })
-  );
+    const importedSymKeys = await Promise.all(
+      decryptedSymKeys.map((key: string) => {
+        if (!key) return null;
+        return importKey(key, true);
+      })
+    );
+
+    // TDOD: get iv from database
+    const iv = localStorage.getItem("iv") as any;
+
+    // decrypt all contents with decrypted sym keys
+    decryptedContents = await Promise.all(
+      links.map((link: IContentLink, index: number) => {
+        const importedSymKey = importedSymKeys[index];
+        if (!importedSymKey) return null;
+        return symDecrypt(
+          base64ToArrayBuffer(link.encryptedContent),
+          importedSymKey,
+          iv
+        );
+      })
+    );
+  } catch (error) {
+    console.log("users update key pair error");
+    console.log("getCreatorsContentLinks decrypt error", error);
+  }
 
   // add decrypted contents to links
   links = links.map((link: IContentLink, index: number) => ({

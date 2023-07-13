@@ -454,12 +454,16 @@ export const decrypt = async (
   encryptedMessage: BufferSource,
   privateKey: CryptoKey
 ) => {
-  const decryptedMessage = await subtle.decrypt(
-    encryptionAlgorithm,
-    privateKey,
-    encryptedMessage
-  );
-  return new TextDecoder().decode(decryptedMessage);
+  try {
+    const decryptedMessage = await subtle.decrypt(
+      encryptionAlgorithm,
+      privateKey,
+      encryptedMessage
+    );
+    return new TextDecoder().decode(decryptedMessage);
+  } catch (error) {
+    console.log("decrypt error", error);
+  }
 };
 
 export const symGenerateKey = async () => {
@@ -472,25 +476,31 @@ export const symGenerateKey = async () => {
 };
 
 export const symEncrypt = async (message: string, key: CryptoKey) => {
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
   const encodedMessage = new TextEncoder().encode(message);
-  const encryptedMessage = await subtle.encrypt(
-    symEncryptionAlgorithm,
+  const encryptedContent = await subtle.encrypt(
+    { ...symEncryptionAlgorithm, iv },
     key,
     encodedMessage
   );
-  return encryptedMessage;
+  return { iv, encryptedContent };
 };
 
 export const symDecrypt = async (
   encryptedMessage: BufferSource,
-  key: CryptoKey
+  key: CryptoKey,
+  iv: Uint8Array
 ) => {
-  const decryptedMessage = await subtle.decrypt(
-    symEncryptionAlgorithm,
-    key,
-    encryptedMessage
-  );
-  return new TextDecoder().decode(decryptedMessage);
+  try {
+    const decryptedMessage = await subtle.decrypt(
+      { ...symEncryptionAlgorithm, iv },
+      key,
+      encryptedMessage
+    );
+    return new TextDecoder().decode(decryptedMessage);
+  } catch (error) {
+    console.log("symDecrypt error", error);
+  }
 };
 
 export const exportKey = async (key: any) => {
