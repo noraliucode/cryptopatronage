@@ -16,7 +16,10 @@ import {
   getBase64edAsymKeys,
   getCreatorsContentLinks,
   getImportedAsymKeys,
+  updateCreatorKeyValue,
 } from "../../utils/main";
+
+const creator = "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr";
 
 const _symGenerateKey = async () => {
   const key = await symGenerateKey();
@@ -198,6 +201,10 @@ const testSymKeyDecryption = async () => {
   console.log("=====================test3 end=============================");
 };
 
+const updateContentLinksDB = async () => {
+  await updateCreatorKeyValue(creator, [], "links", true);
+};
+
 const TestPage = () => {
   return (
     <div>
@@ -218,6 +225,8 @@ const TestPage = () => {
       <button onClick={testSymKeyEncryption}>testSymKeyEncryption</button>
       <br />
       <button onClick={testSymKeyDecryption}>testSymKeyDecryption</button>
+      <br />
+      <button onClick={updateContentLinksDB}>updateContentLinksDB</button>
     </div>
   );
 };
