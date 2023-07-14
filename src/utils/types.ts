@@ -173,6 +173,7 @@ export type IContentLink = {
   date: number;
   creator: string;
   encryptedSymKey: string;
+  iv: string;
 };
 
 export type IContentLinks = IContentLink[] | [];

@@ -738,7 +738,10 @@ const getCreatorLinkInfo = async (
   const encryptedSymKeyBase64 = arrayBufferToBase64(encryptedSymKey);
 
   // encrypt link
-  const { encryptedContent } = await symEncrypt("link", symKey);
+  const { encryptedContent, iv } = await symEncrypt(link, symKey);
+
+  // store iv keys
+  keys.iv = arrayBufferToBase64(iv);
 
   return {
     date: new Date().getTime(),
@@ -837,6 +840,7 @@ export const getCreatorsContentLinks = async (
           encryptedContent: link.content,
           date: link.date,
           encryptedSymKey,
+          iv: link.keys.iv,
         };
         links.push(_data);
       }
@@ -874,7 +878,7 @@ export const getCreatorsContentLinks = async (
         return symDecrypt(
           base64ToArrayBuffer(link.encryptedContent),
           importedSymKey,
-          iv
+          base64ToArrayBuffer(link.iv) as any
         );
       })
     );
