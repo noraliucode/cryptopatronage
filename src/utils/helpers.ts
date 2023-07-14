@@ -413,6 +413,7 @@ export const convertToCSV = (data: any) => {
 // Defining the algorithm objects
 // https://developer.mozilla.org/en-US/docs/Web/API/CryptoKeyPair
 // https://github.com/mdn/dom-examples/blob/main/web-crypto/encrypt-decrypt/rsa-oaep.js#L46
+// https://github.com/mdn/dom-examples/blob/main/web-crypto/encrypt-decrypt/aes-gcm.js
 const keyAlgorithm = {
   name: "RSA-OAEP",
   modulusLength: 2048,
