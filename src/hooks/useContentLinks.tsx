@@ -7,7 +7,7 @@ interface IState {
   loading: boolean;
 }
 
-export const useContentLinks = (creators = [], supporter?: string) => {
+export const useContentLinks = (creators: string[], supporter?: string) => {
   const [state, setState] = useState<IState>({
     links: [],
     loading: false,
@@ -36,6 +36,6 @@ export const useContentLinks = (creators = [], supporter?: string) => {
   };
   useEffect(() => {
     getContentLinks();
-  }, [creators]);
+  }, []);
   return { ...state, getContentLinks };
 };

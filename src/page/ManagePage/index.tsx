@@ -737,6 +737,7 @@ export const Manage = () => {
             </>
             <Supporter />
             <ContentLinkSection
+              network={network}
               creator={signer.address}
               supporters={[...committedSupporters, ...uncommittedSupporters]}
             />

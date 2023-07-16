@@ -7,6 +7,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import {
+  IContentLink,
+  IContentLinks,
   IHistory,
   IHistoryList,
   INetwork,
@@ -30,12 +32,14 @@ export default function BasicTable({
   committedSupporters,
   uncommittedSupporters,
   pullPaymentHistory,
+  contentLinks,
   pull,
 }: {
   network: INetwork;
   committedSupporters?: ISupporter[];
   uncommittedSupporters?: ISupporter[];
   pullPaymentHistory?: IHistoryList;
+  contentLinks?: IContentLinks;
   pull?: (isCommitted: boolean, supporter?: ISupporter) => void;
 }) {
   if (committedSupporters) {
@@ -158,6 +162,49 @@ export default function BasicTable({
                   >
                     <LinkText>{toShortAddress(row.tx)}</LinkText>
                   </a>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  }
+
+  if (contentLinks) {
+    return (
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Title</TableCell>
+              <TableCell align="right">Content</TableCell>
+              <TableCell align="right">Encrypted Content</TableCell>
+              <TableCell align="right">Date</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {contentLinks.map((row: IContentLink, index: number) => (
+              <TableRow
+                key={`${row.title}_${index}`}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {row.title}
+                </TableCell>
+
+                <TableCell align="right">
+                  <a target="blank" href={row.decryptedContent}>
+                    <LinkText>{row.decryptedContent}</LinkText>
+                  </a>
+                </TableCell>
+
+                <TableCell component="th" scope="row">
+                  {toShortAddress(row.encryptedContent)}
+                </TableCell>
+
+                <TableCell component="th" scope="row">
+                  {formatTimestampClear(row.date)}
                 </TableCell>
               </TableRow>
             ))}

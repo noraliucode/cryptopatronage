@@ -1,25 +1,39 @@
-import { Button, TextField } from "@mui/material";
+import { Button, CircularProgress, TextField } from "@mui/material";
 import { useState } from "react";
 import {
   Title,
   TitleWrapper,
   InputWrapper,
   Wrapper,
+  LoadingContainer,
+  Content,
+  Text,
 } from "../../page/ManagePage";
 import { publishLink } from "../../utils/main";
-import { ISupporter } from "../../utils/types";
+import { INetwork, ISupporter } from "../../utils/types";
+import { useContentLinks } from "../../hooks/useContentLinks";
+import BasicTable from "../../components/Table";
 
 type IProps = {
   creator: string;
   supporters: ISupporter[];
+  network: INetwork;
 };
 
-const ContentLinkSection = ({ creator, supporters }: IProps) => {
+const ContentLinkSection = ({ creator, supporters, network }: IProps) => {
   const [state, setState] = useState({ title: "", link: "" });
   const { title, link } = state;
   const setStateValue = (key: string, value: string) => {
     setState({ ...state, [key]: value });
   };
+
+  const { links, loading, getContentLinks } = useContentLinks(
+    [creator],
+    // TODO: remove this hardcode
+    "5HWUV4XjVRpBkJY3Sbo5LDneSHRmxYgQaz9oBzvP351qwKCt"
+  );
+
+  console.log("links", links);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -74,6 +88,24 @@ const ContentLinkSection = ({ creator, supporters }: IProps) => {
             Publish Content Link
           </Button>
         </InputWrapper>
+      </Wrapper>
+
+      <TitleWrapper>
+        <Title>Published Content Links</Title>
+      </TitleWrapper>
+
+      <Wrapper>
+        {loading ? (
+          <LoadingContainer>
+            <CircularProgress size={30} thickness={5} />
+          </LoadingContainer>
+        ) : links.length > 0 ? (
+          <BasicTable network={network} contentLinks={links} />
+        ) : (
+          <Content>
+            <Text>N/A</Text>
+          </Content>
+        )}
       </Wrapper>
     </>
   );

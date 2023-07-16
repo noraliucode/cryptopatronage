@@ -808,6 +808,7 @@ export const getCreatorsContentLinks = async (
   creators: string[],
   supporter?: string
 ) => {
+  if (!creators) return [];
   const data = await readJsonBin();
   let links = [] as any;
   let _data = {} as any;
