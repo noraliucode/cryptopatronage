@@ -23,7 +23,7 @@ import {
   toShortAddress,
 } from "../../utils/helpers";
 import { DECIMALS } from "../../utils/constants";
-import { InputWrapper } from "../../page/ManagePage";
+import { InputWrapper, Text } from "../../page/ManagePage";
 
 export const LinkText = styled("div")(() => ({
   color: "#29b6f6",
@@ -198,9 +198,13 @@ export default function BasicTable({
                 </TableCell>
 
                 <TableCell align="left">
-                  <a target="blank" href={row.decryptedContent}>
-                    <LinkText>{row.decryptedContent}</LinkText>
-                  </a>
+                  {row.decryptedContent ? (
+                    <a target="blank" href={row.decryptedContent}>
+                      <LinkText>{row.decryptedContent}</LinkText>
+                    </a>
+                  ) : (
+                    <Text>Subscribe to view the content link</Text>
+                  )}
                 </TableCell>
 
                 <TableCell component="th" scope="row">
