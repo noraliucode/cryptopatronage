@@ -792,7 +792,6 @@ export const Manage = () => {
             </>
             <Supporter />
             <ContentLinkSection
-              network={network}
               publishLink={_publishLink}
               hasSupporter={hasSupporter}
               links={links}

@@ -10,11 +10,14 @@ import {
 } from "../../page/ManagePage";
 import { IContent, IContentLinks, INetwork } from "../../utils/types";
 import BasicTable from "../../components/Table";
-import { convertToCSV, getUserTempKey } from "../../utils/helpers";
+import {
+  convertToCSV,
+  downloadBackupCode,
+  getUserTempKey,
+} from "../../utils/helpers";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 
 type IProps = {
-  network: INetwork;
   publishLink: (link: string, title: string) => void;
   hasSupporter: boolean;
   links: IContentLinks;
@@ -25,7 +28,6 @@ type IProps = {
 };
 
 const ContentLinkSection = ({
-  network,
   publishLink,
   hasSupporter,
   links,
@@ -41,21 +43,16 @@ const ContentLinkSection = ({
     updateContent({ contentTitle, contentLink });
   };
 
-  const { signer } = useWeb3ConnectedContext();
+  const { signer, network } = useWeb3ConnectedContext();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setStateValue(name, value);
   };
 
-  const downloadBackupCode = async () => {
+  const _downloadBackupCode = async () => {
     if (!signer) return;
-    const code = getUserTempKey(signer?.address);
-    convertToCSV([
-      {
-        code,
-      },
-    ]);
+    downloadBackupCode(signer?.address);
   };
 
   return (
@@ -108,7 +105,7 @@ const ContentLinkSection = ({
           </LoadingContainer>
         ) : links.length > 0 ? (
           <BasicTable
-            downloadBackupCode={downloadBackupCode}
+            downloadBackupCode={_downloadBackupCode}
             network={network}
             contentLinks={links}
           />

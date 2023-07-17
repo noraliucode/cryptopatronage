@@ -593,3 +593,13 @@ export const getUserTempKey = (user: string) => {
   const userTempKey = localStorage.getItem(attribute);
   return userTempKey;
 };
+
+export const downloadBackupCode = async (signer: string) => {
+  if (!signer) return;
+  const code = getUserTempKey(signer);
+  convertToCSV([
+    {
+      code,
+    },
+  ]);
+};
