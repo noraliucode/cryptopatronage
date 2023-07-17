@@ -14,7 +14,7 @@ import {
 } from "../../utils/helpers";
 import {
   getBase64edAsymKeys,
-  getCreatorsContentLinks,
+  getCreatorContentLinks,
   getImportedAsymKeys,
   updateCreatorKeyValue,
 } from "../../utils/main";
@@ -29,12 +29,18 @@ const _symGenerateKey = async () => {
 const _generateKey = async () => {
   const keyPair = await generateKey();
   console.log(keyPair);
+
+  const { base64edAsymPubKey, base64edAsymPrivateKey } =
+    await getBase64edAsymKeys(keyPair);
+
+  console.log("base64edAsymPubKey: ", base64edAsymPubKey);
+  console.log("base64edAsymPrivateKey: ", base64edAsymPrivateKey);
 };
 
 const _getOrCreateUserTempKey = async () => {
   const key = await getOrCreateUserTempKey(
-    "5HWUV4XjVRpBkJY3Sbo5LDneSHRmxYgQaz9oBzvP351qwKCt"
-    // "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr"
+    // "5HWUV4XjVRpBkJY3Sbo5LDneSHRmxYgQaz9oBzvP351qwKCt"
+    "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr"
   );
   console.log(key);
 };
@@ -114,11 +120,11 @@ const encryptionDecryptionFlow = async () => {
   console.log("decryptedContent: ", decryptedContent);
 };
 
-const _getCreatorsContentLinks = async () => {
-  const contentLinks = await getCreatorsContentLinks(
+const _getCreatorContentLinks = async () => {
+  const contentLinks = await getCreatorContentLinks(
     // "5HWUV4XjVRpBkJY3Sbo5LDneSHRmxYgQaz9oBzvP351qwKCt"
-    ["5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr"],
-    "5HWUV4XjVRpBkJY3Sbo5LDneSHRmxYgQaz9oBzvP351qwKCt"
+    "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",
+    "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr"
   );
   console.log(contentLinks);
 };
@@ -203,6 +209,7 @@ const testSymKeyDecryption = async () => {
 
 const updateContentLinksDB = async () => {
   await updateCreatorKeyValue(creator, [], "links", true);
+  await updateCreatorKeyValue(creator, "", "pubKey", true);
 };
 
 const TestPage = () => {
@@ -218,9 +225,7 @@ const TestPage = () => {
         encryptionDecryptionFlow
       </button>
       <br />
-      <button onClick={_getCreatorsContentLinks}>
-        getCreatorsContentLinks
-      </button>
+      <button onClick={_getCreatorContentLinks}>getCreatorContentLinks</button>
       <br />
       <button onClick={testSymKeyEncryption}>testSymKeyEncryption</button>
       <br />
