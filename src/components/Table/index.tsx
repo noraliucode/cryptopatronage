@@ -178,9 +178,9 @@ export default function BasicTable({
           <TableHead>
             <TableRow>
               <TableCell>Title</TableCell>
-              <TableCell align="right">Content</TableCell>
-              <TableCell align="right">Encrypted Content</TableCell>
-              <TableCell align="right">Date</TableCell>
+              <TableCell align="left">Content</TableCell>
+              <TableCell align="left">Encrypted Content</TableCell>
+              <TableCell align="left">Date</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -193,7 +193,7 @@ export default function BasicTable({
                   {row.title}
                 </TableCell>
 
-                <TableCell align="right">
+                <TableCell align="left">
                   <a target="blank" href={row.decryptedContent}>
                     <LinkText>{row.decryptedContent}</LinkText>
                   </a>
