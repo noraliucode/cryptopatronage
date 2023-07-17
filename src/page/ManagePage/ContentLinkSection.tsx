@@ -27,11 +27,7 @@ const ContentLinkSection = ({ creator, supporters, network }: IProps) => {
     setState({ ...state, [key]: value });
   };
 
-  const { links, loading, getContentLinks } = useContentLinks(
-    [creator],
-    // TODO: remove this hardcode
-    "5HWUV4XjVRpBkJY3Sbo5LDneSHRmxYgQaz9oBzvP351qwKCt"
-  );
+  const { links, loading, getContentLinks } = useContentLinks(creator);
 
   console.log("links", links);
 

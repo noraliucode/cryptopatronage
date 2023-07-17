@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import { IContentLinks } from "../utils/types";
-import { getCreatorsContentLinks } from "../utils/main";
+import { getCreatorContentLinks } from "../utils/main";
+import { useWeb3ConnectedContext } from "../context/Web3ConnectedContext";
 
 interface IState {
   links: IContentLinks;
   loading: boolean;
 }
 
-export const useContentLinks = (creators: string[], supporter?: string) => {
+export const useContentLinks = (creator: string) => {
   const [state, setState] = useState<IState>({
     links: [],
     loading: false,
   });
+
+  const { signer } = useWeb3ConnectedContext();
 
   const getContentLinks = async () => {
     try {
@@ -19,7 +22,10 @@ export const useContentLinks = (creators: string[], supporter?: string) => {
         ...prev,
         loading: true,
       }));
-      const links = await getCreatorsContentLinks(creators, supporter);
+      const links = await getCreatorContentLinks(
+        creator,
+        signer?.address as any
+      );
 
       setState((prev) => ({
         ...prev,
