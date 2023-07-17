@@ -16,12 +16,14 @@ import {
 } from "../../utils/types";
 import { Button, styled } from "@mui/material";
 import {
+  convertToCSV,
   formatTimestampClear,
   formatUnit,
   renderAddress,
   toShortAddress,
 } from "../../utils/helpers";
 import { DECIMALS } from "../../utils/constants";
+import { InputWrapper } from "../../page/ManagePage";
 
 export const LinkText = styled("div")(() => ({
   color: "#29b6f6",
@@ -34,6 +36,7 @@ export default function BasicTable({
   pullPaymentHistory,
   contentLinks,
   pull,
+  downloadBackupCode,
 }: {
   network: INetwork;
   committedSupporters?: ISupporter[];
@@ -41,6 +44,7 @@ export default function BasicTable({
   pullPaymentHistory?: IHistoryList;
   contentLinks?: IContentLinks;
   pull?: (isCommitted: boolean, supporter?: ISupporter) => void;
+  downloadBackupCode?: () => void;
 }) {
   if (committedSupporters) {
     return (
@@ -210,6 +214,11 @@ export default function BasicTable({
             ))}
           </TableBody>
         </Table>
+        <InputWrapper>
+          <Button onClick={downloadBackupCode} variant="contained">
+            Export backup code
+          </Button>
+        </InputWrapper>
       </TableContainer>
     );
   }

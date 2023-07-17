@@ -10,6 +10,8 @@ import {
 } from "../../page/ManagePage";
 import { IContent, IContentLinks, INetwork } from "../../utils/types";
 import BasicTable from "../../components/Table";
+import { convertToCSV, getUserTempKey } from "../../utils/helpers";
+import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 
 type IProps = {
   network: INetwork;
@@ -39,9 +41,21 @@ const ContentLinkSection = ({
     updateContent({ contentTitle, contentLink });
   };
 
+  const { signer } = useWeb3ConnectedContext();
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setStateValue(name, value);
+  };
+
+  const downloadBackupCode = async () => {
+    if (!signer) return;
+    const code = getUserTempKey(signer?.address);
+    convertToCSV([
+      {
+        code,
+      },
+    ]);
   };
 
   return (
@@ -93,7 +107,11 @@ const ContentLinkSection = ({
             <CircularProgress size={30} thickness={5} />
           </LoadingContainer>
         ) : links.length > 0 ? (
-          <BasicTable network={network} contentLinks={links} />
+          <BasicTable
+            downloadBackupCode={downloadBackupCode}
+            network={network}
+            contentLinks={links}
+          />
         ) : (
           <Content>
             <Text>N/A</Text>
