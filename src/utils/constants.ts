@@ -165,6 +165,7 @@ export const Clear_Identity = "Clear Identity";
 export const Unregister = "Unregister";
 export const Payment_System = "Payment System";
 export const Unnote_Preimages = "Unnote Preimages";
+export const Links = "links";
 
 export const MANAGE_SECTIONS = [
   {

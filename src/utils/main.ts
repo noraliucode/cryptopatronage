@@ -8,6 +8,7 @@ import {
   PULL_HISTORY,
   TRIAL_PERIOD_BLOCK_TIME,
   TEMP_KEY,
+  Links,
 } from "./constants";
 import {
   ToBase64,
@@ -750,7 +751,7 @@ export const publishLink = async (
       title,
       supporters
     );
-    await updateCreatorKeyValue(creator, creatorLinkInfo, "links");
+    await updateCreatorKeyValue(creator, creatorLinkInfo, Links);
   } catch (error) {
     console.error("publishLink error", error);
   }
