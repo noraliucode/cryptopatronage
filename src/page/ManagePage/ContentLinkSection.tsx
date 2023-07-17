@@ -29,8 +29,6 @@ const ContentLinkSection = ({ creator, supporters, network }: IProps) => {
 
   const { links, loading, getContentLinks } = useContentLinks(creator);
 
-  console.log("links", links);
-
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setStateValue(name, value);
