@@ -43,6 +43,6 @@ export const useContentLinks = (creator: string | undefined) => {
   };
   useEffect(() => {
     getContentLinks();
-  }, [creator]);
+  }, [creator, signer]);
   return { ...state, getContentLinks };
 };
