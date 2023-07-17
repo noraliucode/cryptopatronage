@@ -188,3 +188,5 @@ export interface IContentLinkDatabase {
   encryptedSymKey: string;
   keys: IContentLinkKeys;
 }
+
+export type IContent = { contentTitle: string; contentLink: string };

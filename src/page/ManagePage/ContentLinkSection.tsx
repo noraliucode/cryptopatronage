@@ -9,41 +9,45 @@ import {
   Content,
   Text,
 } from "../../page/ManagePage";
-import { publishLink } from "../../utils/main";
-import { INetwork, ISupporter } from "../../utils/types";
-import { useContentLinks } from "../../hooks/useContentLinks";
+import { IContent, IContentLinks, INetwork } from "../../utils/types";
 import BasicTable from "../../components/Table";
 
 type IProps = {
-  creator: string;
-  supporters: ISupporter[];
   network: INetwork;
+  publishLink: (link: string, title: string) => void;
+  hasSupporter: boolean;
+  links: IContentLinks;
+  loading: boolean;
+  updateContent: (_: IContent) => void;
+  title: string;
+  link: string;
 };
 
-const ContentLinkSection = ({ creator, supporters, network }: IProps) => {
-  const [state, setState] = useState({ title: "", link: "" });
-  const { title, link } = state;
+const ContentLinkSection = ({
+  network,
+  publishLink,
+  hasSupporter,
+  links,
+  loading,
+  updateContent,
+  title,
+  link,
+}: IProps) => {
+  // const [state, setState] = useState({ title: "", link: "" });
+  // const { title, link } = state;
   const setStateValue = (key: string, value: string) => {
-    setState({ ...state, [key]: value });
-  };
+    // setState({ ...state, [key]: value });
 
-  const { links, loading, getContentLinks } = useContentLinks(creator);
+    const contentTitle = key === "title" ? value : title;
+    const contentLink = key === "link" ? value : link;
+
+    updateContent({ contentTitle, contentLink });
+  };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setStateValue(name, value);
   };
-
-  const _publishLink = () => {
-    publishLink(
-      creator,
-      link,
-      title,
-      supporters.map((supporter) => supporter.address)
-    );
-  };
-
-  const hasSupporter = supporters.length > 0;
 
   return (
     <>
@@ -76,7 +80,7 @@ const ContentLinkSection = ({ creator, supporters, network }: IProps) => {
         <InputWrapper>
           <Button
             variant="contained"
-            onClick={_publishLink}
+            onClick={() => publishLink(link, title)}
             disabled={!hasSupporter}
           >
             Publish Content Link

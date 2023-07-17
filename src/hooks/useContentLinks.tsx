@@ -8,7 +8,7 @@ interface IState {
   loading: boolean;
 }
 
-export const useContentLinks = (creator: string) => {
+export const useContentLinks = (creator: string | undefined) => {
   const [state, setState] = useState<IState>({
     links: [],
     loading: false,
@@ -17,6 +17,7 @@ export const useContentLinks = (creator: string) => {
   const { signer } = useWeb3ConnectedContext();
 
   const getContentLinks = async () => {
+    if (!creator) return;
     try {
       setState((prev) => ({
         ...prev,
@@ -42,6 +43,6 @@ export const useContentLinks = (creator: string) => {
   };
   useEffect(() => {
     getContentLinks();
-  }, []);
+  }, [creator]);
   return { ...state, getContentLinks };
 };

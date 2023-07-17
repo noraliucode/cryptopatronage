@@ -4,6 +4,7 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import {
   clearIdentity,
+  publishLink,
   pullPayment,
   toggleIsRegisterToPaymentSystem,
   unregister,
@@ -22,7 +23,11 @@ import {
 } from "../../utils/constants";
 import { convertToCSV, formatUnit, validateUrls } from "../../utils/helpers";
 import Snackbar from "@mui/material/Snackbar";
-import { ISupporter, IWeb3ConnectedContextState } from "../../utils/types";
+import {
+  IContent,
+  ISupporter,
+  IWeb3ConnectedContextState,
+} from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useIdentity } from "../../hooks/useIdentity";
 import { useSupporters } from "../../hooks/useSupporters";
@@ -39,6 +44,7 @@ import { useTranslation } from "react-i18next";
 import ConnectButton from "../../components/ConnectButton";
 import { usePullPaymentHistory } from "../../hooks/usePullPaymentHistory";
 import ContentLinkSection from "./ContentLinkSection";
+import { useContentLinks } from "../../hooks/useContentLinks";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,
@@ -171,6 +177,8 @@ type IState = {
   isCicked: boolean;
   isClearIdentityModalOpen: boolean;
   isUsd: boolean;
+  contentTitle: string;
+  contentLink: string;
 };
 
 export const Manage = () => {
@@ -193,6 +201,8 @@ export const Manage = () => {
     isCicked: false,
     isClearIdentityModalOpen: false,
     isUsd: false,
+    contentTitle: "",
+    contentLink: "",
   };
   const [state, setState] = useState<IState>(defaultState);
 
@@ -214,6 +224,8 @@ export const Manage = () => {
     isCicked,
     isClearIdentityModalOpen,
     isUsd,
+    contentTitle,
+    contentLink,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -238,6 +250,12 @@ export const Manage = () => {
   const { t } = useTranslation();
   const { pullPaymentHistory, loading: isHistoryLoading } =
     usePullPaymentHistory(signer?.address, network);
+
+  const {
+    links,
+    loading: isLinksLoading,
+    getContentLinks,
+  } = useContentLinks(signer?.address);
 
   useEffect(() => {
     if (identity) {
@@ -499,8 +517,42 @@ export const Manage = () => {
     }));
   };
 
+  const _publishLink = (link: string, title: string) => {
+    setState((prev) => ({
+      ...prev,
+      message: "Publishing link...",
+      open: true,
+    }));
+
+    if (!signer) return;
+    const supporters = [...committedSupporters, ...uncommittedSupporters];
+    const callback = async () => {
+      await getContentLinks();
+      setLoading(false);
+      updateContent({
+        contentTitle: "",
+        contentLink: "",
+      });
+    };
+    publishLink(
+      signer.address,
+      link,
+      title,
+      supporters.map((supporter) => supporter.address),
+      callback
+    );
+  };
+
   const _convertToCSV = () => {
     convertToCSV(pullPaymentHistory);
+  };
+
+  const updateContent = ({ contentTitle, contentLink }: IContent) => {
+    setState((prev) => ({
+      ...prev,
+      contentTitle,
+      contentLink,
+    }));
   };
 
   const isSetRateDisabled = !rate || rate === 0;
@@ -509,6 +561,9 @@ export const Manage = () => {
     committedSupporters && committedSupporters.length > 0 && isCreator;
   const isShowUncommittedSupporters =
     uncommittedSupporters && uncommittedSupporters.length > 0 && isCreator;
+
+  const supporters = [...committedSupporters, ...uncommittedSupporters];
+  const hasSupporter = supporters.length > 0;
 
   if (!signer)
     return (
@@ -738,8 +793,13 @@ export const Manage = () => {
             <Supporter />
             <ContentLinkSection
               network={network}
-              creator={signer.address}
-              supporters={[...committedSupporters, ...uncommittedSupporters]}
+              publishLink={_publishLink}
+              hasSupporter={hasSupporter}
+              links={links}
+              loading={isLinksLoading}
+              updateContent={updateContent}
+              title={contentTitle}
+              link={contentLink}
             />
             {/* TODO: add payment system */}
             {/* <>

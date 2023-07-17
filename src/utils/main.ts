@@ -742,7 +742,8 @@ export const publishLink = async (
   creator: string,
   link: string,
   title: string,
-  supporters: string[]
+  supporters: string[],
+  callback?: () => void
 ) => {
   try {
     const creatorLinkInfo = await getCreatorLinkInfo(
@@ -752,6 +753,7 @@ export const publishLink = async (
       supporters
     );
     await updateCreatorKeyValue(creator, creatorLinkInfo, Links);
+    callback && (await callback());
   } catch (error) {
     console.error("publishLink error", error);
   }
