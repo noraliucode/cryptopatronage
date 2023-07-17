@@ -1,5 +1,4 @@
 import { Button, CircularProgress, TextField } from "@mui/material";
-import { useState } from "react";
 import {
   Title,
   TitleWrapper,
@@ -33,11 +32,7 @@ const ContentLinkSection = ({
   title,
   link,
 }: IProps) => {
-  // const [state, setState] = useState({ title: "", link: "" });
-  // const { title, link } = state;
   const setStateValue = (key: string, value: string) => {
-    // setState({ ...state, [key]: value });
-
     const contentTitle = key === "title" ? value : title;
     const contentLink = key === "link" ? value : link;
 
