@@ -800,17 +800,17 @@ export const getCreatorContentLinks = async (
   const data = await readJsonBin();
   let _links = [] as any;
   let _data = {} as any;
+  _data = {
+    creator,
+  };
+  const links = data[creator].links;
+  if (!links) return [];
 
   // private asym key for decrypting sym key
   const base64edAsymPrivateKey = getUserTempKey(signer) as any;
   const importedAsymPrivateKey = await getImportedAsymPrivateKey(
     base64edAsymPrivateKey
   );
-
-  _data = {
-    creator,
-  };
-  const links = data[creator].links;
 
   links.forEach((link: IContentLinkDatabase) => {
     for (let key in link.keys) {
