@@ -203,8 +203,12 @@ class APIService {
   };
 
   getBalances = async (addresses: string[]) => {
-    const balances = await this.api.query.system.account.multi(addresses);
-    return balances;
+    try {
+      const balances = await this.api.query.system.account.multi(addresses);
+      return balances;
+    } catch (error) {
+      console.log("getBalances error: ", error);
+    }
   };
 
   getIdentity = async (creator?: string) => {

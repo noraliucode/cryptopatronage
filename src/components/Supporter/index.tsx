@@ -140,52 +140,6 @@ export const Supporter = () => {
         <Button disabled onClick={_unnotePreimage} variant="contained">
           {t("manage sections.Unnote Preimages")}
         </Button>
-
-        <SectionTitle id={My_Subscription.split(" ").join("")}>
-          {t("manage sections.My Subscription")}
-        </SectionTitle>
-        <Wrapper>
-          <Wrapper>
-            <Title>{t("manage.Committed subscribed Creators")}</Title>
-            {committedCreators.length > 0 ? (
-              committedCreators.map((creator, index) => (
-                <SpaceBetweenWrapper key={`${creator.creator}_${index}`}>
-                  <Text>{creator.creator}</Text>
-                  <Button
-                    onClick={() =>
-                      _unsubscribe(true, creator.creator, creator.pure)
-                    }
-                    variant="outlined"
-                  >
-                    Unsubscribe
-                  </Button>
-                </SpaceBetweenWrapper>
-              ))
-            ) : (
-              <Content>
-                <Text> N/A</Text>
-              </Content>
-            )}
-            <Title>{t("manage.Uncommitted subscribed Creators")}</Title>
-            {uncommittedCreators.length > 0 ? (
-              uncommittedCreators.map((creator, index) => (
-                <SpaceBetweenWrapper key={`${creator.creator}_${index}`}>
-                  <Text>{creator.creator}</Text>
-                  <Button
-                    onClick={() => _unsubscribe(false, creator.creator)}
-                    variant="outlined"
-                  >
-                    Unsubscribe
-                  </Button>
-                </SpaceBetweenWrapper>
-              ))
-            ) : (
-              <Content>
-                <Text> N/A</Text>
-              </Content>
-            )}
-          </Wrapper>
-        </Wrapper>
       </InputWrapper>
     </>
   );

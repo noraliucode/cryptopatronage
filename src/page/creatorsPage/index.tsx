@@ -15,6 +15,11 @@ import { useLocation } from "react-router-dom";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
 import { usePureProxy } from "../../hooks/usePureProxy";
+import ContentLinkTable from "../../components/ContentLinkTable";
+import BasicTable from "../../components/Table";
+import { downloadBackupCode } from "../../utils/helpers";
+import { useContentLinks } from "../../hooks/useContentLinks";
+import { Content, LoadingContainer, Text } from "../ManagePage";
 
 export const Root = styled("div")(() => ({
   padding: 30,
@@ -87,6 +92,7 @@ export const CreatorsPage = () => {
     userPureProxy
   );
   const { tokenUsdPrice } = useTokenUsdPrice(network);
+  const { links, loading: isContentLoading } = useContentLinks(address);
 
   const getIsSubscriber = (creator: string | undefined) => {
     if (!creator) return false;
@@ -158,6 +164,11 @@ export const CreatorsPage = () => {
     return !!selectedCratorIdentity?.isUsd;
   };
 
+  const _downloadBackupCode = async () => {
+    if (!signer) return;
+    downloadBackupCode(signer?.address);
+  };
+
   return (
     <Root>
       <>
@@ -224,6 +235,22 @@ export const CreatorsPage = () => {
                   ))}
                 </Grid>
               </Container>
+              <p />
+              <p />
+              {/* {TODO: duplicated conditional component} */}
+              {isContentLoading ? (
+                <LoadingContainer>
+                  <CircularProgress size={30} thickness={5} />
+                </LoadingContainer>
+              ) : links.length > 0 && address ? (
+                <BasicTable
+                  downloadBackupCode={_downloadBackupCode}
+                  network={network}
+                  contentLinks={links}
+                />
+              ) : (
+                <></>
+              )}
             </>
           )}
         </>

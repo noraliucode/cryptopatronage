@@ -160,3 +160,33 @@ export type IHistory = {
 };
 
 export type IHistoryList = IHistory[] | [] | undefined;
+
+export type ISupporterInfo = {
+  address: string;
+  pubKey: string;
+};
+
+export type IContentLink = {
+  title: string;
+  encryptedContent: string;
+  decryptedContent: string;
+  date: number;
+  creator: string;
+  encryptedSymKey: string;
+  iv: string;
+};
+
+export type IContentLinks = IContentLink[] | [];
+
+type IContentLinkKeys = {
+  [pubKey: string]: string;
+};
+export interface IContentLinkDatabase {
+  date: number;
+  title: string;
+  content: string;
+  encryptedSymKey: string;
+  keys: IContentLinkKeys;
+}
+
+export type IContent = { contentTitle: string; contentLink: string };

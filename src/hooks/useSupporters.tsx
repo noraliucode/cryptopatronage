@@ -47,7 +47,7 @@ export const useSupporters = (
 
       const _committedSupporters: any[] = [];
       const _uncommittedSupporters: any[] = [];
-      committedSupporters.forEach((supporter: ISupporter, index: number) => {
+      committedSupporters?.forEach((supporter: ISupporter, index: number) => {
         const _balance =
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
@@ -61,11 +61,12 @@ export const useSupporters = (
         });
       });
 
-      uncommittedSupporters.forEach((supporter: any, index: any) => {
+      uncommittedSupporters?.forEach((supporter: any, index: any) => {
         const _balance =
+          uncommittedSupporterBalances &&
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          uncommittedSupporterBalances[index]?.toHuman().data.free;
+          uncommittedSupporterBalances[index].toHuman().data.free;
         // format number wirh commas: '1,000,890,001,100'
         const balance = Number(_balance?.replace(/,/g, ""));
         _uncommittedSupporters.push({

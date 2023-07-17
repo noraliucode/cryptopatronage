@@ -7,16 +7,35 @@ import {
   SUPPORTERS,
   PULL_HISTORY,
   TRIAL_PERIOD_BLOCK_TIME,
+  TEMP_KEY,
+  Links,
 } from "./constants";
 import {
+  ToBase64,
+  arrayBufferToBase64,
+  base64ToArrayBuffer,
+  base64ToJwk,
   calculateExpiryTimestamp,
+  decodeBase64,
+  decrypt,
+  encrypt,
+  exportKey,
+  generateKey,
+  getOrCreateUserTempKey,
   getPaymentAmount,
+  getUserTempKey,
+  importKey,
   parseAdditionalInfo,
   removeComma,
   renderAddress,
+  symDecrypt,
+  symEncrypt,
+  symGenerateKey,
 } from "./helpers";
 import {
   IAdditionalInfo,
+  IContentLink,
+  IContentLinkDatabase,
   Identity,
   IHistory,
   INetwork,
@@ -27,6 +46,7 @@ import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
 import { APIService } from "../services/apiService";
 import JsonBinService from "../services/jsonBinService";
+import { compact } from "lodash";
 
 type AnonymousData = {
   pure: string;
@@ -120,9 +140,9 @@ export const subscribe = async (
 
       console.log("set creator as main proxy...");
       if (isDelayed) {
-        // announce the hash of a proxy-call that will be made in the future
         callHash = api.createType("Call", transferCall).hash.toHex() as any;
-        txs = [proxyCall, callHash];
+        const announceCall = apiService.getAnnouncePromise(real, callHash);
+        txs = [proxyCall, announceCall];
       } else {
         const promises = [transferCall, proxyCall];
         txs = await Promise.all(promises);
@@ -131,6 +151,9 @@ export const subscribe = async (
       const _callBack = async () => {
         callback && callback();
         setLoading && setLoading(false);
+
+        // create user temp key when user subscribes for them to decrypt the encrypted symmetric key
+        await getOrCreateUserTempKey(sender);
       };
 
       const tx = await apiService.batchCalls(txs, sender, injector, _callBack);
@@ -638,15 +661,17 @@ export const readJsonBinKeyValue = async (signer: string, key: string) => {
   }
 };
 
+// TODO: rename to updateUserKeyValue
 export const updateCreatorKeyValue = async (
   creator: string,
   value: any,
-  key: string
+  key: string,
+  isOverwrite?: boolean
 ) => {
   const result = await readJsonBin();
   const originalKeyValue = result[creator] ? result[creator][key] : null;
   let data;
-  if (originalKeyValue) {
+  if (originalKeyValue && !isOverwrite) {
     data = {
       [key]: [...originalKeyValue, value],
     };
@@ -658,4 +683,193 @@ export const updateCreatorKeyValue = async (
 
   const creatorData = { ...result[creator], ...data };
   await updateJsonBin({ ...result, [creator]: creatorData });
+};
+
+const getSupporterLinkInfo = async (supporters: string[], symKey: string) => {
+  const data = await readJsonBin();
+  const _supporters = compact(supporters) as any[];
+
+  // get encryptedSymKeys encrypted by supporter's asymPubKey
+  const importedAsymKeys = await Promise.all(
+    _supporters.map((supporter) => getImportedAsymKeys(data[supporter].pubKey))
+  );
+  const encryptedSymKeys = await Promise.all(
+    _supporters.map((supporter, index) =>
+      encrypt(symKey, importedAsymKeys[index].importedAsymPubKey)
+    )
+  );
+
+  const supportersInfo = _supporters.map((supporter, index) => ({
+    address: supporter,
+    encryptedSymKey: arrayBufferToBase64(encryptedSymKeys[index]),
+    pubKey: data[supporter].pubKey,
+  }));
+
+  return supportersInfo;
+};
+
+const getCreatorLinkInfo = async (
+  creator: string,
+  link: string,
+  title: string,
+  supporters: string[]
+) => {
+  const symKey = await symGenerateKey(); //ArrayBuffer
+  const symKeyString = await exportKey(symKey);
+
+  const keys = {} as any;
+  const allInfos = [...supporters, creator];
+
+  const _allInfos = await getSupporterLinkInfo(allInfos, symKeyString);
+
+  _allInfos.forEach((info) => {
+    keys[info.pubKey] = info.encryptedSymKey;
+  });
+  const { encryptedContent, iv } = await symEncrypt(link, symKey);
+
+  // store iv keys
+  keys.iv = arrayBufferToBase64(iv);
+
+  return {
+    date: new Date().getTime(),
+    title,
+    content: arrayBufferToBase64(encryptedContent),
+    keys,
+  };
+};
+
+export const publishLink = async (
+  creator: string,
+  link: string,
+  title: string,
+  supporters: string[],
+  callback?: () => void
+) => {
+  try {
+    const creatorLinkInfo = await getCreatorLinkInfo(
+      creator,
+      link,
+      title,
+      supporters
+    );
+    await updateCreatorKeyValue(creator, creatorLinkInfo, Links);
+    callback && (await callback());
+  } catch (error) {
+    console.error("publishLink error", error);
+  }
+};
+
+export const getBase64edAsymKeys = async (keyPair: CryptoKeyPair) => {
+  //export key ->
+  const exportedAsymPubKey = await exportKey(keyPair.publicKey);
+  const exportedAsymPrivateKey = await exportKey(keyPair.privateKey);
+  //To base64 ->
+  const base64edAsymPubKey = ToBase64(exportedAsymPubKey);
+  const base64edAsymPrivateKey = ToBase64(exportedAsymPrivateKey);
+
+  return { base64edAsymPubKey, base64edAsymPrivateKey };
+};
+
+export const getImportedAsymPrivateKey = async (privateKeyString: string) => {
+  const decodedPrivateKeyBase64 = decodeBase64(privateKeyString);
+  const importedAsymPrivateKey = await importKey(decodedPrivateKeyBase64);
+  return importedAsymPrivateKey;
+};
+
+export const getImportedAsymKeys = async (
+  pubKeyString: string,
+  privateKeyString?: string
+) => {
+  // decode base64 ->
+  const decodedPubKeyBase64 = decodeBase64(pubKeyString);
+  //import key ->
+  const importedAsymPubKey = await importKey(decodedPubKeyBase64, false, true);
+  if (privateKeyString) {
+    const decodedPrivateKeyBase64 = decodeBase64(privateKeyString);
+    const importedAsymPrivateKey = await importKey(decodedPrivateKeyBase64);
+    return { importedAsymPubKey, importedAsymPrivateKey };
+  }
+  return { importedAsymPubKey };
+};
+
+export const getCreatorContentLinks = async (
+  creator: string,
+  signer: string
+) => {
+  if (!creator || !signer) return [];
+  const data = await readJsonBin();
+  let _links = [] as any;
+  let _data = {} as any;
+  _data = {
+    creator,
+  };
+  const links = data[creator].links;
+  if (!links) return [];
+
+  // private asym key for decrypting sym key
+  const base64edAsymPrivateKey = getUserTempKey(signer) as any;
+  const importedAsymPrivateKey = await getImportedAsymPrivateKey(
+    base64edAsymPrivateKey
+  );
+
+  links.forEach((link: IContentLinkDatabase) => {
+    for (let key in link.keys) {
+      if (key !== "iv" && key === data[creator].pubKey) {
+        _data = {
+          ..._data,
+          encryptedSymKey: link.keys[key],
+          title: link.title,
+          encryptedContent: link.content,
+          date: link.date,
+          iv: link.keys.iv,
+        };
+        _links.push(_data);
+      }
+    }
+  });
+
+  let decryptedContents = [] as any;
+  let decryptedSymKeys = [] as any;
+  try {
+    // decrypt all sym keys
+    decryptedSymKeys = await Promise.all(
+      _links.map((link: IContentLink) =>
+        decrypt(
+          base64ToArrayBuffer(link.encryptedSymKey),
+          importedAsymPrivateKey
+        )
+      )
+    );
+
+    const importedSymKeys = await Promise.all(
+      decryptedSymKeys.map((key: string) => {
+        if (!key) return null;
+        return importKey(key, true);
+      })
+    );
+
+    // decrypt all contents with decrypted sym keys
+    decryptedContents = await Promise.all(
+      _links.map((link: IContentLink, index: number) => {
+        const importedSymKey = importedSymKeys[index];
+        if (!importedSymKey) return null;
+        return symDecrypt(
+          base64ToArrayBuffer(link.encryptedContent),
+          importedSymKey,
+          base64ToArrayBuffer(link.iv) as any
+        );
+      })
+    );
+  } catch (error) {
+    console.log("users update key pair error");
+    console.log("getCreatorContentLinks decrypt error", error);
+  }
+
+  // add decrypted contents to links
+  _links = _links.map((link: IContentLink, index: number) => ({
+    ...link,
+    decryptedContent: decryptedContents[index],
+  }));
+
+  return _links;
 };

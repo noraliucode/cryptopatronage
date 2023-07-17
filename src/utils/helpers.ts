@@ -7,10 +7,19 @@ import type {
   AccountIndex,
   Address,
 } from "@polkadot/types/interfaces";
-import { ICreatorProxyParsed, IParsedProxies, IUrls } from "./types";
+import {
+  IContentLinkDatabase,
+  ICreatorProxyParsed,
+  IParsedProxies,
+  IUrls,
+} from "./types";
 import config from "./ss58-registry.json";
 import Papa from "papaparse";
-import { PAYMENT_HISTORY } from "./constants";
+import { PAYMENT_HISTORY, PUB_KEY, TEMP_KEY } from "./constants";
+import { updateCreatorKeyValue } from "./main";
+
+const crypto = window.crypto;
+const subtle = crypto.subtle;
 
 export function toShortAddress(
   _address?: AccountId | AccountIndex | Address | string | null | Uint8Array,
@@ -399,4 +408,198 @@ export const convertToCSV = (data: any) => {
   tempLink.href = csvURL;
   tempLink.setAttribute("download", `${PAYMENT_HISTORY}.csv`);
   tempLink.click();
+};
+
+// Defining the algorithm objects
+// https://developer.mozilla.org/en-US/docs/Web/API/CryptoKeyPair
+// https://github.com/mdn/dom-examples/blob/main/web-crypto/encrypt-decrypt/rsa-oaep.js#L46
+// https://github.com/mdn/dom-examples/blob/main/web-crypto/encrypt-decrypt/aes-gcm.js
+const keyAlgorithm = {
+  name: "RSA-OAEP",
+  modulusLength: 2048,
+  publicExponent: new Uint8Array([1, 0, 1]),
+  hash: "SHA-256",
+};
+const encryptionAlgorithm = {
+  name: "RSA-OAEP",
+};
+
+const symKeyAlgorithm = {
+  name: "AES-GCM",
+  length: 256, // Key size equals block size for AES
+};
+const symEncryptionAlgorithm = {
+  name: "AES-GCM",
+  iv: window.crypto.getRandomValues(new Uint8Array(12)), // IV size for GCM mode is 12 bytes
+};
+
+export const generateKey = async () => {
+  const keyPair = await subtle.generateKey(keyAlgorithm, true, [
+    "encrypt",
+    "decrypt",
+  ]);
+  return keyPair;
+};
+
+export const encrypt = async (message: string, publicKey: CryptoKey) => {
+  const encodedMessage = new TextEncoder().encode(message);
+  const encryptedMessage = await subtle.encrypt(
+    encryptionAlgorithm,
+    publicKey,
+    encodedMessage
+  );
+  return encryptedMessage;
+};
+
+export const decrypt = async (
+  encryptedMessage: BufferSource,
+  privateKey: CryptoKey
+) => {
+  try {
+    const decryptedMessage = await subtle.decrypt(
+      encryptionAlgorithm,
+      privateKey,
+      encryptedMessage
+    );
+    return new TextDecoder().decode(decryptedMessage);
+  } catch (error) {
+    console.log("decrypt error", error);
+  }
+};
+
+export const symGenerateKey = async () => {
+  const key = await subtle.generateKey(
+    symKeyAlgorithm,
+    true, // Key can be exported
+    ["encrypt", "decrypt"]
+  );
+  return key;
+};
+
+export const symEncrypt = async (message: string, key: CryptoKey) => {
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+  const encodedMessage = new TextEncoder().encode(message);
+  const encryptedContent = await subtle.encrypt(
+    { ...symEncryptionAlgorithm, iv },
+    key,
+    encodedMessage
+  );
+  return { iv, encryptedContent };
+};
+
+export const symDecrypt = async (
+  encryptedMessage: BufferSource,
+  key: CryptoKey,
+  iv: Uint8Array
+) => {
+  try {
+    const decryptedMessage = await subtle.decrypt(
+      { ...symEncryptionAlgorithm, iv },
+      key,
+      encryptedMessage
+    );
+    return new TextDecoder().decode(decryptedMessage);
+  } catch (error) {
+    console.log("symDecrypt error", error);
+  }
+};
+
+export const exportKey = async (key: any) => {
+  const keyJwk = await subtle.exportKey("jwk", key);
+  const keyString = JSON.stringify(keyJwk); // '{"kty":"RSA","e":"AQAB","n":"vT3u_0LpXs2...","alg":"RSA-OAEP-256","ext...'
+  return keyString;
+};
+
+export const ToBase64 = (str: string) => {
+  return window.btoa(str);
+};
+
+export const decodeBase64 = (str: string) => {
+  return window.atob(str);
+};
+
+export const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
+  let binary = "";
+  let bytes = new Uint8Array(buffer);
+  let len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return ToBase64(binary);
+};
+
+export const base64ToArrayBuffer = (base64: string) => {
+  let binary_string = window.atob(base64);
+  let len = binary_string.length;
+  let bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary_string.charCodeAt(i);
+  }
+  return bytes.buffer;
+};
+
+export const base64ToJwk = (base64: string) => {
+  const jwkString = window.atob(base64); // decode the base64 back to a string
+  const jwk = JSON.parse(jwkString);
+  return jwk;
+};
+
+export const importKey = async (
+  keyString: string,
+  isSymKey?: boolean,
+  isPubKey?: boolean
+) => {
+  const keyJwk = JSON.parse(keyString);
+  const algorithm = isSymKey ? symKeyAlgorithm : keyAlgorithm;
+  const key_ops = isSymKey
+    ? ["encrypt", "decrypt"]
+    : isPubKey
+    ? ["encrypt"]
+    : ["decrypt"];
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const key = await subtle.importKey("jwk", keyJwk, algorithm, true, key_ops);
+  return key;
+};
+
+export const getOrCreateUserTempKey = async (user: string) => {
+  const attribute = `${TEMP_KEY}_${user}`;
+  const userTempKey = getUserTempKey(user);
+
+  if (userTempKey) {
+    return userTempKey;
+  } else {
+    // generate a new key
+    const { publicKey, privateKey } = await generateKey();
+    // store the public key in the database
+    const serializedPubKey = await exportKey(publicKey);
+    const serializedPrivateKey = await exportKey(privateKey);
+    await updateCreatorKeyValue(
+      user,
+      ToBase64(serializedPubKey),
+      PUB_KEY,
+      true
+    );
+
+    // store the private key in localstorage
+    localStorage.setItem(attribute, ToBase64(serializedPrivateKey));
+    return privateKey;
+  }
+};
+
+export const getUserTempKey = (user: string) => {
+  const attribute = `${TEMP_KEY}_${user}`;
+  // see if the user has key stored in localstorage
+  const userTempKey = localStorage.getItem(attribute);
+  return userTempKey;
+};
+
+export const downloadBackupCode = async (signer: string) => {
+  if (!signer) return;
+  const code = getUserTempKey(signer);
+  convertToCSV([
+    {
+      code,
+    },
+  ]);
 };
