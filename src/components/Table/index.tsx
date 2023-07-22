@@ -190,7 +190,7 @@ export default function BasicTable({
           <TableBody>
             {contentLinks.map((row: IContentLink, index: number) => (
               <TableRow
-                key={`${row.title}_${index}`}
+                key={`${row.title}_${index}_${row.decryptedContent}`}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
