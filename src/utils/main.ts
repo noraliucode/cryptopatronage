@@ -1,26 +1,22 @@
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import {
   DECIMALS,
-  USER_PAYMENT,
   RESERVED_AMOUNT,
   ZERO_BAL,
   SUPPORTERS,
   PULL_HISTORY,
   TRIAL_PERIOD_BLOCK_TIME,
-  TEMP_KEY,
   Links,
 } from "./constants";
 import {
   ToBase64,
   arrayBufferToBase64,
   base64ToArrayBuffer,
-  base64ToJwk,
   calculateExpiryTimestamp,
   decodeBase64,
   decrypt,
   encrypt,
   exportKey,
-  generateKey,
   getOrCreateUserTempKey,
   getPaymentAmount,
   getUserTempKey,
@@ -699,11 +695,16 @@ const getSupporterLinkInfo = async (supporters: string[], symKey: string) => {
     )
   );
 
-  const supportersInfo = _supporters.map((supporter, index) => ({
-    address: supporter,
-    encryptedSymKey: arrayBufferToBase64(encryptedSymKeys[index]),
-    pubKey: data[supporter].pubKey,
-  }));
+  const supportersInfo = _supporters.map((supporter, index) => {
+    const encryptedSymKey = encryptedSymKeys[index];
+    if (encryptedSymKey) {
+      return {
+        address: supporter,
+        encryptedSymKey: arrayBufferToBase64(encryptedSymKeys[index]),
+        pubKey: data[supporter].pubKey,
+      };
+    }
+  });
 
   return supportersInfo;
 };
@@ -723,7 +724,8 @@ const getCreatorLinkInfo = async (
   const _allInfos = await getSupporterLinkInfo(allInfos, symKeyString);
 
   _allInfos.forEach((info) => {
-    keys[info.pubKey] = info.encryptedSymKey;
+    if (!info) return;
+    keys[info.address] = info.encryptedSymKey;
   });
   const { encryptedContent, iv } = await symEncrypt(link, symKey);
 
@@ -813,32 +815,40 @@ export const getCreatorContentLinks = async (
   );
 
   links.forEach((link: IContentLinkDatabase) => {
+    _data = {
+      ..._data,
+      title: link.title,
+      encryptedContent: link.content,
+      date: link.date,
+      iv: link.keys.iv,
+    };
+
     for (let key in link.keys) {
-      if (key !== "iv" && key === data[creator].pubKey) {
+      console.log("key", key);
+      if (key === signer) {
         _data = {
           ..._data,
           encryptedSymKey: link.keys[key],
-          title: link.title,
-          encryptedContent: link.content,
-          date: link.date,
-          iv: link.keys.iv,
         };
-        _links.push(_data);
       }
     }
+
+    _links.push(_data);
   });
 
   let decryptedContents = [] as any;
   let decryptedSymKeys = [] as any;
   try {
     // decrypt all sym keys
+
     decryptedSymKeys = await Promise.all(
-      _links.map((link: IContentLink) =>
-        decrypt(
-          base64ToArrayBuffer(link.encryptedSymKey),
-          importedAsymPrivateKey
-        )
-      )
+      _links.map((link: IContentLink) => {
+        const bufferArrayEncryptedSymKey = base64ToArrayBuffer(
+          link.encryptedSymKey
+        );
+        if (!bufferArrayEncryptedSymKey) return null;
+        return decrypt(bufferArrayEncryptedSymKey, importedAsymPrivateKey);
+      })
     );
 
     const importedSymKeys = await Promise.all(
@@ -852,9 +862,12 @@ export const getCreatorContentLinks = async (
     decryptedContents = await Promise.all(
       _links.map((link: IContentLink, index: number) => {
         const importedSymKey = importedSymKeys[index];
-        if (!importedSymKey) return null;
+        const arrayBufferEncryptedContent = base64ToArrayBuffer(
+          link.encryptedContent
+        );
+        if (!importedSymKey || !arrayBufferEncryptedContent) return null;
         return symDecrypt(
-          base64ToArrayBuffer(link.encryptedContent),
+          arrayBufferEncryptedContent,
           importedSymKey,
           base64ToArrayBuffer(link.iv) as any
         );

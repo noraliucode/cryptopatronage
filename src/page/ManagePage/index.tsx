@@ -1,6 +1,6 @@
 import { Box, Tooltip, CircularProgress, Grid } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import {
   clearIdentity,
@@ -21,28 +21,21 @@ import {
   Personal_Info,
   Unregister,
 } from "../../utils/constants";
-import { convertToCSV, formatUnit, validateUrls } from "../../utils/helpers";
+import { formatUnit, validateUrls } from "../../utils/helpers";
 import Snackbar from "@mui/material/Snackbar";
-import {
-  IContent,
-  ISupporter,
-  IWeb3ConnectedContextState,
-} from "../../utils/types";
+import { ISupporter, IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useIdentity } from "../../hooks/useIdentity";
 import { useSupporters } from "../../hooks/useSupporters";
-import { PaymentSystem } from "../../components/PaymentSystem";
 import { Modal } from "../../components/Modal";
 import { Supporter } from "../../components/Supporter";
 import { useApi } from "../../hooks/useApi";
-import { HintText } from "../../components/SubscribeModal";
 import RateForm from "../../components/CreatorInfoForms/RateForm";
 import ImageForm from "../../components/CreatorInfoForms/ImageForm";
 import IdentityForm from "../../components/CreatorInfoForms/IdentityForm";
 import BasicTable from "../../components/Table";
 import { useTranslation } from "react-i18next";
 import ConnectButton from "../../components/ConnectButton";
-import { usePullPaymentHistory } from "../../hooks/usePullPaymentHistory";
 import ContentLinkSection from "./ContentLinkSection";
 import { useContentLinks } from "../../hooks/useContentLinks";
 
@@ -177,8 +170,6 @@ type IState = {
   isCicked: boolean;
   isClearIdentityModalOpen: boolean;
   isUsd: boolean;
-  contentTitle: string;
-  contentLink: string;
 };
 
 export const Manage = () => {
@@ -224,8 +215,6 @@ export const Manage = () => {
     isCicked,
     isClearIdentityModalOpen,
     isUsd,
-    contentTitle,
-    contentLink,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -248,8 +237,6 @@ export const Manage = () => {
 
   const { api } = useApi(network);
   const { t } = useTranslation();
-  const { pullPaymentHistory, loading: isHistoryLoading } =
-    usePullPaymentHistory(signer?.address, network);
 
   const {
     links,
@@ -517,7 +504,7 @@ export const Manage = () => {
     }));
   };
 
-  const _publishLink = (link: string, title: string) => {
+  const _publishLink = (link: string, title: string, callback: () => void) => {
     setState((prev) => ({
       ...prev,
       message: "Publishing link...",
@@ -526,33 +513,18 @@ export const Manage = () => {
 
     if (!signer) return;
     const supporters = [...committedSupporters, ...uncommittedSupporters];
-    const callback = async () => {
+    const _callback = async () => {
       await getContentLinks();
       setLoading(false);
-      updateContent({
-        contentTitle: "",
-        contentLink: "",
-      });
+      callback();
     };
     publishLink(
       signer.address,
       link,
       title,
       supporters.map((supporter) => supporter.address),
-      callback
+      _callback
     );
-  };
-
-  const _convertToCSV = () => {
-    convertToCSV(pullPaymentHistory);
-  };
-
-  const updateContent = ({ contentTitle, contentLink }: IContent) => {
-    setState((prev) => ({
-      ...prev,
-      contentTitle,
-      contentLink,
-    }));
   };
 
   const isSetRateDisabled = !rate || rate === 0;
@@ -796,9 +768,7 @@ export const Manage = () => {
               hasSupporter={hasSupporter}
               links={links}
               loading={isLinksLoading}
-              updateContent={updateContent}
-              title={contentTitle}
-              link={contentLink}
+              getContentLinks={getContentLinks}
             />
             {/* TODO: add payment system */}
             {/* <>

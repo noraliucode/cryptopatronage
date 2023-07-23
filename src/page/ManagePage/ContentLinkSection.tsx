@@ -8,23 +8,18 @@ import {
   Content,
   Text,
 } from "../../page/ManagePage";
-import { IContent, IContentLinks, INetwork } from "../../utils/types";
+import { IContentLinks } from "../../utils/types";
 import BasicTable from "../../components/Table";
-import {
-  convertToCSV,
-  downloadBackupCode,
-  getUserTempKey,
-} from "../../utils/helpers";
+import { downloadBackupCode, importBackupCode } from "../../utils/helpers";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
+import { useState } from "react";
 
 type IProps = {
-  publishLink: (link: string, title: string) => void;
+  publishLink: (link: string, title: string, callback: () => void) => void;
   hasSupporter: boolean;
   links: IContentLinks;
   loading: boolean;
-  updateContent: (_: IContent) => void;
-  title: string;
-  link: string;
+  getContentLinks: () => void;
 };
 
 const ContentLinkSection = ({
@@ -32,18 +27,18 @@ const ContentLinkSection = ({
   hasSupporter,
   links,
   loading,
-  updateContent,
-  title,
-  link,
+  getContentLinks,
 }: IProps) => {
+  const [state, setState] = useState({
+    title: "",
+    link: "",
+  });
   const setStateValue = (key: string, value: string) => {
-    const contentTitle = key === "title" ? value : title;
-    const contentLink = key === "link" ? value : link;
-
-    updateContent({ contentTitle, contentLink });
+    setState({ ...state, [key]: value });
   };
 
   const { signer, network } = useWeb3ConnectedContext();
+  const { title, link } = state;
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -53,6 +48,10 @@ const ContentLinkSection = ({
   const _downloadBackupCode = async () => {
     if (!signer) return;
     downloadBackupCode(signer?.address);
+  };
+
+  const resetLinkInfo = () => {
+    setState({ ...state, title: "", link: "" });
   };
 
   return (
@@ -86,7 +85,7 @@ const ContentLinkSection = ({
         <InputWrapper>
           <Button
             variant="contained"
-            onClick={() => publishLink(link, title)}
+            onClick={() => publishLink(link, title, resetLinkInfo)}
             disabled={!hasSupporter}
           >
             Publish Content Link
@@ -108,6 +107,9 @@ const ContentLinkSection = ({
             downloadBackupCode={_downloadBackupCode}
             network={network}
             contentLinks={links}
+            importBackupCode={(e) =>
+              importBackupCode(e, signer?.address, getContentLinks)
+            }
           />
         ) : (
           <Content>

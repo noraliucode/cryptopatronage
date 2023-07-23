@@ -441,7 +441,11 @@ export const generateKey = async () => {
   return keyPair;
 };
 
-export const encrypt = async (message: string, publicKey: CryptoKey) => {
+export const encrypt = async (
+  message: string,
+  publicKey: CryptoKey | undefined
+) => {
+  if (!publicKey) return;
   const encodedMessage = new TextEncoder().encode(message);
   const encryptedMessage = await subtle.encrypt(
     encryptionAlgorithm,
@@ -453,9 +457,10 @@ export const encrypt = async (message: string, publicKey: CryptoKey) => {
 
 export const decrypt = async (
   encryptedMessage: BufferSource,
-  privateKey: CryptoKey
+  privateKey: CryptoKey | undefined
 ) => {
   try {
+    if (!privateKey) return;
     const decryptedMessage = await subtle.decrypt(
       encryptionAlgorithm,
       privateKey,
@@ -515,10 +520,17 @@ export const ToBase64 = (str: string) => {
 };
 
 export const decodeBase64 = (str: string) => {
-  return window.atob(str);
+  try {
+    return window.atob(str);
+  } catch (error) {
+    console.log("decodeBase64 error", error);
+    // TODO: for preventing unhandled promise rejection
+    return "";
+  }
 };
 
-export const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
+export const arrayBufferToBase64 = (buffer: ArrayBuffer | undefined) => {
+  if (!buffer) return;
   let binary = "";
   let bytes = new Uint8Array(buffer);
   let len = bytes.byteLength;
@@ -529,13 +541,17 @@ export const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
 };
 
 export const base64ToArrayBuffer = (base64: string) => {
-  let binary_string = window.atob(base64);
-  let len = binary_string.length;
-  let bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binary_string.charCodeAt(i);
+  try {
+    let binary_string = window.atob(base64);
+    let len = binary_string.length;
+    let bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binary_string.charCodeAt(i);
+    }
+    return bytes.buffer;
+  } catch (error) {
+    console.log("base64ToArrayBuffer error", error);
   }
-  return bytes.buffer;
 };
 
 export const base64ToJwk = (base64: string) => {
@@ -549,17 +565,22 @@ export const importKey = async (
   isSymKey?: boolean,
   isPubKey?: boolean
 ) => {
-  const keyJwk = JSON.parse(keyString);
-  const algorithm = isSymKey ? symKeyAlgorithm : keyAlgorithm;
-  const key_ops = isSymKey
-    ? ["encrypt", "decrypt"]
-    : isPubKey
-    ? ["encrypt"]
-    : ["decrypt"];
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const key = await subtle.importKey("jwk", keyJwk, algorithm, true, key_ops);
-  return key;
+  try {
+    if (!isJsonString(keyString)) return;
+    const keyJwk = JSON.parse(keyString);
+    const algorithm = isSymKey ? symKeyAlgorithm : keyAlgorithm;
+    const key_ops = isSymKey
+      ? ["encrypt", "decrypt"]
+      : isPubKey
+      ? ["encrypt"]
+      : ["decrypt"];
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const key = await subtle.importKey("jwk", keyJwk, algorithm, true, key_ops);
+    return key;
+  } catch (error) {
+    console.log("importKey error", error);
+  }
 };
 
 export const getOrCreateUserTempKey = async (user: string) => {
@@ -594,6 +615,10 @@ export const getUserTempKey = (user: string) => {
   return userTempKey;
 };
 
+export const getUserKeyName = (user: string) => {
+  return `${TEMP_KEY}_${user}`;
+};
+
 export const downloadBackupCode = async (signer: string) => {
   if (!signer) return;
   const code = getUserTempKey(signer);
@@ -602,4 +627,31 @@ export const downloadBackupCode = async (signer: string) => {
       code,
     },
   ]);
+};
+
+export const isJsonString = (str: string) => {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+};
+
+export const importBackupCode = async (
+  e: React.ChangeEvent<HTMLInputElement>,
+  user?: string,
+  callback?: () => void
+) => {
+  if (!e.target.files || !user) return;
+  const file = e.target.files[0];
+
+  Papa.parse(file, {
+    header: true,
+    complete: async (results) => {
+      const key = results.data[0] as { code: string };
+      await localStorage.setItem(getUserKeyName(user), key.code);
+      callback && (await callback());
+    },
+  });
 };
