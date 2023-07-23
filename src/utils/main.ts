@@ -1,26 +1,22 @@
 import { InjectedExtension } from "@polkadot/extension-inject/types";
 import {
   DECIMALS,
-  USER_PAYMENT,
   RESERVED_AMOUNT,
   ZERO_BAL,
   SUPPORTERS,
   PULL_HISTORY,
   TRIAL_PERIOD_BLOCK_TIME,
-  TEMP_KEY,
   Links,
 } from "./constants";
 import {
   ToBase64,
   arrayBufferToBase64,
   base64ToArrayBuffer,
-  base64ToJwk,
   calculateExpiryTimestamp,
   decodeBase64,
   decrypt,
   encrypt,
   exportKey,
-  generateKey,
   getOrCreateUserTempKey,
   getPaymentAmount,
   getUserTempKey,
