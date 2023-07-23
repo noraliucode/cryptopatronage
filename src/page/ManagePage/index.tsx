@@ -1,6 +1,6 @@
 import { Box, Tooltip, CircularProgress, Grid } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import {
   clearIdentity,
@@ -21,28 +21,21 @@ import {
   Personal_Info,
   Unregister,
 } from "../../utils/constants";
-import { convertToCSV, formatUnit, validateUrls } from "../../utils/helpers";
+import { formatUnit, validateUrls } from "../../utils/helpers";
 import Snackbar from "@mui/material/Snackbar";
-import {
-  IContent,
-  ISupporter,
-  IWeb3ConnectedContextState,
-} from "../../utils/types";
+import { ISupporter, IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useIdentity } from "../../hooks/useIdentity";
 import { useSupporters } from "../../hooks/useSupporters";
-import { PaymentSystem } from "../../components/PaymentSystem";
 import { Modal } from "../../components/Modal";
 import { Supporter } from "../../components/Supporter";
 import { useApi } from "../../hooks/useApi";
-import { HintText } from "../../components/SubscribeModal";
 import RateForm from "../../components/CreatorInfoForms/RateForm";
 import ImageForm from "../../components/CreatorInfoForms/ImageForm";
 import IdentityForm from "../../components/CreatorInfoForms/IdentityForm";
 import BasicTable from "../../components/Table";
 import { useTranslation } from "react-i18next";
 import ConnectButton from "../../components/ConnectButton";
-import { usePullPaymentHistory } from "../../hooks/usePullPaymentHistory";
 import ContentLinkSection from "./ContentLinkSection";
 import { useContentLinks } from "../../hooks/useContentLinks";
 
