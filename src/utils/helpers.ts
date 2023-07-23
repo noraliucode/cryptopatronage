@@ -520,7 +520,13 @@ export const ToBase64 = (str: string) => {
 };
 
 export const decodeBase64 = (str: string) => {
-  return window.atob(str);
+  try {
+    return window.atob(str);
+  } catch (error) {
+    console.log("decodeBase64 error", error);
+    // TODO: for preventing unhandled promise rejection
+    return "";
+  }
 };
 
 export const arrayBufferToBase64 = (buffer: ArrayBuffer | undefined) => {
@@ -609,6 +615,10 @@ export const getUserTempKey = (user: string) => {
   return userTempKey;
 };
 
+export const getUserKeyName = (user: string) => {
+  return `${TEMP_KEY}_${user}`;
+};
+
 export const downloadBackupCode = async (signer: string) => {
   if (!signer) return;
   const code = getUserTempKey(signer);
@@ -626,4 +636,22 @@ export const isJsonString = (str: string) => {
     return false;
   }
   return true;
+};
+
+export const importBackupCode = async (
+  e: React.ChangeEvent<HTMLInputElement>,
+  user?: string,
+  callback?: () => void
+) => {
+  if (!e.target.files || !user) return;
+  const file = e.target.files[0];
+
+  Papa.parse(file, {
+    header: true,
+    complete: async (results) => {
+      const key = results.data[0] as { code: string };
+      await localStorage.setItem(getUserKeyName(user), key.code);
+      callback && (await callback());
+    },
+  });
 };

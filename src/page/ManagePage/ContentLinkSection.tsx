@@ -10,7 +10,7 @@ import {
 } from "../../page/ManagePage";
 import { IContentLinks } from "../../utils/types";
 import BasicTable from "../../components/Table";
-import { downloadBackupCode } from "../../utils/helpers";
+import { downloadBackupCode, importBackupCode } from "../../utils/helpers";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useState } from "react";
 
@@ -19,6 +19,7 @@ type IProps = {
   hasSupporter: boolean;
   links: IContentLinks;
   loading: boolean;
+  getContentLinks: () => void;
 };
 
 const ContentLinkSection = ({
@@ -26,6 +27,7 @@ const ContentLinkSection = ({
   hasSupporter,
   links,
   loading,
+  getContentLinks,
 }: IProps) => {
   const [state, setState] = useState({
     title: "",
@@ -105,6 +107,9 @@ const ContentLinkSection = ({
             downloadBackupCode={_downloadBackupCode}
             network={network}
             contentLinks={links}
+            importBackupCode={(e) =>
+              importBackupCode(e, signer?.address, getContentLinks)
+            }
           />
         ) : (
           <Content>

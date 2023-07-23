@@ -768,6 +768,7 @@ export const Manage = () => {
               hasSupporter={hasSupporter}
               links={links}
               loading={isLinksLoading}
+              getContentLinks={getContentLinks}
             />
             {/* TODO: add payment system */}
             {/* <>

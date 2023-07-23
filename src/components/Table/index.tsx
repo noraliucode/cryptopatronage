@@ -24,6 +24,7 @@ import {
 } from "../../utils/helpers";
 import { DECIMALS } from "../../utils/constants";
 import { InputWrapper, Text } from "../../page/ManagePage";
+import ImportButton from "./ImportButton";
 
 export const LinkText = styled("div")(() => ({
   color: "#29b6f6",
@@ -37,6 +38,7 @@ export default function BasicTable({
   contentLinks,
   pull,
   downloadBackupCode,
+  importBackupCode,
 }: {
   network: INetwork;
   committedSupporters?: ISupporter[];
@@ -45,6 +47,7 @@ export default function BasicTable({
   contentLinks?: IContentLinks;
   pull?: (isCommitted: boolean, supporter?: ISupporter) => void;
   downloadBackupCode?: () => void;
+  importBackupCode?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   if (committedSupporters) {
     return (
@@ -223,6 +226,7 @@ export default function BasicTable({
             Export backup code
           </Button>
         </InputWrapper>
+        <ImportButton importBackupCode={importBackupCode} />
       </TableContainer>
     );
   }

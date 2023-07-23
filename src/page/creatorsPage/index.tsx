@@ -17,7 +17,7 @@ import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
 import { usePureProxy } from "../../hooks/usePureProxy";
 import ContentLinkTable from "../../components/ContentLinkTable";
 import BasicTable from "../../components/Table";
-import { downloadBackupCode } from "../../utils/helpers";
+import { downloadBackupCode, importBackupCode } from "../../utils/helpers";
 import { useContentLinks } from "../../hooks/useContentLinks";
 import { Content, LoadingContainer, Text } from "../ManagePage";
 
@@ -92,7 +92,11 @@ export const CreatorsPage = () => {
     userPureProxy
   );
   const { tokenUsdPrice } = useTokenUsdPrice(network);
-  const { links, loading: isContentLoading } = useContentLinks(address);
+  const {
+    links,
+    loading: isContentLoading,
+    getContentLinks,
+  } = useContentLinks(address);
 
   const getIsSubscriber = (creator: string | undefined) => {
     if (!creator) return false;
@@ -247,6 +251,9 @@ export const CreatorsPage = () => {
                   downloadBackupCode={_downloadBackupCode}
                   network={network}
                   contentLinks={links}
+                  importBackupCode={(e) =>
+                    importBackupCode(e, signer?.address, getContentLinks)
+                  }
                 />
               ) : (
                 <></>
