@@ -8,13 +8,9 @@ import {
   Content,
   Text,
 } from "../../page/ManagePage";
-import { IContent, IContentLinks, INetwork } from "../../utils/types";
+import { IContentLinks } from "../../utils/types";
 import BasicTable from "../../components/Table";
-import {
-  convertToCSV,
-  downloadBackupCode,
-  getUserTempKey,
-} from "../../utils/helpers";
+import { downloadBackupCode } from "../../utils/helpers";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { useState } from "react";
 
