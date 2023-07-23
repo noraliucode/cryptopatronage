@@ -177,8 +177,6 @@ type IState = {
   isCicked: boolean;
   isClearIdentityModalOpen: boolean;
   isUsd: boolean;
-  contentTitle: string;
-  contentLink: string;
 };
 
 export const Manage = () => {
@@ -224,8 +222,6 @@ export const Manage = () => {
     isCicked,
     isClearIdentityModalOpen,
     isUsd,
-    contentTitle,
-    contentLink,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -248,8 +244,6 @@ export const Manage = () => {
 
   const { api } = useApi(network);
   const { t } = useTranslation();
-  const { pullPaymentHistory, loading: isHistoryLoading } =
-    usePullPaymentHistory(signer?.address, network);
 
   const {
     links,
@@ -538,10 +532,6 @@ export const Manage = () => {
       supporters.map((supporter) => supporter.address),
       _callback
     );
-  };
-
-  const _convertToCSV = () => {
-    convertToCSV(pullPaymentHistory);
   };
 
   const isSetRateDisabled = !rate || rate === 0;
