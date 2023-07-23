@@ -517,7 +517,7 @@ export const Manage = () => {
     }));
   };
 
-  const _publishLink = (link: string, title: string) => {
+  const _publishLink = (link: string, title: string, callback: () => void) => {
     setState((prev) => ({
       ...prev,
       message: "Publishing link...",
@@ -526,33 +526,22 @@ export const Manage = () => {
 
     if (!signer) return;
     const supporters = [...committedSupporters, ...uncommittedSupporters];
-    const callback = async () => {
+    const _callback = async () => {
       await getContentLinks();
       setLoading(false);
-      updateContent({
-        contentTitle: "",
-        contentLink: "",
-      });
+      callback();
     };
     publishLink(
       signer.address,
       link,
       title,
       supporters.map((supporter) => supporter.address),
-      callback
+      _callback
     );
   };
 
   const _convertToCSV = () => {
     convertToCSV(pullPaymentHistory);
-  };
-
-  const updateContent = ({ contentTitle, contentLink }: IContent) => {
-    setState((prev) => ({
-      ...prev,
-      contentTitle,
-      contentLink,
-    }));
   };
 
   const isSetRateDisabled = !rate || rate === 0;
@@ -796,9 +785,6 @@ export const Manage = () => {
               hasSupporter={hasSupporter}
               links={links}
               loading={isLinksLoading}
-              updateContent={updateContent}
-              title={contentTitle}
-              link={contentLink}
             />
             {/* TODO: add payment system */}
             {/* <>
