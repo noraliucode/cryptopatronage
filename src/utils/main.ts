@@ -824,7 +824,6 @@ export const getCreatorContentLinks = async (
     };
 
     for (let key in link.keys) {
-      console.log("key", key);
       if (key === signer) {
         _data = {
           ..._data,
