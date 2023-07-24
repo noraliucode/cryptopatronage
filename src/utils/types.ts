@@ -190,3 +190,9 @@ export interface IContentLinkDatabase {
 }
 
 export type IContent = { contentTitle: string; contentLink: string };
+
+export type IAnnounce = {
+  isExecuted: boolean;
+  delegate: string;
+  real: string;
+};

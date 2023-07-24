@@ -7,6 +7,7 @@ import {
   PULL_HISTORY,
   TRIAL_PERIOD_BLOCK_TIME,
   Links,
+  ADMIN,
 } from "./constants";
 import {
   ToBase64,
@@ -30,6 +31,7 @@ import {
 } from "./helpers";
 import {
   IAdditionalInfo,
+  IAnnounce,
   IContentLink,
   IContentLinkDatabase,
   Identity,
@@ -43,6 +45,7 @@ import { ApiPromise } from "@polkadot/api";
 import { APIService } from "../services/apiService";
 import JsonBinService from "../services/jsonBinService";
 import { compact } from "lodash";
+import { blake2AsHex } from "@polkadot/util-crypto";
 
 type AnonymousData = {
   pure: string;
@@ -128,17 +131,41 @@ export const subscribe = async (
       // const totalAmount =
       //   Math.ceil(Number(fee)) * 10 ** M_DECIMALS[NETWORK] + amount + reserved;
 
-      const transferCall = apiService.transfer(real, amount + reserved);
-      const proxyCall = apiService.addProxyViaProxy(creator, real, delay);
+      const transferCall = apiService.getTransferSubmittable(
+        real,
+        amount + reserved
+      );
+      const proxyCall = apiService.getAddProxyViaProxySubmittable(
+        creator,
+        real,
+        delay
+      );
       let callHash;
 
       let txs;
 
       console.log("set creator as main proxy...");
       if (isDelayed) {
-        callHash = api.createType("Call", transferCall).hash.toHex() as any;
-        const announceCall = apiService.getAnnouncePromise(real, callHash);
-        txs = [proxyCall, announceCall];
+        console.log("isDelayed...");
+
+        // Get the call hash
+        const callHash = blake2AsHex(transferCall.toU8a());
+
+        const announceCall = apiService.getAnnounceSubmittable(real, callHash);
+        // give permission to the admin for the call to be executed later
+        console.log("set admin as proxy...");
+        const addAdminToProxy = apiService.getAddProxyViaProxySubmittable(
+          ADMIN,
+          real
+        );
+        txs = [proxyCall, announceCall, addAdminToProxy];
+
+        // add announce call to database for it to be executed later
+        await addAnnounce({
+          isExecuted: false,
+          real,
+          delegate: ADMIN,
+        });
       } else {
         const promises = [transferCall, proxyCall];
         txs = await Promise.all(promises);
@@ -884,4 +911,12 @@ export const getCreatorContentLinks = async (
   }));
 
   return _links;
+};
+
+export const addAnnounce = async (data: IAnnounce) => {
+  const result = await readJsonBin();
+  const announce = result["announce"];
+
+  const announceData = { ...announce, ...data };
+  await updateJsonBin({ ...result, announce: announceData });
 };

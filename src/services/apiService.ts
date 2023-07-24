@@ -62,6 +62,10 @@ class APIService {
     return this.api.tx.balances.transfer(receiver, amount);
   };
 
+  getTransferSubmittable = (receiver: string, amount: number) => {
+    return this.api.tx.balances.transfer(receiver, amount);
+  };
+
   getTransferFee = async (receiver: string, amount: number, sender: string) => {
     const info = await this.api.tx.balances
       .transfer(receiver, amount)
@@ -104,7 +108,11 @@ class APIService {
       .signAndSend(sender, { signer: injector.signer }, (status) => {});
   };
 
-  addProxyViaProxy = async (proxy: string, real?: string, delay = 0) => {
+  getAddProxyViaProxySubmittable = (
+    proxy: string,
+    real?: string,
+    delay = 0
+  ) => {
     return this.api.tx.proxy.proxy(
       real,
       null,
@@ -321,7 +329,7 @@ class APIService {
     });
   };
 
-  getAnnouncePromise = async (real: string, call_hash: H256) => {
+  getAnnounceSubmittable = (real: string, call_hash: `0x${string}`) => {
     return this.api.tx.proxy.announce(real, call_hash);
   };
 
