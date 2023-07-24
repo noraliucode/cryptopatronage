@@ -652,3 +652,10 @@ export const importBackupCode = async (
     },
   });
 };
+
+export const getTwitterUrl = (user: string) => {
+  if (user.startsWith("@")) {
+    return `https://twitter.com/${user}`;
+  }
+  return user;
+};

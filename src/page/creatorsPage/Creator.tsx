@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { DECIMALS, IMAGE_HEIGHT, SYMBOL } from "../../utils/constants";
-import { formatUnit, toShortAddress } from "../../utils/helpers";
+import { formatUnit, getTwitterUrl, toShortAddress } from "../../utils/helpers";
 import EmailIcon from "@mui/icons-material/Email";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import { ICreator, INetwork } from "../../utils/types";
@@ -152,7 +152,11 @@ const Creator: React.FC<Props> = ({
                 ) : null}
 
                 {creator.twitter ? (
-                  <a href={creator.twitter} target="_blank" rel="noreferrer">
+                  <a
+                    href={getTwitterUrl(creator.twitter)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <IconButton color="primary" aria-label="twitter icon">
                       <TwitterIcon />
                     </IconButton>
