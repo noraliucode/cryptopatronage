@@ -195,4 +195,5 @@ export type IAnnounce = {
   isExecuted: boolean;
   delegate: string;
   real: string;
+  delayUntil: number;
 };

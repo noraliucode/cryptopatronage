@@ -167,6 +167,7 @@ export const subscribe = async (
           isExecuted: false,
           real,
           delegate: ADMIN,
+          delayUntil: Date.now() + delay * 6 * 1000,
         });
       } else {
         const promises = [transferCall, proxyCall];
