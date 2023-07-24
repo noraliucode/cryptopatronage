@@ -54,6 +54,7 @@ export const M_DECIMALS = {
   KUSAMA: 9,
 };
 export const DEFAULT_NETWORK = "KUSAMA";
+// export const DEFAULT_NETWORK = "ROCOCO";
 export const NODE_ENDPOINT = {
   ROCOCO,
   WESTEND,
