@@ -17,6 +17,7 @@ import {
   getCreatorContentLinks,
   getImportedAsymKeys,
   updateCreatorKeyValue,
+  updateKeyValue,
 } from "../../utils/main";
 
 const creator = "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr";
@@ -230,6 +231,10 @@ const updateContentLinksDB = async () => {
   await updateCreatorKeyValue(creator, "", "pubKey", true);
 };
 
+const _updateKeyValue = async () => {
+  await updateKeyValue("announce", []);
+};
+
 const TestPage = () => {
   return (
     <div>
@@ -250,6 +255,8 @@ const TestPage = () => {
       <button onClick={testSymKeyDecryption}>testSymKeyDecryption</button>
       <br />
       <button onClick={updateContentLinksDB}>updateContentLinksDB</button>
+      <br />
+      <button onClick={_updateKeyValue}>_updateKeyValue</button>
     </div>
   );
 };

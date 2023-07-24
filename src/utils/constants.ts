@@ -32,6 +32,8 @@ export const PUB_KEY = "pubKey";
 // In one minute (60 seconds), there are 60/6 = 10 block times.
 // Trial period is usually 7 days.
 export const TRIAL_PERIOD_BLOCK_TIME = 10 * 60 * 24 * 7;
+export const TESTING_BLOCK_TIME = 10 * 5;
+export const ADMIN = "5ELQKe6xTcQRNVEmU8ZAkebUbvU2jFCtSMJJNP97LYhyN3sV";
 
 export const SUPPORTER = {
   ROCOCO: "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr",
@@ -52,6 +54,7 @@ export const M_DECIMALS = {
   KUSAMA: 9,
 };
 export const DEFAULT_NETWORK = "KUSAMA";
+// export const DEFAULT_NETWORK = "ROCOCO";
 export const NODE_ENDPOINT = {
   ROCOCO,
   WESTEND,
