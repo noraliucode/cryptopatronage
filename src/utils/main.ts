@@ -8,6 +8,7 @@ import {
   TRIAL_PERIOD_BLOCK_TIME,
   Links,
   ADMIN,
+  TESTING_BLOCK_TIME,
 } from "./constants";
 import {
   ToBase64,
@@ -79,6 +80,7 @@ export const subscribe = async (
     setLoading && setLoading(true);
     let real = sender;
     let delay = isDelayed ? TRIAL_PERIOD_BLOCK_TIME : 0;
+    // let delay = isDelayed ? TESTING_BLOCK_TIME : 0;
     const supporter = sender;
     // let delay = isDelayed ? 300 : 0; // for testing
     if (isCommitted) {
