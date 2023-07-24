@@ -152,15 +152,20 @@ const Creator: React.FC<Props> = ({
                 ) : null}
 
                 {creator.twitter ? (
-                  <a
-                    href={getTwitterUrl(creator.twitter)}
-                    target="_blank"
-                    rel="noreferrer"
+                  <IconButton
+                    color="primary"
+                    aria-label="twitter icon"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      window.open(
+                        getTwitterUrl(creator.twitter),
+                        "_blank",
+                        "noreferrer"
+                      );
+                    }}
                   >
-                    <IconButton color="primary" aria-label="twitter icon">
-                      <TwitterIcon />
-                    </IconButton>
-                  </a>
+                    <TwitterIcon />
+                  </IconButton>
                 ) : null}
 
                 {!creator.twitter && !creator.email ? <ExtraHeight /> : null}
