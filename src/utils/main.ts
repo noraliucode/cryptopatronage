@@ -710,6 +710,12 @@ export const updateCreatorKeyValue = async (
   await updateJsonBin({ ...result, [creator]: creatorData });
 };
 
+export const updateKeyValue = async (key: string, value: any) => {
+  const result = await readJsonBin();
+
+  await updateJsonBin({ ...result, [key]: value });
+};
+
 const getSupporterLinkInfo = async (supporters: string[], symKey: string) => {
   const data = await readJsonBin();
   const _supporters = compact(supporters) as any[];
