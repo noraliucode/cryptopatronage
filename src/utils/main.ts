@@ -925,6 +925,6 @@ export const addAnnounce = async (data: IAnnounce) => {
   const result = await readJsonBin();
   const announce = result["announce"];
 
-  const announceData = { ...announce, ...data };
+  const announceData = [...announce, data];
   await updateJsonBin({ ...result, announce: announceData });
 };
