@@ -284,13 +284,10 @@ export function isValidImageUrl(url: string): boolean {
   return imageExtensions.includes(urlExtension);
 }
 
-export function isTwitterProfileUrl(url: string): boolean {
-  const twitterProfilePattern = new RegExp(
-    "^(https?:\\/\\/)?(www\\.)?twitter\\.com\\/[A-Za-z0-9_]{1,15}$",
-    "i"
-  );
+export function isTwitterProfileUrl(username: string): boolean {
+  const twitterUsernamePattern = new RegExp("^@[A-Za-z0-9_]+$", "i");
 
-  return !!twitterProfilePattern.test(url);
+  return !!twitterUsernamePattern.test(username);
 }
 
 export function generateText(obj: { [key: string]: boolean }) {

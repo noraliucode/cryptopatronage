@@ -158,7 +158,7 @@ export const IDENTITY_LABELS = [DISPLAY_NAME, EMAIL, TWITTER, WEB];
 export const PLACEHOLDER: IPlaceHoper = {
   [DISPLAY_NAME]: "userName",
   [EMAIL]: "exampleUser@gmail.com",
-  [TWITTER]: "https://twitter.com/exampleUser",
+  [TWITTER]: "@userId",
   [WEB]: "https://www.example.com/",
 };
 export const Personal_Info = "Personal Info";
