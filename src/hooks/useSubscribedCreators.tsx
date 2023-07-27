@@ -58,16 +58,18 @@ export const useSubscribedCreators = (
       //   }
       // });
 
-      const identities = await apiService.getIdentities(
-        committedCreators.map((x: any) => x.address)
-      );
-      identities.map((x: any, index: number) => {
-        const essentialInfo = parseEssentialInfo(x.toHuman()?.info);
-        committedCreators[index] = {
-          ...committedCreators[index],
-          display: essentialInfo.display,
-        };
-      });
+      if (committedCreators) {
+        const identities = await apiService.getIdentities(
+          committedCreators.map((x: any) => x.address)
+        );
+        identities.map((x: any, index: number) => {
+          const essentialInfo = parseEssentialInfo(x.toHuman()?.info);
+          committedCreators[index] = {
+            ...committedCreators[index],
+            display: essentialInfo.display,
+          };
+        });
+      }
 
       setState((prev) => ({
         ...prev,

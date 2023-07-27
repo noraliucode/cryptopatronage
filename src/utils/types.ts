@@ -16,6 +16,8 @@ export type IProxyParsedSupporters = IProxyParsedSupporter[] | [];
 
 export type ICreatorProxyParsed = {
   creator: string;
+  // TODO: update ICreatorProxyParsed
+  address: string;
   pure?: string;
   display?: string;
 };
