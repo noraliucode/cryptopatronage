@@ -141,7 +141,7 @@ const SidebarList = (props: Props) => {
             return (
               <StyledLink
                 key={`${item.creator}_${index}`}
-                to={`/creators/${item.creator}`}
+                to={`/creators/${item.address}/?network=${network}`}
               >
                 <ListItem
                   key={item.creator}
