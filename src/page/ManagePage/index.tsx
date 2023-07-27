@@ -57,6 +57,11 @@ export const Text = styled("div")(({ theme }) => ({
   lineHeight: 2,
   color: theme.palette.text.primary,
 }));
+export const DisabledText = styled("div")(({ theme }) => ({
+  fontSize: 14,
+  lineHeight: 2,
+  color: theme.palette.text.disabled,
+}));
 export const CheckWrapper = styled("div")(() => ({
   cursor: "pointer",
   display: "flex",

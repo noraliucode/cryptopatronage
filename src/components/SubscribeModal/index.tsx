@@ -23,7 +23,7 @@ import { formatTimestamp, formatUnit } from "../../utils/helpers";
 import { subscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Modal } from "../Modal";
-import { CheckWrapper, Text } from "../../page/ManagePage";
+import { CheckWrapper, DisabledText, Text } from "../../page/ManagePage";
 import { useTranslation } from "react-i18next";
 import { AddToCalendarButton } from "add-to-calendar-button-react";
 import { usePureProxy } from "../../hooks/usePureProxy";
@@ -259,10 +259,12 @@ export const SubscribeModal = (props: IProps) => {
           </CheckWrapper>
           <CheckWrapper onClick={() => handleClick(IS_DELAYED)}>
             <Checkbox
-              disabled={!isCommitted}
-              checked={isCommitted && isDelayed}
+              disabled
+              checked={false}
+              // disabled={!isCommitted}
+              // checked={isCommitted && isDelayed}
             />
-            <Text>{t("subscribe_modal.text2")}</Text>
+            <DisabledText>{t("subscribe_modal.text2")}</DisabledText>
           </CheckWrapper>
           {!isCommitted && (
             <CheckWrapper onClick={handleNoFundsExclusiveClick}>
