@@ -144,7 +144,10 @@ const Creator: React.FC<Props> = ({
                   </Typography>
                 )}
                 {creator.email ? (
-                  <a href={`mailto:${creator.email}`}>
+                  <a
+                    href={`mailto:${creator.email}`}
+                    onClick={(event) => event.stopPropagation()}
+                  >
                     <IconButton color="primary" aria-label="email icon">
                       <EmailIcon />
                     </IconButton>
@@ -152,20 +155,16 @@ const Creator: React.FC<Props> = ({
                 ) : null}
 
                 {creator.twitter ? (
-                  <IconButton
-                    color="primary"
-                    aria-label="twitter icon"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      window.open(
-                        getTwitterUrl(creator.twitter),
-                        "_blank",
-                        "noreferrer"
-                      );
-                    }}
+                  <a
+                    href={getTwitterUrl(creator.twitter)}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(event) => event.stopPropagation()}
                   >
-                    <TwitterIcon />
-                  </IconButton>
+                    <IconButton color="primary" aria-label="twitter icon">
+                      <TwitterIcon />
+                    </IconButton>
+                  </a>
                 ) : null}
 
                 {!creator.twitter && !creator.email ? <ExtraHeight /> : null}
