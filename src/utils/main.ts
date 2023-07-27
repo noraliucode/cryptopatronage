@@ -9,6 +9,7 @@ import {
   Links,
   ADMIN,
   TESTING_BLOCK_TIME,
+  SUBSCRIBED_COMMITTED_CREATORS,
 } from "./constants";
 import {
   ToBase64,
@@ -193,7 +194,12 @@ export const subscribe = async (
           address: sender,
           subscribedTime: Date.now(),
           expiresOn: expiryDate,
+          network,
           pureProxy: isCommitted ? real : null,
+        };
+        const creatorInfo = {
+          address: creator,
+          network,
         };
         if (isDelayed) {
           supporterInfo = {
@@ -201,7 +207,13 @@ export const subscribe = async (
             callHash,
           };
         }
-        await updateCreatorKeyValue(creator, [supporterInfo], SUPPORTERS);
+        // TODO: update the databse twice for preventing concurrency issue
+        await updateCreatorKeyValue(creator, supporterInfo, SUPPORTERS);
+        await updateCreatorKeyValue(
+          supporter,
+          creatorInfo,
+          SUBSCRIBED_COMMITTED_CREATORS
+        );
       }
     } else {
       console.log("set creator as proxy...");

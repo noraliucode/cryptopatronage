@@ -147,6 +147,7 @@ export type ISupporter = {
   pureBalance?: number;
   supporterBalance?: number;
   callHash?: string;
+  network?: string;
 };
 
 export type ISupporters = ISupporter[] | [];
