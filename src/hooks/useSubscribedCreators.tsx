@@ -7,6 +7,7 @@ import {
   parseEssentialInfo,
 } from "../utils/helpers";
 import { INetwork, IProxyParsedCreators } from "../utils/types";
+import { getCreatorsForSuppporter } from "../utils/main";
 
 interface IState {
   committedCreators: IProxyParsedCreators;
@@ -30,13 +31,17 @@ export const useSubscribedCreators = (
       const apiService = new APIService(api);
       const supporterProxies: any = await apiService.getProxies();
 
+      // TODO: can be deleted later
+      // const { committedCreators, uncommittedCreators } =
+      //   getSubscribedCreatorsForSupporters(
+      //     supporter,
+      //     pureProxy,
+      //     supporterProxies,
+      //     network
+      //   );
+
       const { committedCreators, uncommittedCreators } =
-        getSubscribedCreatorsForSupporters(
-          supporter,
-          pureProxy,
-          supporterProxies,
-          network
-        );
+        await getCreatorsForSuppporter(supporter);
 
       // TODO: creators can pull payment anytime, so the balance is not necessarily greater than rate. The code below can be deleted later.
       // const balances = await apiService.getBalances(
@@ -54,7 +59,7 @@ export const useSubscribedCreators = (
       // });
 
       const identities = await apiService.getIdentities(
-        committedCreators.map((x: any) => x.creator)
+        committedCreators.map((x: any) => x.address)
       );
       identities.map((x: any, index: number) => {
         const essentialInfo = parseEssentialInfo(x.toHuman()?.info);

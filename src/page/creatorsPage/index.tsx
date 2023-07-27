@@ -102,13 +102,13 @@ export const CreatorsPage = () => {
     if (!creator) return false;
     let committedCreator;
     let uncommittedCreator;
-    if (committedCreators.length > 0) {
+    if (committedCreators?.length > 0) {
       committedCreator = committedCreators.find(
         (x) => x?.creator?.toLowerCase() === creator.toLowerCase()
       );
     }
 
-    if (uncommittedCreators.length > 0) {
+    if (uncommittedCreators?.length > 0) {
       uncommittedCreator = uncommittedCreators.find(
         (x) => x?.creator?.toLowerCase() === creator.toLowerCase()
       );

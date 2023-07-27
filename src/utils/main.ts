@@ -709,14 +709,17 @@ export const updateCreatorKeyValue = async (
   const result = await readJsonBin();
   const originalKeyValue = result[creator] ? result[creator][key] : null;
   let data;
-  if (originalKeyValue && !isOverwrite) {
-    data = {
-      [key]: [...originalKeyValue, value],
-    };
-  } else {
+
+  if (isOverwrite) {
     data = {
       [key]: value,
     };
+  } else {
+    data = originalKeyValue
+      ? {
+          [key]: [...originalKeyValue, value],
+        }
+      : { [key]: [value] };
   }
 
   const creatorData = { ...result[creator], ...data };
@@ -940,4 +943,12 @@ export const addAnnounce = async (data: IAnnounce) => {
 
   const announceData = [...announce, data];
   await updateJsonBin({ ...result, announce: announceData });
+};
+
+export const getCreatorsForSuppporter = async (suppporter = "") => {
+  const result = await readJsonBin();
+  const committedCreators = result[suppporter]?.subscribedCommittedCreators;
+  const uncommittedCreators = result[suppporter]?.subscribedCreators;
+
+  return { committedCreators, uncommittedCreators };
 };
