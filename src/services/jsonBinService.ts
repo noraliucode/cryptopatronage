@@ -1,9 +1,10 @@
-import Bottleneck from "bottleneck";
+// import Bottleneck from "bottleneck";
 import { API_URL } from "../utils/constants";
 
-const limiter = new Bottleneck({
-  minTime: 0, // 1 request per second
-});
+// TODO: limiter can be removed later
+// const limiter = new Bottleneck({
+//   minTime: 0, // 1 request per second
+// });
 class JsonBinService {
   updateData = async (jsonObject: any) => {
     try {
@@ -29,11 +30,9 @@ class JsonBinService {
 
   readData = async () => {
     try {
-      const response = await limiter.schedule(() =>
-        fetch(`${API_URL}/data`, {
-          method: "GET",
-        })
-      );
+      const response = await fetch(`${API_URL}/data`, {
+        method: "GET",
+      });
 
       if (!response.ok) {
         throw new Error(`readData HTTP error! status: ${response.status}`);
