@@ -683,7 +683,6 @@ const readJsonBin = async () => {
   try {
     let result = await jsonBinService.readData();
 
-    result = result.record;
     return result;
   } catch (error) {
     console.error("readJsonBin error", error);
