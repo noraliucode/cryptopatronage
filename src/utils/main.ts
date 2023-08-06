@@ -683,7 +683,8 @@ const readJsonBin = async () => {
   try {
     let result = await jsonBinService.readData();
 
-    return result;
+    // TODO: all data stored in index 0 for now in mongoDB
+    return result[0];
   } catch (error) {
     console.error("readJsonBin error", error);
   }
