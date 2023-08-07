@@ -1,22 +1,22 @@
-import Bottleneck from "bottleneck";
+// import Bottleneck from "bottleneck";
+import { API_URL } from "../utils/constants";
 
-const limiter = new Bottleneck({
-  minTime: 2000, // 1 request per second
-});
+// TODO: limiter can be removed later
+// const limiter = new Bottleneck({
+//   minTime: 0, // 1 request per second
+// });
 class JsonBinService {
   updateData = async (jsonObject: any) => {
     try {
-      const response = await fetch(
-        `https://api.jsonbin.io/v3/b/${process.env.REACT_APP_BIN_ID}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Master-Key": `${process.env.REACT_APP_BIN_SECRET_KEY}`,
-          },
-          body: JSON.stringify(jsonObject),
-        }
-      );
+      // TODO: id is hardcoded for now
+      const response = await fetch(`${API_URL}/data/64d088490fb1a7797dcca3e8`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+        },
+        body: JSON.stringify(jsonObject),
+      });
 
       if (!response.ok) {
         throw new Error(`updateData HTTP error! status: ${response.status}`);
@@ -31,14 +31,9 @@ class JsonBinService {
 
   readData = async () => {
     try {
-      const response = await limiter.schedule(() =>
-        fetch(`https://api.jsonbin.io/v3/b/${process.env.REACT_APP_BIN_ID}`, {
-          method: "GET",
-          headers: {
-            "X-Master-Key": `${process.env.REACT_APP_BIN_SECRET_KEY}`,
-          },
-        })
-      );
+      const response = await fetch(`${API_URL}/data`, {
+        method: "GET",
+      });
 
       if (!response.ok) {
         throw new Error(`readData HTTP error! status: ${response.status}`);

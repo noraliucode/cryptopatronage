@@ -672,7 +672,8 @@ export const unregister = async (
 export const updateJsonBin = async (data: any) => {
   const jsonBinService = new JsonBinService();
   try {
-    await jsonBinService.updateData(data);
+    // TODO: for mongodb, use { data: jsonObject } to update the data field
+    await jsonBinService.updateData({ data });
   } catch (error) {
     console.error("updateJsonBin error", error);
   }
@@ -683,8 +684,8 @@ const readJsonBin = async () => {
   try {
     let result = await jsonBinService.readData();
 
-    result = result.record;
-    return result;
+    // TODO: all data stored in index 0, key "data" for now in mongoDB
+    return result[0].data;
   } catch (error) {
     console.error("readJsonBin error", error);
   }

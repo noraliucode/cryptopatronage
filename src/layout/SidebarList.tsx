@@ -66,7 +66,7 @@ const SidebarList = (props: Props) => {
   };
 
   const isShowSubscribedCreators =
-    open && (committedCreators.length > 0 || uncommittedCreators.length > 0);
+    open && (committedCreators?.length > 0 || uncommittedCreators?.length > 0);
 
   const listItemButtonStyle = {
     minHeight: 48,

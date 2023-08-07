@@ -11,6 +11,7 @@ export const WESTEND = "wss://westend-rpc.polkadot.io";
 export const KUSAMA = "wss://kusama-rpc.polkadot.io";
 export const POLKADOT = "wss://rpc.polkadot.io";
 export const KABOCHA = "wss://kabocha.jelliedowl.net";
+export const API_URL = "https://patronage-api-6524b8be6cb2.herokuapp.com";
 
 export const SUPPORTER_LIST = "SUPPORTER_LIST";
 export const RATE = 1;
