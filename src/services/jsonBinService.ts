@@ -8,8 +8,9 @@ import { API_URL } from "../utils/constants";
 class JsonBinService {
   updateData = async (jsonObject: any) => {
     try {
-      const response = await fetch(`${API_URL}/data`, {
-        method: "POST",
+      // TODO: id is hardcoded for now
+      const response = await fetch(`${API_URL}/data/64d088490fb1a7797dcca3e8`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
