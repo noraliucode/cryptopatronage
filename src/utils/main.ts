@@ -629,13 +629,10 @@ export const clearIdentity = async (
   const apiService = new APIService(api);
   try {
     setLoading && setLoading(true);
-    await apiService.signAndSendSetIdentity(
-      null,
-      null,
-      sender,
-      injector,
-      callback
-    );
+    const _callback = () => {
+      unregisterCreator(sender);
+    };
+    await apiService.clearIdentity(sender, injector, _callback);
   } catch (error) {
     callback && callback();
     console.log("clearIdentity error", error);
@@ -731,6 +728,13 @@ export const updateKeyValue = async (key: string, value: any) => {
   const result = await readJsonBin();
 
   await updateJsonBin({ ...result, [key]: value });
+};
+
+export const unregisterCreator = async (key: string) => {
+  const result = await readJsonBin();
+  const creator = result[key];
+  const UnregisteredCreator = removeKeys(creator, ["supporters", "links"]);
+  await updateJsonBin({ ...result, [key]: UnregisteredCreator });
 };
 
 const getSupporterLinkInfo = async (supporters: string[], symKey: string) => {
@@ -952,4 +956,17 @@ export const getCreatorsForSuppporter = async (suppporter = "") => {
   const uncommittedCreators = result[suppporter]?.subscribedCreators;
 
   return { committedCreators, uncommittedCreators };
+};
+
+export const removeKeys = async <T>(
+  obj: T,
+  keysToRemove: (keyof T)[]
+): Promise<Partial<T>> => {
+  const clonedObj = { ...obj };
+
+  for (const key of keysToRemove) {
+    delete clonedObj[key];
+  }
+
+  return clonedObj;
 };
