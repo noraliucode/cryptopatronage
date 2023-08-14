@@ -155,12 +155,10 @@ export default function Create() {
     }));
   };
 
-  const handleImageUrlInputChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const setImageUrl = (imgUrl: string) => {
     setState((prev) => ({
       ...prev,
-      imgUrl: event.target.value,
+      imgUrl,
     }));
   };
 
@@ -221,7 +219,7 @@ export default function Create() {
         imgUrl={imgUrl}
         checked={checked}
         handleChange={handleChange}
-        handleInputChange={handleImageUrlInputChange}
+        setImageUrl={setImageUrl}
       />
     );
   };

@@ -1,8 +1,9 @@
-import { Checkbox, styled, TextField } from "@mui/material";
+import { Checkbox, styled } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { IHandleChange, IHandleCheck } from "../../utils/types";
-import { Title, TitleWrapper, Wrapper, Text } from "../../page/ManagePage";
+import { IHandleCheck } from "../../utils/types";
+import { Title, TitleWrapper, Text } from "../../page/ManagePage";
+import UploadImage from "../UploadImage";
 
 export const Container = styled("div")(() => ({
   display: "flex",
@@ -15,30 +16,17 @@ type IProps = {
   imgUrl: string;
   checked: boolean;
   handleChange: IHandleCheck;
-  handleInputChange: IHandleChange;
+  setImageUrl: (_: string) => void;
 };
 
-const ImageForm = ({
-  imgUrl,
-  checked,
-  handleChange,
-  handleInputChange,
-}: IProps) => {
+const ImageForm = ({ imgUrl, checked, handleChange, setImageUrl }: IProps) => {
   const { t } = useTranslation();
   return (
     <>
       <TitleWrapper>
         <Title>{t("manage.Add Image (Optional)")}</Title>
       </TitleWrapper>
-      <TextField
-        fullWidth
-        value={imgUrl}
-        id="standard-basic"
-        label="Image Url"
-        variant="standard"
-        placeholder={"https://www.example.com/image.png"}
-        onChange={handleInputChange}
-      />
+      <UploadImage setImageUrl={setImageUrl} />
       <Container>
         <Checkbox
           checked={checked}
