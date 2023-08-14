@@ -4,6 +4,7 @@ import { APIService } from "../services/apiService";
 import { NODE_ENDPOINT } from "../utils/constants";
 import {
   getSubscribedCreatorsForSupporters,
+  parseAdditionalInfo,
   parseEssentialInfo,
 } from "../utils/helpers";
 import { INetwork, IProxyParsedCreators } from "../utils/types";
@@ -64,9 +65,12 @@ export const useSubscribedCreators = (
         );
         identities.map((x: any, index: number) => {
           const essentialInfo = parseEssentialInfo(x.toHuman()?.info);
+          const identity = parseAdditionalInfo(x);
+
           committedCreators[index] = {
             ...committedCreators[index],
             display: essentialInfo.display,
+            imgUrl: identity.imgUrl,
           };
         });
       }

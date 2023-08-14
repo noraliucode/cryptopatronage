@@ -1,4 +1,10 @@
-import { Collapse, Divider, styled } from "@mui/material";
+import {
+  Collapse,
+  Divider,
+  styled,
+  ListItemAvatar,
+  Avatar,
+} from "@mui/material";
 import React from "react";
 import { MENU, SOCIAL_ITEMS, lngs } from "../utils/constants";
 import { stringShorten } from "@polkadot/util";
@@ -136,26 +142,28 @@ const SidebarList = (props: Props) => {
       {open && committedCreators && (
         <List>
           {committedCreators.map((item, index) => {
-            // const Icon = item.icon;
-
             return (
               <StyledLink
                 key={`${item.creator}_${index}`}
                 to={`/creators/${item.address}/?network=${network}`}
               >
-                <ListItem
-                  key={item.creator}
-                  disablePadding
-                  sx={{ display: "block" }}
-                >
+                <ListItem key={item.creator} disablePadding>
                   <ListItemButton
                     selected={selectedIndex === index}
                     onClick={(event) => handleListItemClick(event, index)}
                     sx={listItemButtonStyle}
                   >
-                    <ListItemIcon sx={listItemIconStyle}>
-                      {/* <Icon /> */}
-                    </ListItemIcon>
+                    <ListItemAvatar>
+                      <Avatar
+                        alt={item.display}
+                        src={
+                          item.imgUrl
+                            ? item.imgUrl
+                            : "/assets/images/default.webp"
+                        }
+                      />
+                    </ListItemAvatar>
+
                     <ListItemText
                       primary={item.display || stringShorten(item.creator, 5)}
                       sx={{ opacity: open ? 1 : 0 }}
