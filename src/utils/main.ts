@@ -539,7 +539,7 @@ export const getPullPaymentHistory = async (creator = "") => {
 
 export const updateInfo = async (
   api: ApiPromise | null,
-  idetity: Identity,
+  identity: Identity,
   updatedAdditionalInfo: IAdditionalInfo,
   sender: string,
   injector: any,
@@ -569,7 +569,7 @@ export const updateInfo = async (
       sender,
       injector,
       _callBack,
-      idetity
+      identity
     );
   } catch (error) {
     console.error("set identity error", error);
