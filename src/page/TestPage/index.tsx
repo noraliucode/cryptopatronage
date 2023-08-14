@@ -19,6 +19,7 @@ import {
   updateCreatorKeyValue,
   updateKeyValue,
 } from "../../utils/main";
+import UploadImage from "../../components/UploadImage";
 
 const creator = "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr";
 
@@ -257,6 +258,7 @@ const TestPage = () => {
       <button onClick={updateContentLinksDB}>updateContentLinksDB</button>
       <br />
       <button onClick={_updateKeyValue}>_updateKeyValue</button>
+      <UploadImage />
     </div>
   );
 };
