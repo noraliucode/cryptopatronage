@@ -235,7 +235,8 @@ class APIService {
     sender: string,
     injector: any,
     callback?: () => void,
-    updatedInfo?: Identity
+    updatedInfo?: Identity,
+    errorHandling?: (error: any) => void
   ) => {
     let _essentialInfo;
     if (essentialInfo) {
@@ -265,6 +266,7 @@ class APIService {
         })
         .catch((error) => {
           console.log("signAndSendSetIdentity error: ", error);
+          errorHandling && errorHandling(error.message);
           reject(error);
         });
     });

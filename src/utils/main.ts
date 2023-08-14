@@ -544,7 +544,8 @@ export const updateInfo = async (
   sender: string,
   injector: any,
   callback?: () => void,
-  setLoading?: (_: boolean) => void
+  setLoading?: (_: boolean) => void,
+  errorHandling?: (error: any) => void
 ) => {
   try {
     if (!api) return;
@@ -569,7 +570,8 @@ export const updateInfo = async (
       sender,
       injector,
       _callBack,
-      identity
+      identity,
+      errorHandling
     );
   } catch (error) {
     console.error("set identity error", error);

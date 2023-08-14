@@ -457,6 +457,14 @@ export const Manage = () => {
       isUsd,
     };
 
+    const errorHandling = (errorMessage: string) => {
+      setState((prev) => ({
+        ...prev,
+        isModalOpen: true,
+        title: errorMessage,
+      }));
+    };
+
     await updateInfo(
       api,
       identity,
@@ -464,7 +472,8 @@ export const Manage = () => {
       signer.address,
       injector,
       () => {},
-      setLoading
+      setLoading,
+      errorHandling
     );
   };
 
