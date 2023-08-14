@@ -374,6 +374,20 @@ class APIService {
   announce = async (real: string, call_hash: H256) => {
     return this.api.tx.proxy.announce(real, call_hash);
   };
+
+  clearIdentity = async (
+    sender: string,
+    injector: any,
+    callback?: () => void
+  ) => {
+    await this.api.tx.identity
+      .clearIdentity()
+      .signAndSend(sender, { signer: injector.signer }, (status) => {
+        if (status.isInBlock) {
+          callback && callback();
+        }
+      });
+  };
 }
 
 export { APIService };
