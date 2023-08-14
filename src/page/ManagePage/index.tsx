@@ -385,12 +385,10 @@ export const Manage = () => {
     }));
   };
 
-  const handleImageUrlInputChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const setImageUrl = (imgUrl: string) => {
     setState((prev) => ({
       ...prev,
-      imgUrl: event.target.value,
+      imgUrl,
     }));
   };
 
@@ -641,7 +639,7 @@ export const Manage = () => {
                         imgUrl={imgUrl}
                         checked={checked}
                         handleChange={handleCheck}
-                        handleInputChange={handleImageUrlInputChange}
+                        setImageUrl={setImageUrl}
                       />
                       <IdentityForm
                         display={display}
