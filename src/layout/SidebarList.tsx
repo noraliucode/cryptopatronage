@@ -139,7 +139,7 @@ const SidebarList = (props: Props) => {
           <SectionTitle>My Subscribtion</SectionTitle>
         </MarginLeftWrapper>
       )}
-      {open && committedCreators && (
+      {open && committedCreators?.length > 0 && (
         <List>
           {committedCreators.map((item, index) => {
             return (
@@ -165,7 +165,7 @@ const SidebarList = (props: Props) => {
                     </ListItemAvatar>
 
                     <ListItemText
-                      primary={item.display || stringShorten(item.creator, 5)}
+                      primary={item.display || stringShorten(item.address, 5)}
                       sx={{ opacity: open ? 1 : 0 }}
                     />
                   </ListItemButton>
