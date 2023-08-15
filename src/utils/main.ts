@@ -519,11 +519,11 @@ export const getSupportersForCreator = async (creator = "") => {
   const result = await readJsonBin();
   const supporters = result[creator].supporters;
 
-  const committedSupporters = supporters.filter(
+  const committedSupporters = supporters?.filter(
     (supporter: any) => supporter.pureProxy
   );
 
-  const uncommittedSupporters = supporters.filter(
+  const uncommittedSupporters = supporters?.filter(
     (supporter: any) => !supporter.pureProxy
   );
 
@@ -632,6 +632,7 @@ export const clearIdentity = async (
   try {
     setLoading && setLoading(true);
     const _callback = () => {
+      callback && callback();
       unregisterCreator(sender);
     };
     await apiService.clearIdentity(sender, injector, _callback);
