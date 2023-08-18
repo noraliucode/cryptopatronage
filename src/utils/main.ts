@@ -174,10 +174,11 @@ export const subscribe = async (
 
         // add announce call to database for it to be executed later
         await addAnnounce({
-          isExecuted: false,
+          isExecuted: false, // might not be needed
           real,
           delegate: ADMIN,
           delayUntil: Date.now() + delay * 6 * 1000,
+          callHash, // for corn job to check if the balance is enough
         });
       } else {
         const promises = [transferCall, proxyCall];
