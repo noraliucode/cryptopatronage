@@ -19,7 +19,11 @@ import {
   IS_DELAYED,
   SYMBOL,
 } from "../../utils/constants";
-import { formatTimestamp, formatUnit } from "../../utils/helpers";
+import {
+  formatTimestamp,
+  formatUnit,
+  getReserveAmount,
+} from "../../utils/helpers";
 import { subscribe } from "../../utils/main";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { Modal } from "../Modal";
@@ -284,12 +288,16 @@ export const SubscribeModal = (props: IProps) => {
   };
 
   const content = () => {
-    const total = Number(rate) + proxyDepositBase;
+    const total = Number(rate) * months + proxyDepositBase;
     return `Rate: ${formattedRate} ${
       SYMBOL[network]
-    } and desposits ${formatUnit(proxyDepositBase, DECIMALS[network])} ${
-      SYMBOL[network]
-    }, total transferable ${formatUnit(total, DECIMALS[network])} ${
+    } for ${months} months subscription, and desposits ${formatUnit(
+      proxyDepositBase,
+      DECIMALS[network]
+    )} ${SYMBOL[network]} total transferable ${formatUnit(
+      total,
+      DECIMALS[network]
+    )} ${
       SYMBOL[network]
     } is required for this process. Deposits are fees that will be refunded upon cancellation of the subscription.`;
   };

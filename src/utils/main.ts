@@ -22,6 +22,7 @@ import {
   exportKey,
   getOrCreateUserTempKey,
   getPaymentAmount,
+  getReserveAmount,
   getUserTempKey,
   importKey,
   parseAdditionalInfo,
@@ -83,17 +84,16 @@ export const subscribe = async (
     let delay = isDelayed ? TRIAL_PERIOD_BLOCK_TIME : 0;
     // let delay = isDelayed ? TESTING_BLOCK_TIME : 0;
     const supporter = sender;
+    const bal = (await apiService.getBalance(sender)).toString();
+    const proxyDepositBase: any = await apiService.getProxyDepositBase();
+    const formattedProxyDepositBase = removeComma(proxyDepositBase.toString());
     // let delay = isDelayed ? 300 : 0; // for testing
     if (isCommitted) {
       // check if the supporter has created pure proxy to the creator
       if (!pureProxy) {
         console.log("ceate anonymous proxy...");
-        const proxyDepositBase: any = await apiService.getProxyDepositBase();
-        const formattedProxyDepositBase = removeComma(
-          proxyDepositBase.toString()
-        );
-        const bal = (await apiService.getBalance(sender)).toString();
 
+        // proxyDepositBase is only for the first time creating proxy
         if (
           proxyDepositBase &&
           Number(bal) < Number(formattedProxyDepositBase)
@@ -125,7 +125,9 @@ export const subscribe = async (
         amount = rate * months;
       }
 
-      const reserved = RESERVED_AMOUNT * 10 ** DECIMALS[network];
+      const reserved = getReserveAmount(network);
+
+      const total = amount + reserved;
 
       // TODO: add total amount later to inform user
       // const fee = (await getTransferFee(anonymous, amount, sender)).split(
@@ -134,10 +136,17 @@ export const subscribe = async (
       // const totalAmount =
       //   Math.ceil(Number(fee)) * 10 ** M_DECIMALS[NETWORK] + amount + reserved;
 
-      const transferCall = apiService.getTransferSubmittable(
-        real,
-        amount + reserved
-      );
+      // TODO: preventing delay transfer failure. A better way to handle warnings is needed.
+      if (Number(bal) < Number(total)) {
+        setLoading && setLoading(false);
+        // TODO: extract fee calculation code block
+        return {
+          text: "Insufficient Balance",
+          proxyDepositBase: formattedProxyDepositBase,
+        };
+      }
+
+      const transferCall = apiService.getTransferSubmittable(real, total);
       const proxyCall = apiService.getAddProxyViaProxySubmittable(
         creator,
         real,
