@@ -10,12 +10,19 @@ import type {
 import {
   IContentLinkDatabase,
   ICreatorProxyParsed,
+  INetwork,
   IParsedProxies,
   IUrls,
 } from "./types";
 import config from "./ss58-registry.json";
 import Papa from "papaparse";
-import { PAYMENT_HISTORY, PUB_KEY, TEMP_KEY } from "./constants";
+import {
+  DECIMALS,
+  PAYMENT_HISTORY,
+  PUB_KEY,
+  RESERVED_AMOUNT,
+  TEMP_KEY,
+} from "./constants";
 import { updateCreatorKeyValue } from "./main";
 
 const crypto = window.crypto;
@@ -658,4 +665,10 @@ export const getTwitterUrl = (user: string) => {
     return `https://twitter.com/${user}`;
   }
   return user;
+};
+
+export const getReserveAmount = (network: INetwork) => {
+  const reserved = RESERVED_AMOUNT * 10 ** DECIMALS[network];
+
+  return reserved;
 };

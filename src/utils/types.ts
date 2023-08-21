@@ -5,6 +5,7 @@ import {
   InjectedAccountWithMeta,
 } from "@polkadot/extension-inject/types";
 import { ChangeEvent } from "react";
+import type { H256 } from "@polkadot/types/interfaces";
 
 export type IProxyParsedSupporter = {
   supporter?: string;
@@ -200,4 +201,6 @@ export type IAnnounce = {
   delegate: string;
   real: string;
   delayUntil: number;
+  callHash: `0x${string}`;
+  total: number;
 };
