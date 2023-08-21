@@ -178,7 +178,8 @@ export const subscribe = async (
           real,
           delegate: ADMIN,
           delayUntil: Date.now() + delay * 6 * 1000,
-          callHash, // for corn job to check if the balance is enough
+          callHash, // for corn job to verify if it's the same call
+          total, // for corn job to filter out the calls that balances are not enough
         });
       } else {
         const promises = [transferCall, proxyCall];

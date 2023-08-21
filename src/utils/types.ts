@@ -202,4 +202,5 @@ export type IAnnounce = {
   real: string;
   delayUntil: number;
   callHash: `0x${string}`;
+  total: number;
 };
