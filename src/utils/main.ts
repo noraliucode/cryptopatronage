@@ -46,7 +46,7 @@ import {
 import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
 import { APIService } from "../services/apiService";
-import DatabaseService from "../services/DatabaseService";
+import databaseService from "../services/databaseService";
 import { compact } from "lodash";
 import { blake2AsHex } from "@polkadot/util-crypto";
 
@@ -681,19 +681,19 @@ export const unregister = async (
 };
 
 export const updateJsonBin = async (data: any) => {
-  const _DatabaseService = new DatabaseService();
+  const _databaseService = new databaseService();
   try {
     // TODO: for mongodb, use { data: jsonObject } to update the data field
-    await _DatabaseService.updateData({ data });
+    await _databaseService.updateData({ data });
   } catch (error) {
     console.error("updateJsonBin error", error);
   }
 };
 
 const readJsonBin = async () => {
-  const _DatabaseService = new DatabaseService();
+  const _databaseService = new databaseService();
   try {
-    let result = await _DatabaseService.readData();
+    let result = await _databaseService.readData();
 
     // TODO: all data stored in index 0, key "data" for now in mongoDB
     return result[0].data;

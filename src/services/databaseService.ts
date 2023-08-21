@@ -5,7 +5,7 @@ import { API_URL } from "../utils/constants";
 // const limiter = new Bottleneck({
 //   minTime: 0, // 1 request per second
 // });
-class DatabaseService {
+class databaseService {
   updateData = async (jsonObject: any) => {
     try {
       // TODO: id is hardcoded for now
@@ -47,4 +47,4 @@ class DatabaseService {
   };
 }
 
-export default DatabaseService;
+export default databaseService;
