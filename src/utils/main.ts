@@ -146,7 +146,11 @@ export const subscribe = async (
         };
       }
 
-      const transferCall = apiService.getTransferSubmittable(real, total);
+      const transferCall = apiService.transferViaProxyPromise(
+        real,
+        real,
+        total
+      );
       let callHash;
 
       let txs;
