@@ -331,8 +331,12 @@ class APIService {
     });
   };
 
-  getAnnounceSubmittable = (real: string, call_hash: `0x${string}`) => {
-    return this.api.tx.proxy.announce(real, call_hash);
+  getAnnounceViaProxySubmittable = (real: string, call_hash: `0x${string}`) => {
+    return this.api.tx.proxy.proxy(
+      real,
+      null,
+      this.api.tx.proxy.announce(real, call_hash)
+    );
   };
 
   getNotePreimagePromise = async (bytes: Bytes) => {
