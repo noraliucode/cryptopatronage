@@ -19,6 +19,10 @@ import {
   updateCreatorKeyValue,
   updateKeyValue,
 } from "../../utils/main";
+import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import { NODE_ENDPOINT } from "../../utils/constants";
+import { blake2AsHex } from "@polkadot/util-crypto";
 
 const creator = "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr";
 
@@ -235,7 +239,28 @@ const _updateKeyValue = async () => {
   await updateKeyValue("announce", []);
 };
 
+const _testAnnounce = async (injector: any, signer: any) => {
+  try {
+    const pure = "5Ha9TDxYm5Le5Xp1zuPX7SN2hJP5y4iHgfhwkf4PDbbfZ7Zf";
+    const wsProvider = new WsProvider(NODE_ENDPOINT["ROCOCO"]);
+    const api = await ApiPromise.create({ provider: wsProvider });
+    const transferCall = api.tx.balances.transfer(pure, 1000000000000);
+    const callHash = blake2AsHex(transferCall.toU8a());
+    await api.tx.proxy
+      .announce(pure, callHash)
+      .signAndSend(signer, { signer: injector.signer }, (status) => {
+        if (status.isInBlock) {
+          // callback && callback();
+        }
+      });
+  } catch (error) {
+    console.log("testAnnounce error", error);
+  }
+};
+
 const TestPage = () => {
+  const { injector, signer }: any = useWeb3ConnectedContext();
+
   return (
     <div>
       <button onClick={_symGenerateKey}>generate symKey</button>
@@ -257,6 +282,10 @@ const TestPage = () => {
       <button onClick={updateContentLinksDB}>updateContentLinksDB</button>
       <br />
       <button onClick={_updateKeyValue}>_updateKeyValue</button>
+      <br />
+      <button onClick={() => _testAnnounce(injector, signer)}>
+        _testAnnounce
+      </button>
     </div>
   );
 };
