@@ -1,10 +1,5 @@
-// import Bottleneck from "bottleneck";
 import { API_URL } from "../utils/constants";
 
-// TODO: limiter can be removed later
-// const limiter = new Bottleneck({
-//   minTime: 0, // 1 request per second
-// });
 class DatabaseService {
   updateData = async (jsonObject: any) => {
     try {
