@@ -24,9 +24,9 @@ class DatabaseService {
     }
   };
 
-  readData = async () => {
+  readData = async (collections = "data") => {
     try {
-      const response = await fetch(`${API_URL}/data`, {
+      const response = await fetch(`${API_URL}/${collections}`, {
         method: "GET",
       });
 
@@ -35,6 +35,16 @@ class DatabaseService {
       }
 
       const data = await response.json();
+      return data;
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
+
+  getCreators = async () => {
+    try {
+      const data = await this.readData("creators");
+
       return data;
     } catch (error) {
       console.log("There was a network error:", error);

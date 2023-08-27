@@ -5,6 +5,7 @@ import { NODE_ENDPOINT } from "../utils/constants";
 import { parseAdditionalInfo, parseEssentialInfo } from "../utils/helpers";
 import { ICreator, INetwork } from "../utils/types";
 import * as _ from "lodash";
+import DatabaseService from "../services/databaseService";
 interface IState {
   creators: (ICreator | undefined)[] | null;
   loading: boolean;
@@ -27,6 +28,7 @@ export const useCreators = (
       const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
       const api = await ApiPromise.create({ provider: wsProvider });
       const apiService = new APIService(api);
+      const databaseService = new DatabaseService();
 
       let identidies = (await apiService.getAllRegisteredIdentities()) as any;
       identidies = identidies.map((identity: any) => {
@@ -61,6 +63,10 @@ export const useCreators = (
 
       // TODO: remove any
       let _creators = _.uniqBy(creators, "address") as any[];
+
+      // fetch creators from the database
+      const offChainCreators = await databaseService.getCreators();
+      _creators = [...creators, ...offChainCreators];
 
       _creators = _creators.filter(
         (creator) => creator.isSensitive === isShowSensitiveContent
