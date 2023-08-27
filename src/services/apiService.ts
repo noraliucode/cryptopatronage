@@ -62,10 +62,6 @@ class APIService {
     return this.api.tx.balances.transfer(receiver, amount);
   };
 
-  getTransferSubmittable = (receiver: string, amount: number) => {
-    return this.api.tx.balances.transfer(receiver, amount);
-  };
-
   getTransferFee = async (receiver: string, amount: number, sender: string) => {
     const info = await this.api.tx.balances
       .transfer(receiver, amount)
@@ -85,7 +81,7 @@ class APIService {
       .signAndSend(sender, { signer: injector.signer });
   };
 
-  transferViaProxyPromise = async (
+  transferViaProxyPromise = (
     real: string,
     receiver: string,
     amount: number
@@ -331,8 +327,12 @@ class APIService {
     });
   };
 
-  getAnnounceSubmittable = (real: string, call_hash: `0x${string}`) => {
-    return this.api.tx.proxy.announce(real, call_hash);
+  getAnnounceViaProxySubmittable = (real: string, call_hash: `0x${string}`) => {
+    return this.api.tx.proxy.proxy(
+      real,
+      null,
+      this.api.tx.proxy.announce(real, call_hash)
+    );
   };
 
   getNotePreimagePromise = async (bytes: Bytes) => {

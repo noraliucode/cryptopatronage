@@ -263,12 +263,14 @@ export const SubscribeModal = (props: IProps) => {
           </CheckWrapper>
           <CheckWrapper onClick={() => handleClick(IS_DELAYED)}>
             <Checkbox
-              disabled
-              checked={false}
-              // disabled={!isCommitted}
-              // checked={isCommitted && isDelayed}
+              disabled={!isCommitted}
+              checked={isCommitted && isDelayed}
             />
-            <DisabledText>{t("subscribe_modal.text2")}</DisabledText>
+            {!isCommitted ? (
+              <DisabledText>{t("subscribe_modal.text2")}</DisabledText>
+            ) : (
+              <Text>{t("subscribe_modal.text2")}</Text>
+            )}
           </CheckWrapper>
           {!isCommitted && (
             <CheckWrapper onClick={handleNoFundsExclusiveClick}>

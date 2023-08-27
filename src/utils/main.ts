@@ -146,11 +146,10 @@ export const subscribe = async (
         };
       }
 
-      const transferCall = apiService.getTransferSubmittable(real, total);
-      const proxyCall = apiService.getAddProxyViaProxySubmittable(
-        creator,
+      const transferCall = apiService.transferViaProxyPromise(
         real,
-        delay
+        real,
+        total
       );
       let callHash;
 
@@ -163,14 +162,17 @@ export const subscribe = async (
         // Get the call hash
         const callHash = blake2AsHex(transferCall.toU8a());
 
-        const announceCall = apiService.getAnnounceSubmittable(real, callHash);
+        const announceCall = apiService.getAnnounceViaProxySubmittable(
+          real,
+          callHash
+        );
         // give permission to the admin for the call to be executed later
         console.log("set admin as proxy...");
         const addAdminToProxy = apiService.getAddProxyViaProxySubmittable(
           ADMIN,
           real
         );
-        txs = [proxyCall, announceCall, addAdminToProxy];
+        txs = [announceCall, addAdminToProxy];
 
         // add announce call to database for it to be executed later
         await addAnnounce({
@@ -182,7 +184,7 @@ export const subscribe = async (
           total, // for corn job to filter out the calls that balances are not enough
         });
       } else {
-        const promises = [transferCall, proxyCall];
+        const promises = [transferCall];
         txs = await Promise.all(promises);
       }
 

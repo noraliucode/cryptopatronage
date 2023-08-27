@@ -19,6 +19,10 @@ import {
   updateCreatorKeyValue,
   updateKeyValue,
 } from "../../utils/main";
+import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import { NODE_ENDPOINT } from "../../utils/constants";
+import { blake2AsHex } from "@polkadot/util-crypto";
 
 const creator = "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr";
 
@@ -235,7 +239,56 @@ const _updateKeyValue = async () => {
   await updateKeyValue("announce", []);
 };
 
+const _testAnnounce = async (injector: any, signer: any) => {
+  // success call:
+  // https://rococo.subscan.io/extrinsic/0xce0341845d660835693c6b818650b8772ae86515e275a41be6db4b4f28edf3ca
+  try {
+    const pure = "5DcfXrJ2HvKUmr2zgLpS7sXkW9yPVxjpFRbzhAvVsHoo62bd";
+    const wsProvider = new WsProvider(NODE_ENDPOINT["ROCOCO"]);
+    const api = await ApiPromise.create({ provider: wsProvider });
+    const transferCall = api.tx.balances.transfer(pure, 1000000000000);
+    const callHash = blake2AsHex(transferCall.toU8a());
+    await api.tx.proxy
+      .announce(pure, callHash) // real: MultiAddress, call_hash: H256
+      .signAndSend(signer.address, { signer: injector.signer }, (status) => {
+        if (status.isInBlock) {
+          // callback && callback();
+        }
+      });
+  } catch (error) {
+    console.log("testAnnounce error", error);
+  }
+};
+
+const proxyAnnounced = async (injector: any, signer: any) => {
+  // operate sane call on polkadot official ui, got CannotLookup error
+  // got the same error after transfering some funds to the pure proxy account(can be found on explorer)
+  // add dispatchError to get to know the detail of the error
+  // https://polkadot.js.org/docs/api/cookbook/tx/
+  const pure = "5DcfXrJ2HvKUmr2zgLpS7sXkW9yPVxjpFRbzhAvVsHoo62bd";
+  const delegate = "5Eh87bNZd2AnPNA2Yo3UZAbcLXS2wvYTxari7mr6uk8UXxwy";
+  const wsProvider = new WsProvider(NODE_ENDPOINT["ROCOCO"]);
+  console.log("proxyAnnounce ");
+  console.log("signer", signer);
+
+  try {
+    const api = await ApiPromise.create({ provider: wsProvider });
+    const transferCall = api.tx.balances.transfer(pure, 1000000000000);
+    await api.tx.proxy
+      .proxyAnnounced(delegate, pure, "Any", transferCall)
+      .signAndSend(signer.address, { signer: injector.signer }, (status) => {
+        if (status.isInBlock) {
+          // callback && callback();
+        }
+      });
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
 const TestPage = () => {
+  const { injector, signer }: any = useWeb3ConnectedContext();
+
   return (
     <div>
       <button onClick={_symGenerateKey}>generate symKey</button>
@@ -257,6 +310,14 @@ const TestPage = () => {
       <button onClick={updateContentLinksDB}>updateContentLinksDB</button>
       <br />
       <button onClick={_updateKeyValue}>_updateKeyValue</button>
+      <br />
+      <button onClick={() => _testAnnounce(injector, signer)}>
+        _testAnnounce
+      </button>
+      <br />
+      <button onClick={() => proxyAnnounced(injector, signer)}>
+        proxyAnnounced
+      </button>
     </div>
   );
 };
