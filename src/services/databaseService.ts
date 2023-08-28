@@ -50,6 +50,50 @@ class DatabaseService {
       console.log("There was a network error:", error);
     }
   };
+
+  updateCreator = async (jsonObject: any, id: string) => {
+    try {
+      const response = await fetch(`${API_URL}/creators/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+        },
+        body: JSON.stringify(jsonObject),
+      });
+
+      if (!response.ok) {
+        throw new Error(`updateData HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("result", result);
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
+
+  createCreator = async (jsonObject: any) => {
+    try {
+      const response = await fetch(`${API_URL}/creators`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+        },
+        body: JSON.stringify(jsonObject),
+      });
+
+      if (!response.ok) {
+        throw new Error(`updateData HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("result", result);
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
 }
 
 export default DatabaseService;
