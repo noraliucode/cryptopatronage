@@ -4,11 +4,13 @@ import { ChangeEvent, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import {
   clearIdentity,
+  createCreatorOffChain,
   publishLink,
   pullPayment,
   toggleIsRegisterToPaymentSystem,
   unregister,
   updateInfo,
+  updateInfoOffChain,
 } from "../../utils/main";
 import {
   Clear_Identity,
@@ -39,6 +41,7 @@ import ConnectButton from "../../components/ConnectButton";
 import ContentLinkSection from "./ContentLinkSection";
 import { useContentLinks } from "../../hooks/useContentLinks";
 import { CreatorRegistrationModal } from "../../components/CreatorRegistrationModal";
+import DatabaseService from "../../services/databaseService";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,
@@ -547,6 +550,7 @@ export const Manage = () => {
   };
 
   const _updateInfo = async (isOnChain: boolean) => {
+    if (!injector || !signer) return;
     const identity = {
       email,
       twitter,
@@ -563,8 +567,6 @@ export const Manage = () => {
 
     if (isOnChain) {
       checkSigner();
-      if (!injector || !signer) return;
-
       showUpdateInfoMessage();
 
       await updateInfo(
@@ -578,7 +580,19 @@ export const Manage = () => {
         errorHandling
       );
     } else {
-      // TODO: update info off-chain
+      const data = {
+        ...identity,
+        ...additionalInfo,
+        address: signer.address,
+      };
+      if (isCreatorRegistered) {
+        // TODO: get id from the database
+        // TODO: remove any
+        const id = "00";
+        updateInfoOffChain(data as any, id);
+      } else {
+        createCreatorOffChain(data as any);
+      }
     }
   };
 

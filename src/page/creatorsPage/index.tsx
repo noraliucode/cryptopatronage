@@ -233,7 +233,10 @@ export const CreatorsPage = () => {
                       onCardClick={onCardClick}
                       onSubscribeClick={() => {
                         creator &&
-                          onSubscribeClick(creator?.address, creator?.rate);
+                          onSubscribeClick(
+                            creator?.address,
+                            creator?.rate as any
+                          ); // TODO: fix any
                       }}
                     />
                   ))}
