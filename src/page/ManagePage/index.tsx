@@ -409,7 +409,7 @@ export const Manage = () => {
     }));
   };
 
-  const validatingInfo = () => {
+  const validateInfo = () => {
     const result = validateUrls({
       web,
       img: imgUrl,
@@ -447,7 +447,7 @@ export const Manage = () => {
   };
 
   const _updateInfo = async (isOnchain: boolean) => {
-    validatingInfo();
+    validateInfo();
 
     const identity = {
       email,
