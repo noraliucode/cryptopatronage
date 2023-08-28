@@ -38,6 +38,7 @@ import { useTranslation } from "react-i18next";
 import ConnectButton from "../../components/ConnectButton";
 import ContentLinkSection from "./ContentLinkSection";
 import { useContentLinks } from "../../hooks/useContentLinks";
+import { CreatorRegistrationModal } from "../../components/CreatorRegistrationModal";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,
@@ -175,6 +176,7 @@ type IState = {
   isCicked: boolean;
   isClearIdentityModalOpen: boolean;
   isUsd: boolean;
+  isCreatorRegistrationModalOpen: boolean;
 };
 
 export const Manage = () => {
@@ -199,6 +201,7 @@ export const Manage = () => {
     isUsd: false,
     contentTitle: "",
     contentLink: "",
+    isCreatorRegistrationModalOpen: false,
   };
   const [state, setState] = useState<IState>(defaultState);
 
@@ -220,6 +223,7 @@ export const Manage = () => {
     isCicked,
     isClearIdentityModalOpen,
     isUsd,
+    isCreatorRegistrationModalOpen,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -405,9 +409,7 @@ export const Manage = () => {
     }));
   };
 
-  const _updateInfo = async () => {
-    checkSigner();
-    if (!injector || !signer) return;
+  const validatingInfo = () => {
     const result = validateUrls({
       web,
       img: imgUrl,
@@ -442,6 +444,10 @@ export const Manage = () => {
       ...prev,
       message: "Update Info...",
     }));
+  };
+
+  const _updateInfo = async (isOnchain: boolean) => {
+    validatingInfo();
 
     const identity = {
       email,
@@ -465,16 +471,21 @@ export const Manage = () => {
       }));
     };
 
-    await updateInfo(
-      api,
-      identity,
-      additionalInfo,
-      signer.address,
-      injector,
-      () => {},
-      setLoading,
-      errorHandling
-    );
+    if (isOnchain) {
+      checkSigner();
+      if (!injector || !signer) return;
+
+      await updateInfo(
+        api,
+        identity,
+        additionalInfo,
+        signer.address,
+        injector,
+        () => {},
+        setLoading,
+        errorHandling
+      );
+    }
   };
 
   const _clearIdentity = async () => {
@@ -539,6 +550,13 @@ export const Manage = () => {
     );
   };
 
+  const toggleRegistrationModal = (value: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      isCreatorRegistrationModalOpen: value,
+    }));
+  };
+
   const isSetRateDisabled = !rate || rate === 0;
   const isCreator = currentRate > 0;
   const isShowCommittedSupporters =
@@ -561,6 +579,11 @@ export const Manage = () => {
 
   return (
     <Root>
+      <CreatorRegistrationModal
+        open={isCreatorRegistrationModalOpen}
+        onClose={() => toggleRegistrationModal(false)}
+        updateInfo={(value: boolean) => _updateInfo(value)}
+      />
       <Modal
         open={isModalOpen}
         onClose={() =>
@@ -660,7 +683,10 @@ export const Manage = () => {
                       <Wrapper>
                         <ErrorMessage>{errorMessage}</ErrorMessage>
                         <InputWrapper>
-                          <Button onClick={_updateInfo} variant="contained">
+                          <Button
+                            onClick={() => toggleRegistrationModal(true)}
+                            variant="contained"
+                          >
                             Update Creator Info
                           </Button>
                         </InputWrapper>
