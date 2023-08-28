@@ -235,6 +235,7 @@ export const Manage = () => {
     additionalInfo,
     identity,
     loading: isInfoLoading,
+    isOnchained,
   } = useIdentity(signer?.address, network);
 
   const {
@@ -439,11 +440,6 @@ export const Manage = () => {
       reset();
       return;
     }
-
-    setState((prev) => ({
-      ...prev,
-      message: "Update Info...",
-    }));
   };
 
   const errorHandling = (errorMessage: string) => {
@@ -452,40 +448,6 @@ export const Manage = () => {
       isModalOpen: true,
       title: errorMessage,
     }));
-  };
-
-  const _updateInfo = async (isOnchain: boolean) => {
-    validateInfo();
-
-    const identity = {
-      email,
-      twitter,
-      display,
-      web,
-    };
-
-    const additionalInfo = {
-      imgUrl,
-      rate: rate * 10 ** DECIMALS[network],
-      isSensitive: checked,
-      isUsd,
-    };
-
-    if (isOnchain) {
-      checkSigner();
-      if (!injector || !signer) return;
-
-      await updateInfo(
-        api,
-        identity,
-        additionalInfo,
-        signer.address,
-        injector,
-        () => {},
-        setLoading,
-        errorHandling
-      );
-    }
   };
 
   const _clearIdentity = async () => {
@@ -557,6 +519,59 @@ export const Manage = () => {
     }));
   };
 
+  const showUpdateInfoMessage = () => {
+    setState((prev) => ({
+      ...prev,
+      message: "Update Info...",
+    }));
+  };
+
+  const onUpdateInfoClick = () => {
+    validateInfo();
+
+    if (isCreatorRegistered) {
+      _updateInfo(isOnchained);
+    } else {
+      toggleRegistrationModal(true);
+    }
+  };
+
+  const _updateInfo = async (isOnChain: boolean) => {
+    const identity = {
+      email,
+      twitter,
+      display,
+      web,
+    };
+
+    const additionalInfo = {
+      imgUrl,
+      rate: rate * 10 ** DECIMALS[network],
+      isSensitive: checked,
+      isUsd,
+    };
+
+    if (isOnChain) {
+      checkSigner();
+      if (!injector || !signer) return;
+
+      showUpdateInfoMessage();
+
+      await updateInfo(
+        api,
+        identity,
+        additionalInfo,
+        signer.address,
+        injector,
+        () => {},
+        setLoading,
+        errorHandling
+      );
+    } else {
+      // TODO: update info off-chain
+    }
+  };
+
   const isSetRateDisabled = !rate || rate === 0;
   const isCreator = currentRate > 0;
   const isShowCommittedSupporters =
@@ -566,6 +581,7 @@ export const Manage = () => {
 
   const supporters = [...committedSupporters, ...uncommittedSupporters];
   const hasSupporter = supporters.length > 0;
+  const isCreatorRegistered = !!rate;
 
   if (!signer)
     return (
@@ -684,7 +700,7 @@ export const Manage = () => {
                         <ErrorMessage>{errorMessage}</ErrorMessage>
                         <InputWrapper>
                           <Button
-                            onClick={() => toggleRegistrationModal(true)}
+                            onClick={onUpdateInfoClick}
                             variant="contained"
                           >
                             Update Creator Info

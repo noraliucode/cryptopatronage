@@ -11,6 +11,7 @@ interface IState {
   additionalInfo: IAdditionalInfo | null;
   identity: Identity | null;
   loading: boolean;
+  isOnchained: boolean;
 }
 
 export const useIdentity = (creator: string | undefined, network: INetwork) => {
@@ -20,6 +21,7 @@ export const useIdentity = (creator: string | undefined, network: INetwork) => {
     additionalInfo: null,
     identity: null,
     loading: false,
+    isOnchained: false,
   });
 
   const getRate = async () => {
@@ -28,6 +30,9 @@ export const useIdentity = (creator: string | undefined, network: INetwork) => {
         ...prev,
         loading: true,
       }));
+      // TODO: get data from the database
+      const isOnchained = true;
+
       const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
       const api = await ApiPromise.create({ provider: wsProvider });
       const apiService = new APIService(api);
@@ -49,6 +54,7 @@ export const useIdentity = (creator: string | undefined, network: INetwork) => {
         isRegisterToPaymentSystem,
         additionalInfo,
         identity,
+        isOnchained,
       }));
     } catch (error) {
       console.error("getRate error", error);
