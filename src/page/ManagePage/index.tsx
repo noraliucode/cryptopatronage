@@ -411,35 +411,44 @@ export const Manage = () => {
   };
 
   const validateInfo = () => {
-    const result = validateUrls({
-      web,
-      img: imgUrl,
-      twitter,
-    });
-    const reset = () => {
-      setTimeout(() => {
+    return new Promise((resolve, reject) => {
+      const result = validateUrls({
+        web,
+        img: imgUrl,
+        twitter,
+      });
+
+      const reset = () => {
+        setTimeout(() => {
+          setState((prev) => ({
+            ...prev,
+            errorMessage: "",
+          }));
+        }, 3000);
+      };
+
+      if (!display) {
         setState((prev) => ({
           ...prev,
-          errorMessage: "",
+          errorMessage: "Display Name is required.",
         }));
-      }, 3000);
-    };
-    if (!display) {
-      setState((prev) => ({
-        ...prev,
-        errorMessage: "Disaply Name is required.",
-      }));
-      reset();
-      return;
-    }
-    if (result) {
-      setState((prev) => ({
-        ...prev,
-        errorMessage: result,
-      }));
-      reset();
-      return;
-    }
+        reset();
+        resolve(false);
+        return;
+      }
+
+      if (result) {
+        setState((prev) => ({
+          ...prev,
+          errorMessage: result,
+        }));
+        reset();
+        resolve(false);
+        return;
+      }
+
+      resolve(true);
+    });
   };
 
   const errorHandling = (errorMessage: string) => {
@@ -526,8 +535,9 @@ export const Manage = () => {
     }));
   };
 
-  const onUpdateInfoClick = () => {
-    validateInfo();
+  const onUpdateInfoClick = async () => {
+    const isValid = await validateInfo();
+    if (!isValid) return;
 
     if (isCreatorRegistered) {
       _updateInfo(isOnchained);
@@ -581,7 +591,7 @@ export const Manage = () => {
 
   const supporters = [...committedSupporters, ...uncommittedSupporters];
   const hasSupporter = supporters.length > 0;
-  const isCreatorRegistered = !!rate;
+  const isCreatorRegistered = !!currentRate;
 
   if (!signer)
     return (
