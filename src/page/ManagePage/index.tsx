@@ -446,6 +446,14 @@ export const Manage = () => {
     }));
   };
 
+  const errorHandling = (errorMessage: string) => {
+    setState((prev) => ({
+      ...prev,
+      isModalOpen: true,
+      title: errorMessage,
+    }));
+  };
+
   const _updateInfo = async (isOnchain: boolean) => {
     validateInfo();
 
@@ -461,14 +469,6 @@ export const Manage = () => {
       rate: rate * 10 ** DECIMALS[network],
       isSensitive: checked,
       isUsd,
-    };
-
-    const errorHandling = (errorMessage: string) => {
-      setState((prev) => ({
-        ...prev,
-        isModalOpen: true,
-        title: errorMessage,
-      }));
     };
 
     if (isOnchain) {
