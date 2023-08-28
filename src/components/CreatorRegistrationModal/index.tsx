@@ -10,6 +10,11 @@ import {
 
 const ContentWrapper = styled("div")(() => ({
   lineHeight: 1.5,
+  width: 400,
+}));
+
+const ButtonWrapper = styled("div")(() => ({
+  display: "flex",
 }));
 
 type IProps = {
@@ -39,17 +44,24 @@ export const CreatorRegistrationModal = (props: IProps) => {
       <Divider />
       <DialogContent>
         <ContentWrapper>
+          This option only appears once:
+          <br />
+          <br />
           <Button
             variant="contained"
             color="primary"
             onClick={handleOnChainClick}
+            fullWidth
           >
             On-Chain
           </Button>
+          <br />
+          <br />
           <Button
             variant="contained"
             color="secondary"
             onClick={handleOffChainClick}
+            fullWidth
           >
             Off-Chain
           </Button>
