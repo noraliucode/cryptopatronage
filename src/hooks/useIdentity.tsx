@@ -14,7 +14,12 @@ interface IState {
   isOnchained: boolean;
 }
 
-export const useIdentity = (creator: string | undefined, network: INetwork) => {
+export const useIdentity = (
+  creator: string | undefined,
+  network: INetwork,
+  id?: string,
+  isOnchained = true
+) => {
   const [state, setState] = useState<IState>({
     rate: 0,
     isRegisterToPaymentSystem: false,
@@ -30,32 +35,35 @@ export const useIdentity = (creator: string | undefined, network: INetwork) => {
         ...prev,
         loading: true,
       }));
-      // TODO: get data from the database
-      const isOnchained = true;
 
-      const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
-      const api = await ApiPromise.create({ provider: wsProvider });
-      const apiService = new APIService(api);
-      const _identity: any = await apiService.getIdentity(creator);
+      if (isOnchained) {
+        const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
+        const api = await ApiPromise.create({ provider: wsProvider });
+        const apiService = new APIService(api);
+        const _identity: any = await apiService.getIdentity(creator);
 
-      const identity = {
-        ...parseEssentialInfo(_identity.toHuman()?.info),
-      };
+        const identity = {
+          ...parseEssentialInfo(_identity.toHuman()?.info),
+        };
 
-      const additionalInfo = parseAdditionalInfo(_identity);
+        const additionalInfo = parseAdditionalInfo(_identity);
 
-      const rate = additionalInfo.rate;
-      const isRegisterToPaymentSystem = additionalInfo.ps;
+        const rate = additionalInfo.rate;
+        const isRegisterToPaymentSystem = additionalInfo.ps;
 
-      setState((prev) => ({
-        ...prev,
-        // TODO: fix different identity format from useCreators.tsx / remove useless properties
-        rate: Number(rate),
-        isRegisterToPaymentSystem,
-        additionalInfo,
-        identity,
-        isOnchained,
-      }));
+        setState((prev) => ({
+          ...prev,
+          // TODO: fix different identity format from useCreators.tsx / remove useless properties
+          rate: Number(rate),
+          isRegisterToPaymentSystem,
+          additionalInfo,
+          identity,
+          isOnchained,
+          id: _identity.id,
+        }));
+      } else {
+        // get data from the database
+      }
     } catch (error) {
       console.error("getRate error", error);
     } finally {
