@@ -988,12 +988,34 @@ export const removeKeys = async <T>(
   return clonedObj;
 };
 
-export const updateInfoOffChain = async (data: ICreator, id: string) => {
-  const databaseService = new DatabaseService();
-  databaseService.updateCreator(data, id);
+export const updateInfoOffChain = async (
+  data: ICreator,
+  address: string,
+  callback?: () => void,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
+    await databaseService.updateCreator(data, address);
+  } catch (error) {
+    errorHandling && errorHandling(error);
+  } finally {
+    callback && callback();
+  }
 };
 
-export const createCreatorOffChain = async (data: ICreator) => {
-  const databaseService = new DatabaseService();
-  databaseService.createCreator(data);
+export const createCreatorOffChain = async (
+  data: ICreator,
+  callback?: () => void,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
+    databaseService.createCreator(data);
+    callback && callback();
+  } catch (error) {
+    errorHandling && errorHandling(error);
+  } finally {
+    callback && callback();
+  }
 };

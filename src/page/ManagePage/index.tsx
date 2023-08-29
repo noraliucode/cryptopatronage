@@ -565,6 +565,8 @@ export const Manage = () => {
       isUsd,
     };
 
+    toggleRegistrationModal(false);
+
     if (isOnChain) {
       checkSigner();
       showUpdateInfoMessage();
@@ -580,18 +582,25 @@ export const Manage = () => {
         errorHandling
       );
     } else {
+      const callback = () => {
+        setLoading(false);
+        getRate();
+      };
       const data = {
         ...identity,
         ...additionalInfo,
         address: signer.address,
       };
       if (isCreatorRegistered) {
-        // TODO: get id from the database
         // TODO: remove any
-        const id = "00";
-        updateInfoOffChain(data as any, id);
+        updateInfoOffChain(
+          data as any,
+          signer.address,
+          callback,
+          errorHandling
+        );
       } else {
-        createCreatorOffChain(data as any);
+        createCreatorOffChain(data as any, callback, errorHandling);
       }
     }
   };
