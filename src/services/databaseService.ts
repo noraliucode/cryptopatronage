@@ -51,9 +51,9 @@ class DatabaseService {
     }
   };
 
-  updateCreator = async (jsonObject: any, id: string) => {
+  updateCreator = async (jsonObject: any, address: string) => {
     try {
-      const response = await fetch(`${API_URL}/creators/${id}`, {
+      const response = await fetch(`${API_URL}/creators/${address}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
