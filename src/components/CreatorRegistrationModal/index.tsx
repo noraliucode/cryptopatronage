@@ -44,7 +44,8 @@ export const CreatorRegistrationModal = (props: IProps) => {
       <Divider />
       <DialogContent>
         <ContentWrapper>
-          This option only appears once:
+          Choose your identity visibility: Each account can only choose one
+          visibility setting
           <br />
           <br />
           <Button
