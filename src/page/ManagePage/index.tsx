@@ -233,7 +233,7 @@ export const Manage = () => {
     useWeb3ConnectedContext();
   const {
     rate: currentRate,
-    getRate,
+    getIdentity,
     isRegisterToPaymentSystem,
     additionalInfo,
     identity,
@@ -289,7 +289,7 @@ export const Manage = () => {
 
   const callback = async () => {
     await getSupporters();
-    await getRate();
+    await getIdentity();
     setLoading(false);
   };
 
@@ -351,7 +351,7 @@ export const Manage = () => {
       open: true,
     }));
     const callback = async (value: boolean) => {
-      await getRate();
+      await getIdentity();
       setState((prev) => ({
         ...prev,
         open: value,
@@ -584,7 +584,7 @@ export const Manage = () => {
     } else {
       const callback = () => {
         setLoading(false);
-        getRate();
+        getIdentity();
       };
       const data = {
         ...identity,

@@ -17,7 +17,6 @@ interface IState {
 export const useIdentity = (
   creator: string | undefined,
   network: INetwork,
-  id?: string,
   isOnchained = true
 ) => {
   const [state, setState] = useState<IState>({
@@ -29,7 +28,7 @@ export const useIdentity = (
     isOnchained: false,
   });
 
-  const getRate = async () => {
+  const getIdentity = async () => {
     try {
       setState((prev) => ({
         ...prev,
@@ -59,13 +58,12 @@ export const useIdentity = (
           additionalInfo,
           identity,
           isOnchained,
-          id: _identity.id,
         }));
       } else {
         // get data from the database
       }
     } catch (error) {
-      console.error("getRate error", error);
+      console.error("getIdentity error", error);
     } finally {
       setState((prev) => ({
         ...prev,
@@ -74,7 +72,7 @@ export const useIdentity = (
     }
   };
   useEffect(() => {
-    getRate();
+    getIdentity();
   }, [creator, network]);
-  return { ...state, getRate };
+  return { ...state, getIdentity };
 };
