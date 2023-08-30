@@ -53,7 +53,7 @@ class DatabaseService {
 
   updateCreator = async (jsonObject: any, address: string) => {
     try {
-      const response = await fetch(`${API_URL}/creators/${address}`, {
+      const response = await fetch(`${API_URL}/creators/address/${address}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -90,6 +90,27 @@ class DatabaseService {
 
       const result = await response.json();
       console.log("result", result);
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
+
+  getCreator = async (address: string) => {
+    try {
+      const response = await fetch(`${API_URL}/creators/address/${address}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`readData HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
     } catch (error) {
       console.log("There was a network error:", error);
     }
