@@ -1012,7 +1012,6 @@ export const createCreatorOffChain = async (
   try {
     const databaseService = new DatabaseService();
     databaseService.createCreator(data);
-    callback && callback();
   } catch (error) {
     errorHandling && errorHandling(error);
   } finally {

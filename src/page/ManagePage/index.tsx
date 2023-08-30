@@ -582,14 +582,22 @@ export const Manage = () => {
         errorHandling
       );
     } else {
+      // TODO: refactor loading and message
+      setLoading(true);
+      setState((prev) => ({
+        ...prev,
+        message: "Updating Info...",
+      }));
+
       const callback = () => {
         setLoading(false);
         getIdentity();
       };
       const data = {
-        ...identity,
-        ...additionalInfo,
+        identity,
+        additionalInfo,
         address: signer.address,
+        isOnchained: false,
       };
       if (isCreatorRegistered) {
         // TODO: remove any
@@ -614,7 +622,7 @@ export const Manage = () => {
 
   const supporters = [...committedSupporters, ...uncommittedSupporters];
   const hasSupporter = supporters.length > 0;
-  const isCreatorRegistered = !!currentRate;
+  const isCreatorRegistered = !!additionalInfo;
 
   if (!signer)
     return (

@@ -4,6 +4,7 @@ import { APIService } from "../services/apiService";
 import { NODE_ENDPOINT } from "../utils/constants";
 import { parseAdditionalInfo, parseEssentialInfo } from "../utils/helpers";
 import { IAdditionalInfo, Identity, INetwork } from "../utils/types";
+import DatabaseService from "../services/databaseService";
 
 interface IState {
   rate: number;
@@ -14,11 +15,7 @@ interface IState {
   isOnchained: boolean;
 }
 
-export const useIdentity = (
-  creator: string | undefined,
-  network: INetwork,
-  isOnchained = true
-) => {
+export const useIdentity = (creator: string | undefined, network: INetwork) => {
   const [state, setState] = useState<IState>({
     rate: 0,
     isRegisterToPaymentSystem: false,
@@ -30,10 +27,17 @@ export const useIdentity = (
 
   const getIdentity = async () => {
     try {
+      if (!creator) return;
       setState((prev) => ({
         ...prev,
         loading: true,
       }));
+
+      const databaseService = new DatabaseService();
+
+      const data = await databaseService.getCreator(creator);
+
+      const isOnchained = data?.isOnchained;
 
       if (isOnchained) {
         const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
@@ -57,10 +61,17 @@ export const useIdentity = (
           isRegisterToPaymentSystem,
           additionalInfo,
           identity,
-          isOnchained,
+          isOnchained: true,
         }));
       } else {
-        // get data from the database
+        setState((prev) => ({
+          ...prev,
+          rate: Number(data?.rate),
+          isRegisterToPaymentSystem: data?.isRegisterToPaymentSystem,
+          additionalInfo: data?.additionalInfo,
+          identity: data?.identity,
+          isOnchained: false,
+        }));
       }
     } catch (error) {
       console.error("getIdentity error", error);
