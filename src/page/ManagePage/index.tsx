@@ -593,7 +593,7 @@ export const Manage = () => {
         setLoading(false);
         getIdentity();
       };
-      const data = {
+      let data: any = {
         identity,
         additionalInfo,
         address: signer.address,
@@ -608,7 +608,11 @@ export const Manage = () => {
           errorHandling
         );
       } else {
-        createCreatorOffChain(data as any, callback, errorHandling);
+        data = {
+          ...data,
+          network,
+        };
+        createCreatorOffChain(data, callback, errorHandling);
       }
     }
   };

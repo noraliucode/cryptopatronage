@@ -65,6 +65,7 @@ export type ICreator = {
   web: string;
   isSensitive: boolean;
   isUsd: boolean;
+  network?: INetwork;
 };
 
 export type IAdditionalInfo = {

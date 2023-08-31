@@ -67,20 +67,36 @@ export const useCreators = (
       // fetch creators from the database
       let offChainCreators = await databaseService.getCreators();
       offChainCreators = offChainCreators.map((creator: any) => {
+        const { rate, imgUrl, isSensitive, isUsd } = creator.additionalInfo;
+        const { email, twitter, display, web } = creator.identity;
         return {
-          ...creator.additionalInfo,
-          ...creator.identity,
           address: creator.address,
+          network: creator.network,
           isOnchained: creator.isOnchained,
-          imageUrl: creator.additionalInfo?.imgUrl,
+          // additionalInfo
+          rate: rate?.toString(),
+          imageUrl: imgUrl,
+          isSensitive: isSensitive,
+          isUsd: isUsd,
+          // essentialInfo
+          email: email,
+          twitter: twitter,
+          display: display,
+          web: web,
         };
       });
 
       _creators = [...creators, ...offChainCreators];
 
-      _creators = _creators.filter(
-        (creator) => creator.isSensitive === isShowSensitiveContent
-      );
+      _creators = _creators.filter((creator) => {
+        return (
+          creator.isSensitive === isShowSensitiveContent &&
+          // TODO: creators onchain don't have isOnchained property
+          (creator.isOnchained === undefined
+            ? true
+            : creator.network === network)
+        );
+      });
 
       // TODO: filter with supporter and calculate funds
 
