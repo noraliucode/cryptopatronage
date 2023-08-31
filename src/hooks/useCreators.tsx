@@ -65,7 +65,16 @@ export const useCreators = (
       let _creators = _.uniqBy(creators, "address") as any[];
 
       // fetch creators from the database
-      const offChainCreators = await databaseService.getCreators();
+      let offChainCreators = await databaseService.getCreators();
+      offChainCreators = offChainCreators.map((creator: any) => {
+        return {
+          ...creator.additionalInfo,
+          ...creator.identity,
+          address: creator.address,
+          isOnchained: creator.isOnchained,
+        };
+      });
+
       _creators = [...creators, ...offChainCreators];
 
       _creators = _creators.filter(
