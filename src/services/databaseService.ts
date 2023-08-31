@@ -28,6 +28,10 @@ class DatabaseService {
     try {
       const response = await fetch(`${API_URL}/${collections}`, {
         method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+        },
       });
 
       if (!response.ok) {
