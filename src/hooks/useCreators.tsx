@@ -72,6 +72,7 @@ export const useCreators = (
           ...creator.identity,
           address: creator.address,
           isOnchained: creator.isOnchained,
+          imageUrl: creator.additionalInfo?.imgUrl,
         };
       });
 
