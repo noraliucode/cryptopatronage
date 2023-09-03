@@ -605,6 +605,7 @@ export const Manage = () => {
         updateInfoOffChain(
           data as any,
           signer.address,
+          network,
           callback,
           errorHandling
         );

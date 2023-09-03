@@ -36,9 +36,10 @@ export const useIdentity = (creator: string | undefined, network: INetwork) => {
 
       const databaseService = new DatabaseService();
 
-      const data = await databaseService.getCreator(creator);
+      const data = await databaseService.getCreator(creator, network);
 
-      const isOnchained = data?.isOnchained;
+      // TODO: onChain creators are not stored in database for now
+      const isOnchained = data?.isOnchained === undefined;
 
       if (isOnchained) {
         const wsProvider = new WsProvider(NODE_ENDPOINT[network]);

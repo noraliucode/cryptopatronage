@@ -72,16 +72,23 @@ class DatabaseService {
     }
   };
 
-  updateCreator = async (jsonObject: any, address: string) => {
+  updateCreator = async (
+    jsonObject: any,
+    address: string,
+    network: INetwork
+  ) => {
     try {
-      const response = await fetch(`${API_URL}/creators/address/${address}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
-        },
-        body: JSON.stringify(jsonObject),
-      });
+      const response = await fetch(
+        `${API_URL}/creators/network/${network}/address/${address}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+          },
+          body: JSON.stringify(jsonObject),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`updateData HTTP error! status: ${response.status}`);
@@ -116,15 +123,18 @@ class DatabaseService {
     }
   };
 
-  getCreator = async (address: string) => {
+  getCreator = async (address: string, network: INetwork) => {
     try {
-      const response = await fetch(`${API_URL}/creators/address/${address}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
-        },
-      });
+      const response = await fetch(
+        `${API_URL}/creators/network/${network}/address/${address}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`readData HTTP error! status: ${response.status}`);

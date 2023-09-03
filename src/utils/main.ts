@@ -991,12 +991,13 @@ export const removeKeys = async <T>(
 export const updateInfoOffChain = async (
   data: ICreator,
   address: string,
+  network: INetwork,
   callback?: () => void,
   errorHandling?: (error: any) => void
 ) => {
   try {
     const databaseService = new DatabaseService();
-    await databaseService.updateCreator(data, address);
+    await databaseService.updateCreator(data, address, network);
   } catch (error) {
     errorHandling && errorHandling(error);
   } finally {
