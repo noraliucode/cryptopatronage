@@ -239,6 +239,7 @@ export const Manage = () => {
     identity,
     loading: isInfoLoading,
     isOnchained,
+    network: _network,
   } = useIdentity(signer?.address, network);
 
   const {

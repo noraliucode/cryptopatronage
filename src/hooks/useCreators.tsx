@@ -62,10 +62,10 @@ export const useCreators = (
       });
 
       // TODO: remove any
-      let _creators = _.uniqBy(creators, "address") as any[];
+      let _creators = [] as any;
 
       // fetch creators from the database
-      let offChainCreators = await databaseService.getCreators();
+      let offChainCreators = await databaseService.getCreators(network);
       offChainCreators = offChainCreators.map((creator: any) => {
         const { rate, imgUrl, isSensitive, isUsd } = creator.additionalInfo;
         const { email, twitter, display, web } = creator.identity;
@@ -88,14 +88,8 @@ export const useCreators = (
 
       _creators = [...creators, ...offChainCreators];
 
-      _creators = _creators.filter((creator) => {
-        return (
-          creator.isSensitive === isShowSensitiveContent &&
-          // TODO: creators onchain don't have isOnchained property
-          (creator.isOnchained === undefined
-            ? true
-            : creator.network === network)
-        );
+      _creators = _creators.filter((creator: any) => {
+        return creator.isSensitive === isShowSensitiveContent;
       });
 
       // TODO: filter with supporter and calculate funds

@@ -13,6 +13,7 @@ interface IState {
   identity: Identity | null;
   loading: boolean;
   isOnchained: boolean;
+  network?: INetwork;
 }
 
 export const useIdentity = (creator: string | undefined, network: INetwork) => {

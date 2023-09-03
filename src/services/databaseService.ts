@@ -1,4 +1,5 @@
 import { API_URL } from "../utils/constants";
+import { INetwork } from "../utils/types";
 
 class DatabaseService {
   updateData = async (jsonObject: any) => {
@@ -24,6 +25,7 @@ class DatabaseService {
     }
   };
 
+  // TODO: `network` needs to be added to read data
   readData = async (collections = "data") => {
     try {
       const response = await fetch(`${API_URL}/${collections}`, {
@@ -45,10 +47,25 @@ class DatabaseService {
     }
   };
 
-  getCreators = async () => {
+  getCreators = async (network: INetwork) => {
+    const collections = "creators";
     try {
-      const data = await this.readData("creators");
+      const response = await fetch(
+        `${API_URL}/${collections}/network/${network}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+          },
+        }
+      );
 
+      if (!response.ok) {
+        throw new Error(`readData HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
       return data;
     } catch (error) {
       console.log("There was a network error:", error);
