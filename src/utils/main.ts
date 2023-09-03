@@ -1019,3 +1019,19 @@ export const createCreatorOffChain = async (
     callback && callback();
   }
 };
+
+export const deleteCreatorOffChain = async (
+  address: string,
+  network: INetwork,
+  callback?: () => void,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
+    await databaseService.deleteCreator(address, network);
+  } catch (error) {
+    errorHandling && errorHandling(error);
+  } finally {
+    callback && callback();
+  }
+};

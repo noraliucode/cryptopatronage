@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import {
   clearIdentity,
   createCreatorOffChain,
+  deleteCreatorOffChain,
   publishLink,
   pullPayment,
   toggleIsRegisterToPaymentSystem,
@@ -485,7 +486,11 @@ export const Manage = () => {
       open: true,
     }));
 
-    unregister(api, signer.address, injector, callback, setLoading);
+    if (isOnchained) {
+      unregister(api, signer.address, injector, callback, setLoading);
+    } else {
+      deleteCreatorOffChain(signer.address, network, callback, errorHandling);
+    }
   };
 
   const handleClearIdentityClick = () => {
