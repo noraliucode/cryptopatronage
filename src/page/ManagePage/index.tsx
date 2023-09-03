@@ -633,7 +633,7 @@ export const Manage = () => {
 
   const supporters = [...committedSupporters, ...uncommittedSupporters];
   const hasSupporter = supporters.length > 0;
-  const isCreatorRegistered = !!additionalInfo;
+  const isCreatorRegistered = !!additionalInfo?.rate;
 
   if (!signer)
     return (
