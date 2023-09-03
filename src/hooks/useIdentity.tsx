@@ -17,14 +17,18 @@ interface IState {
 }
 
 export const useIdentity = (creator: string | undefined, network: INetwork) => {
-  const [state, setState] = useState<IState>({
+  const defaultState: IState = {
     rate: 0,
     isRegisterToPaymentSystem: false,
     additionalInfo: null,
     identity: null,
     loading: false,
     isOnchained: false,
-  });
+  };
+  const [state, setState] = useState<IState>(defaultState);
+  const resetState = () => {
+    setState(defaultState);
+  };
 
   const getIdentity = async () => {
     try {
@@ -38,10 +42,16 @@ export const useIdentity = (creator: string | undefined, network: INetwork) => {
 
       const data = await databaseService.getCreator(creator, network);
 
-      // TODO: onChain creators are not stored in database for now
-      const isOnchained = !data;
-
-      if (isOnchained) {
+      if (data) {
+        setState((prev) => ({
+          ...prev,
+          rate: Number(data?.rate),
+          isRegisterToPaymentSystem: data?.isRegisterToPaymentSystem,
+          additionalInfo: data?.additionalInfo,
+          identity: data?.identity,
+          isOnchained: false,
+        }));
+      } else {
         const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
         const api = await ApiPromise.create({ provider: wsProvider });
         const apiService = new APIService(api);
@@ -52,28 +62,25 @@ export const useIdentity = (creator: string | undefined, network: INetwork) => {
         };
 
         const additionalInfo = parseAdditionalInfo(_identity);
-
         const rate = additionalInfo.rate;
         const isRegisterToPaymentSystem = additionalInfo.ps;
 
-        setState((prev) => ({
-          ...prev,
-          // TODO: fix different identity format from useCreators.tsx / remove useless properties
-          rate: Number(rate),
-          isRegisterToPaymentSystem,
-          additionalInfo,
-          identity,
-          isOnchained: true,
-        }));
-      } else {
-        setState((prev) => ({
-          ...prev,
-          rate: Number(data?.rate),
-          isRegisterToPaymentSystem: data?.isRegisterToPaymentSystem,
-          additionalInfo: data?.additionalInfo,
-          identity: data?.identity,
-          isOnchained: false,
-        }));
+        // When off-chain users unregistered, no data is returned. Therefore we need to reset state
+        if (!rate) {
+          console.log("resetState!!!");
+
+          resetState();
+        } else {
+          setState((prev) => ({
+            ...prev,
+            // TODO: fix different identity format from useCreators.tsx / remove useless properties
+            rate: Number(rate),
+            isRegisterToPaymentSystem,
+            additionalInfo,
+            identity,
+            isOnchained: true,
+          }));
+        }
       }
     } catch (error) {
       console.error("getIdentity error", error);
