@@ -5,6 +5,7 @@ import { NODE_ENDPOINT } from "../utils/constants";
 import { parseAdditionalInfo, parseEssentialInfo } from "../utils/helpers";
 import { ICreator, INetwork } from "../utils/types";
 import * as _ from "lodash";
+import DatabaseService from "../services/databaseService";
 interface IState {
   creators: (ICreator | undefined)[] | null;
   loading: boolean;
@@ -19,11 +20,52 @@ export const useCreators = (
   });
 
   const getCreators = async () => {
+    const getFilteredCreators = (creators: any) => {
+      return creators.filter((creator: any) => {
+        return creator.isSensitive === isShowSensitiveContent;
+      });
+    };
+
     try {
       setState((prev) => ({
         ...prev,
         loading: true,
       }));
+      let _creators = [] as any;
+      const databaseService = new DatabaseService();
+
+      // fetch creators from the database
+      let offChainCreators = await databaseService.getCreators(network);
+      offChainCreators = offChainCreators.map((creator: any) => {
+        const { rate, imgUrl, isSensitive, isUsd } = creator.additionalInfo;
+        const { email, twitter, display, web } = creator.identity;
+        return {
+          address: creator.address,
+          network: creator.network,
+          isOnchained: creator.isOnchained,
+          // additionalInfo
+          rate: rate?.toString(),
+          imageUrl: imgUrl,
+          isSensitive: isSensitive,
+          isUsd: isUsd,
+          // essentialInfo
+          email: email,
+          twitter: twitter,
+          display: display,
+          web: web,
+        };
+      });
+
+      if (network === "POLKADOT") {
+        _creators = getFilteredCreators(offChainCreators);
+        setState((prev) => ({
+          ...prev,
+          creators: _creators,
+          loading: false,
+        }));
+        return;
+      }
+
       const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
       const api = await ApiPromise.create({ provider: wsProvider });
       const apiService = new APIService(api);
@@ -59,12 +101,8 @@ export const useCreators = (
         }
       });
 
-      // TODO: remove any
-      let _creators = _.uniqBy(creators, "address") as any[];
-
-      _creators = _creators.filter(
-        (creator) => creator.isSensitive === isShowSensitiveContent
-      );
+      _creators = [...creators, ...offChainCreators];
+      _creators = getFilteredCreators(_creators);
 
       // TODO: filter with supporter and calculate funds
 

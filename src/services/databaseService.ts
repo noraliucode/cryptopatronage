@@ -1,10 +1,6 @@
-// import Bottleneck from "bottleneck";
 import { API_URL } from "../utils/constants";
+import { INetwork } from "../utils/types";
 
-// TODO: limiter can be removed later
-// const limiter = new Bottleneck({
-//   minTime: 0, // 1 request per second
-// });
 class DatabaseService {
   updateData = async (jsonObject: any) => {
     try {
@@ -29,14 +25,143 @@ class DatabaseService {
     }
   };
 
-  readData = async () => {
+  // TODO: `network` needs to be added to read data
+  readData = async (collections = "data") => {
     try {
-      const response = await fetch(`${API_URL}/data`, {
+      const response = await fetch(`${API_URL}/${collections}`, {
         method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+        },
       });
 
       if (!response.ok) {
         throw new Error(`readData HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
+
+  getCreators = async (network: INetwork) => {
+    const collections = "creators";
+    try {
+      const response = await fetch(
+        `${API_URL}/${collections}/network/${network}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`readData HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
+
+  updateCreator = async (
+    jsonObject: any,
+    address: string,
+    network: INetwork
+  ) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/creators/network/${network}/address/${address}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+          },
+          body: JSON.stringify(jsonObject),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`updateData HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("result", result);
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
+
+  createCreator = async (jsonObject: any) => {
+    try {
+      const response = await fetch(`${API_URL}/creators`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+        },
+        body: JSON.stringify(jsonObject),
+      });
+
+      if (!response.ok) {
+        throw new Error(`updateData HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("result", result);
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
+
+  getCreator = async (address: string, network: INetwork) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/creators/network/${network}/address/${address}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`readData HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
+
+  deleteCreator = async (address: string, network: INetwork) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/creators/network/${network}/address/${address}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`deleteData HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();

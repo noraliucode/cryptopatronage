@@ -4,11 +4,14 @@ import { ChangeEvent, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import {
   clearIdentity,
+  createCreatorOffChain,
+  deleteCreatorOffChain,
   publishLink,
   pullPayment,
   toggleIsRegisterToPaymentSystem,
   unregister,
   updateInfo,
+  updateInfoOffChain,
 } from "../../utils/main";
 import {
   Clear_Identity,
@@ -38,6 +41,8 @@ import { useTranslation } from "react-i18next";
 import ConnectButton from "../../components/ConnectButton";
 import ContentLinkSection from "./ContentLinkSection";
 import { useContentLinks } from "../../hooks/useContentLinks";
+import { CreatorRegistrationModal } from "../../components/CreatorRegistrationModal";
+import DatabaseService from "../../services/databaseService";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,
@@ -175,6 +180,7 @@ type IState = {
   isCicked: boolean;
   isClearIdentityModalOpen: boolean;
   isUsd: boolean;
+  isCreatorRegistrationModalOpen: boolean;
 };
 
 export const Manage = () => {
@@ -199,6 +205,7 @@ export const Manage = () => {
     isUsd: false,
     contentTitle: "",
     contentLink: "",
+    isCreatorRegistrationModalOpen: false,
   };
   const [state, setState] = useState<IState>(defaultState);
 
@@ -220,17 +227,20 @@ export const Manage = () => {
     isCicked,
     isClearIdentityModalOpen,
     isUsd,
+    isCreatorRegistrationModalOpen,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
   const {
     rate: currentRate,
-    getRate,
+    getIdentity,
     isRegisterToPaymentSystem,
     additionalInfo,
     identity,
     loading: isInfoLoading,
+    isOnchained,
+    network: _network,
   } = useIdentity(signer?.address, network);
 
   const {
@@ -281,7 +291,7 @@ export const Manage = () => {
 
   const callback = async () => {
     await getSupporters();
-    await getRate();
+    await getIdentity();
     setLoading(false);
   };
 
@@ -343,7 +353,7 @@ export const Manage = () => {
       open: true,
     }));
     const callback = async (value: boolean) => {
-      await getRate();
+      await getIdentity();
       setState((prev) => ({
         ...prev,
         open: value,
@@ -405,76 +415,53 @@ export const Manage = () => {
     }));
   };
 
-  const _updateInfo = async () => {
-    checkSigner();
-    if (!injector || !signer) return;
-    const result = validateUrls({
-      web,
-      img: imgUrl,
-      twitter,
-    });
-    const reset = () => {
-      setTimeout(() => {
+  const validateInfo = () => {
+    return new Promise((resolve, reject) => {
+      const result = validateUrls({
+        web,
+        img: imgUrl,
+        twitter,
+      });
+
+      const reset = () => {
+        setTimeout(() => {
+          setState((prev) => ({
+            ...prev,
+            errorMessage: "",
+          }));
+        }, 3000);
+      };
+
+      if (!display) {
         setState((prev) => ({
           ...prev,
-          errorMessage: "",
+          errorMessage: "Display Name is required.",
         }));
-      }, 3000);
-    };
-    if (!display) {
-      setState((prev) => ({
-        ...prev,
-        errorMessage: "Disaply Name is required.",
-      }));
-      reset();
-      return;
-    }
-    if (result) {
-      setState((prev) => ({
-        ...prev,
-        errorMessage: result,
-      }));
-      reset();
-      return;
-    }
+        reset();
+        resolve(false);
+        return;
+      }
 
+      if (result) {
+        setState((prev) => ({
+          ...prev,
+          errorMessage: result,
+        }));
+        reset();
+        resolve(false);
+        return;
+      }
+
+      resolve(true);
+    });
+  };
+
+  const errorHandling = (errorMessage: string) => {
     setState((prev) => ({
       ...prev,
-      message: "Update Info...",
+      isModalOpen: true,
+      title: errorMessage,
     }));
-
-    const identity = {
-      email,
-      twitter,
-      display,
-      web,
-    };
-
-    const additionalInfo = {
-      imgUrl,
-      rate: rate * 10 ** DECIMALS[network],
-      isSensitive: checked,
-      isUsd,
-    };
-
-    const errorHandling = (errorMessage: string) => {
-      setState((prev) => ({
-        ...prev,
-        isModalOpen: true,
-        title: errorMessage,
-      }));
-    };
-
-    await updateInfo(
-      api,
-      identity,
-      additionalInfo,
-      signer.address,
-      injector,
-      () => {},
-      setLoading,
-      errorHandling
-    );
   };
 
   const _clearIdentity = async () => {
@@ -499,7 +486,11 @@ export const Manage = () => {
       open: true,
     }));
 
-    unregister(api, signer.address, injector, callback, setLoading);
+    if (isOnchained) {
+      unregister(api, signer.address, injector, callback, setLoading);
+    } else {
+      deleteCreatorOffChain(signer.address, network, callback, errorHandling);
+    }
   };
 
   const handleClearIdentityClick = () => {
@@ -539,6 +530,100 @@ export const Manage = () => {
     );
   };
 
+  const toggleRegistrationModal = (value: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      isCreatorRegistrationModalOpen: value,
+    }));
+  };
+
+  const showUpdateInfoMessage = () => {
+    setState((prev) => ({
+      ...prev,
+      message: "Update Info...",
+    }));
+  };
+
+  const onUpdateInfoClick = async () => {
+    const isValid = await validateInfo();
+    if (!isValid) return;
+
+    if (isCreatorRegistered) {
+      _updateInfo(isOnchained);
+    } else {
+      toggleRegistrationModal(true);
+    }
+  };
+
+  const _updateInfo = async (isOnChain: boolean) => {
+    if (!injector || !signer) return;
+    const identity = {
+      email,
+      twitter,
+      display,
+      web,
+    };
+
+    const additionalInfo = {
+      imgUrl,
+      rate: rate * 10 ** DECIMALS[network],
+      isSensitive: checked,
+      isUsd,
+    };
+
+    toggleRegistrationModal(false);
+
+    if (isOnChain) {
+      checkSigner();
+      showUpdateInfoMessage();
+
+      await updateInfo(
+        api,
+        identity,
+        additionalInfo,
+        signer.address,
+        injector,
+        () => {},
+        setLoading,
+        errorHandling
+      );
+    } else {
+      // TODO: refactor loading and message
+      setLoading(true);
+      setState((prev) => ({
+        ...prev,
+        message: "Updating Info...",
+      }));
+
+      const callback = () => {
+        setLoading(false);
+        getIdentity();
+      };
+      let data: any = {
+        identity,
+        additionalInfo,
+        address: signer.address,
+        isOnchained: false,
+      };
+      if (isCreatorRegistered) {
+        // TODO: remove any
+        updateInfoOffChain(
+          data as any,
+          signer.address,
+          network,
+          callback,
+          errorHandling
+        );
+      } else {
+        data = {
+          ...data,
+          network,
+        };
+        createCreatorOffChain(data, callback, errorHandling);
+      }
+    }
+  };
+
   const isSetRateDisabled = !rate || rate === 0;
   const isCreator = currentRate > 0;
   const isShowCommittedSupporters =
@@ -548,6 +633,7 @@ export const Manage = () => {
 
   const supporters = [...committedSupporters, ...uncommittedSupporters];
   const hasSupporter = supporters.length > 0;
+  const isCreatorRegistered = !!additionalInfo?.rate;
 
   if (!signer)
     return (
@@ -561,6 +647,12 @@ export const Manage = () => {
 
   return (
     <Root>
+      <CreatorRegistrationModal
+        open={isCreatorRegistrationModalOpen}
+        onClose={() => toggleRegistrationModal(false)}
+        updateInfo={(value: boolean) => _updateInfo(value)}
+        disableOnchain={!!(network === "POLKADOT")}
+      />
       <Modal
         open={isModalOpen}
         onClose={() =>
@@ -622,7 +714,11 @@ export const Manage = () => {
                   {isRegisterToPaymentSystem ? "Registered" : "Not Registered"}
                 </Text>
                 <br />
-                <Button onClick={handleRegisterClick} variant="contained">
+                <Button
+                  onClick={handleRegisterClick}
+                  variant="contained"
+                  disabled
+                >
                   {isRegisterToPaymentSystem ? "Unregister" : "Register"}
                 </Button>
               </InputWrapper>
@@ -660,7 +756,10 @@ export const Manage = () => {
                       <Wrapper>
                         <ErrorMessage>{errorMessage}</ErrorMessage>
                         <InputWrapper>
-                          <Button onClick={_updateInfo} variant="contained">
+                          <Button
+                            onClick={onUpdateInfoClick}
+                            variant="contained"
+                          >
                             Update Creator Info
                           </Button>
                         </InputWrapper>

@@ -37,6 +37,7 @@ import {
   IAnnounce,
   IContentLink,
   IContentLinkDatabase,
+  ICreator,
   Identity,
   IHistory,
   INetwork,
@@ -985,4 +986,52 @@ export const removeKeys = async <T>(
   }
 
   return clonedObj;
+};
+
+export const updateInfoOffChain = async (
+  data: ICreator,
+  address: string,
+  network: INetwork,
+  callback?: () => void,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
+    await databaseService.updateCreator(data, address, network);
+  } catch (error) {
+    errorHandling && errorHandling(error);
+  } finally {
+    callback && callback();
+  }
+};
+
+export const createCreatorOffChain = async (
+  data: ICreator,
+  callback?: () => void,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
+    databaseService.createCreator(data);
+  } catch (error) {
+    errorHandling && errorHandling(error);
+  } finally {
+    callback && callback();
+  }
+};
+
+export const deleteCreatorOffChain = async (
+  address: string,
+  network: INetwork,
+  callback?: () => void,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
+    await databaseService.deleteCreator(address, network);
+  } catch (error) {
+    errorHandling && errorHandling(error);
+  } finally {
+    callback && callback();
+  }
 };
