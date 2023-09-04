@@ -13,10 +13,6 @@ const ContentWrapper = styled("div")(() => ({
   width: 400,
 }));
 
-const ButtonWrapper = styled("div")(() => ({
-  display: "flex",
-}));
-
 type IProps = {
   open: boolean;
   onClose: () => void;
