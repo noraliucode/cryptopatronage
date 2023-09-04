@@ -17,10 +17,11 @@ type IProps = {
   open: boolean;
   onClose: () => void;
   updateInfo: (_: boolean) => void;
+  disableOnchain: boolean;
 };
 
 export const CreatorRegistrationModal = (props: IProps) => {
-  const { onClose, open, updateInfo } = props;
+  const { onClose, open, updateInfo, disableOnchain } = props;
 
   const handleClose = () => {
     onClose();
@@ -74,6 +75,7 @@ export const CreatorRegistrationModal = (props: IProps) => {
           color="primary"
           onClick={handleOnChainClick}
           fullWidth
+          disabled={disableOnchain}
         >
           On-Chain
         </Button>

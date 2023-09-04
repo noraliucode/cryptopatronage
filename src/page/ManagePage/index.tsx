@@ -657,6 +657,7 @@ export const Manage = () => {
         open={isCreatorRegistrationModalOpen}
         onClose={() => toggleRegistrationModal(false)}
         updateInfo={(value: boolean) => _updateInfo(value)}
+        disableOnchain={!!(network === "POLKADOT")}
       />
       <Modal
         open={isModalOpen}
