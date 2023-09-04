@@ -56,7 +56,7 @@ export const M_DECIMALS = {
   WESTEND: 9,
   KUSAMA: 9,
 };
-export const DEFAULT_NETWORK = "POLKADOT";
+export const DEFAULT_NETWORK = "KUSAMA";
 // export const DEFAULT_NETWORK = "ROCOCO";
 export const NODE_ENDPOINT = {
   ROCOCO,
