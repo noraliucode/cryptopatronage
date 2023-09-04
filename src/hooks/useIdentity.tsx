@@ -67,8 +67,6 @@ export const useIdentity = (creator: string | undefined, network: INetwork) => {
 
         // When off-chain users unregistered, no data is returned. Therefore we need to reset state
         if (!rate) {
-          console.log("resetState!!!");
-
           resetState();
         } else {
           setState((prev) => ({
