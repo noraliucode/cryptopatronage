@@ -486,12 +486,6 @@ export const Manage = () => {
       open: true,
     }));
 
-    const callback = async () => {
-      setLoading(false);
-      // No need to get identity again after unregister
-      setState(defaultState);
-    };
-
     if (isOnchained) {
       unregister(api, signer.address, injector, callback, setLoading);
     } else {
