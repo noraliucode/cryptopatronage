@@ -714,7 +714,11 @@ export const Manage = () => {
                   {isRegisterToPaymentSystem ? "Registered" : "Not Registered"}
                 </Text>
                 <br />
-                <Button onClick={handleRegisterClick} variant="contained">
+                <Button
+                  onClick={handleRegisterClick}
+                  variant="contained"
+                  disabled
+                >
                   {isRegisterToPaymentSystem ? "Unregister" : "Register"}
                 </Button>
               </InputWrapper>
