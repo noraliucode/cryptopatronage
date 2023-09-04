@@ -44,33 +44,50 @@ export const CreatorRegistrationModal = (props: IProps) => {
       <Divider />
       <DialogContent>
         <ContentWrapper>
-          Choose your identity visibility: Each account can only choose one
-          visibility setting
+          Choose your identity visibility. Each account can only choose one
+          visibility setting Onchain:
           <br />
           <br />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOnChainClick}
-            fullWidth
-          >
-            On-Chain
-          </Button>
-          <br />
-          <br />
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleOffChainClick}
-            fullWidth
-          >
-            Off-Chain
-          </Button>
+          <strong>Onchain:</strong>
+          <ul>
+            <li>Requires a deposit to store identity information.</li>
+            <li>Identity information is stored publicly and reliably.</li>
+            <li>
+              Data can be read from onchain and might be visible in other
+              applications.
+            </li>
+          </ul>
+          <strong>Offchain:</strong>
+          <ul>
+            <li>No deposit required to store identity information.</li>
+            <li>Account creation is free.</li>
+            <li>
+              Identity information is only visible within this application.
+            </li>
+            <li>
+              Transaction fees are only necessary to pull payment from
+              supporters, except if using automated payments.
+            </li>
+          </ul>
         </ContentWrapper>
       </DialogContent>
+      <Divider />
       <DialogActions>
-        <Button onClick={handleClose} autoFocus>
-          Cancel
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOnChainClick}
+          fullWidth
+        >
+          On-Chain
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleOffChainClick}
+          fullWidth
+        >
+          Off-Chain
         </Button>
       </DialogActions>
     </Dialog>
