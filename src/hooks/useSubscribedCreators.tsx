@@ -30,7 +30,6 @@ export const useSubscribedCreators = (
       const wsProvider = new WsProvider(NODE_ENDPOINT[network]);
       const api = await ApiPromise.create({ provider: wsProvider });
       const apiService = new APIService(api);
-      const supporterProxies: any = await apiService.getProxies();
 
       // TODO: can be deleted later
       // const { committedCreators, uncommittedCreators } =

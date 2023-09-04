@@ -56,7 +56,7 @@ export const M_DECIMALS = {
   WESTEND: 9,
   KUSAMA: 9,
 };
-export const DEFAULT_NETWORK = "KUSAMA";
+export const DEFAULT_NETWORK = "POLKADOT";
 // export const DEFAULT_NETWORK = "ROCOCO";
 export const NODE_ENDPOINT = {
   ROCOCO,
@@ -76,11 +76,11 @@ export const SYMBOL = {
 const assetPath = "/assets/networks/";
 
 export const NETWORKS = [
+  { network: "KUSAMA", icon: `${assetPath}kusama.gif` },
+  { network: "POLKADOT", icon: `${assetPath}polkadot.svg` }, // We believe that a deposit of 20 DOT for setting up an identity is excessive. As a result, we have decided to suspend our support polkadot for the time being. Sep 4 Edit: We are now supporting polkadot for off-chain identity.
   { network: "ROCOCO", icon: `${assetPath}rococo.svg` },
   { network: "WESTEND", icon: `${assetPath}westend.svg` },
-  { network: "KUSAMA", icon: `${assetPath}kusama.gif` },
-  // { network: "POLKADOT", icon: `${assetPath}polkadot.svg` }, // We believe that a deposit of 20 DOT for setting up an identity is excessive. As a result, we have decided to suspend our support polkadot for the time being.
-  { network: "KABOCHA", icon: `${assetPath}kabocha.svg` },
+  // { network: "KABOCHA", icon: `${assetPath}kabocha.svg` }, // No support for now
 ];
 export const SECONDS_IN_ONE_DAY = 60 * 60 * 24;
 export const DAYS_IN_ONE_MONTH = 30.4;
