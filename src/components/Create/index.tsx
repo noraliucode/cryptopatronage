@@ -18,6 +18,8 @@ import { useApi } from "../../hooks/useApi";
 import RateForm from "../CreatorInfoForms/RateForm";
 import IdentityForm from "../CreatorInfoForms/IdentityForm";
 import ImageForm from "../CreatorInfoForms/ImageForm";
+import CreatorInfoUpdateBtn from "../CreatorInfoUpdateBtn";
+import { useIdentity } from "../../hooks/useIdentity";
 
 const Root = styled("div")(({ theme }) => ({
   width: 600,
@@ -90,6 +92,8 @@ export default function Create() {
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
   const { api } = useApi(network);
+  const { additionalInfo, isOnchained } = useIdentity(signer?.address, network);
+  const isCreatorRegistered = !!additionalInfo?.rate;
 
   const { rate, imgUrl, email, twitter, display, web, open, isUsd } = state;
 
@@ -102,26 +106,6 @@ export default function Create() {
   };
 
   const handleNext = () => {
-    if (signer && injector && activeStep === steps.length - 1) {
-      const identity = {
-        email,
-        twitter,
-        display,
-        web,
-      };
-
-      create(
-        api,
-        Number(rate) * 10 ** DECIMALS[network],
-        imgUrl,
-        identity,
-        signer.address,
-        injector,
-        () => {},
-        setLoading
-      );
-      return;
-    }
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
@@ -232,7 +216,7 @@ export default function Create() {
           horizontal: "center",
         }}
         open={open}
-        message={"Signing Transaction..."}
+        message={"creating..."}
       />
       <Box sx={{ width: "100%" }}>
         <MainTitle>Register as a creator</MainTitle>
@@ -256,15 +240,31 @@ export default function Create() {
                 </Instructions>
               </BackgroundBox>
               <InputWrapper>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleNext}
-                >
-                  {activeStep === steps.length - 1
-                    ? "Sign Transaction"
-                    : "Next"}
-                </Button>
+                {activeStep === steps.length - 1 ? (
+                  <CreatorInfoUpdateBtn
+                    isCreatorRegistered={isCreatorRegistered}
+                    isOnchained={isOnchained}
+                    email={email}
+                    twitter={twitter}
+                    display={display}
+                    web={web}
+                    imgUrl={imgUrl}
+                    rate={rate}
+                    checked={checked}
+                    isUsd={isUsd}
+                    setLoading={setLoading}
+                    setMessage={() => {}}
+                    text={"Create"}
+                  />
+                ) : (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleNext}
+                  >
+                    Next
+                  </Button>
+                )}
                 <BackButton>
                   <Button disabled={activeStep === 0} onClick={handleBack}>
                     Back

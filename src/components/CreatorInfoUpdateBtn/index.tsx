@@ -27,6 +27,7 @@ interface CreatorInfoUpdateBtnProps {
   isUsd: boolean;
   setLoading: (value: boolean) => void;
   setMessage: (value: string) => void;
+  text?: string;
 }
 
 const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
@@ -42,6 +43,7 @@ const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
   isUsd,
   setLoading,
   setMessage,
+  text = "Update Creator Info",
 }) => {
   const [state, setState] = useState({
     errorMessage: "",
@@ -217,7 +219,7 @@ const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
         <ErrorMessage>{errorMessage}</ErrorMessage>
         <InputWrapper>
           <Button onClick={onUpdateInfoClick} variant="contained">
-            Update Creator Info
+            {text}
           </Button>
         </InputWrapper>
       </Wrapper>
