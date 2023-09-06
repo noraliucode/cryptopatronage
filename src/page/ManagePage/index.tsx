@@ -264,7 +264,7 @@ export const Manage = () => {
         ...prev,
         rate: rate ? formatUnit(rate, DECIMALS[network]) : 0,
         imgUrl: imgUrl,
-        isSensitive,
+        checked: isSensitive,
       }));
     }
   }, [additionalInfo, identity, network, signer, isInfoLoading]);
