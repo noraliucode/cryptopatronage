@@ -160,8 +160,14 @@ const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
       setMessage("Updating Info...");
 
       const callback = () => {
-        setLoading(false);
         getIdentity();
+        setTimeout(() => {
+          setMessage("Update Info Success!");
+
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000);
+        }, 500);
       };
       let data: any = {
         identity,
