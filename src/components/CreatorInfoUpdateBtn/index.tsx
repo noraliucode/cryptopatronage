@@ -28,6 +28,7 @@ interface CreatorInfoUpdateBtnProps {
   setLoading: (value: boolean) => void;
   setMessage: (value: string) => void;
   text?: string;
+  callback?: () => void;
 }
 
 const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
@@ -44,6 +45,7 @@ const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
   setLoading,
   setMessage,
   text = "Update Creator Info",
+  callback: _callback,
 }) => {
   const [state, setState] = useState({
     errorMessage: "",
@@ -150,7 +152,7 @@ const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
         additionalInfo,
         signer.address,
         injector,
-        () => {},
+        _callback,
         setLoading,
         errorHandling
       );
@@ -168,6 +170,7 @@ const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
             setLoading(false);
           }, 1000);
         }, 500);
+        _callback && _callback();
       };
       let data: any = {
         identity,

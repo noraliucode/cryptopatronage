@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import {
   Stepper,
   Step,
@@ -8,6 +8,7 @@ import {
   styled,
   Box,
   Snackbar,
+  CircularProgress,
 } from "@mui/material";
 import { InputWrapper } from "../../page/ManagePage";
 import { DECIMALS, FOOTER_HEIGHT, NAV_BAR_HEIGHT } from "../../utils/constants";
@@ -20,6 +21,7 @@ import IdentityForm from "../CreatorInfoForms/IdentityForm";
 import ImageForm from "../CreatorInfoForms/ImageForm";
 import CreatorInfoUpdateBtn from "../CreatorInfoUpdateBtn";
 import { useIdentity } from "../../hooks/useIdentity";
+import { Link as StyledLink } from "../Link";
 
 const Root = styled("div")(({ theme }) => ({
   width: 600,
@@ -75,10 +77,7 @@ type IState = {
 };
 
 export default function Create() {
-  const [activeStep, setActiveStep] = useState(0);
-
-  const [checked, setChecked] = useState(true);
-  const [state, setState] = useState<IState>({
+  const defaultState = {
     rate: 1,
     imgUrl: "",
     email: "",
@@ -87,7 +86,11 @@ export default function Create() {
     web: "",
     open: false,
     isUsd: false,
-  });
+  };
+
+  const [activeStep, setActiveStep] = useState(0);
+  const [checked, setChecked] = useState(false);
+  const [state, setState] = useState<IState>(defaultState);
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
@@ -99,6 +102,13 @@ export default function Create() {
 
   const steps = getSteps();
 
+  useEffect(() => {
+    return () => {
+      setState(defaultState);
+      setActiveStep(0);
+    };
+  }, []);
+
   const handleChange = (event: {
     target: { checked: boolean | ((prevState: boolean) => boolean) };
   }) => {
@@ -106,7 +116,9 @@ export default function Create() {
   };
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if (activeStep < 2) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
   };
 
   const handleBack = () => {
@@ -208,6 +220,38 @@ export default function Create() {
     );
   };
 
+  if (open)
+    return (
+      <Root>
+        <Box sx={{ width: "100%" }}>
+          <MainTitle>Register as a creator</MainTitle>
+          <CircularProgress size={30} thickness={5} />
+        </Box>
+      </Root>
+    );
+
+  if (activeStep === steps.length) {
+    return (
+      <Root>
+        <Box sx={{ width: "100%" }}>
+          <MainTitle>Register as a creator</MainTitle>
+          Registeration Success! explore creators here!
+          <br />
+          <br />
+          <StyledLink to={"/"}>
+            <Button
+              color="primary"
+              aria-label={"explore"}
+              variant={"contained"}
+            >
+              Explore
+            </Button>
+          </StyledLink>
+        </Box>
+      </Root>
+    );
+  }
+
   return (
     <Root>
       <Snackbar
@@ -228,51 +272,40 @@ export default function Create() {
           ))}
         </Stepper>
         <div>
-          {activeStep === steps.length ? (
+          <BackgroundBox>
             <Instructions>
-              <Typography>All steps completed</Typography>
+              <Typography>{getStepContent(activeStep)}</Typography>
             </Instructions>
-          ) : (
-            <>
-              <BackgroundBox>
-                <Instructions>
-                  <Typography>{getStepContent(activeStep)}</Typography>
-                </Instructions>
-              </BackgroundBox>
-              <InputWrapper>
-                {activeStep === steps.length - 1 ? (
-                  <CreatorInfoUpdateBtn
-                    isCreatorRegistered={isCreatorRegistered}
-                    isOnchained={isOnchained}
-                    email={email}
-                    twitter={twitter}
-                    display={display}
-                    web={web}
-                    imgUrl={imgUrl}
-                    rate={rate}
-                    checked={checked}
-                    isUsd={isUsd}
-                    setLoading={setLoading}
-                    setMessage={() => {}}
-                    text={"Create"}
-                  />
-                ) : (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleNext}
-                  >
-                    Next
-                  </Button>
-                )}
-                <BackButton>
-                  <Button disabled={activeStep === 0} onClick={handleBack}>
-                    Back
-                  </Button>
-                </BackButton>
-              </InputWrapper>
-            </>
-          )}
+          </BackgroundBox>
+          <InputWrapper>
+            {activeStep === steps.length - 1 ? (
+              <CreatorInfoUpdateBtn
+                isCreatorRegistered={isCreatorRegistered}
+                isOnchained={isOnchained}
+                email={email}
+                twitter={twitter}
+                display={display}
+                web={web}
+                imgUrl={imgUrl}
+                rate={rate}
+                checked={checked}
+                isUsd={isUsd}
+                setLoading={setLoading}
+                setMessage={() => {}}
+                text={"Create"}
+                callback={() => setActiveStep(3)}
+              />
+            ) : (
+              <Button variant="contained" color="primary" onClick={handleNext}>
+                Next
+              </Button>
+            )}
+            <BackButton>
+              <Button disabled={activeStep === 0} onClick={handleBack}>
+                Back
+              </Button>
+            </BackButton>
+          </InputWrapper>
         </div>
       </Box>
     </Root>
