@@ -4,14 +4,11 @@ import { ChangeEvent, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import {
   clearIdentity,
-  createCreatorOffChain,
   deleteCreatorOffChain,
   publishLink,
   pullPayment,
   toggleIsRegisterToPaymentSystem,
   unregister,
-  updateInfo,
-  updateInfoOffChain,
 } from "../../utils/main";
 import {
   Clear_Identity,
@@ -24,7 +21,7 @@ import {
   Personal_Info,
   Unregister,
 } from "../../utils/constants";
-import { formatUnit, validateUrls } from "../../utils/helpers";
+import { formatUnit } from "../../utils/helpers";
 import Snackbar from "@mui/material/Snackbar";
 import { ISupporter, IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
@@ -41,8 +38,7 @@ import { useTranslation } from "react-i18next";
 import ConnectButton from "../../components/ConnectButton";
 import ContentLinkSection from "./ContentLinkSection";
 import { useContentLinks } from "../../hooks/useContentLinks";
-import { CreatorRegistrationModal } from "../../components/CreatorRegistrationModal";
-import DatabaseService from "../../services/databaseService";
+import CreatorInfoUpdateBtn from "../../components/CreatorInfoUpdateBtn";
 
 const Root = styled("div")(({ theme }) => ({
   maxWidth: 1920,
@@ -223,11 +219,9 @@ export const Manage = () => {
     display,
     web,
     checked,
-    errorMessage,
     isCicked,
     isClearIdentityModalOpen,
     isUsd,
-    isCreatorRegistrationModalOpen,
   } = state;
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
@@ -270,7 +264,7 @@ export const Manage = () => {
         ...prev,
         rate: rate ? formatUnit(rate, DECIMALS[network]) : 0,
         imgUrl: imgUrl,
-        isSensitive,
+        checked: isSensitive,
       }));
     }
   }, [additionalInfo, identity, network, signer, isInfoLoading]);
@@ -299,6 +293,13 @@ export const Manage = () => {
     setState((prev) => ({
       ...prev,
       open: value,
+    }));
+  };
+
+  const setMessage = (message: string) => {
+    setState((prev) => ({
+      ...prev,
+      message,
     }));
   };
 
@@ -415,47 +416,6 @@ export const Manage = () => {
     }));
   };
 
-  const validateInfo = () => {
-    return new Promise((resolve, reject) => {
-      const result = validateUrls({
-        web,
-        img: imgUrl,
-        twitter,
-      });
-
-      const reset = () => {
-        setTimeout(() => {
-          setState((prev) => ({
-            ...prev,
-            errorMessage: "",
-          }));
-        }, 3000);
-      };
-
-      if (!display) {
-        setState((prev) => ({
-          ...prev,
-          errorMessage: "Display Name is required.",
-        }));
-        reset();
-        resolve(false);
-        return;
-      }
-
-      if (result) {
-        setState((prev) => ({
-          ...prev,
-          errorMessage: result,
-        }));
-        reset();
-        resolve(false);
-        return;
-      }
-
-      resolve(true);
-    });
-  };
-
   const errorHandling = (errorMessage: string) => {
     setState((prev) => ({
       ...prev,
@@ -530,100 +490,6 @@ export const Manage = () => {
     );
   };
 
-  const toggleRegistrationModal = (value: boolean) => {
-    setState((prev) => ({
-      ...prev,
-      isCreatorRegistrationModalOpen: value,
-    }));
-  };
-
-  const showUpdateInfoMessage = () => {
-    setState((prev) => ({
-      ...prev,
-      message: "Update Info...",
-    }));
-  };
-
-  const onUpdateInfoClick = async () => {
-    const isValid = await validateInfo();
-    if (!isValid) return;
-
-    if (isCreatorRegistered) {
-      _updateInfo(isOnchained);
-    } else {
-      toggleRegistrationModal(true);
-    }
-  };
-
-  const _updateInfo = async (isOnChain: boolean) => {
-    if (!injector || !signer) return;
-    const identity = {
-      email,
-      twitter,
-      display,
-      web,
-    };
-
-    const additionalInfo = {
-      imgUrl,
-      rate: rate * 10 ** DECIMALS[network],
-      isSensitive: checked,
-      isUsd,
-    };
-
-    toggleRegistrationModal(false);
-
-    if (isOnChain) {
-      checkSigner();
-      showUpdateInfoMessage();
-
-      await updateInfo(
-        api,
-        identity,
-        additionalInfo,
-        signer.address,
-        injector,
-        () => {},
-        setLoading,
-        errorHandling
-      );
-    } else {
-      // TODO: refactor loading and message
-      setLoading(true);
-      setState((prev) => ({
-        ...prev,
-        message: "Updating Info...",
-      }));
-
-      const callback = () => {
-        setLoading(false);
-        getIdentity();
-      };
-      let data: any = {
-        identity,
-        additionalInfo,
-        address: signer.address,
-        isOnchained: false,
-      };
-      if (isCreatorRegistered) {
-        // TODO: remove any
-        updateInfoOffChain(
-          data as any,
-          signer.address,
-          network,
-          callback,
-          errorHandling
-        );
-      } else {
-        data = {
-          ...data,
-          network,
-        };
-        createCreatorOffChain(data, callback, errorHandling);
-      }
-    }
-  };
-
   const isSetRateDisabled = !rate || rate === 0;
   const isCreator = currentRate > 0;
   const isShowCommittedSupporters =
@@ -647,12 +513,6 @@ export const Manage = () => {
 
   return (
     <Root>
-      <CreatorRegistrationModal
-        open={isCreatorRegistrationModalOpen}
-        onClose={() => toggleRegistrationModal(false)}
-        updateInfo={(value: boolean) => _updateInfo(value)}
-        disableOnchain={!!(network === "POLKADOT")}
-      />
       <Modal
         open={isModalOpen}
         onClose={() =>
@@ -753,17 +613,20 @@ export const Manage = () => {
                         web={web}
                         handleInputChange={handleIdentityInputChange}
                       />
-                      <Wrapper>
-                        <ErrorMessage>{errorMessage}</ErrorMessage>
-                        <InputWrapper>
-                          <Button
-                            onClick={onUpdateInfoClick}
-                            variant="contained"
-                          >
-                            Update Creator Info
-                          </Button>
-                        </InputWrapper>
-                      </Wrapper>
+                      <CreatorInfoUpdateBtn
+                        isCreatorRegistered={isCreatorRegistered}
+                        isOnchained={isOnchained}
+                        email={email}
+                        twitter={twitter}
+                        display={display}
+                        web={web}
+                        imgUrl={imgUrl}
+                        rate={rate}
+                        checked={checked}
+                        isUsd={isUsd}
+                        setLoading={setLoading}
+                        setMessage={setMessage}
+                      />
                     </>
                   )}
                 </>
