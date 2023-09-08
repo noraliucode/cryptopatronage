@@ -210,5 +210,6 @@ export type ISubscription = {
   creator: string;
   supporter: string;
   pureProxy: string;
-  expires_on: number;
+  expiresOn: number;
+  subscribedTime: number;
 };
