@@ -173,6 +173,23 @@ export const CreatorsPage = () => {
     downloadBackupCode(signer?.address);
   };
 
+  const unsubscribe = () => {
+    if (!signer) return;
+    /**
+     * TODO: implement unsubscribe
+    const pureProxy = await getPureProxy(signer?.address);
+    if(pureProxy) {
+      // check if there is balance in pureProxy account 
+      const balance = await getPureProxyBalance(pureProxy);
+      if(balance > 0) {
+        // transfer to creator
+      }
+      // then delete pure proxy both on-chain / off-chain
+    }
+    // then delete subscription from database
+     */
+  };
+
   return (
     <Root>
       <>
@@ -242,6 +259,11 @@ export const CreatorsPage = () => {
                   ))}
                 </Grid>
               </Container>
+              {address && getIsSubscriber(address) && (
+                <Button variant="contained" onClick={unsubscribe}>
+                  Unsubscribe
+                </Button>
+              )}
               <p />
               <p />
               {/* {TODO: duplicated conditional component} */}
