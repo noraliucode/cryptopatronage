@@ -276,11 +276,46 @@ const proxyAnnounced = async (injector: any, signer: any) => {
     const transferCall = api.tx.balances.transfer(pure, 1000000000000);
     await api.tx.proxy
       .proxyAnnounced(delegate, pure, "Any", transferCall)
-      .signAndSend(signer.address, { signer: injector.signer }, (status) => {
-        if (status.isInBlock) {
-          // callback && callback();
+      .signAndSend(
+        signer.address,
+        { signer: injector.signer },
+        ({ status, events }) => {
+          if (status.isInBlock || status.isFinalized) {
+            events
+              // find/filter for failed events
+              .filter(({ event }) =>
+                api.events.system.ExtrinsicFailed.is(event)
+              )
+              // we know that data for system.ExtrinsicFailed is
+              // (DispatchError, DispatchInfo)
+              .forEach(
+                ({
+                  event: {
+                    data: [error, info],
+                  },
+                }) => {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  if (error.isModule) {
+                    // for module errors, we have the section indexed, lookup
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    const decoded = api.registry.findMetaError(error.asModule);
+                    const { docs, method, section } = decoded;
+
+                    console.log(`${section}.${method}: ${docs.join(" ")}`);
+                  } else {
+                    // Other, CannotLookup, BadOrigin, no extra info
+                    console.log(error.toString());
+                  }
+                }
+              );
+          }
+          if (status.isInBlock) {
+            // callback && callback();
+          }
         }
-      });
+      );
   } catch (error) {
     console.log("error", error);
   }
