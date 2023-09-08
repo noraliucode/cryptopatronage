@@ -205,3 +205,10 @@ export type IAnnounce = {
   callHash: `0x${string}`;
   total: number;
 };
+
+export type ISubscription = {
+  creator: string;
+  supporter: string;
+  pureProxy: string;
+  expires_on: number;
+};
