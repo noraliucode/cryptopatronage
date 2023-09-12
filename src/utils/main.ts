@@ -43,6 +43,7 @@ import {
   INetwork,
   IParsedSupporterProxies,
   ISupporter,
+  IUser,
 } from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
@@ -88,6 +89,14 @@ export const subscribe = async (
     const bal = (await apiService.getBalance(sender)).toString();
     const proxyDepositBase: any = await apiService.getProxyDepositBase();
     const formattedProxyDepositBase = removeComma(proxyDepositBase.toString());
+
+    // add documents to database
+    const data = {
+      address: sender,
+      network,
+    };
+    await addUser(sender, network, data);
+
     // let delay = isDelayed ? 300 : 0; // for testing
     if (isCommitted) {
       // check if the supporter has created pure proxy to the creator
@@ -1033,5 +1042,22 @@ export const deleteCreatorOffChain = async (
     errorHandling && errorHandling(error);
   } finally {
     callback && callback();
+  }
+};
+
+export const addUser = async (
+  address: string,
+  network: INetwork,
+  data: IUser,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
+    const user = await databaseService.getUser(address, network);
+
+    if (user) return;
+    await databaseService.createUser(data);
+  } catch (error) {
+    errorHandling && errorHandling(error);
   }
 };
