@@ -42,6 +42,7 @@ import {
   IHistory,
   INetwork,
   IParsedSupporterProxies,
+  ISubscription,
   ISupporter,
   IUser,
 } from "./types";
@@ -89,13 +90,24 @@ export const subscribe = async (
     const bal = (await apiService.getBalance(sender)).toString();
     const proxyDepositBase: any = await apiService.getProxyDepositBase();
     const formattedProxyDepositBase = removeComma(proxyDepositBase.toString());
+    const now = new Date().getTime();
+    const expiryDate = calculateExpiryTimestamp(now, months);
+    const subscribedTime = Date.now();
 
     // add documents to database
-    const data = {
+    const user = {
       address: sender,
       network,
     };
-    await addUser(sender, network, data);
+    const subscription = {
+      creator,
+      supporter,
+      pureProxy,
+      expiresOn: expiryDate,
+      subscribedTime,
+    };
+    await addUser(sender, network, user);
+    await addSubscription(creator, sender, network, subscription);
 
     // let delay = isDelayed ? 300 : 0; // for testing
     if (isCommitted) {
@@ -209,8 +221,7 @@ export const subscribe = async (
       const tx = await apiService.batchCalls(txs, sender, injector, _callBack);
       if (tx) {
         console.log("set subscribed time...");
-        const now = new Date().getTime();
-        const expiryDate = calculateExpiryTimestamp(now, months);
+
         let supporterInfo: ISupporter;
         setExpiryDate(expiryDate);
         supporterInfo = {
@@ -1057,6 +1068,28 @@ export const addUser = async (
 
     if (user) return;
     await databaseService.createUser(data);
+  } catch (error) {
+    errorHandling && errorHandling(error);
+  }
+};
+
+export const addSubscription = async (
+  creator: string,
+  supporter: string,
+  network: INetwork,
+  data: ISubscription,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
+    const subscription = await databaseService.getSubscription(
+      creator,
+      supporter,
+      network
+    );
+
+    if (subscription) return;
+    await databaseService.createSubscription(data);
   } catch (error) {
     errorHandling && errorHandling(error);
   }

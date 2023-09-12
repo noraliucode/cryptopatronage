@@ -209,7 +209,7 @@ export type IAnnounce = {
 export type ISubscription = {
   creator: string;
   supporter: string;
-  pureProxy: string;
+  pureProxy: string | null | undefined;
   expiresOn: number;
   subscribedTime: number;
 };
