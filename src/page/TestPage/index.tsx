@@ -321,6 +321,33 @@ const proxyAnnounced = async (injector: any, signer: any) => {
   }
 };
 
+const getBlockDetail = async (sender: string) => {
+  const wsProvider = new WsProvider(NODE_ENDPOINT["ROCOCO"]);
+  const api = await ApiPromise.create({ provider: wsProvider });
+  const txHash = await api.tx.balances
+    .transfer(sender, 1000000000000)
+    .signAndSend(sender);
+
+  const unsub = await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
+    const blockHash = header.hash;
+    const block = await api.rpc.chain.getBlock(blockHash);
+
+    let extrinsicIndex;
+    block.block.extrinsics.forEach((extrinsic, index) => {
+      if (extrinsic.hash.eq(txHash)) {
+        extrinsicIndex = index;
+      }
+    });
+
+    if (extrinsicIndex !== undefined) {
+      console.log(
+        `Extrinsic is in block number: ${header.number} and its index is: ${extrinsicIndex}`
+      );
+      unsub(); // Unsubscribe after finding the extrinsic
+    }
+  });
+};
+
 const TestPage = () => {
   const { injector, signer }: any = useWeb3ConnectedContext();
 
@@ -353,6 +380,7 @@ const TestPage = () => {
       <button onClick={() => proxyAnnounced(injector, signer)}>
         proxyAnnounced
       </button>
+      <button onClick={() => getBlockDetail(signer)}>getBlockDetail</button>
     </div>
   );
 };
