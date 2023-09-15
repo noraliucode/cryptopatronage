@@ -20,6 +20,7 @@ import {
   decrypt,
   encrypt,
   exportKey,
+  generateKey,
   getOrCreateUserTempKey,
   getPaymentAmount,
   getReserveAmount,
@@ -93,11 +94,14 @@ export const subscribe = async (
     const now = new Date().getTime();
     const expiryDate = calculateExpiryTimestamp(now, months);
     const subscribedTime = Date.now();
+    const keyPair = await generateKey();
+    const { base64edAsymPubKey } = await getBase64edAsymKeys(keyPair);
 
     // add documents to database
     const user = {
       address: sender,
       network,
+      pubKey: base64edAsymPubKey,
     };
     const subscription = {
       creator,

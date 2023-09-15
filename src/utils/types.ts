@@ -217,5 +217,5 @@ export type ISubscription = {
 export type IUser = {
   address: string;
   network: string;
-  // pubKey: string; TODO: add pubKey
+  pubKey: string;
 };
