@@ -16,6 +16,7 @@ import {
   getBase64edAsymKeys,
   getCreatorContentLinks,
   getImportedAsymKeys,
+  unsubscribe,
   updateCreatorKeyValue,
   updateKeyValue,
 } from "../../utils/main";
@@ -378,6 +379,25 @@ const getBlockDetail = async (injector: any, sender: any) => {
 const TestPage = () => {
   const { injector, signer }: any = useWeb3ConnectedContext();
 
+  const _unsubscribe = async () => {
+    const isCommitted = true;
+    const creator = "";
+    const pureProxy = "";
+
+    const wsProvider = new WsProvider(NODE_ENDPOINT["ROCOCO"]);
+    const api = await ApiPromise.create({ provider: wsProvider });
+    await unsubscribe(
+      isCommitted,
+      api,
+      signer.address,
+      injector,
+      creator,
+      () => {},
+      () => {},
+      pureProxy
+    );
+  };
+
   return (
     <div>
       <button onClick={_symGenerateKey}>generate symKey</button>
@@ -407,9 +427,12 @@ const TestPage = () => {
       <button onClick={() => proxyAnnounced(injector, signer)}>
         proxyAnnounced
       </button>
+      <br />
       <button onClick={() => getBlockDetail(injector, signer)}>
         getBlockDetail
       </button>
+      <br />
+      <button onClick={() => _unsubscribe()}>_unsubscribe</button>
     </div>
   );
 };
