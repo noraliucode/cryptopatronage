@@ -1024,7 +1024,12 @@ export const updateInfoOffChain = async (
 ) => {
   try {
     const databaseService = new DatabaseService();
-    await databaseService.updateCreator(data, address, network);
+    const creator = await databaseService.getCreator(address, network);
+    if (creator) {
+      await databaseService.updateCreator(data, address, network);
+    } else {
+      await databaseService.createCreator(data);
+    }
   } catch (error) {
     errorHandling && errorHandling(error);
   } finally {
