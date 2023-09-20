@@ -156,11 +156,13 @@ export const subscribe = async (
         };
       }
 
-      const transferCall = apiService.transferViaProxyPromise(
-        real,
-        real,
-        total
-      );
+      // TODO: can be deleted later
+      // const transferCall = apiService.transferViaProxyPromise(
+      //   real,
+      //   real,
+      //   total
+      // );
+      const transferCall = apiService.transferSubmittable(real, total);
       let callHash;
 
       let txs;

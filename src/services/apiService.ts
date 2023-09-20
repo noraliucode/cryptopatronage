@@ -62,6 +62,10 @@ class APIService {
     return this.api.tx.balances.transfer(receiver, amount);
   };
 
+  transferSubmittable = (receiver: string, amount: number) => {
+    return this.api.tx.balances.transfer(receiver, amount);
+  };
+
   getTransferFee = async (receiver: string, amount: number, sender: string) => {
     const info = await this.api.tx.balances
       .transfer(receiver, amount)
