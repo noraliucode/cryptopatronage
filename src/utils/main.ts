@@ -1117,3 +1117,21 @@ export const getSubscription = async (
     errorHandling && errorHandling(error);
   }
 };
+
+export const getSubscriptions = async (
+  supporter: string,
+  network: INetwork,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
+    const subscriptions = await databaseService.getSubscriptions(
+      supporter,
+      network
+    );
+
+    return subscriptions;
+  } catch (error) {
+    errorHandling && errorHandling(error);
+  }
+};

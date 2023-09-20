@@ -266,6 +266,30 @@ class DatabaseService {
       console.log("There was a network error:", error);
     }
   };
+
+  getSubscriptions = async (supporter: string, network: INetwork) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/subscriptions/network/${network}/supporter/${supporter}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`readData HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
 }
 
 export default DatabaseService;
