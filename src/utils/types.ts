@@ -212,6 +212,7 @@ export type ISubscription = {
   pureProxy: string | null | undefined;
   expiresOn: number;
   subscribedTime: number;
+  network: string;
 };
 
 export type IUser = {

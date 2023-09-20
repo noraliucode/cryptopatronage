@@ -97,22 +97,6 @@ export const subscribe = async (
     const keyPair = await generateKey();
     const { base64edAsymPubKey } = await getBase64edAsymKeys(keyPair);
 
-    // add documents to database
-    const user = {
-      address: sender,
-      network,
-      pubKey: base64edAsymPubKey,
-    };
-    const subscription = {
-      creator,
-      supporter,
-      pureProxy,
-      expiresOn: expiryDate,
-      subscribedTime,
-    };
-    await addUser(sender, network, user);
-    await addSubscription(creator, sender, network, subscription);
-
     // let delay = isDelayed ? 300 : 0; // for testing
     if (isCommitted) {
       // check if the supporter has created pure proxy to the creator
@@ -245,6 +229,23 @@ export const subscribe = async (
             callHash,
           };
         }
+
+        // add documents to database
+        const user = {
+          address: sender,
+          network,
+          pubKey: base64edAsymPubKey,
+        };
+        const subscription = {
+          creator,
+          supporter,
+          pureProxy: real,
+          expiresOn: expiryDate,
+          subscribedTime,
+          network,
+        };
+        await addUser(sender, network, user);
+        await addSubscription(creator, sender, network, subscription);
         // TODO: update the databse twice for preventing concurrency issue
         await updateCreatorKeyValue(creator, supporterInfo, SUPPORTERS);
         await updateCreatorKeyValue(
