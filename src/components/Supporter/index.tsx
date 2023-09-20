@@ -45,9 +45,10 @@ export const Supporter = () => {
 
   const { signer, injector, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
-  const { userPureProxy } = usePureProxy(signer?.address);
+  // TODO: refactor
+  // const { userPureProxy } = usePureProxy(signer?.address);
   const { committedCreators, uncommittedCreators, getSubscribedCreators } =
-    useSubscribedCreators(signer?.address, network, userPureProxy);
+    useSubscribedCreators(signer?.address, network);
 
   const { api } = useApi(network);
   const { t } = useTranslation();

@@ -1089,14 +1089,30 @@ export const addSubscription = async (
 ) => {
   try {
     const databaseService = new DatabaseService();
+    const subscription = await getSubscription(creator, supporter, network);
+
+    if (subscription) return;
+    await databaseService.createSubscription(data);
+  } catch (error) {
+    errorHandling && errorHandling(error);
+  }
+};
+
+export const getSubscription = async (
+  creator: string,
+  supporter: string,
+  network: INetwork,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
     const subscription = await databaseService.getSubscription(
       creator,
       supporter,
       network
     );
 
-    if (subscription) return;
-    await databaseService.createSubscription(data);
+    return subscription;
   } catch (error) {
     errorHandling && errorHandling(error);
   }

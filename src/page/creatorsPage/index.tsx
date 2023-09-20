@@ -84,12 +84,12 @@ export const CreatorsPage = () => {
   const params = useParams();
   const { t } = useTranslation();
   const { address } = params as any;
-  const { userPureProxy } = usePureProxy(signer?.address);
+  // TODO: refactor later
+  // const { userPureProxy } = usePureProxy(signer?.address);
 
   const { committedCreators, uncommittedCreators } = useSubscribedCreators(
     signer?.address,
-    network,
-    userPureProxy
+    network
   );
   const { tokenUsdPrice } = useTokenUsdPrice(network);
   const {

@@ -736,7 +736,8 @@ export const Manage = () => {
                 </Button>
               </InputWrapper>
             </>
-            <Supporter />
+            {/* { TODO: refactor} */}
+            {/* <Supporter /> */}
             <ContentLinkSection
               publishLink={_publishLink}
               hasSupporter={hasSupporter}

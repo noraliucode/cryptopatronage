@@ -49,11 +49,9 @@ const SidebarList = (props: Props) => {
   const { t } = useTranslation();
   const { signer, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
-  const { userPureProxy } = usePureProxy(signer?.address);
   const { committedCreators, uncommittedCreators } = useSubscribedCreators(
     signer?.address,
-    network,
-    userPureProxy
+    network
   );
   const [state, setState] = React.useState({
     selectedIndex: 1,

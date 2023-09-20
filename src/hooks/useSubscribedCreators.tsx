@@ -15,11 +15,7 @@ interface IState {
   uncommittedCreators: IProxyParsedCreators;
 }
 
-export const useSubscribedCreators = (
-  supporter = "",
-  network: INetwork,
-  pureProxy: string | null
-) => {
+export const useSubscribedCreators = (supporter = "", network: INetwork) => {
   const [state, setState] = useState<IState>({
     committedCreators: [],
     uncommittedCreators: [],

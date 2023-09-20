@@ -1,21 +1,24 @@
 import { useEffect, useState } from "react";
-import { USER_PURE_PROXY } from "../utils/constants";
-import { readJsonBinKeyValue } from "../utils/main";
+import { getSubscription } from "../utils/main";
+import { INetwork } from "../utils/types";
 
 interface IState {
   userPureProxy: string | null;
 }
 
-export const usePureProxy = (signer = "") => {
+export const usePureProxy = (
+  creator: string,
+  supporter: string,
+  network: INetwork
+) => {
   const [state, setState] = useState<IState>({
     userPureProxy: null,
   });
 
   const getUserProxy = async () => {
     try {
-      const result = await readJsonBinKeyValue(signer, USER_PURE_PROXY);
-      if (!result) return null;
-      const userPureProxy = result[signer]?.pureProxy;
+      const subscription = await getSubscription(creator, supporter, network);
+      const userPureProxy = subscription.pureProxy;
 
       setState((prev) => ({
         ...prev,
@@ -27,6 +30,6 @@ export const usePureProxy = (signer = "") => {
   };
   useEffect(() => {
     getUserProxy();
-  }, [signer]);
+  }, [supporter]);
   return { ...state };
 };
