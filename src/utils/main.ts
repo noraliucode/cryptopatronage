@@ -69,7 +69,7 @@ export const subscribe = async (
   creator: string,
   sender: string,
   injector: InjectedExtension,
-  isCommitted = true,
+  isCommitted: boolean,
   network: INetwork,
   months = 1,
   tokenUsdPrice: number,
@@ -245,6 +245,7 @@ export const subscribe = async (
           expiresOn: expiryDate,
           subscribedTime,
           network,
+          isCommitted,
         };
         await addUser(sender, network, user);
         await addSubscription(creator, sender, network, subscription);
