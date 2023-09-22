@@ -213,7 +213,15 @@ export type ISubscription = {
   expiresOn: number;
   subscribedTime: number;
   network: string;
+  isCommitted: boolean;
 };
+
+export interface IFormattedSubscription extends ISubscription {
+  display: string;
+  imgUrl: string;
+}
+
+export type IFormattedSubscriptions = IFormattedSubscription[] | [];
 
 export type IUser = {
   address: string;

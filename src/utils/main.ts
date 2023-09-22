@@ -40,6 +40,7 @@ import {
   IContentLinkDatabase,
   ICreator,
   Identity,
+  IFormattedSubscription,
   IHistory,
   INetwork,
   IParsedSupporterProxies,
@@ -1136,7 +1137,18 @@ export const getSubscriptions = async (
       network
     );
 
-    return subscriptions;
+    const committedCreators: IFormattedSubscription[] = [];
+    const uncommittedCreators: IFormattedSubscription[] = [];
+
+    subscriptions.forEach((obj: IFormattedSubscription) => {
+      if (obj.isCommitted) {
+        committedCreators.push(obj);
+      } else {
+        uncommittedCreators.push(obj);
+      }
+    });
+
+    return { committedCreators, uncommittedCreators };
   } catch (error) {
     errorHandling && errorHandling(error);
   }
