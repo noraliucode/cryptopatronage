@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCreators } from "../../hooks/useCreators";
 import { styled } from "@mui/material/styles";
 import { Box, Button, CircularProgress, Grid } from "@mui/material";
 import { FOOTER_HEIGHT, NAV_BAR_HEIGHT, NETWORK } from "../../utils/constants";
-import { IWeb3ConnectedContextState } from "../../utils/types";
+import {
+  IFormattedSubscription,
+  IWeb3ConnectedContextState,
+} from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { SubscribeModal } from "../../components/SubscribeModal";
 import { Modal } from "../../components/Modal";
@@ -20,6 +23,8 @@ import BasicTable from "../../components/Table";
 import { downloadBackupCode, importBackupCode } from "../../utils/helpers";
 import { useContentLinks } from "../../hooks/useContentLinks";
 import { Content, LoadingContainer, Text } from "../ManagePage";
+import { unsubscribe } from "../../utils/main";
+import { useApi } from "../../hooks/useApi";
 
 export const Root = styled("div")(() => ({
   padding: 30,
@@ -54,6 +59,7 @@ type IState = {
   isModalOpen: boolean;
   selectedIndex: number;
   selectedRate: string | undefined;
+  creator: IFormattedSubscription | null;
 };
 
 export const CreatorsPage = () => {
@@ -63,6 +69,7 @@ export const CreatorsPage = () => {
     isModalOpen: false,
     selectedIndex: -1,
     selectedRate: "",
+    creator: null,
   });
   const {
     signer,
@@ -84,13 +91,21 @@ export const CreatorsPage = () => {
   const params = useParams();
   const { t } = useTranslation();
   const { address } = params as any;
+  const { api } = useApi(network);
   // TODO: refactor later
   // const { userPureProxy } = usePureProxy(signer?.address);
+  useEffect(() => {
+    if (address) {
+      const _creator = getCreator();
+      setState((prev) => ({
+        ...prev,
+        creator: _creator as any,
+      }));
+    }
+  }, [address]);
 
-  const { committedCreators, uncommittedCreators } = useSubscribedCreators(
-    signer?.address,
-    network
-  );
+  const { committedCreators, uncommittedCreators, getSubscribedCreators } =
+    useSubscribedCreators(signer?.address, network);
   const { tokenUsdPrice } = useTokenUsdPrice(network);
   const {
     links,
@@ -98,24 +113,27 @@ export const CreatorsPage = () => {
     getContentLinks,
   } = useContentLinks(address);
 
-  const getIsSubscriber = (creator: string | undefined) => {
-    if (!creator) return false;
+  const getCreator = (creatorAddress?: string) => {
+    const _address = creatorAddress || address;
     let committedCreator;
     let uncommittedCreator;
     if (committedCreators?.length > 0) {
       committedCreator = committedCreators.find(
-        (x) => x?.creator?.toLowerCase() === creator.toLowerCase()
+        (x) => x?.creator?.toLowerCase() === _address.toLowerCase()
       );
     }
 
     if (uncommittedCreators?.length > 0) {
       uncommittedCreator = uncommittedCreators.find(
-        (x) => x?.creator?.toLowerCase() === creator.toLowerCase()
+        (x) => x?.creator?.toLowerCase() === _address.toLowerCase()
       );
     }
 
-    return !!(committedCreator || uncommittedCreator);
-    // committedCreators.length > 0 || uncommittedCreators.length > 0;
+    return committedCreator || uncommittedCreator;
+  };
+
+  const getIsSubscriber = (address: string) => {
+    return !!getCreator(address);
   };
 
   const onClose = () => {
@@ -153,8 +171,14 @@ export const CreatorsPage = () => {
     }));
   };
 
-  const { open, selectedCreator, isModalOpen, selectedIndex, selectedRate } =
-    state;
+  const {
+    open,
+    selectedCreator,
+    isModalOpen,
+    selectedIndex,
+    selectedRate,
+    creator,
+  } = state;
   const _creators = address
     ? creators?.filter(
         (x) => x?.address?.toLowerCase() === address.toLowerCase()
@@ -173,21 +197,38 @@ export const CreatorsPage = () => {
     downloadBackupCode(signer?.address);
   };
 
-  const unsubscribe = () => {
+  const callback = async () => {
+    await getSubscribedCreators();
+    setState((prev) => ({
+      ...prev,
+      isUnsubscribing: false,
+    }));
+  };
+
+  const setLoading = (value: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      isUnsubscribing: value,
+    }));
+  };
+
+  const _unsubscribe = async () => {
     if (!signer) return;
-    /**
-     * TODO: implement unsubscribe
-    const pureProxy = await getPureProxy(signer?.address);
-    if(pureProxy) {
-      // check if there is balance in pureProxy account 
-      const balance = await getPureProxyBalance(pureProxy);
-      if(balance > 0) {
-        // transfer to creator
-      }
-      // then delete pure proxy both on-chain / off-chain
-    }
-    // then delete subscription from database
-     */
+    checkSigner();
+    if (!injector || !signer) return;
+    const address = creator?.creator || "";
+    const isCommitted = !!creator?.isCommitted;
+    const pureProxy = creator?.pureProxy || "";
+    await unsubscribe(
+      isCommitted,
+      api,
+      signer.address,
+      injector,
+      address,
+      callback,
+      setLoading,
+      pureProxy
+    );
   };
 
   return (
@@ -241,7 +282,7 @@ export const CreatorsPage = () => {
                   {_creators.map((creator, index) => (
                     <Creator
                       key={`${creator}_${index}`}
-                      isSubscriber={getIsSubscriber(creator?.address)}
+                      isSubscriber={getIsSubscriber(creator?.address || "")}
                       tokenUsdPrice={tokenUsdPrice}
                       creator={creator}
                       selectedIndex={selectedIndex}
@@ -260,7 +301,7 @@ export const CreatorsPage = () => {
                 </Grid>
               </Container>
               {address && getIsSubscriber(address) && (
-                <Button variant="contained" onClick={unsubscribe}>
+                <Button variant="contained" onClick={_unsubscribe}>
                   Unsubscribe
                 </Button>
               )}
