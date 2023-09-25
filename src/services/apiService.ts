@@ -128,7 +128,7 @@ class APIService {
     );
   };
 
-  removeProxyViaProxy = async (real: string, proxy: string) => {
+  removeProxyViaProxySubmittable = (real: string, proxy: string) => {
     return this.api.tx.proxy.proxy(
       real,
       null,

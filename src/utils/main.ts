@@ -164,11 +164,13 @@ export const subscribe = async (
       //   total
       // );
       const transferCall = apiService.transferSubmittable(real, total);
+      const addProxyCall = apiService.getAddProxyViaProxySubmittable(
+        creator,
+        real
+      );
       let callHash;
-
       let txs;
 
-      console.log("set creator as main proxy...");
       if (isDelayed) {
         console.log("isDelayed...");
 
@@ -197,7 +199,8 @@ export const subscribe = async (
           total, // for corn job to filter out the calls that balances are not enough
         });
       } else {
-        const promises = [transferCall];
+        console.log("set creator as main proxy...");
+        const promises = [transferCall, addProxyCall];
         txs = await Promise.all(promises);
       }
 
@@ -287,7 +290,9 @@ export const unsubscribe = async (
       const balance = await apiService.getBalance(pureProxy);
       // To use killPure, we need to pass block height and other parameters. Therefore, our conclusion is to simply break the relationship between creator and pureProxy by using removeProxy.
       // https://www.notion.so/517be2b31a69450bb145d5b2e39314ab?v=0df5c9bf2d1144b387ae7a962c9ac8e0&p=cd914b3b0b3f4c53b156a5906f152d06&pm=s
-      const txs = [await apiService.removeProxyViaProxy(pureProxy, creator)];
+      const txs = [
+        await apiService.removeProxyViaProxySubmittable(pureProxy, creator),
+      ];
       // withdraw if there are still funds
       if (balance > ZERO_BAL) {
         txs.push(
