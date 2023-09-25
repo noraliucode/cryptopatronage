@@ -300,8 +300,10 @@ export const CreatorsPage = () => {
                   ))}
                 </Grid>
               </Container>
+              <p />
+              <p />
               {address && getIsSubscriber(address) && (
-                <Button variant="contained" onClick={_unsubscribe}>
+                <Button fullWidth variant="contained" onClick={_unsubscribe}>
                   Unsubscribe
                 </Button>
               )}
