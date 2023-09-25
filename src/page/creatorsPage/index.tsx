@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useCreators } from "../../hooks/useCreators";
 import { styled } from "@mui/material/styles";
-import { Box, Button, CircularProgress, Grid } from "@mui/material";
+import { Box, Button, CircularProgress, Grid, Snackbar } from "@mui/material";
 import { FOOTER_HEIGHT, NAV_BAR_HEIGHT, NETWORK } from "../../utils/constants";
 import {
   IFormattedSubscription,
@@ -60,6 +60,7 @@ type IState = {
   selectedIndex: number;
   selectedRate: string | undefined;
   creator: IFormattedSubscription | null;
+  isUnsubscribing: boolean;
 };
 
 export const CreatorsPage = () => {
@@ -70,6 +71,7 @@ export const CreatorsPage = () => {
     selectedIndex: -1,
     selectedRate: "",
     creator: null,
+    isUnsubscribing: false,
   });
   const {
     signer,
@@ -178,6 +180,7 @@ export const CreatorsPage = () => {
     selectedIndex,
     selectedRate,
     creator,
+    isUnsubscribing,
   } = state;
   const _creators = address
     ? creators?.filter(
@@ -215,10 +218,11 @@ export const CreatorsPage = () => {
   const _unsubscribe = async () => {
     if (!signer) return;
     checkSigner();
-    if (!injector || !signer) return;
+    if (!injector || !signer || !creator) return;
     const address = creator?.creator || "";
-    const isCommitted = !!creator?.isCommitted;
-    const pureProxy = creator?.pureProxy || "";
+    const isCommitted = !!creator.isCommitted;
+    const pureProxy = creator.pureProxy || "";
+
     await unsubscribe(
       network,
       isCommitted,
@@ -235,6 +239,14 @@ export const CreatorsPage = () => {
   return (
     <Root>
       <>
+        <Snackbar
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          open={isUnsubscribing}
+          message={"Unsubscribing..."}
+        />
         <Title>{t("title")}</Title>
         <Link to={"/create"}>
           <Button variant="contained">{t("button.becomeCreator")}</Button>

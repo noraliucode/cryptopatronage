@@ -308,6 +308,8 @@ export const unsubscribe = async (
     }
   } catch (error) {
     console.error("unsubscribe error >>", error);
+  } finally {
+    setLoading && setLoading(false);
   }
 };
 
