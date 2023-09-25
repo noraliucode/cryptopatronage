@@ -119,13 +119,13 @@ export const CreatorsPage = () => {
     let uncommittedCreator;
     if (committedCreators?.length > 0) {
       committedCreator = committedCreators.find(
-        (x) => x?.creator?.toLowerCase() === _address.toLowerCase()
+        (x) => x?.creator?.toLowerCase() === _address?.toLowerCase()
       );
     }
 
     if (uncommittedCreators?.length > 0) {
       uncommittedCreator = uncommittedCreators.find(
-        (x) => x?.creator?.toLowerCase() === _address.toLowerCase()
+        (x) => x?.creator?.toLowerCase() === _address?.toLowerCase()
       );
     }
 
