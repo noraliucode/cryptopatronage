@@ -85,16 +85,17 @@ export const Supporter = () => {
   ) => {
     checkSigner();
     if (!injector || !signer) return;
-    await unsubscribe(
-      isCommitted,
-      api,
-      signer.address,
-      injector,
-      creator,
-      callback,
-      setLoading,
-      pureProxy
-    );
+    // TODO: refactor
+    // await unsubscribe(
+    //   isCommitted,
+    //   api,
+    //   signer.address,
+    //   injector,
+    //   creator,
+    //   callback,
+    //   setLoading,
+    //   pureProxy
+    // );
   };
 
   const _unnotePreimage = async () => {

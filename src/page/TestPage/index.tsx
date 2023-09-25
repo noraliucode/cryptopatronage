@@ -386,16 +386,18 @@ const TestPage = () => {
 
     const wsProvider = new WsProvider(NODE_ENDPOINT["ROCOCO"]);
     const api = await ApiPromise.create({ provider: wsProvider });
-    await unsubscribe(
-      isCommitted,
-      api,
-      signer.address,
-      injector,
-      creator,
-      () => {},
-      () => {},
-      pureProxy
-    );
+    // TODO: refactor
+    // await unsubscribe(
+    //   network,
+    //   isCommitted,
+    //   api,
+    //   signer.address,
+    //   injector,
+    //   creator,
+    //   () => {},
+    //   () => {},
+    //   pureProxy
+    // );
   };
 
   return (

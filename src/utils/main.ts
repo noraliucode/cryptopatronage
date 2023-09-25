@@ -272,6 +272,7 @@ export const subscribe = async (
 };
 
 export const unsubscribe = async (
+  network: INetwork,
   isCommitted: boolean,
   api: ApiPromise | null,
   sender: string,
@@ -300,6 +301,7 @@ export const unsubscribe = async (
         );
       }
       await apiService.batchCalls(txs, sender, injector, callback);
+      await deleteSubscription(creator, network, sender);
     } else {
       // simply removeProxy and signer is the supporter
       apiService.signAndSendRemoveProxy(sender, injector, creator, callback);
@@ -1156,5 +1158,23 @@ export const getSubscriptions = async (
     return { committedCreators, uncommittedCreators };
   } catch (error) {
     errorHandling && errorHandling(error);
+  }
+};
+
+export const deleteSubscription = async (
+  creator: string,
+  network: INetwork,
+  supporter: string
+) => {
+  try {
+    const data = {
+      creator,
+      network,
+      supporter,
+    };
+    const databaseService = new DatabaseService();
+    await databaseService.deleteSubscription(data);
+  } catch (error) {
+    console.log("deleteSubscription error", error);
   }
 };

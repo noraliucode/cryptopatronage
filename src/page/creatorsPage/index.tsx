@@ -220,6 +220,7 @@ export const CreatorsPage = () => {
     const isCommitted = !!creator?.isCommitted;
     const pureProxy = creator?.pureProxy || "";
     await unsubscribe(
+      network,
       isCommitted,
       api,
       signer.address,
