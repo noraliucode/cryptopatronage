@@ -170,6 +170,148 @@ class DatabaseService {
       console.log("There was a network error:", error);
     }
   };
+
+  createUser = async (jsonObject: any) => {
+    try {
+      const response = await fetch(`${API_URL}/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+        },
+        body: JSON.stringify(jsonObject),
+      });
+
+      if (!response.ok) {
+        throw new Error(`updateData HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("result", result);
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
+
+  getUser = async (address: string, network: INetwork) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/users/network/${network}/address/${address}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`readData HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
+
+  createSubscription = async (jsonObject: any) => {
+    try {
+      const response = await fetch(`${API_URL}/subscriptions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+        },
+        body: JSON.stringify(jsonObject),
+      });
+
+      if (!response.ok) {
+        throw new Error(`updateData HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("result", result);
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
+
+  getSubscription = async (
+    creator: string,
+    supporter: string,
+    network: INetwork
+  ) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/subscriptions/network/${network}/creator/${creator}/supporter/${supporter}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`readData HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
+
+  getSubscriptions = async (supporter: string, network: INetwork) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/subscriptions/network/${network}/supporter/${supporter}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`readData HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
+
+  deleteSubscription = async (jsonObject: any) => {
+    try {
+      const response = await fetch(`${API_URL}/subscriptions`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
+        },
+        body: JSON.stringify(jsonObject),
+      });
+
+      if (!response.ok) {
+        throw new Error(`delete HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("result", result);
+    } catch (error) {
+      console.log("There was a network error:", error);
+    }
+  };
 }
 
 export default DatabaseService;

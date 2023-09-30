@@ -139,6 +139,11 @@ const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
       isSensitive: checked,
       isUsd,
     };
+    let data: any = {
+      identity,
+      additionalInfo,
+      address: signer.address,
+    };
 
     toggleRegistrationModal(false);
 
@@ -156,6 +161,14 @@ const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
         setLoading,
         errorHandling
       );
+
+      // It needs to store data off chain too for fetching subscribed creators list
+      data = {
+        ...data,
+        isOnchained: true,
+        network,
+      };
+      updateInfoOffChain(data as any, signer.address, network);
     } else {
       // TODO: refactor loading and message
       setLoading(true);
@@ -172,10 +185,8 @@ const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
         }, 500);
         _callback && _callback();
       };
-      let data: any = {
-        identity,
-        additionalInfo,
-        address: signer.address,
+      data = {
+        ...data,
         isOnchained: false,
       };
       if (isCreatorRegistered) {

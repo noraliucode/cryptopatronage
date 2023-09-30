@@ -49,11 +49,9 @@ const SidebarList = (props: Props) => {
   const { t } = useTranslation();
   const { signer, network }: IWeb3ConnectedContextState =
     useWeb3ConnectedContext();
-  const { userPureProxy } = usePureProxy(signer?.address);
   const { committedCreators, uncommittedCreators } = useSubscribedCreators(
     signer?.address,
-    network,
-    userPureProxy
+    network
   );
   const [state, setState] = React.useState({
     selectedIndex: 1,
@@ -145,7 +143,7 @@ const SidebarList = (props: Props) => {
             return (
               <StyledLink
                 key={`${item.creator}_${index}`}
-                to={`/creators/${item.address}/?network=${network}`}
+                to={`/creators/${item.creator}/?network=${network}`}
               >
                 <ListItem key={item.creator} disablePadding>
                   <ListItemButton
@@ -165,7 +163,7 @@ const SidebarList = (props: Props) => {
                     </ListItemAvatar>
 
                     <ListItemText
-                      primary={item.display || stringShorten(item.address, 5)}
+                      primary={item.display || stringShorten(item.creator, 5)}
                       sx={{ opacity: open ? 1 : 0 }}
                     />
                   </ListItemButton>

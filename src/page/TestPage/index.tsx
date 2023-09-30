@@ -16,12 +16,13 @@ import {
   getBase64edAsymKeys,
   getCreatorContentLinks,
   getImportedAsymKeys,
+  unsubscribe,
   updateCreatorKeyValue,
   updateKeyValue,
 } from "../../utils/main";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
 import { ApiPromise, WsProvider } from "@polkadot/api";
-import { NODE_ENDPOINT } from "../../utils/constants";
+import { NODE_ENDPOINT, PURE_CREATED } from "../../utils/constants";
 import { blake2AsHex } from "@polkadot/util-crypto";
 
 const creator = "5FWRBKS8qncTegjmBnVrEnQYVR2Py6FtZCtQFiKBuewDkhpr";
@@ -321,8 +322,83 @@ const proxyAnnounced = async (injector: any, signer: any) => {
   }
 };
 
+const getBlockDetail = async (injector: any, sender: any) => {
+  const wsProvider = new WsProvider(NODE_ENDPOINT["ROCOCO"]);
+
+  const api = await ApiPromise.create({ provider: wsProvider });
+  // const txHash = await api.tx.balances
+  //   .transfer(sender.address, 1000000000000)
+  //   .signAndSend(sender.address, { signer: injector.signer });
+  const txHash = await api.tx.proxy
+    .createPure("any", 0, 0)
+    .signAndSend(
+      sender.address,
+      { signer: injector.signer },
+      ({ status, events = [] }) => {
+        if (status.isInBlock) {
+          const anonymousCreatedEvent = events.find((x) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const event = x.toHuman().event?.valueOf();
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return event.method === PURE_CREATED;
+          });
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+
+          // resolve(anonymousCreatedEvent?.toHuman().event?.valueOf());
+          console.log(
+            "anonymousCreatedEvent?.toHuman().event?.valueOf()",
+            anonymousCreatedEvent?.toHuman().event?.valueOf()
+          );
+        }
+      }
+    );
+
+  const unsub = await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
+    const blockHash = header.hash;
+    const block = await api.rpc.chain.getBlock(blockHash);
+
+    let extrinsicIndex;
+    block.block.extrinsics.forEach((extrinsic, index) => {
+      if (extrinsic.hash.eq(txHash)) {
+        extrinsicIndex = index;
+      }
+    });
+
+    if (extrinsicIndex !== undefined) {
+      console.log(
+        `Extrinsic is in block number: ${header.number} and its index is: ${extrinsicIndex}`
+      );
+      unsub(); // Unsubscribe after finding the extrinsic
+    }
+  });
+};
+
 const TestPage = () => {
   const { injector, signer }: any = useWeb3ConnectedContext();
+
+  const _unsubscribe = async () => {
+    const isCommitted = true;
+    const creator = "";
+    const pureProxy = "";
+
+    const wsProvider = new WsProvider(NODE_ENDPOINT["ROCOCO"]);
+    const api = await ApiPromise.create({ provider: wsProvider });
+    // TODO: refactor
+    // await unsubscribe(
+    //   network,
+    //   isCommitted,
+    //   api,
+    //   signer.address,
+    //   injector,
+    //   creator,
+    //   () => {},
+    //   () => {},
+    //   pureProxy
+    // );
+  };
 
   return (
     <div>
@@ -353,6 +429,12 @@ const TestPage = () => {
       <button onClick={() => proxyAnnounced(injector, signer)}>
         proxyAnnounced
       </button>
+      <br />
+      <button onClick={() => getBlockDetail(injector, signer)}>
+        getBlockDetail
+      </button>
+      <br />
+      <button onClick={() => _unsubscribe()}>_unsubscribe</button>
     </div>
   );
 };

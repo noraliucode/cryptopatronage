@@ -205,3 +205,26 @@ export type IAnnounce = {
   callHash: `0x${string}`;
   total: number;
 };
+
+export type ISubscription = {
+  creator: string;
+  supporter: string;
+  pureProxy: string | null | undefined;
+  expiresOn: number;
+  subscribedTime: number;
+  network: string;
+  isCommitted: boolean;
+};
+
+export interface IFormattedSubscription extends ISubscription {
+  display: string;
+  imgUrl: string;
+}
+
+export type IFormattedSubscriptions = IFormattedSubscription[] | [];
+
+export type IUser = {
+  address: string;
+  network: string;
+  pubKey: string;
+};

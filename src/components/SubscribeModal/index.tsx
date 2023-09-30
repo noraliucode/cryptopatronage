@@ -108,7 +108,11 @@ export const SubscribeModal = (props: IProps) => {
     useWeb3ConnectedContext();
 
   const { api } = useApi(network);
-  const { userPureProxy } = usePureProxy(signer?.address);
+  const { userPureProxy } = usePureProxy(
+    selectedCreator,
+    signer?.address || "",
+    network
+  );
 
   const isSubscribDisabled = !isCommitted && !isNoFundsExclusivelyConfirmed;
   const formattedRate = formatUnit(Number(rate), DECIMALS[network]);

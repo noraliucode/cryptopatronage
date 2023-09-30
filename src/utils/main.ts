@@ -20,6 +20,7 @@ import {
   decrypt,
   encrypt,
   exportKey,
+  generateKey,
   getOrCreateUserTempKey,
   getPaymentAmount,
   getReserveAmount,
@@ -39,10 +40,13 @@ import {
   IContentLinkDatabase,
   ICreator,
   Identity,
+  IFormattedSubscription,
   IHistory,
   INetwork,
   IParsedSupporterProxies,
+  ISubscription,
   ISupporter,
+  IUser,
 } from "./types";
 import type { H256 } from "@polkadot/types/interfaces";
 import { ApiPromise } from "@polkadot/api";
@@ -66,7 +70,7 @@ export const subscribe = async (
   creator: string,
   sender: string,
   injector: InjectedExtension,
-  isCommitted = true,
+  isCommitted: boolean,
   network: INetwork,
   months = 1,
   tokenUsdPrice: number,
@@ -88,6 +92,12 @@ export const subscribe = async (
     const bal = (await apiService.getBalance(sender)).toString();
     const proxyDepositBase: any = await apiService.getProxyDepositBase();
     const formattedProxyDepositBase = removeComma(proxyDepositBase.toString());
+    const now = new Date().getTime();
+    const expiryDate = calculateExpiryTimestamp(now, months);
+    const subscribedTime = Date.now();
+    const keyPair = await generateKey();
+    const { base64edAsymPubKey } = await getBase64edAsymKeys(keyPair);
+
     // let delay = isDelayed ? 300 : 0; // for testing
     if (isCommitted) {
       // check if the supporter has created pure proxy to the creator
@@ -147,16 +157,20 @@ export const subscribe = async (
         };
       }
 
-      const transferCall = apiService.transferViaProxyPromise(
-        real,
-        real,
-        total
+      // TODO: can be deleted later
+      // const transferCall = apiService.transferViaProxyPromise(
+      //   real,
+      //   real,
+      //   total
+      // );
+      const transferCall = apiService.transferSubmittable(real, total);
+      const addProxyCall = apiService.getAddProxyViaProxySubmittable(
+        creator,
+        real
       );
       let callHash;
-
       let txs;
 
-      console.log("set creator as main proxy...");
       if (isDelayed) {
         console.log("isDelayed...");
 
@@ -185,7 +199,8 @@ export const subscribe = async (
           total, // for corn job to filter out the calls that balances are not enough
         });
       } else {
-        const promises = [transferCall];
+        console.log("set creator as main proxy...");
+        const promises = [transferCall, addProxyCall];
         txs = await Promise.all(promises);
       }
 
@@ -200,8 +215,7 @@ export const subscribe = async (
       const tx = await apiService.batchCalls(txs, sender, injector, _callBack);
       if (tx) {
         console.log("set subscribed time...");
-        const now = new Date().getTime();
-        const expiryDate = calculateExpiryTimestamp(now, months);
+
         let supporterInfo: ISupporter;
         setExpiryDate(expiryDate);
         supporterInfo = {
@@ -221,6 +235,24 @@ export const subscribe = async (
             callHash,
           };
         }
+
+        // add documents to database
+        const user = {
+          address: sender,
+          network,
+          pubKey: base64edAsymPubKey,
+        };
+        const subscription = {
+          creator,
+          supporter,
+          pureProxy: real,
+          expiresOn: expiryDate,
+          subscribedTime,
+          network,
+          isCommitted,
+        };
+        await addUser(sender, network, user);
+        await addSubscription(creator, sender, network, subscription);
         // TODO: update the databse twice for preventing concurrency issue
         await updateCreatorKeyValue(creator, supporterInfo, SUPPORTERS);
         await updateCreatorKeyValue(
@@ -240,6 +272,7 @@ export const subscribe = async (
 };
 
 export const unsubscribe = async (
+  network: INetwork,
   isCommitted: boolean,
   api: ApiPromise | null,
   sender: string,
@@ -258,7 +291,9 @@ export const unsubscribe = async (
       const balance = await apiService.getBalance(pureProxy);
       // To use killPure, we need to pass block height and other parameters. Therefore, our conclusion is to simply break the relationship between creator and pureProxy by using removeProxy.
       // https://www.notion.so/517be2b31a69450bb145d5b2e39314ab?v=0df5c9bf2d1144b387ae7a962c9ac8e0&p=cd914b3b0b3f4c53b156a5906f152d06&pm=s
-      const txs = [await apiService.removeProxyViaProxy(pureProxy, creator)];
+      const txs = [
+        await apiService.removeProxyViaProxySubmittable(pureProxy, creator),
+      ];
       // withdraw if there are still funds
       if (balance > ZERO_BAL) {
         txs.push(
@@ -266,12 +301,15 @@ export const unsubscribe = async (
         );
       }
       await apiService.batchCalls(txs, sender, injector, callback);
+      await deleteSubscription(creator, network, sender);
     } else {
       // simply removeProxy and signer is the supporter
       apiService.signAndSendRemoveProxy(sender, injector, creator, callback);
     }
   } catch (error) {
     console.error("unsubscribe error >>", error);
+  } finally {
+    setLoading && setLoading(false);
   }
 };
 
@@ -997,7 +1035,12 @@ export const updateInfoOffChain = async (
 ) => {
   try {
     const databaseService = new DatabaseService();
-    await databaseService.updateCreator(data, address, network);
+    const creator = await databaseService.getCreator(address, network);
+    if (creator) {
+      await databaseService.updateCreator(data, address, network);
+    } else {
+      await databaseService.createCreator(data);
+    }
   } catch (error) {
     errorHandling && errorHandling(error);
   } finally {
@@ -1033,5 +1076,107 @@ export const deleteCreatorOffChain = async (
     errorHandling && errorHandling(error);
   } finally {
     callback && callback();
+  }
+};
+
+export const addUser = async (
+  address: string,
+  network: INetwork,
+  data: IUser,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
+    const user = await databaseService.getUser(address, network);
+
+    if (user) return;
+    await databaseService.createUser(data);
+  } catch (error) {
+    errorHandling && errorHandling(error);
+  }
+};
+
+export const addSubscription = async (
+  creator: string,
+  supporter: string,
+  network: INetwork,
+  data: ISubscription,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
+    const subscription = await getSubscription(creator, supporter, network);
+
+    if (subscription) return;
+    await databaseService.createSubscription(data);
+  } catch (error) {
+    errorHandling && errorHandling(error);
+  }
+};
+
+export const getSubscription = async (
+  creator: string,
+  supporter: string,
+  network: INetwork,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
+    const subscription = await databaseService.getSubscription(
+      creator,
+      supporter,
+      network
+    );
+
+    return subscription;
+  } catch (error) {
+    errorHandling && errorHandling(error);
+  }
+};
+
+export const getSubscriptions = async (
+  supporter: string,
+  network: INetwork,
+  errorHandling?: (error: any) => void
+) => {
+  try {
+    const databaseService = new DatabaseService();
+    const subscriptions = await databaseService.getSubscriptions(
+      supporter,
+      network
+    );
+
+    const committedCreators: IFormattedSubscription[] = [];
+    const uncommittedCreators: IFormattedSubscription[] = [];
+
+    subscriptions.forEach((obj: IFormattedSubscription) => {
+      if (obj.isCommitted) {
+        committedCreators.push(obj);
+      } else {
+        uncommittedCreators.push(obj);
+      }
+    });
+
+    return { committedCreators, uncommittedCreators };
+  } catch (error) {
+    errorHandling && errorHandling(error);
+  }
+};
+
+export const deleteSubscription = async (
+  creator: string,
+  network: INetwork,
+  supporter: string
+) => {
+  try {
+    const data = {
+      creator,
+      network,
+      supporter,
+    };
+    const databaseService = new DatabaseService();
+    await databaseService.deleteSubscription(data);
+  } catch (error) {
+    console.log("deleteSubscription error", error);
   }
 };
