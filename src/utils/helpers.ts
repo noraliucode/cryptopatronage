@@ -10,6 +10,7 @@ import type {
 import {
   IContentLinkDatabase,
   ICreatorProxyParsed,
+  IInjector,
   INetwork,
   IParsedProxies,
   IUrls,
@@ -24,6 +25,7 @@ import {
   TEMP_KEY,
 } from "./constants";
 import { updateCreatorKeyValue } from "./main";
+import { stringToHex } from "@polkadot/util";
 
 const crypto = window.crypto;
 const subtle = crypto.subtle;
@@ -671,4 +673,16 @@ export const getReserveAmount = (network: INetwork) => {
   const reserved = RESERVED_AMOUNT * 10 ** DECIMALS[network];
 
   return reserved;
+};
+
+export const getSignature = async (injector: IInjector, address: string) => {
+  const signRaw = injector?.signer?.signRaw;
+  if (!signRaw) return;
+
+  const { signature } = await signRaw({
+    address,
+    data: stringToHex("message to sign"),
+    type: "bytes",
+  });
+  return signature;
 };
