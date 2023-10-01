@@ -1,7 +1,15 @@
 import { API_URL } from "../utils/constants";
-import { INetwork } from "../utils/types";
+import { getSignature } from "../utils/helpers";
+import { IInjector, INetwork } from "../utils/types";
 
 class DatabaseService {
+  injector: IInjector;
+  address: string;
+  constructor(injector: IInjector, address: string) {
+    this.injector = injector;
+    this.address = address;
+  }
+
   updateData = async (jsonObject: any) => {
     try {
       // TODO: id is hardcoded for now
@@ -77,6 +85,12 @@ class DatabaseService {
     address: string,
     network: INetwork
   ) => {
+    const signature = await getSignature(this.injector, this.address);
+    const _jsonObject = {
+      ...jsonObject,
+      signature,
+    };
+
     try {
       const response = await fetch(
         `${API_URL}/creators/network/${network}/address/${address}`,
@@ -86,7 +100,7 @@ class DatabaseService {
             "Content-Type": "application/json",
             Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
           },
-          body: JSON.stringify(jsonObject),
+          body: JSON.stringify(_jsonObject),
         }
       );
 
@@ -102,6 +116,12 @@ class DatabaseService {
   };
 
   createCreator = async (jsonObject: any) => {
+    const signature = await getSignature(this.injector, this.address);
+    const _jsonObject = {
+      ...jsonObject,
+      signature,
+    };
+
     try {
       const response = await fetch(`${API_URL}/creators`, {
         method: "POST",
@@ -109,7 +129,7 @@ class DatabaseService {
           "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
         },
-        body: JSON.stringify(jsonObject),
+        body: JSON.stringify(_jsonObject),
       });
 
       if (!response.ok) {
@@ -148,9 +168,11 @@ class DatabaseService {
   };
 
   deleteCreator = async (address: string, network: INetwork) => {
+    const signature = await getSignature(this.injector, this.address);
+
     try {
       const response = await fetch(
-        `${API_URL}/creators/network/${network}/address/${address}`,
+        `${API_URL}/creators/network/${network}/address/${address}/${signature}`,
         {
           method: "DELETE",
           headers: {
@@ -172,6 +194,12 @@ class DatabaseService {
   };
 
   createUser = async (jsonObject: any) => {
+    const signature = await getSignature(this.injector, this.address);
+    const _jsonObject = {
+      ...jsonObject,
+      signature,
+    };
+
     try {
       const response = await fetch(`${API_URL}/users`, {
         method: "POST",
@@ -179,7 +207,7 @@ class DatabaseService {
           "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
         },
-        body: JSON.stringify(jsonObject),
+        body: JSON.stringify(_jsonObject),
       });
 
       if (!response.ok) {
@@ -218,6 +246,12 @@ class DatabaseService {
   };
 
   createSubscription = async (jsonObject: any) => {
+    const signature = await getSignature(this.injector, this.address);
+    const _jsonObject = {
+      ...jsonObject,
+      signature,
+    };
+
     try {
       const response = await fetch(`${API_URL}/subscriptions`, {
         method: "POST",
@@ -225,7 +259,7 @@ class DatabaseService {
           "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
         },
-        body: JSON.stringify(jsonObject),
+        body: JSON.stringify(_jsonObject),
       });
 
       if (!response.ok) {
@@ -292,6 +326,12 @@ class DatabaseService {
   };
 
   deleteSubscription = async (jsonObject: any) => {
+    const signature = await getSignature(this.injector, this.address);
+    const _jsonObject = {
+      ...jsonObject,
+      signature,
+    };
+
     try {
       const response = await fetch(`${API_URL}/subscriptions`, {
         method: "DELETE",
@@ -299,7 +339,7 @@ class DatabaseService {
           "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.REACT_APP_DATABASE_API_KEY}`,
         },
-        body: JSON.stringify(jsonObject),
+        body: JSON.stringify(_jsonObject),
       });
 
       if (!response.ok) {
