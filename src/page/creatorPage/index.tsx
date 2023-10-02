@@ -56,6 +56,8 @@ const CreatorPage = () => {
   }, [identity, additionalInfo, network]);
 
   const { display, email, twitter, web, imgUrl } = state;
+  const image = imgUrl ? imgUrl : "/assets/images/default.webp";
+
   return (
     <div>
       <Profile
@@ -63,8 +65,8 @@ const CreatorPage = () => {
         email={email}
         twitter={twitter}
         website={web}
-        iconURL={imgUrl}
-        bannerURL={imgUrl}
+        iconURL={image}
+        bannerURL={image}
       />
     </div>
   );
