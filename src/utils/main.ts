@@ -42,6 +42,7 @@ import {
   Identity,
   IFormattedSubscription,
   IHistory,
+  IInjector,
   INetwork,
   IParsedSupporterProxies,
   ISubscription,
@@ -251,8 +252,8 @@ export const subscribe = async (
           network,
           isCommitted,
         };
-        await addUser(sender, network, user);
-        await addSubscription(creator, sender, network, subscription);
+        await addUser(injector, sender, network, user);
+        await addSubscription(injector, creator, sender, network, subscription);
         // TODO: update the databse twice for preventing concurrency issue
         await updateCreatorKeyValue(creator, supporterInfo, SUPPORTERS);
         await updateCreatorKeyValue(
@@ -301,7 +302,7 @@ export const unsubscribe = async (
         );
       }
       await apiService.batchCalls(txs, sender, injector, callback);
-      await deleteSubscription(creator, network, sender);
+      await deleteSubscription(injector, creator, network, sender);
     } else {
       // simply removeProxy and signer is the supporter
       apiService.signAndSendRemoveProxy(sender, injector, creator, callback);
@@ -1027,6 +1028,7 @@ export const removeKeys = async <T>(
 };
 
 export const updateInfoOffChain = async (
+  injector: IInjector,
   data: ICreator,
   address: string,
   network: INetwork,
@@ -1034,7 +1036,7 @@ export const updateInfoOffChain = async (
   errorHandling?: (error: any) => void
 ) => {
   try {
-    const databaseService = new DatabaseService();
+    const databaseService = new DatabaseService(injector, address);
     const creator = await databaseService.getCreator(address, network);
     if (creator) {
       await databaseService.updateCreator(data, address, network);
@@ -1049,12 +1051,13 @@ export const updateInfoOffChain = async (
 };
 
 export const createCreatorOffChain = async (
+  injector: IInjector,
   data: ICreator,
   callback?: () => void,
   errorHandling?: (error: any) => void
 ) => {
   try {
-    const databaseService = new DatabaseService();
+    const databaseService = new DatabaseService(injector, data.address);
     databaseService.createCreator(data);
   } catch (error) {
     errorHandling && errorHandling(error);
@@ -1064,13 +1067,14 @@ export const createCreatorOffChain = async (
 };
 
 export const deleteCreatorOffChain = async (
+  injector: IInjector,
   address: string,
   network: INetwork,
   callback?: () => void,
   errorHandling?: (error: any) => void
 ) => {
   try {
-    const databaseService = new DatabaseService();
+    const databaseService = new DatabaseService(injector, address);
     await databaseService.deleteCreator(address, network);
   } catch (error) {
     errorHandling && errorHandling(error);
@@ -1080,13 +1084,14 @@ export const deleteCreatorOffChain = async (
 };
 
 export const addUser = async (
+  injector: IInjector,
   address: string,
   network: INetwork,
   data: IUser,
   errorHandling?: (error: any) => void
 ) => {
   try {
-    const databaseService = new DatabaseService();
+    const databaseService = new DatabaseService(injector, address);
     const user = await databaseService.getUser(address, network);
 
     if (user) return;
@@ -1097,6 +1102,7 @@ export const addUser = async (
 };
 
 export const addSubscription = async (
+  injector: IInjector,
   creator: string,
   supporter: string,
   network: INetwork,
@@ -1104,7 +1110,7 @@ export const addSubscription = async (
   errorHandling?: (error: any) => void
 ) => {
   try {
-    const databaseService = new DatabaseService();
+    const databaseService = new DatabaseService(injector, supporter);
     const subscription = await getSubscription(creator, supporter, network);
 
     if (subscription) return;
@@ -1164,6 +1170,7 @@ export const getSubscriptions = async (
 };
 
 export const deleteSubscription = async (
+  injector: IInjector,
   creator: string,
   network: INetwork,
   supporter: string
@@ -1174,7 +1181,7 @@ export const deleteSubscription = async (
       network,
       supporter,
     };
-    const databaseService = new DatabaseService();
+    const databaseService = new DatabaseService(injector, supporter);
     await databaseService.deleteSubscription(data);
   } catch (error) {
     console.log("deleteSubscription error", error);

@@ -168,7 +168,7 @@ const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
         isOnchained: true,
         network,
       };
-      updateInfoOffChain(data as any, signer.address, network);
+      updateInfoOffChain(injector, data as any, signer.address, network);
     } else {
       // TODO: refactor loading and message
       setLoading(true);
@@ -192,6 +192,7 @@ const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
       if (isCreatorRegistered) {
         // TODO: remove any
         updateInfoOffChain(
+          injector,
           data as any,
           signer.address,
           network,
@@ -203,7 +204,7 @@ const CreatorInfoUpdateBtn: FunctionComponent<CreatorInfoUpdateBtnProps> = ({
           ...data,
           network,
         };
-        createCreatorOffChain(data, callback, errorHandling);
+        createCreatorOffChain(injector, data, callback, errorHandling);
       }
     }
   };

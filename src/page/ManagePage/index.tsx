@@ -449,7 +449,13 @@ export const Manage = () => {
     if (isOnchained) {
       unregister(api, signer.address, injector, callback, setLoading);
     } else {
-      deleteCreatorOffChain(signer.address, network, callback, errorHandling);
+      deleteCreatorOffChain(
+        injector,
+        signer.address,
+        network,
+        callback,
+        errorHandling
+      );
     }
   };
 
