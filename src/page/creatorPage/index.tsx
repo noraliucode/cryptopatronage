@@ -3,9 +3,17 @@ import Profile from "./Profile";
 import { useIdentity } from "../../hooks/useIdentity";
 import { IWeb3ConnectedContextState } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
-import { formatUnit } from "../../utils/helpers";
+import {
+  downloadBackupCode,
+  formatUnit,
+  importBackupCode,
+} from "../../utils/helpers";
 import { DECIMALS } from "../../utils/constants";
 import { useParams } from "react-router-dom";
+import { LoadingContainer } from "../ManagePage";
+import { CircularProgress } from "@mui/material";
+import BasicTable from "../../components/Table";
+import { useContentLinks } from "../../hooks/useContentLinks";
 
 type IState = {
   imgUrl: string;
@@ -39,6 +47,14 @@ const CreatorPage = () => {
     network: _network,
   } = useIdentity(address, network);
 
+  const {
+    links,
+    loading: isContentLoading,
+    getContentLinks,
+  } = useContentLinks(address);
+
+  const { signer }: IWeb3ConnectedContextState = useWeb3ConnectedContext();
+
   useEffect(() => {
     if (identity) {
       const { email, twitter, display, web } = identity;
@@ -57,6 +73,10 @@ const CreatorPage = () => {
 
   const { display, email, twitter, web, imgUrl } = state;
   const image = imgUrl ? imgUrl : "/assets/images/default.webp";
+  const _downloadBackupCode = async () => {
+    if (!signer) return;
+    downloadBackupCode(signer?.address);
+  };
 
   return (
     <div>
@@ -68,6 +88,22 @@ const CreatorPage = () => {
         iconURL={image}
         bannerURL={image}
       />
+      {isContentLoading ? (
+        <LoadingContainer>
+          <CircularProgress size={30} thickness={5} />
+        </LoadingContainer>
+      ) : links.length > 0 && address ? (
+        <BasicTable
+          downloadBackupCode={_downloadBackupCode}
+          network={network}
+          contentLinks={links}
+          importBackupCode={(e) =>
+            importBackupCode(e, signer?.address, getContentLinks)
+          }
+        />
+      ) : (
+        <></>
+      )}
     </div>
   );
 };
