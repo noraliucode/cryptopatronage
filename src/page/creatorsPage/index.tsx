@@ -17,12 +17,10 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
-import { usePureProxy } from "../../hooks/usePureProxy";
-import ContentLinkTable from "../../components/ContentLinkTable";
 import BasicTable from "../../components/Table";
 import { downloadBackupCode, importBackupCode } from "../../utils/helpers";
 import { useContentLinks } from "../../hooks/useContentLinks";
-import { Content, LoadingContainer, Text } from "../ManagePage";
+import { LoadingContainer } from "../ManagePage";
 import { unsubscribe } from "../../utils/main";
 import { useApi } from "../../hooks/useApi";
 
