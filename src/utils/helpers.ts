@@ -676,14 +676,17 @@ export const getReserveAmount = (network: INetwork) => {
 };
 
 export const getSignature = async (injector: IInjector, address: string) => {
-  const signRaw = injector?.signer?.signRaw;
-  const message = process.env.REACT_APP_MESSAGE_TO_SIGN;
-  if (!signRaw) return;
-
-  const { signature } = await signRaw({
-    address,
-    data: stringToHex(message),
-    type: "bytes",
-  });
-  return signature;
+  try {
+    const signRaw = injector?.signer?.signRaw;
+    const message = process.env.REACT_APP_MESSAGE_TO_SIGN;
+    if (!signRaw) return;
+    const { signature } = await signRaw({
+      address,
+      data: stringToHex(message),
+      type: "bytes",
+    });
+    return signature;
+  } catch (error) {
+    console.log("getSignature error", error);
+  }
 };
