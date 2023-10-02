@@ -1,5 +1,8 @@
 import React from "react";
 import { Avatar, Box, Typography, Link } from "@mui/material";
+import EmailIcon from "@mui/icons-material/Email";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import LanguageIcon from "@mui/icons-material/Language"; // Icon for personal website
 
 type ProfileProps = {
   name: string;
@@ -80,20 +83,38 @@ const Profile: React.FC<ProfileProps> = ({
         <Typography variant="h5" sx={{ color: "#fff" }}>
           {name}
         </Typography>
-        <Typography variant="body2" sx={{ color: "#fff" }}>
-          {email}
-        </Typography>
-        <Link
-          href={`https://twitter.com/${twitter}`}
-          target="_blank"
-          rel="noopener"
-          sx={{ color: "#fff", textDecoration: "none" }}
-        >
-          Twitter: @{twitter}
-        </Link>
-        <Typography variant="body2" sx={{ color: "#fff" }}>
-          Website: {website}
-        </Typography>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 2 }}>
+          {email && (
+            <Link
+              href={`mailto:${email}`}
+              target="_blank"
+              rel="noopener"
+              sx={{ color: "#fff", textDecoration: "none" }}
+            >
+              <EmailIcon />
+            </Link>
+          )}
+          {twitter && (
+            <Link
+              href={`https://twitter.com/${twitter}`}
+              target="_blank"
+              rel="noopener"
+              sx={{ color: "#fff", textDecoration: "none" }}
+            >
+              <TwitterIcon />
+            </Link>
+          )}
+          {website && (
+            <Link
+              href={website}
+              target="_blank"
+              rel="noopener"
+              sx={{ color: "#fff", textDecoration: "none" }}
+            >
+              <LanguageIcon />
+            </Link>
+          )}
+        </Box>
       </Box>
     </Box>
   );
