@@ -11,7 +11,7 @@ import {
 import { DECIMALS } from "../../utils/constants";
 import { useParams } from "react-router-dom";
 import { LoadingContainer } from "../ManagePage";
-import { CircularProgress } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import BasicTable from "../../components/Table";
 import { useContentLinks } from "../../hooks/useContentLinks";
 
@@ -88,22 +88,28 @@ const CreatorPage = () => {
         iconURL={image}
         bannerURL={image}
       />
-      {isContentLoading ? (
-        <LoadingContainer>
-          <CircularProgress size={30} thickness={5} />
-        </LoadingContainer>
-      ) : links.length > 0 && address ? (
-        <BasicTable
-          downloadBackupCode={_downloadBackupCode}
-          network={network}
-          contentLinks={links}
-          importBackupCode={(e) =>
-            importBackupCode(e, signer?.address, getContentLinks)
-          }
-        />
-      ) : (
-        <></>
-      )}
+      <Box
+        sx={{
+          marginTop: "480px",
+        }}
+      >
+        {isContentLoading ? (
+          <LoadingContainer>
+            <CircularProgress size={30} thickness={5} />
+          </LoadingContainer>
+        ) : links.length > 0 && address ? (
+          <BasicTable
+            downloadBackupCode={_downloadBackupCode}
+            network={network}
+            contentLinks={links}
+            importBackupCode={(e) =>
+              importBackupCode(e, signer?.address, getContentLinks)
+            }
+          />
+        ) : (
+          <></>
+        )}
+      </Box>
     </div>
   );
 };
