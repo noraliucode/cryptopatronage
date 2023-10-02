@@ -3,9 +3,9 @@ import { getSignature } from "../utils/helpers";
 import { IInjector, INetwork } from "../utils/types";
 
 class DatabaseService {
-  injector: IInjector;
-  address: string;
-  constructor(injector: IInjector, address: string) {
+  injector?: IInjector;
+  address?: string;
+  constructor(injector?: IInjector, address?: string) {
     this.injector = injector;
     this.address = address;
   }
@@ -85,6 +85,8 @@ class DatabaseService {
     address: string,
     network: INetwork
   ) => {
+    if (!this.injector || !this.address) return;
+
     const signature = await getSignature(this.injector, this.address);
     const _jsonObject = {
       ...jsonObject,
@@ -116,6 +118,7 @@ class DatabaseService {
   };
 
   createCreator = async (jsonObject: any) => {
+    if (!this.injector || !this.address) return;
     const signature = await getSignature(this.injector, this.address);
     const _jsonObject = {
       ...jsonObject,
@@ -168,6 +171,7 @@ class DatabaseService {
   };
 
   deleteCreator = async (address: string, network: INetwork) => {
+    if (!this.injector || !this.address) return;
     const signature = await getSignature(this.injector, this.address);
 
     try {
@@ -194,6 +198,7 @@ class DatabaseService {
   };
 
   createUser = async (jsonObject: any) => {
+    if (!this.injector || !this.address) return;
     const signature = await getSignature(this.injector, this.address);
     const _jsonObject = {
       ...jsonObject,
@@ -246,6 +251,7 @@ class DatabaseService {
   };
 
   createSubscription = async (jsonObject: any) => {
+    if (!this.injector || !this.address) return;
     const signature = await getSignature(this.injector, this.address);
     const _jsonObject = {
       ...jsonObject,
@@ -326,6 +332,7 @@ class DatabaseService {
   };
 
   deleteSubscription = async (jsonObject: any) => {
+    if (!this.injector || !this.address) return;
     const signature = await getSignature(this.injector, this.address);
     const _jsonObject = {
       ...jsonObject,
