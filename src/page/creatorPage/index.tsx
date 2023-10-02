@@ -53,7 +53,7 @@ const CreatorPage = () => {
         checked: isSensitive,
       }));
     }
-  }, []);
+  }, [identity, additionalInfo, network]);
 
   const { display, email, twitter, web, imgUrl } = state;
   return (
