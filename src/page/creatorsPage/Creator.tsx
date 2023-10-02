@@ -187,11 +187,6 @@ const Creator: React.FC<Props> = ({
                     )}
                   </Button>
                 </CardActions>
-                <CardActions>
-                  <Button onClick={onShareClick} size="small">
-                    <ShareIcon color="action" />
-                  </Button>
-                </CardActions>
               </Wrapper>
             </>
           </CardActionArea>
