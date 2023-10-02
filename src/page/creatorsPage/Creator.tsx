@@ -21,6 +21,7 @@ import { Text } from "../ManagePage";
 import ShareIcon from "@mui/icons-material/Share";
 import { useTranslation } from "react-i18next";
 import { Modal } from "../../components/Modal";
+import { Link } from "../../components/Link";
 
 const CardImage = styled("div")(({ url }: { url: any }) => ({
   backgroundColor: "rgba(255, 255, 255, 0.4)",
@@ -56,6 +57,7 @@ interface Props {
   onSubscribeClick: (_: string) => void;
   tokenUsdPrice: number;
   isSubscriber: boolean;
+  address: string;
 }
 
 const Creator: React.FC<Props> = ({
@@ -67,6 +69,7 @@ const Creator: React.FC<Props> = ({
   onSubscribeClick,
   tokenUsdPrice,
   isSubscriber,
+  address,
 }) => {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -107,91 +110,93 @@ const Creator: React.FC<Props> = ({
         }
         action={onOpenWebsite}
       />
-      <Card
-        sx={{ maxWidth: 345, cursor: "pointer" }}
-        onClick={() => onCardClick(index)}
-      >
-        <CardActionArea>
-          <>
-            <div onClick={_onCardClick}>
-              <CardImage
-                url={
-                  // TODO: add node.js server to handle redirect url and remove this later
-                  creator.imageUrl
-                    ? creator.display === "DatDot"
-                      ? "/assets/images/datdot.png"
-                      : creator.imageUrl
-                    : "/assets/images/default.webp"
-                }
-              >
-                <Blur isClicked={selectedIndex === index ? true : false} />
-              </CardImage>
-
-              <CardContent>
-                <Text>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {creator.display
-                      ? isHex(creator.display)
-                        ? hexToString(creator.display)
-                        : creator.display
-                      : toShortAddress(creator.address)}
-                  </Typography>
-                </Text>
-                {creator.rate && (
-                  <Typography variant="body2" color="text.secondary">
-                    {t("Rate")}: {getRate()[0]} USD / {getRate()[1]}{" "}
-                    {SYMBOL[network]}
-                  </Typography>
-                )}
-                {creator.email ? (
-                  <a
-                    href={`mailto:${creator.email}`}
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    <IconButton color="primary" aria-label="email icon">
-                      <EmailIcon />
-                    </IconButton>
-                  </a>
-                ) : null}
-
-                {creator.twitter ? (
-                  <a
-                    href={getTwitterUrl(creator.twitter)}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    <IconButton color="primary" aria-label="twitter icon">
-                      <TwitterIcon />
-                    </IconButton>
-                  </a>
-                ) : null}
-
-                {!creator.twitter && !creator.email ? <ExtraHeight /> : null}
-              </CardContent>
-            </div>
-            <Wrapper>
-              <CardActions>
-                <Button
-                  onClick={() => onSubscribeClick(creator.address)}
-                  size="small"
+      <Link to={`/creators/${address}/${network}`}>
+        <Card
+          sx={{ maxWidth: 345, cursor: "pointer" }}
+          onClick={() => onCardClick(index)}
+        >
+          <CardActionArea>
+            <>
+              <div onClick={_onCardClick}>
+                <CardImage
+                  url={
+                    // TODO: add node.js server to handle redirect url and remove this later
+                    creator.imageUrl
+                      ? creator.display === "DatDot"
+                        ? "/assets/images/datdot.png"
+                        : creator.imageUrl
+                      : "/assets/images/default.webp"
+                  }
                 >
-                  {isSubscriber ? (
-                    <Text>{t("button.top up")}</Text>
-                  ) : (
-                    <Text>{t("button.subscribe")}</Text>
+                  <Blur isClicked={selectedIndex === index ? true : false} />
+                </CardImage>
+
+                <CardContent>
+                  <Text>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {creator.display
+                        ? isHex(creator.display)
+                          ? hexToString(creator.display)
+                          : creator.display
+                        : toShortAddress(creator.address)}
+                    </Typography>
+                  </Text>
+                  {creator.rate && (
+                    <Typography variant="body2" color="text.secondary">
+                      {t("Rate")}: {getRate()[0]} USD / {getRate()[1]}{" "}
+                      {SYMBOL[network]}
+                    </Typography>
                   )}
-                </Button>
-              </CardActions>
-              <CardActions>
-                <Button onClick={onShareClick} size="small">
-                  <ShareIcon color="action" />
-                </Button>
-              </CardActions>
-            </Wrapper>
-          </>
-        </CardActionArea>
-      </Card>
+                  {creator.email ? (
+                    <a
+                      href={`mailto:${creator.email}`}
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <IconButton color="primary" aria-label="email icon">
+                        <EmailIcon />
+                      </IconButton>
+                    </a>
+                  ) : null}
+
+                  {creator.twitter ? (
+                    <a
+                      href={getTwitterUrl(creator.twitter)}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <IconButton color="primary" aria-label="twitter icon">
+                        <TwitterIcon />
+                      </IconButton>
+                    </a>
+                  ) : null}
+
+                  {!creator.twitter && !creator.email ? <ExtraHeight /> : null}
+                </CardContent>
+              </div>
+              <Wrapper>
+                <CardActions>
+                  <Button
+                    onClick={() => onSubscribeClick(creator.address)}
+                    size="small"
+                  >
+                    {isSubscriber ? (
+                      <Text>{t("button.top up")}</Text>
+                    ) : (
+                      <Text>{t("button.subscribe")}</Text>
+                    )}
+                  </Button>
+                </CardActions>
+                <CardActions>
+                  <Button onClick={onShareClick} size="small">
+                    <ShareIcon color="action" />
+                  </Button>
+                </CardActions>
+              </Wrapper>
+            </>
+          </CardActionArea>
+        </Card>
+      </Link>
       <Snackbar
         message="Copied to clibboard"
         anchorOrigin={{ vertical: "top", horizontal: "center" }}

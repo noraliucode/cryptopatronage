@@ -292,6 +292,7 @@ export const CreatorsPage = () => {
                 <Grid container spacing={2}>
                   {_creators.map((creator, index) => (
                     <Creator
+                      address={creator?.address || ""}
                       key={`${creator}_${index}`}
                       isSubscriber={getIsSubscriber(creator?.address || "")}
                       tokenUsdPrice={tokenUsdPrice}
