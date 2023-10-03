@@ -22,7 +22,7 @@ export const useCreators = (
   const getCreators = async () => {
     const getFilteredCreators = (creators: any) => {
       return creators.filter((creator: any) => {
-        return creator.isSensitive === isShowSensitiveContent;
+        return !!creator.isSensitive === isShowSensitiveContent;
       });
     };
 
