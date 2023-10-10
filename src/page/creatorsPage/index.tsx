@@ -17,12 +17,10 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
-import { usePureProxy } from "../../hooks/usePureProxy";
-import ContentLinkTable from "../../components/ContentLinkTable";
 import BasicTable from "../../components/Table";
 import { downloadBackupCode, importBackupCode } from "../../utils/helpers";
 import { useContentLinks } from "../../hooks/useContentLinks";
-import { Content, LoadingContainer, Text } from "../ManagePage";
+import { LoadingContainer } from "../ManagePage";
 import { unsubscribe } from "../../utils/main";
 import { useApi } from "../../hooks/useApi";
 
@@ -294,6 +292,7 @@ export const CreatorsPage = () => {
                 <Grid container spacing={2}>
                   {_creators.map((creator, index) => (
                     <Creator
+                      address={creator?.address || ""}
                       key={`${creator}_${index}`}
                       isSubscriber={getIsSubscriber(creator?.address || "")}
                       tokenUsdPrice={tokenUsdPrice}

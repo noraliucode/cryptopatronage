@@ -10,6 +10,7 @@ import { AboutPage } from "./page/aboutPage";
 import Create from "./components/Create";
 import HowToSupport from "./page/howToSupportPage";
 import TestPage from "./page/TestPage";
+import CreatorPage from "./page/creatorPage";
 
 function App() {
   return (
@@ -61,6 +62,14 @@ function App() {
           element={
             <Layout>
               <HowToSupport />
+            </Layout>
+          }
+        />
+        <Route
+          path="/creators/:address/:network"
+          element={
+            <Layout>
+              <CreatorPage />
             </Layout>
           }
         />
