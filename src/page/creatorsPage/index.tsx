@@ -91,57 +91,16 @@ export const CreatorsPage = () => {
   const params = useParams();
   const { t } = useTranslation();
   const { address } = params as any;
-  const { api } = useApi(network);
+
   // TODO: refactor later
   // const { userPureProxy } = usePureProxy(signer?.address);
-  useEffect(() => {
-    if (address) {
-      const _creator = getCreator();
-      setState((prev) => ({
-        ...prev,
-        creator: _creator as any,
-      }));
-    }
-  }, [address]);
 
-  const { committedCreators, uncommittedCreators, getSubscribedCreators } =
-    useSubscribedCreators(signer?.address, network);
   const { tokenUsdPrice } = useTokenUsdPrice(network);
   const {
     links,
     loading: isContentLoading,
     getContentLinks,
   } = useContentLinks(address);
-
-  const getCreator = (creatorAddress?: string) => {
-    const _address = creatorAddress || address;
-    let committedCreator;
-    let uncommittedCreator;
-    if (committedCreators?.length > 0) {
-      committedCreator = committedCreators.find(
-        (x) => x?.creator?.toLowerCase() === _address?.toLowerCase()
-      );
-    }
-
-    if (uncommittedCreators?.length > 0) {
-      uncommittedCreator = uncommittedCreators.find(
-        (x) => x?.creator?.toLowerCase() === _address?.toLowerCase()
-      );
-    }
-
-    return committedCreator || uncommittedCreator;
-  };
-
-  const getIsSubscriber = (address: string) => {
-    return !!getCreator(address);
-  };
-
-  const onClose = () => {
-    setState((prev) => ({
-      ...prev,
-      open: false,
-    }));
-  };
 
   const checkSigner = () => {
     if (!signer || !injector) {
@@ -151,17 +110,6 @@ export const CreatorsPage = () => {
       }));
       return;
     }
-  };
-
-  const onSubscribeClick = (address: string, rate: string | undefined) => {
-    checkSigner();
-    if (!signer) return;
-    setState((prev) => ({
-      ...prev,
-      open: true,
-      selectedCreator: address,
-      selectedRate: rate,
-    }));
   };
 
   const onCardClick = (index: number) => {
@@ -186,65 +134,14 @@ export const CreatorsPage = () => {
       )
     : creators;
 
-  const getIsUsd = () => {
-    const selectedCratorIdentity = _creators?.find(
-      (x) => x?.address?.toLowerCase() === selectedCreator.toLowerCase()
-    );
-    return !!selectedCratorIdentity?.isUsd;
-  };
-
   const _downloadBackupCode = async () => {
     if (!signer) return;
     downloadBackupCode(signer?.address);
   };
 
-  const callback = async () => {
-    await getSubscribedCreators();
-    setState((prev) => ({
-      ...prev,
-      isUnsubscribing: false,
-    }));
-  };
-
-  const setLoading = (value: boolean) => {
-    setState((prev) => ({
-      ...prev,
-      isUnsubscribing: value,
-    }));
-  };
-
-  const _unsubscribe = async () => {
-    if (!signer) return;
-    checkSigner();
-    if (!injector || !signer || !creator) return;
-    const address = creator?.creator || "";
-    const isCommitted = !!creator.isCommitted;
-    const pureProxy = creator.pureProxy || "";
-
-    await unsubscribe(
-      network,
-      isCommitted,
-      api,
-      signer.address,
-      injector,
-      address,
-      callback,
-      setLoading,
-      pureProxy
-    );
-  };
-
   return (
     <Root>
       <>
-        <Snackbar
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "center",
-          }}
-          open={isUnsubscribing}
-          message={"Unsubscribing..."}
-        />
         <Title>{t("title")}</Title>
         <Link to={"/create"}>
           <Button variant="contained">{t("button.becomeCreator")}</Button>
@@ -279,46 +176,22 @@ export const CreatorsPage = () => {
             </Wrapper>
           ) : (
             <>
-              <SubscribeModal
-                isSubscriber={getIsSubscriber(selectedCreator)}
-                open={open}
-                onClose={onClose}
-                selectedCreator={selectedCreator}
-                rate={selectedRate}
-                tokenUsdPrice={tokenUsdPrice}
-                isUsd={getIsUsd()}
-              />
               <Container>
                 <Grid container spacing={2}>
                   {_creators.map((creator, index) => (
                     <Creator
                       address={creator?.address || ""}
                       key={`${creator}_${index}`}
-                      isSubscriber={getIsSubscriber(creator?.address || "")}
                       tokenUsdPrice={tokenUsdPrice}
                       creator={creator}
                       selectedIndex={selectedIndex}
                       index={index}
                       network={network}
                       onCardClick={onCardClick}
-                      onSubscribeClick={() => {
-                        creator &&
-                          onSubscribeClick(
-                            creator?.address,
-                            creator?.rate as any
-                          ); // TODO: fix any
-                      }}
                     />
                   ))}
                 </Grid>
               </Container>
-              <p />
-              <p />
-              {address && getIsSubscriber(address) && (
-                <Button fullWidth variant="contained" onClick={_unsubscribe}>
-                  Unsubscribe
-                </Button>
-              )}
               <p />
               <p />
               {/* {TODO: duplicated conditional component} */}

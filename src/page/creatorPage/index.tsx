@@ -11,9 +11,10 @@ import {
 import { DECIMALS } from "../../utils/constants";
 import { useParams } from "react-router-dom";
 import { LoadingContainer } from "../ManagePage";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Snackbar } from "@mui/material";
 import BasicTable from "../../components/Table";
 import { useContentLinks } from "../../hooks/useContentLinks";
+import Subscribe from "./Subscribe";
 
 type IState = {
   imgUrl: string;
@@ -93,6 +94,7 @@ const CreatorPage = () => {
           marginTop: "480px",
         }}
       >
+        <Subscribe additionalInfo={additionalInfo} />
         {isContentLoading ? (
           <LoadingContainer>
             <CircularProgress size={30} thickness={5} />

@@ -54,9 +54,7 @@ interface Props {
   index: number;
   network: INetwork;
   onCardClick: (index: number) => void;
-  onSubscribeClick: (_: string) => void;
   tokenUsdPrice: number;
-  isSubscriber: boolean;
   address: string;
 }
 
@@ -66,9 +64,7 @@ const Creator: React.FC<Props> = ({
   index,
   network,
   onCardClick,
-  onSubscribeClick,
   tokenUsdPrice,
-  isSubscriber,
   address,
 }) => {
   const [open, setOpen] = useState(false);
@@ -174,20 +170,6 @@ const Creator: React.FC<Props> = ({
                   {!creator.twitter && !creator.email ? <ExtraHeight /> : null}
                 </CardContent>
               </div>
-              <Wrapper>
-                <CardActions>
-                  <Button
-                    onClick={() => onSubscribeClick(creator.address)}
-                    size="small"
-                  >
-                    {isSubscriber ? (
-                      <Text>{t("button.top up")}</Text>
-                    ) : (
-                      <Text>{t("button.subscribe")}</Text>
-                    )}
-                  </Button>
-                </CardActions>
-              </Wrapper>
             </>
           </CardActionArea>
         </Card>
