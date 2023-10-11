@@ -82,7 +82,7 @@ const CreatorPage = () => {
   return (
     <div>
       <Profile
-        name={display}
+        name={display || address}
         email={email}
         twitter={twitter}
         website={web}
