@@ -89,11 +89,7 @@ const CreatorPage = () => {
         iconURL={image}
         bannerURL={image}
       />
-      <Box
-        sx={{
-          marginTop: "480px",
-        }}
-      >
+      <Box>
         <Subscribe additionalInfo={additionalInfo} />
         {isContentLoading ? (
           <LoadingContainer>
