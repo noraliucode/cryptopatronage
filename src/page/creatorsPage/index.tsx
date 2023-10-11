@@ -1,28 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useCreators } from "../../hooks/useCreators";
 import { styled } from "@mui/material/styles";
-import { Box, Button, CircularProgress, Grid, Snackbar } from "@mui/material";
+import { Box, Button, CircularProgress, Grid } from "@mui/material";
 import { FOOTER_HEIGHT, NAV_BAR_HEIGHT, NETWORK } from "../../utils/constants";
 import {
   IFormattedSubscription,
   IWeb3ConnectedContextState,
 } from "../../utils/types";
 import { useWeb3ConnectedContext } from "../../context/Web3ConnectedContext";
-import { SubscribeModal } from "../../components/SubscribeModal";
 import { Modal } from "../../components/Modal";
 import { useParams } from "react-router";
 import Creator from "./Creator";
 import { Link } from "../../components/Link";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { useSubscribedCreators } from "../../hooks/useSubscribedCreators";
 import { useTokenUsdPrice } from "../../hooks/useTokenUsdPrice";
 import BasicTable from "../../components/Table";
 import { downloadBackupCode, importBackupCode } from "../../utils/helpers";
 import { useContentLinks } from "../../hooks/useContentLinks";
 import { LoadingContainer } from "../ManagePage";
-import { unsubscribe } from "../../utils/main";
-import { useApi } from "../../hooks/useApi";
 
 export const Root = styled("div")(() => ({
   padding: 30,
@@ -102,16 +98,6 @@ export const CreatorsPage = () => {
     getContentLinks,
   } = useContentLinks(address);
 
-  const checkSigner = () => {
-    if (!signer || !injector) {
-      setState((prev) => ({
-        ...prev,
-        isModalOpen: true,
-      }));
-      return;
-    }
-  };
-
   const onCardClick = (index: number) => {
     setState((prev) => ({
       ...prev,
@@ -119,15 +105,7 @@ export const CreatorsPage = () => {
     }));
   };
 
-  const {
-    open,
-    selectedCreator,
-    isModalOpen,
-    selectedIndex,
-    selectedRate,
-    creator,
-    isUnsubscribing,
-  } = state;
+  const { isModalOpen, selectedIndex } = state;
   const _creators = address
     ? creators?.filter(
         (x) => x?.address?.toLowerCase() === address.toLowerCase()
