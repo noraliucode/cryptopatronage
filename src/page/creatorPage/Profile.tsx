@@ -24,62 +24,26 @@ const Profile: React.FC<ProfileProps> = ({
   return (
     <Box
       sx={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        display: "flex",
+        justifyContent: "center",
+        gap: 2,
+        flexDirection: "column",
+        alignItems: "center",
+        mt: 2,
       }}
     >
-      {/* Border Box */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "35%",
-          overflow: "hidden",
-        }}
-      >
-        {/* Blurred Banner */}
-        <Box
-          sx={{
-            width: "100%",
-            height: "100%",
-            backgroundImage: `url(${bannerURL})`,
-            backgroundSize: "cover",
-            filter: "blur(10px)",
-          }}
-        />
-      </Box>
-
       {/* User Icon */}
       <Avatar
         src={iconURL}
         sx={{
-          position: "absolute",
-          top: "35%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
           width: 200,
           height: 200,
-          zIndex: 1,
           border: "5px solid #fff",
         }}
       />
 
       {/* User Details */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: "55%",
-          left: "50%",
-          transform: "translate(-50%, 0)",
-          textAlign: "center",
-          zIndex: 1,
-        }}
-      >
+      <Box>
         <Typography variant="h5" sx={{ color: "#fff" }}>
           {name}
         </Typography>
