@@ -94,14 +94,20 @@ const CreatorPage = () => {
 
   return (
     <div>
-      <Profile
-        name={display || address}
-        email={email}
-        twitter={twitter}
-        website={web}
-        iconURL={image}
-        bannerURL={image}
-      />
+      {isInfoLoading ? (
+        <LoadingContainer>
+          <CircularProgress size={30} thickness={5} />
+        </LoadingContainer>
+      ) : (
+        <Profile
+          name={display || address}
+          email={email}
+          twitter={twitter}
+          website={web}
+          iconURL={image}
+          bannerURL={image}
+        />
+      )}
       <Box>
         {!(signer?.address === address) && (
           <Subscribe additionalInfo={additionalInfo} />
