@@ -11,7 +11,13 @@ import {
 import { DECIMALS } from "../../utils/constants";
 import { useParams } from "react-router-dom";
 import { LoadingContainer } from "../ManagePage";
-import { Box, CircularProgress, Snackbar } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Snackbar,
+  Typography,
+  styled,
+} from "@mui/material";
 import BasicTable from "../../components/Table";
 import { useContentLinks } from "../../hooks/useContentLinks";
 import Subscribe from "./Subscribe";
@@ -23,6 +29,13 @@ type IState = {
   display: string;
   web: string;
 };
+
+export const Divider = styled("hr")(() => ({
+  borderWidth: "0.5px",
+  marginTop: "20px",
+  marginBottom: "20px",
+  borderColor: "#777777",
+}));
 
 const CreatorPage = () => {
   const defaultState = {
@@ -90,20 +103,31 @@ const CreatorPage = () => {
         bannerURL={image}
       />
       <Box>
-        <Subscribe additionalInfo={additionalInfo} />
+        {!(signer?.address === address) && (
+          <Subscribe additionalInfo={additionalInfo} />
+        )}
         {isContentLoading ? (
           <LoadingContainer>
             <CircularProgress size={30} thickness={5} />
           </LoadingContainer>
         ) : links.length > 0 && address ? (
-          <BasicTable
-            downloadBackupCode={_downloadBackupCode}
-            network={network}
-            contentLinks={links}
-            importBackupCode={(e) =>
-              importBackupCode(e, signer?.address, getContentLinks)
-            }
-          />
+          <>
+            <Divider />
+            <Typography
+              variant="h5"
+              sx={{ color: "#fff", marginBottom: "20px" }}
+            >
+              ContentLink
+            </Typography>
+            <BasicTable
+              downloadBackupCode={_downloadBackupCode}
+              network={network}
+              contentLinks={links}
+              importBackupCode={(e) =>
+                importBackupCode(e, signer?.address, getContentLinks)
+              }
+            />
+          </>
         ) : (
           <></>
         )}
