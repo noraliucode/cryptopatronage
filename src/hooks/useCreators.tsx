@@ -96,12 +96,20 @@ export const useCreators = (
             web: identity.web,
             isSensitive: identity.isSensitive === "true" ? true : false,
             isUsd: identity.isUsd,
+            network: "ROCOCO", // TODO: need to be checked
           };
           creators.push(creator);
         }
       });
 
       _creators = [...creators, ...offChainCreators];
+
+      // both onchain and offchain creators are stored in the database, but older version creators are not stored in the database
+      // so we need to filter creators by address and network
+      _creators = _.uniqBy(_creators, (creator: any) => {
+        return creator.address + creator.network;
+      });
+
       _creators = getFilteredCreators(_creators);
 
       // TODO: filter with supporter and calculate funds
