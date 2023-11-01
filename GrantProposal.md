@@ -147,7 +147,7 @@ We will provid in private through Google Form.
 | 0b. | Documentation | [Specify documentation to be provided] |
 | 0c. | Testing Guide | [Specify testing guide details] | |
 | 1. | Payment System | [Specification for Deliverable 1] |
-| 2. | UI Upgrade | [Specification for Deliverable 2] |
+| 2. | Subscription / Pull Payment Refactor | [Specification for Deliverable 2] |
 | 3. | Creator Page Improvement | [Specification for Deliverable 3] |
 | 4. | Beta Testing | [Specification for Deliverable 4] |
 | 5. | Iterative Development | [Specification for Deliverable 5] |
@@ -165,7 +165,7 @@ We will provid in private through Google Form.
 | 0c. | Testing Guide | [Specify testing guide details] | 
 | 1. | Delay Payment(Announced  calls) | [Specification for Deliverable 1] |
 | 2. | Database Security Improvement | [Specification for Deliverable 2] |
-| 3. | Subscri |[Specification for Deliverable 3] |
+| 3. | UI Upgrade |[Specification for Deliverable 3] |
 | 4. | Beta Testing | [Specification for Deliverable 4] |
 | 5. | Iterative Development | [Specification for Deliverable 5] |
 
