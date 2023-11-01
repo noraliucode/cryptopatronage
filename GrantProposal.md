@@ -31,11 +31,11 @@ By default, we take no platform fees, and you only pay blockchain transaction fe
 
 If you want to have an experience similar to traditional crowdfunding websites, we (will soon) provide automatic payment execution as an always-optional, fee-added service, at a rate that outcompetes all comparable non-blockchain-based equivalents.
 
-![](https://hackmd.io/_uploads/S1zQvwCM6.png)
-![](https://hackmd.io/_uploads/r1uSovymp.png)
-![](https://hackmd.io/_uploads/SkBIAwJQa.png)
-![](https://hackmd.io/_uploads/Skl0uRw176.png)
-![](https://hackmd.io/_uploads/Sy8mnwJXT.png =x400)
+<img width="1149" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/189e52d0-067a-4cd5-affe-b7dc1c863b28">
+<img width="1068" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/9b9b4a94-756d-457d-adda-8487e96af076">
+<img width="1069" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/78056551-6e08-46e2-8e90-b4a4e6515cde">
+<img width="1067" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/2a9eb25d-b4d2-46b5-ac22-5d653c9cc97c">
+
 
 ### Key Features
 
@@ -70,8 +70,9 @@ If you want to have an experience similar to traditional crowdfunding websites, 
 - Transfer all payment(delay)
  
 ### Infrastructure
-![](https://hackmd.io/_uploads/rJYgQuymT.png)
-![](https://hackmd.io/_uploads/r1FMS_JXa.png)
+<img width="821" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/800e1d78-ee6a-4d60-98c2-8c2f1b21abf2">
+<img width="827" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/0a2be45d-8b4d-417c-ab12-8e87b8604228">
+
 
 
 ### Ecosystem Fit
