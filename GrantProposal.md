@@ -31,16 +31,22 @@ By default, we take no platform fees, and you only pay blockchain transaction fe
 
 If you want to have an experience similar to traditional crowdfunding websites, we (will soon) provide automatic payment execution as an always-optional, fee-added service, at a rate that outcompetes all comparable non-blockchain-based equivalents.
 
+Page 1: creators page
 <img width="1149" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/189e52d0-067a-4cd5-affe-b7dc1c863b28">
+
+Page 2: manage page
 <img width="1068" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/9b9b4a94-756d-457d-adda-8487e96af076">
+
+Page 3: create creator wizard
 <img width="1069" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/78056551-6e08-46e2-8e90-b4a4e6515cde">
+
+Page 4: creator page
 <img width="1067" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/2a9eb25d-b4d2-46b5-ac22-5d653c9cc97c">
 
 
 ### Key Features
 
 #### Supporter
-
 - Subscribe a creator
 - Unsubscribe a creator
 - Browse committed subscribed creators list
@@ -49,7 +55,6 @@ If you want to have an experience similar to traditional crowdfunding websites, 
 - Browse creators page
 
 #### Creator
-
 - Add rate
 - Pull payment (committed, normal)
 - Pull all payment (committed, normal)
@@ -63,16 +68,20 @@ If you want to have an experience similar to traditional crowdfunding websites, 
 - Add image url
 
 #### Admin
-
 - Transfer payment(normal)
 - Transfer all payment(normal)
 - Transfer payment(delay)
 - Transfer all payment(delay)
  
 ### Infrastructure
+why we use pure proxy:
 <img width="821" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/800e1d78-ee6a-4d60-98c2-8c2f1b21abf2">
-<img width="827" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/0a2be45d-8b4d-417c-ab12-8e87b8604228">
+A Creator utilizes a Pure Proxy, a keyless and non-deterministic account set up by a Supporter. This proxy acts as an intermediary for operations, enhancing security by preventing the direct access to supporter's account. The decentralized nature of this proxy, which operates without central ownership or a private key, serves to protect the identity and credentials of the original account holder in blockchain interactions.
 
+high-level dApp architecture diagram: 
+<img width="827" alt="image" src="https://github.com/noraliucode/
+cryptopatronage/assets/12429503/0a2be45d-8b4d-417c-ab12-8e87b8604228">
+The dApp has a front-end built using HTML, CSS, and JavaScript, served to users via a browser. The backend runs on Node.js and is deployed using Vercel, which also manages scheduled tasks through cron jobs. The system interfaces with a database for data storage and employs the Polkadot.js library to interact with the Polkadot blockchain network via JSON-RPC calls. This setup enables blockchain-related functionalities for users accessing the platform.
 
 
 ### Ecosystem Fit
@@ -117,7 +126,7 @@ We will be pleased to offer specific information in private.
 
 ### Team LinkedIn Profiles
 
-We will provid in private through Google Form.
+We will provide in private through Google Form.
 
 ## Development Roadmap :nut_and_bolt:
 
@@ -135,14 +144,14 @@ We will provid in private through Google Form.
 
 | Number | Deliverable | Specification |
 | ------------- | ------------- | ------------- |
-| 0a. | License | Apache 2.0 |
-| 0b. | Documentation | [Specify documentation to be provided] |
-| 0c. | Testing Guide | [Specify testing guide details] | |
-| 1. | Payment System | [Specification for Deliverable 1] |
-| 2. | Subscription / Pull Payment Refactor | [Specification for Deliverable 2] |
-| 3. | Creator Page Improvement | [Specification for Deliverable 3] |
-| 4. | Beta Testing | [Specification for Deliverable 4] |
-| 5. | Iterative Development | [Specification for Deliverable 5] |
+| 0a. | License | The project will be released under the Apache 2.0 License, ensuring open-source usage and contributions. |
+| 0b. | Documentation | Comprehensive documentation will be provided, including setup guides, feature overviews, API endpoints, and examples of usage. |
+| 0c. | Testing Guide | A detailed testing guide will be created, outlining steps for automated and manual testing, including test cases, expected results, and troubleshooting. |
+| 1. | Payment System | Implementation of a blockchain-based payment system enabling direct transactions between patrons and creators without intermediaries. |
+| 2. | Subscription / Pull Payment Refactor | Refinement of the existing subscription system to support pull payments, allowing creators to set up and manage recurring revenue streams. |
+| 3. | Creator Page Improvement | Enhancements to the creator page UI/UX, including customizable profiles, improved content display, and analytics for creators to track engagement. |
+| 4. | Beta Testing | A structured beta testing phase involving real users to gather feedback, identify bugs, and ensure stability and usability of the platform. |
+
 
 ### Milestone 2 — [Title of Milestone 2]
 
@@ -153,13 +162,13 @@ We will provid in private through Google Form.
 | Number | Deliverable | Specification |
 | ------------- | ------------- | ------------- |
 | 0a. | License | Apache 2.0 |
-| 0b. | Documentation | [Specify documentation to be provided] |
-| 0c. | Testing Guide | [Specify testing guide details] | 
-| 1. | Delay Payment(Announced  calls) | [Specification for Deliverable 1] |
-| 2. | Database Security Improvement | [Specification for Deliverable 2] |
-| 3. | UI Upgrade |[Specification for Deliverable 3] |
-| 4. | Beta Testing | [Specification for Deliverable 4] |
-| 5. | Iterative Development | [Specification for Deliverable 5] |
+| 0b. | Documentation | The project will provide comprehensive documentation covering setup, configuration, and usage guidelines, with a focus on ease of understanding to facilitate adoption by new users. |
+| 0c. | Testing Guide | The testing guide will include detailed instructions for both automated and manual testing procedures, ensuring thorough coverage of all features and robust detection of any defects. |
+| 1. | Delay Payment(Announced calls) | Implement a feature that allows users to schedule transactions in advance, with security measures in place to ensure the transactions are only executed at the specified time. |
+| 2. | Database Security Improvement | Enhance the existing database architecture with encryption at rest and in transit, role-based access control, and continuous monitoring for any potential security breaches. |
+| 3. | UI Upgrade | Redesign the user interface to improve user experience with modern design principles, ensuring the UI is responsive and accessible across various devices and platforms. |
+| 4. | Beta Testing | Conduct a beta testing phase with a selected user group to collect feedback on the usability and functionality of the system, and to identify and rectify any issues before the general release. |
+
 
 ## Development Status
 
