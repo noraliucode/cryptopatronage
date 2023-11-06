@@ -146,11 +146,11 @@ We will provide in private through Google Form.
 | Number | Deliverable | Specification |
 | ------------- | ------------- | ------------- |
 | 0a. | License | The project will be released under the Apache 2.0 License, ensuring open-source usage and contributions. |
-| 0b. | Documentation | Comprehensive documentation will be provided, including setup guides, feature overviews, API endpoints, and examples of usage. |
-| 0c. | Testing Guide | A detailed testing guide will be created, outlining steps for automated and manual testing, including test cases, expected results, and troubleshooting. |
-| 1. | Payment System | Implementation of a blockchain-based payment system enabling direct transactions between patrons and creators without intermediaries. |
+| 0b. | Documentation | Comprehensive documentation will be provided, including setup guides, feature overviews and examples of usage. |
+| 0c. | Testing Guide | A detailed testing guide will be created, outlining steps for automated and manual testing, including test cases, and expected results |
+| 1. | Payment System | An automated system is set up to disburse payments to creators who have enrolled in a payment system, utilizing cron jobs to schedule and execute the distribution. |
 | 2. | Subscription / Pull Payment Refactor | Refinement of the existing subscription system to support pull payments, allowing creators to set up and manage recurring revenue streams. |
-| 3. | Creator Page Improvement | Enhancements to the creator page UI/UX, including customizable profiles, improved content display, and analytics for creators to track engagement. |
+| 3. | Creator Page Improvement | Enhancements to the creator page UI/UX, including customizable profiles, improved content display, and encrypted/decrypted content list |
 | 4. | Beta Testing | A structured beta testing phase involving real users to gather feedback, identify bugs, and ensure stability and usability of the platform. |
 
 
