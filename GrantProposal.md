@@ -163,9 +163,9 @@ We will provide in private through Google Form.
 | Number | Deliverable | Specification |
 | ------------- | ------------- | ------------- |
 | 0a. | License | Apache 2.0 |
-| 0b. | Documentation | The project will provide comprehensive documentation covering setup, configuration, and usage guidelines, with a focus on ease of understanding to facilitate adoption by new users. |
-| 0c. | Testing Guide | The testing guide will include detailed instructions for both automated and manual testing procedures, ensuring thorough coverage of all features and robust detection of any defects. |
-| 1. | Delay Payment(Announced calls) | Implement a feature that allows users to schedule transactions in advance, with security measures in place to ensure the transactions are only executed at the specified time. |
+| 0b. | Documentation | The project will provide comprehensive documentation covering usage guidelines, with a focus on ease of understanding to facilitate adoption by new users. |
+| 0c. | Testing Guide | A detailed testing guide will be created, outlining steps for automated and manual testing, including test cases, and expected results |
+| 1. | Delay Payment(Announced calls) | Implement a feature to ensure that transactions are not triggered immediately, with security measures in place to guarantee that the transactions are executed only at the specified time. |
 | 2. | Database Security Improvement | Enhance the existing database architecture with encryption at rest and in transit, role-based access control, and continuous monitoring for any potential security breaches. |
 | 3. | UI Upgrade | Redesign the user interface to improve user experience with modern design principles, ensuring the UI is responsive and accessible across various devices and platforms. |
 | 4. | Beta Testing | Conduct a beta testing phase with a selected user group to collect feedback on the usability and functionality of the system, and to identify and rectify any issues before the general release. |
