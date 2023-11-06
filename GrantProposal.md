@@ -137,7 +137,7 @@ We will provide in private through Google Form.
 - **Full-time equivalent (FTE):** 2
 - **Total Costs:**  20,000 USD
 
-### Milestone 1 — [Title of Milestone 1]
+### Milestone 1 — Payment System & Subscription / Pull Payment Refactor & Creator Page Improvement
 
 * **Estimated Duration:** 6 weeks
 - **FTE:**  2
@@ -154,7 +154,7 @@ We will provide in private through Google Form.
 | 4. | Beta Testing | A structured beta testing phase involving real users to gather feedback, identify bugs, and ensure stability and usability of the platform. |
 
 
-### Milestone 2 — [Title of Milestone 2]
+### Milestone 2 — Delay Payment(Announced calls) & Database Security Improvement & UI Upgrade
 
 * **Estimated Duration:** 6 weeks
 - **FTE:**  2
