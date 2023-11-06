@@ -77,15 +77,7 @@ If you want to have an experience similar to traditional crowdfunding websites, 
 
 ### Ecosystem Fit
 
-The CryptoPatronage project will enable all interested parties to track the support and funding dynamics among different creators on the platform, regardless of the blockchain they operate on. It allows following the number of transactions, creators, supporters, ongoing patronages, the top supporters of the month, and the evolution of support and active creators for each month over the last year, while monitoring the recent transactions that are being conducted within various creator communities.
-
-There are many benefits to having the CryptoPatronage project fully operational:
-
-- It offers a clear overview of the long-term support being provided across various creators, by aggregating all necessary data in one place.
-- Acknowledges the supporters of the month.
-- Displays the active creators for each month over the last year.
-- Shows the evolution of the number of transactions made on the platform by supporters.
-- Outlines the recent transactions and support commitments, showcasing the patronage system as a viable and sustainable payment model for creators.
+CryptoPatronage carves a niche in the blockchain space, focusing on a direct, bankless membership model for content creators within the Polkadot network. This precise approach is ideal for creators seeking immediate support from their community, ensuring transparency and lower fees than traditional support systems. It resonates with users in crypto-friendly regions or communities, bypassing the need for traditional banking. Although there is some functional overlap with Subsocial, CryptoPatronage distinguishes itself by catering to users who either prefer or require to operate without a bank account, emphasizing its unique position in the ecosystem.
 
 ## Team :busts_in_silhouette:
 
@@ -102,7 +94,7 @@ All team members can contact privately for any specific information.
 ### Team's Experience
 
 - Jam:
-  - ..
+  - ex-member of Kusama and Polkadot councils (from chain genesis to ~2021), ~9 years experience in blockchain technical support, consulting, and app prototyping.
 
 - Nora Liu:
   - Frontend development with 7 years working experience.
@@ -185,5 +177,5 @@ The cryptoPatronage dApp is live currently on the above link.
 
 > Why not use Patreon?
 
-[Include a FAQ section to address common questions or concerns.]
+Our application emphasizes the unique demand for cryptopatronage in serving real-world communities. We are driven by a genuine desire to support our peers who lack access to traditional banking facilities, enabling them to monetize their online presence. Utilizing Polkadot technology was the most accessible solution, extending beyond the Polkadot community itself. Our platform caters to individuals for whom Patreon is not an option. Additionally, we offer a highly competitive fee structure compared to existing services.
 
