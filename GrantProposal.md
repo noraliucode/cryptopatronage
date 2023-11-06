@@ -74,14 +74,15 @@ Page 4: creator page
 - Transfer all payment(delay)
  
 ### Infrastructure
-why we use pure proxy:
-<img width="821" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/800e1d78-ee6a-4d60-98c2-8c2f1b21abf2">
-A Creator utilizes a Pure Proxy, a keyless and non-deterministic account set up by a Supporter. This proxy acts as an intermediary for operations, enhancing security by preventing the direct access to supporter's account. The decentralized nature of this proxy, which operates without central ownership or a private key, serves to protect the identity and credentials of the original account holder in blockchain interactions.
 
-high-level dApp architecture diagram: 
-<img width="827" alt="image" src="https://github.com/noraliucode/
-cryptopatronage/assets/12429503/0a2be45d-8b4d-417c-ab12-8e87b8604228">
-The dApp has a front-end built using HTML, CSS, and JavaScript, served to users via a browser. The backend runs on Node.js and is deployed using Vercel, which also manages scheduled tasks through cron jobs. The system interfaces with a database for data storage and employs the Polkadot.js library to interact with the Polkadot blockchain network via JSON-RPC calls. This setup enables blockchain-related functionalities for users accessing the platform.
+#### why we use pure proxy:
+<img width="821" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/800e1d78-ee6a-4d60-98c2-8c2f1b21abf2">
+<br/>A creator utilizes a Pure Proxy, a keyless and non-deterministic account set up by a Supporter. This proxy acts as an intermediary for operations, enhancing security by preventing the direct access to supporter's account. The decentralized nature of this proxy, which operates without central ownership or a private key, serves to protect the identity and credentials of the original account holder in blockchain interactions.
+
+
+#### high-level dApp architecture diagram: 
+<img width="827" alt="image" src="https://github.com/noraliucode/cryptopatronage/assets/12429503/0a2be45d-8b4d-417c-ab12-8e87b8604228">
+<br/>The dApp has a front-end built using HTML, CSS, and JavaScript, served to users via a browser. The backend runs on Node.js and is deployed using Vercel, which also manages scheduled tasks through cron jobs. The system interfaces with a database for data storage and employs the Polkadot.js library to interact with the Polkadot blockchain network via JSON-RPC calls. This setup enables blockchain-related functionalities for users accessing the platform.
 
 
 ### Ecosystem Fit
