@@ -188,3 +188,6 @@ The cryptoPatronage dApp is live currently on the above link.
 
 Our application emphasizes the unique demand for cryptopatronage in serving real-world communities. We are driven by a genuine desire to support our peers who lack access to traditional banking facilities, enabling them to monetize their online presence. Utilizing Polkadot technology was the most accessible solution, extending beyond the Polkadot community itself. Our platform caters to individuals for whom Patreon is not an option. Additionally, we offer a highly competitive fee structure compared to existing services.
 
+> How is user data stored?
+
+User data is maintained in two distinct ways depending on the creator's preference. Those who operate on-chain have their identity information secured within the blockchain. Meanwhile, creators preferring an off-chain, more traditional web experience initially have their details housed in a centralized database. Nonetheless, they retain the option to transition their data to the blockchain as they grow more accustomed to the web3 environment.
