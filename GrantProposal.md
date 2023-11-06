@@ -87,7 +87,7 @@ Page 4: creator page
 
 ### Ecosystem Fit
 
-CryptoPatronage carves a niche in the blockchain space, focusing on a direct, bankless membership model for content creators within the Polkadot network. This precise approach is ideal for creators seeking immediate support from their community, ensuring transparency and lower fees than traditional support systems. It resonates with users in crypto-friendly regions or communities, bypassing the need for traditional banking. Although there is some functional overlap with Subsocial, CryptoPatronage distinguishes itself by catering to users who either prefer or require to operate without a bank account, emphasizing its unique position in the ecosystem.
+CryptoPatronage carves a niche in the blockchain space, focusing on a direct, bankless membership model for content creators within the Polkadot network. This precise approach is ideal for creators seeking immediate support from their community, ensuring transparency and lower fees than traditional support systems. It resonates with users in crypto-friendly regions or communities, bypassing the need for traditional banking. Although there is some functional overlap with Subsocial within the Polkadot ecosystem, which includes a similar feature, CryptoPatronage distinguishes itself from other tools in it's vertical by catering to users who either prefer or require operating without a bank account.
 
 ## Team :busts_in_silhouette:
 
