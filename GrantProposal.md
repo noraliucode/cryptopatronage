@@ -107,13 +107,12 @@ All team members can contact privately for any specific information.
   - ex-member of Kusama and Polkadot councils (from chain genesis to ~2021), ~9 years experience in blockchain technical support, consulting, and app prototyping.
 
 - Nora Liu:
-  - Frontend development with 7 years working experience.
+  - Frontend / mobile app development with 7 years working experience in traditional web / blockchain field. 
 
 ### Contact
 
 - **Contact Name:** Nora Liu
 - **Contact Email:** noraliu.web3@gmail.com
-- **Website:** [Will provide later]
 
 ### Legal Structure
 
