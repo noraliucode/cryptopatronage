@@ -143,12 +143,12 @@ We will provide in private through Google Form.
 
 | Number | Deliverable | Specification |
 | ------------- | ------------- | ------------- |
-| 0a. | License | The project will be released under the Apache 2.0 License, ensuring open-source usage and contributions. |
-| 0b. | Documentation | Comprehensive documentation will be provided, including setup guides, feature overviews and examples of usage. |
-| 0c. | Testing Guide | A detailed testing guide will be created, outlining steps for automated and manual testing, including test cases, and expected results |
+| 0a. | License | Apache 2.0 |
+| 0b. | Documentation | CryptoPatronage user guide, including payment system guides, feature overviews and examples of usage. |
+| 0c. | Testing Guide | We will provide uni test for user management and payment system test report. |
 | 1. | Payment System | An automated system is set up to disburse payments to creators who have enrolled in a payment system, utilizing cron jobs to schedule and execute the distribution. |
 | 2. | Subscription / Pull Payment Refactor | Refinement of the existing subscription system to support pull payments, allowing creators to set up and manage recurring revenue streams. |
-| 3. | Creator Page Improvement | Enhancements to the creator page UI/UX, including customizable profiles, improved content display, and encrypted/decrypted content list |
+| 3. | Creator Page Improvement | Enhancements to the creator page UI/UX, including customizable profiles, improved content display, and encrypted/decrypted content list. |
 | 4. | Beta Testing | A structured beta testing phase involving real users to gather feedback, identify bugs, and ensure stability and usability of the platform. |
 
 
@@ -161,10 +161,10 @@ We will provide in private through Google Form.
 | Number | Deliverable | Specification |
 | ------------- | ------------- | ------------- |
 | 0a. | License | Apache 2.0 |
-| 0b. | Documentation | The project will provide comprehensive documentation covering usage guidelines, with a focus on ease of understanding to facilitate adoption by new users. |
-| 0c. | Testing Guide | A detailed testing guide will be created, outlining steps for automated and manual testing, including test cases, and expected results |
-| 1. | Delay Payment(Announced calls) | Implement a feature to ensure that transactions are not triggered immediately, with security measures in place to guarantee that the transactions are executed only at the specified time. |
-| 2. | Database Security Improvement | Enhance the existing database architecture with encryption at rest and in transit, role-based access control, and continuous monitoring for any potential security breaches. |
+| 0b. | Documentation | A user guide for CryptoPatronage detailing registration processes, feature overviews, and usage examples to assist users in navigating the platform efficiently. |
+| 0c. | Testing Guide | We will provide uni test for data transit and UI test report. |
+| 1. | Set up Prod/dev mode | Establish separate production and development environments to streamline the development process and safeguard the live application. |
+| 2. | Database Security Improvement | Enhance the existing database architecture with verifying signature while transit, role-based access control, and continuous monitoring for any potential security breaches. |
 | 3. | UI Upgrade | Redesign the user interface to improve user experience with modern design principles, ensuring the UI is responsive and accessible across various devices and platforms. |
 | 4. | Beta Testing | Conduct a beta testing phase with a selected user group to collect feedback on the usability and functionality of the system, and to identify and rectify any issues before the general release. |
 
