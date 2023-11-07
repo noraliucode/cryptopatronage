@@ -47,31 +47,30 @@ Page 4: creator page
 ### Key Features
 
 #### Supporter
-- Subscribe a creator
-- Unsubscribe a creator
-- Browse committed subscribed creators list
-- Browse uncommitted subscribed creators list
-- Withdraw(unnote preimages)
-- Browse creators page
+- Subscribe to a creator: Start following a creator to receive exclusive content or updates.
+- Unsubscribe from a creator: Cease subscription and access to the creator's content.
+- Browse committed subscribed creators list: View a list of creators you're subscribed to with a commitment, such as a recurring subscription with pure proxy.
+- Browse uncommitted subscribed creators list: View a list of creators you're subscribed to on a non-committal basis.
+- Browse creators page: Explore various creators' pages to view content or learn more about them.
 
 #### Creator
-- Add rate
-- Pull payment (committed, normal)
-- Pull all payment (committed, normal)
-- Pull payment (uncommitted, normal)
-- Pull all payment (uncommitted, normal)
-- Pull payment(delay)
-- Pull all payment(delay)
-- Browse committed subscribed supporter list
-- Browse uncommitted subscribed supporter list
-- Register to payment system
-- Add image url
+- Add rate: Set or update the rate(monthly) for subscribers to access exclusive content.
+- Pull payment (committed): Withdraw earnings from committed subscribers under committed conditions.
+- Pull all payment (committed): Withdraw all accumulated earnings from committed subscribers.
+- Pull payment (uncommitted): Withdraw earnings from uncommitted subscribers.
+- Pull all payment (uncommitted): Withdraw all earnings from uncommitted subscribers.
+- Pull payment (delay): Withdraw payments that have been delayed.
+- Pull all payment (delay): Withdraw all delayed payments at once.
+- Browse committed subscribed supporter list: View a list of supporters with a committed subscription.
+- Browse uncommitted subscribed supporter list: View a list of supporters with a non-committal subscription.
+- Register to payment system: Sign up for the payment system to start receiving funds automatically.
+- Add image URL: Add URLs to prfile images
 
 #### Admin
-- Transfer payment(normal)
-- Transfer all payment(normal)
-- Transfer payment(delay)
-- Transfer all payment(delay)
+- Transfer payment (normal): Handle the transfer of payments to creators under normal conditions.
+- Transfer all payment (normal): Transfer all payments to creators at once.
+- Transfer payment (delay): Manage the transfer of delayed payments to creators.
+- Transfer all payment (delay): Transfer all delayed payments to the respective creators.
  
 ### Infrastructure
 
