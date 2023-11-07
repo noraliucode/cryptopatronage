@@ -173,7 +173,7 @@ We will provide in private through Google Form.
 
 https://patronage.shokunin.network/
 
-The cryptoPatronage dApp is live currently on the above link. 
+The cryptoPatronage dApp is now active and can be accessed via the provided link. Presently, there are creators signed up on the platform who are receiving funds by supporters through our patronage system.
 
 ## Future Plans
 
