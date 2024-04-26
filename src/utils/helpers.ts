@@ -78,8 +78,7 @@ export function getPaymentAmount(rate: number, lastPaymentTime?: any): number {
 export function parseAdditionalInfo(identity: any) {
   const additionalInfo = {} as any;
   identity
-    ?.toHuman()
-    ?.valueOf()
+    ?.toHuman()[0]
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignores
     .info.additional.forEach((keyValue: any) => {
