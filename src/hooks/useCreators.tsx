@@ -75,7 +75,7 @@ export const useCreators = (
         if (identity) {
           const _identity = {
             address: identity.address,
-            ...parseEssentialInfo(identity.identity.toHuman()?.info),
+            ...parseEssentialInfo(identity.identity.toHuman()[0]?.info),
             ...parseAdditionalInfo(identity.identity),
           };
 
